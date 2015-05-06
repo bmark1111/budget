@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="budgetApp">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="shortcut icon" href="../../assets/ico/favicon.png">
+
+		<title>Budget Tracker</title>
+
+		<!-- Bootstrap core CSS -->
+		<link href="app/styles/bootstrap.min.css" rel="stylesheet">
+		<link href="app/styles/jasny-bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+		<!-- Custom styles for this template -->
+		<link href="app/styles/navmenu.css" rel="stylesheet">
+		<link href="app/styles/message.css" rel="stylesheet">
+		<link href="app/styles/table-styles.css" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div>
+			<div ng-view=""></div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="scripts/angularjs/angular.js"></script>
+		<script src="scripts/angularjs/angular-resource.js"></script>
+		<script src="scripts/angularjs/angular-route.min.js"></script>		
+		<script src="scripts/jquery/jquery-1.10.2.min.js"></script>
+		<script src="scripts/bootstrap.min.js"></script>
+		<script src="scripts/jasny-bootstrap.min.js"></script>
+		<script src="scripts/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
+		<script src="app/scripts/app.js"></script>
+		<script src="app/scripts/controllers/dashboardController.js"></script>
+		<script src="app/scripts/controllers/forecastController.js"></script>
+		<script src="app/scripts/controllers/transactionsController.js"></script>
+		<script src="app/scripts/controllers/settingsController.js"></script>
+		<script src="app/scripts/controllers/deleteModalController.js"></script>
+		<script src="app/scripts/controllers/editModalController.js"></script>
+		<script src="app/scripts/controllers/uploadModalController.js"></script>
+		<script src="app/scripts/services/data.js"></script>
+		<script src="app/scripts/services/fileUpload.js"></script>
+		<script src="app/scripts/filters/dateFormat.js"></script>
+		<script type="text/javascript" src="scripts/ngContextMenu.js"></script>
+		<script src="app/scripts/directives/rightClick.js"></script>
+		<script src="app/scripts/directives/fileModel.js"></script>
+	</body>
+</html>

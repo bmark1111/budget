@@ -1,0 +1,42 @@
+<ng-include ng-init="nav_active = 'forecast'" src="'app/views/templates/sidenav.html'"></ng-include>
+
+<div class="container-fluid">
+	<h1 class="page-header">Forecast</h1>
+	<div class="table-responsive" ng-if="!dataErrorMsg">
+		<table>
+			<thead>
+				<tr>
+					<th> &nbsp; </th>
+					<th ng-repeat="idx in result_seq"><span class="pull-right">{{result[idx].interval_beginning|date:'EEE MMM dd, yyyy'}}</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th nowrap>Balance Forward</th>
+					<td ng-repeat="balance in balance_forward"><span class="pull-right">{{balance}}</span></td>
+				</tr>
+				<tr ng-repeat="idx1 in categories_seq">
+					<th nowrap>{{categories[idx1].name}}</th>
+					<td ng-repeat="idx2 in result_seq"><span class="pull-right">{{result[idx2].totals[categories[idx1].id]|currency}}</span></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<th nowrap>Totals</th>
+					<td ng-repeat="total in totals track by $index"><span class="pull-right">{{total|currency}}</span></td>
+				</tr>
+				<tr>
+					<th nowrap>Running Totals</th>
+					<td ng-repeat="rTotal in rTotals track by $index"><span class="pull-right">{{rTotal|currency}}</span></td>
+				</tr>
+			</tfoot>
+		</table>
+		<div>
+			<div class="pull-left pointer" ng-click="moveInterval(-1)"><<<</div>
+			<div class="pull-right pointer" ng-click="moveInterval(1)">>>></div>
+		</div>
+	</div>
+	<div ng-if="dataErrorMsg">
+		<p class="text-muted">{{ dataErrorMsg }}</p>
+	</div>
+</div>
