@@ -4,7 +4,8 @@
 		<li ng-class="{'active': nav_active == 'dashboard'}"><a href="#/">Dashboard</a></li>
 		<li ng-class="{'active': nav_active == 'forecast'}"><a href="#/forecast">Forecast</a></li>
 		<li ng-class="{'active': nav_active == 'transactions'}"><a href="#/transactions">Transactions</a></li>
-		<!--<li ng-class="{'active': nav_active == 'offcanvas'}"><a href="../navbar-offcanvas/">Off canvas navbar</a></li>-->
+		<!--<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads  {{ transaction_count }}</a></li>-->
+		<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads <span class="badge">{{ transaction_count }}</span></a></li>
 	</ul>
 	<ul class="nav navmenu-nav">
 		<li style="padding-left:12px;font-size:15px;"><b>Settings</b></li>

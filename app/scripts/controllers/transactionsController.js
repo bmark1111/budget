@@ -7,6 +7,7 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 	$scope.recCount		= 0;
 	$scope.numPages = 5;
 	$scope.transactions	= [];
+	$scope.transaction_count = '';
 
 	$scope.dataErrorMsg	= false;
 
@@ -95,9 +96,11 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 			}
 		});
 
-		modalInstance.result.then(function ()
+		modalInstance.result.then(function (response)
 		{
-			loadData();
+			$scope.transaction_count = response.count;
+//console.log(response)
+			console.log('successful upload');
 		},
 		function ()
 		{

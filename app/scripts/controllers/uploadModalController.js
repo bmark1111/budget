@@ -18,8 +18,9 @@ app.controller('UploadModalController', function ($scope, $modalInstance, fileUp
 				if (response.success === 1)
 				{
 //console.log('success');
-					//do nothing for now
 					$scope.upload_fail = false;
+					$scope.upload_errors = {};
+					$modalInstance.close(response);
 				} else {
 //console.log('fail');
 					$scope.upload_fail = true;
