@@ -2,22 +2,36 @@ app.controller('UploadModalController', function ($scope, $modalInstance, fileUp
 {
 
 	$scope.title = params.title;
-
-//	$scope.open = function($event)
-//	{
-//		$event.preventDefault();
-//		$event.stopPropagation();
-//
-//		$scope.opened = true;
-//	};
+	$scope.upload_errors = {};
+	$scope.upload_fail = false;
 
 	// save edited transaction
 	$scope.upload = function ()
 	{
 		var file = $scope.myFile;
-console.log('file is ' + JSON.stringify(file));
+//console.log('file is ' + JSON.stringify(file));
 		var uploadUrl = 'http://rest.budget.loc/upload';
-		fileUpload.uploadFileToUrl(file, uploadUrl);
+		fileUpload.uploadFileToUrl(file, uploadUrl)
+			.success(function(response)
+			{
+//console.log(response);
+				if (response.success === 1)
+				{
+//console.log('success');
+					//do nothing for now
+					$scope.upload_fail = false;
+				} else {
+//console.log('fail');
+					$scope.upload_fail = true;
+					$scope.upload_errors = response.errors;
+//console.log($scope.upload_errors);
+				}
+			})
+//			.error(function(response)
+//			{
+//console.log(response);
+//console.log('fail');
+//			});
 	};
 
 	// cancel transaction edit

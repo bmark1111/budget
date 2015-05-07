@@ -84,7 +84,7 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 		var modalInstance = $modal.open({
 			templateUrl: 'uploadModal.html',
 			controller: 'UploadModalController',
-			size: 'lg',
+			size: 'sm',
 			resolve: {
 				params: function()
 					{
