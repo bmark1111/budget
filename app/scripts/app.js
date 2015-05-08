@@ -19,6 +19,11 @@ app.config(function($routeProvider, $httpProvider)
 			controller:		'TransactionsController',
 			templateUrl:	'app/views/transactions.html'
 		})
+		.when('/uploads',
+		{
+			controller:		'UploadsController',
+			templateUrl:	'app/views/uploads.html'
+		})
 		.when('/bank_settings',
 		{
 			controller:		'SettingsController',
@@ -35,5 +40,15 @@ app.config(function($routeProvider, $httpProvider)
 $httpProvider.defaults.useXDomain = true;
 delete $httpProvider.defaults.headers.common['X-Requested-With'];
 ///////////////////////////////
+});
+
+app.run(function($rootScope, RestData)
+{
+	// get the badge count for pending uploaded transactions
+	RestData.getCounts(
+			function(response)
+			{
+				$rootScope.transaction_count = response.data.count;
+			});
 });
 

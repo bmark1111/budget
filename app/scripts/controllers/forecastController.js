@@ -1,7 +1,9 @@
 'use strict';
 
-app.controller('ForecastController', function($scope, RestData, $filter)
+app.controller('ForecastController', function($scope, $rootScope, RestData, $filter)
 {
+	$rootScope.nav_active = 'forecast';
+
 	$scope.totals = [];
 	$scope.rTotals = [];
 	$scope.balance_forward = {};

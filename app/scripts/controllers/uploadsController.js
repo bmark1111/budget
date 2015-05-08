@@ -1,15 +1,15 @@
 'use strict';
 
-app.controller('TransactionsController', function($scope, $rootScope, $modal, $timeout, RestData)
+app.controller('UploadsController', function($scope, $modal, $timeout, $rootScope, RestData)
 {
-	$rootScope.nav_active = 'transactions';
+	$rootScope.nav_active = 'uploads';
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
 	$scope.recCount		= 0;
 	$scope.numPages = 5;
 	$scope.transactions	= [];
-//	$scope.transaction_count = '';
+	$scope.transaction_count = '';
 
 	$scope.dataErrorMsg	= false;
 
@@ -27,6 +27,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 //		ngProgress.start();
 
 		var searchCriteria = {
+						'status':				0,					// get all pending uploaded transactions
 						'date':					$scope.search.date,
 						'description':			$scope.search.description,
 						'amount':				$scope.search.amount,
@@ -36,7 +37,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 						'pagination_amount':	$scope.itemsPerPage
 		};
 
-		RestData.getAllTransactions(searchCriteria,
+		RestData.getAllUploads(searchCriteria,
 			function(response)
 			{
 				if (!!response.success)
@@ -100,7 +101,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 		modalInstance.result.then(function (response)
 		{
-			$rootScope.transaction_count = response.count;
+			$scope.transaction_count = response.count;
 //console.log(response)
 			console.log('successful upload');
 		},

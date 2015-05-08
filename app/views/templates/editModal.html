@@ -21,6 +21,22 @@
 					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
 				</div>
 			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2" ng-class="{ 'has-error' : validation.type }">
+				<label for="type">Type</label>{{type}}
+				<select class="form-control" name="type" ng-model="transaction.type">
+					<option ng-selected="transaction.type == 'CHECK'" value="CHECK">Check</option>
+					<option ng-selected="transaction.type == 'DEBIT'" value="DEBIT">Debit</option>
+					<option ng-selected="transaction.type == 'CREDIT'" value="CREDIT">Credit</option>
+					<option ng-selected="transaction.type == 'DSLIP'" value="DSLIP">Deposit</option>
+				</select>
+				<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
+			</div>
+			<div class="col-sm-2">
+				<label for="check_num">Check Num</label>{{check_num}}
+				<input type="text" name="check_num" class="form-control" ng-model="transaction.check_num" />
+			</div>
 			<div class="col-md-2" style="width:20%;">
 				<div class="form-group">
 					<label for="description">Amount</label>
@@ -43,25 +59,12 @@
 		<div class="table-responsive">
 			<table style="width:100%;">
 				<tr>
-					<th><span class="pull-left">Type</span></th>
-					<th><span class="pull-left">Check Num</span></th>
 					<th><span class="pull-left">Amount</span></th>
 					<th><span class="pull-left">Category</span></th>
 					<th><span class="pull-left">Notes</span></th>
 					<th></th>
 				</tr>
 				<tr ng-repeat="t in transaction.categories" ng-if="t.is_deleted != 1">
-					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.items.type[$index] }">
-						<select class="form-control" ng-model="t.type">
-							<option ng-selected="t.type == 'CHECK'" value="CHECK">Check</option>
-							<option ng-selected="t.type == 'DEBIT'" value="DEBIT">Debit</option>
-							<option ng-selected="t.type == 'CREDIT'" value="CREDIT">Credit</option>
-						</select>
-						<span class="help-block" ng-show="validation.items.type[$index]">{{ validation.items.type[$index] }}</span>
-					</td>
-					<td class="col-sm-2" style="width:15%;vertical-align:top;">
-						<input type="text" class="form-control" ng-model="t.check_num" />
-					</td>
 					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.items.amount[$index] }">
 						<input type="text" class="form-control" ng-model="t.amount" />
 						<span class="help-block" ng-show="validation.items.amount[$index]">{{ validation.items.amount[$index] }}</span>

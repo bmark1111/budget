@@ -1,8 +1,9 @@
 'use strict';
 
-app.controller('SettingsController', function($scope, RestData, $filter, $location)
+app.controller('SettingsController', function($scope, $rootScope, RestData, $filter, $location)
 {
-
+//	$rootScope.nav_active = 'budget_settings';
+	$rootScope.nav_active = $location.path().replace("/", "");
 
 	RestData.getSetting(
 		{

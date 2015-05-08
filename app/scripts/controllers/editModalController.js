@@ -24,7 +24,7 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 				angular.forEach(response.data.categories,
 					function(category)
 					{
-						category.selected = "Income";
+//						category.selected = "Income";
 						$scope.categories.push(category)
 					});
 			} else {
