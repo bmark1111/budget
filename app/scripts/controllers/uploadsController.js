@@ -111,45 +111,18 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 		});
 	};
 
-	$scope.addTransaction = function()
+	$scope.assignTransaction = function(transaction_id)
 	{
 		var modalInstance = $modal.open({
-			templateUrl: 'editModal.html',
-			controller: 'EditModalController',
-			size: 'lg',
-			resolve: {
-				params: function()
-					{
-						return {
-							id: 0,
-							title: 'Add Transaction'
-						}
-					}
-			}
-		});
-
-		modalInstance.result.then(function ()
-		{
-			loadData();
-		},
-		function ()
-		{
-			console.log('Add Modal dismissed at: ' + new Date());
-		});
-	};
-
-	$scope.editTransaction = function(transaction_id)
-	{
-		var modalInstance = $modal.open({
-			templateUrl: 'editModal.html',
-			controller: 'EditModalController',
+			templateUrl: 'assignModal.html',
+			controller: 'AssignModalController',
 			size: 'lg',
 			resolve: {
 				params: function()
 					{
 						return {
 							id: transaction_id,
-							title: 'Edit Transaction'
+							title: 'Assign Transaction'
 						}
 					}
 			}
@@ -161,35 +134,7 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 		},
 		function ()
 		{
-			console.log('Edit Modal dismissed at: ' + new Date());
-		});
-	};
-
-	$scope.deleteTransaction = function (transaction_id)
-	{
-		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
-			controller: 'DeleteModalController',
-			size: 'sm',
-			resolve: {
-				params: function()
-					{
-						return {
-							id: transaction_id,
-							title: 'Delete Transaction ?',
-							msg: 'Are you sure you want to delete this transaction. This action cannot be undone.'
-						}
-					}
-			}
-		});
-
-		modalInstance.result.then(function ()
-		{
-			loadData();
-		},
-		function ()
-		{
-			console.log('Delete Modal dismissed at: ' + new Date());
+			console.log('Assign Modal dismissed at: ' + new Date());
 		});
 	};
 

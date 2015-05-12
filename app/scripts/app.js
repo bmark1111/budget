@@ -46,9 +46,9 @@ app.run(function($rootScope, RestData)
 {
 	// get the badge count for pending uploaded transactions
 	RestData.getCounts(
-			function(response)
-			{
-				$rootScope.transaction_count = response.data.count;
-			});
+		function(response)
+		{
+			$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+		});
 });
 

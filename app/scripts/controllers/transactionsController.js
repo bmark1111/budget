@@ -101,7 +101,6 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 		modalInstance.result.then(function (response)
 		{
 			$rootScope.transaction_count = response.count;
-//console.log(response)
 			console.log('successful upload');
 		},
 		function ()

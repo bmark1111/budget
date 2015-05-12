@@ -1,4 +1,3 @@
-<!--<ng-include ng-init="nav_active = 'transactions'" src="'app/views/templates/sidenav.html'"></ng-include>-->
 <ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
 <ng-include src="'app/views/templates/editModal.html'"></ng-include>
 <ng-include src="'app/views/templates/uploadModal.html'"></ng-include>
@@ -51,45 +50,31 @@
 			<thead>
 				<tr>
 					<th>Date</th>
-					<th>Description</th>
-					<th>Type</th>
 					<th>Check Num</th>
+					<th colspan="2">Description</th>
 					<th>DEBIT</th>
 					<th>CREDIT</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat-start="idx in transactions_seq" ng-click="isOpen=!isOpen">
-					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
-					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
-					<td><span class="pull-left">{{transactions[idx].type}}</span></td>
-					<td><span class="pull-left">{{transactions[idx].check_num}}</span></td>
-					<!--<td><span class="pull-right">{{transactions[idx].total|currency}}</span></td>-->
-					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].total|currency}}</span></td>
-					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].total|currency}}</span></td>
-					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
+				<tr ng-repeat-start="idx in transactions_seq">
+					<td rowspan="2">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+					<td rowspan="2"><span class="pull-left">{{transactions[idx].check_num}}</span></td>
+					<td colspan="2"><span class="pull-left">{{transactions[idx].description}}</span></td>
+					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
+					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
+					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 						<span class="glyphicon glyphicon-trash" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 					</td>
 				</tr>
-				<tr ng-repeat-end="" ng-if="isOpen">
-					<td colspan="7">
-						<table class="pull-right" style="width:60%;margin-right:80px;">
-							<thead>
-								<th>Notes</th>
-								<th>Category</th>
-								<th>Amount</th>
-							</thead>
-							<tbody>
-								<tr ng-repeat="category in transactions[idx].categories">
-									<td><span class="pull-left">{{category.notes}}</span></td>
-									<td><span class="pull-left">{{category.category.name}}</span></td>
-									<td><span class="pull-right">{{category.amount|currency}}</span></td>
-								</tr>
-							</tbody>
-						</table>
+				<tr ng-repeat-end="">
+					<td>
+						<span class="pull-left" ng-if="transactions[idx].category_id == 0">--Split--</span>
+						<span class="pull-left" ng-if="transactions[idx].category_id != 0">{{transactions[idx].category.name}}</span>
 					</td>
+					<td><span class="pull-left">{{transactions[idx].notes}}</span></td>
 				</tr>
 			</tbody>
 		</table>

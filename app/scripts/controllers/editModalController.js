@@ -1,7 +1,7 @@
 app.controller('EditModalController', function ($scope, $modalInstance, RestData, params)
 {
 	$scope.transaction = {
-			categories: {}
+			splits: {}
 		};
 	$scope.categories = [];
 	$scope.title = params.title;
@@ -24,7 +24,6 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 				angular.forEach(response.data.categories,
 					function(category)
 					{
-//						category.selected = "Income";
 						$scope.categories.push(category)
 					});
 			} else {
@@ -37,20 +36,6 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 			}
 //			ngProgress.complete();
 		});
-	
-	$scope.getTotal = function()
-	{
-		var total = parseFloat(0);
-		angular.forEach($scope.transaction.categories,
-			function(category)
-			{
-				if (category.amount)
-				{
-					total += parseFloat(category.amount);
-				}
-			});
-		return total;
-	}
 
 	$scope.open = function($event)
 	{
@@ -74,23 +59,26 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 				}
 				else if (response.validation)
 				{
-					$scope.validation.items = {};
+					$scope.validation.splits = {};
 					angular.forEach(response.validation,
 						function(validation)
 						{
 							switch (validation.fieldName)
 							{
-								case 'transaction[date]':
+								case 'transaction_date':
 									$scope.validation.date = validation.errorMessage;
 									break;
-								case 'transaction[description]':
+								case 'description':
 									$scope.validation.description = validation.errorMessage;
 									break;
-								case 'transaction[categories]':
-									$scope.validation.categories = validation.errorMessage;
+								case 'type':
+									$scope.validation.type = validation.errorMessage;
+									break;
+								case 'splits':
+									$scope.validation.splits = validation.errorMessage;
 									break;
 								default:
-									if (validation.fieldName.substr(0,23) == 'transaction[categories]')
+									if (validation.fieldName.substr(0,6) == 'splits')
 									{
 										var fieldName = validation.fieldName;
 										var matches = fieldName.match(/\[(.*?)\]/g);
@@ -100,11 +88,11 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 											{
 												matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
 											}
-											if (typeof $scope.validation.items[matches[2]] == 'undefined')
+											if (typeof $scope.validation.splits[matches[1]] == 'undefined')
 											{
-												$scope.validation.items[matches[2]] = Array();
+												$scope.validation.splits[matches[1]] = Array();
 											}
-											$scope.validation.items[matches[2]].push(validation.errorMessage);
+											$scope.validation.splits[matches[1]].push(validation.errorMessage);
 										} else {
 											$scope.validation[fieldName] = validation.errorMessage;
 										}
@@ -130,29 +118,89 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 		$modalInstance.dismiss('cancel');
 	};
 
-	// add new item to transaction
-	$scope.addItem = function()
+	// split transaction
+	$scope.split = function()
 	{
 		var newItem = {
 			amount:			'',
 			category_id:	'',
-			check_num:		'',
-			notes:			'',
-			type:			''
+			notes:			''
 		}
-		if ($scope.transaction.categories)
+		if ($scope.transaction.splits)
 		{
-			var yy = Object.keys($scope.transaction.categories).length
-			$scope.transaction.categories[yy] = newItem;
+			return;
+//			// calculate total of all splits
+//			var total = parseFloat(0);
+//			angular.forEach($scope.transaction.splits,
+//				function(split)
+//				{
+//					if (split.is_deleted != 1)
+//					{
+//						total += parseFloat(split.amount);
+//					}
+//				});
+//			newItem.amount = $scope.transaction.amount - total;
+//			var yy = Object.keys($scope.transaction.splits).length
+//			$scope.transaction.splits[yy] = newItem;
 		} else {
-			$scope.transaction.categories = {};
-			$scope.transaction.categories[0] = newItem;
+			newItem.amount = $scope.transaction.amount;
+			$scope.transaction.splits = {};
+			$scope.transaction.splits[0] = newItem;
 		}
-	}
+	};
 
-	$scope.deleteItem = function(ele)
+	$scope.refreshSplits = function()
 	{
-		$scope.transaction.categories[ele].is_deleted = 1;
-	}
+		var newItem = {
+			amount:			'',
+			category_id:	'',
+			notes:			''
+		}
+		if ($scope.transaction.splits)
+		{
+			// calculate total of all splits
+			var total = parseFloat(0);
+			angular.forEach($scope.transaction.splits,
+				function(split)
+				{
+					if (split.is_deleted != 1)
+					{
+						total += parseFloat(split.amount);
+					}
+				});
+			$scope.calc = Array();
+			var yy = Object.keys($scope.transaction.splits).length
+			if ($scope.transaction.amount > total)
+			{
+				newItem.amount = $scope.transaction.amount - total;
+				$scope.transaction.splits[yy] = newItem;
+			}
+			else if ($scope.transaction.amount < total)
+			{
+				$scope.calc[yy-1] = 'Split amounts do not match Item amount';
+			}
+		}
+	};
+
+	$scope.deleteSplit = function(ele)
+	{
+		$scope.transaction.splits[ele].is_deleted = 1;
+
+		// calculate total of all splits
+		var total = parseFloat(0);
+		angular.forEach($scope.transaction.splits,
+			function(split)
+			{
+				if (split.is_deleted != 1)
+				{
+					total += parseFloat(split.amount);
+				}
+			});
+		$scope.calc = Array();
+		if ($scope.transaction.amount != total)
+		{
+			$scope.calc[ele-1] = 'Split amounts do not match Item amount';
+		}
+	};
 
 });

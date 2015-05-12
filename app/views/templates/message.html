@@ -1,13 +1,10 @@
 <div class="menu" ng-show="isVisible && !dataErrorMsg2">
-	<table>
-<!--		<tr ng-repeat="transaction in transactions">
-			<td class="pull-right" nowrap>{{transaction.transaction_date}}</td>
-			<td style="text-align:left;min-width:200px;">{{transaction.description}}</td>
-			<td class="pull-right" nowrap>{{transaction.amount|currency}}</td>-->
+	<table border="1">
 		<tr ng-repeat="idx in transactions_seq">
-			<td class="pull-right" nowrap>{{transactions[idx].transaction_date}}</td>
-			<td style="text-align:left;min-width:200px;">{{transactions[idx].description}}</td>
-			<td class="pull-right" nowrap>{{transactions[idx].amount|currency}}</td>
+			<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+			<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].description}}<span ng-if="transaction[idx].notes != ''"> - {{transactions[idx].notes}}</spna></td>
+			<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].type}}</td>
+			<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].amount|currency}}</td>
 		</tr>
 	</table>
 </div>

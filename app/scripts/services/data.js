@@ -17,6 +17,7 @@ app.factory('RestData', function ($resource)
 		  getForecast:			{ method: 'GET', headers: headers, params: {object: 'forecast', action: 'load', param: null} },
 		  getAllTransactions:	{ method: 'GET', headers: headers, params: {object: 'transaction', action: 'loadAll', param: null} },
 		  getAllUploads:		{ method: 'GET', headers: headers, params: {object: 'upload', action: 'loadAll', param: null} },
+		  assignUpload:			{ method: 'GET', headers: headers, params: {object: 'upload', action: 'assign', param: null} },
 		  getSetting:			{ method: 'GET', headers: headers, params: {object: 'setting', action: 'load', param: null} },
 		  getCounts:			{ method: 'GET', headers: headers, params: {object: 'upload', action: 'counts', param: null} }
 	  });
