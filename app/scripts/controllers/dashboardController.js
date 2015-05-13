@@ -17,7 +17,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 
 	$scope.result = {};
 	$scope.forecast = {};
-	$scope.categories = {};
+	$scope.categories = [];
 
 	$scope.dataErrorMsg = false;
 	$scope.dataErrorMsg2 = false;
@@ -90,8 +90,13 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 					$scope.result = response.data.result;
 					$scope.result_seq = Object.keys(response.data.result);
 
-					$scope.categories = response.data.categories;
-					$scope.categories_seq = Object.keys(response.data.categories);
+//					$scope.categories = response.data.categories;
+//					$scope.categories_seq = Object.keys(response.data.categories);
+					angular.forEach($rootScope.categories,
+						function(category)
+						{
+							$scope.categories.push(category)
+						});
 
 					// now calulate totals
 					angular.forEach($scope.result,

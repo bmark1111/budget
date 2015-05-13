@@ -1,0 +1,80 @@
+<script type="text/ng-template" id="postUploadedModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">{{title}}</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row">
+			<div class="col-md-6" style="width:22%;">
+				<label>Date:</label> {{transaction.transaction_date|date:'EEE MMM dd, yyyy'}}
+			</div>
+			<div class="col-md-6" style="width:78%;">
+				<label>Description:</label> {{transaction.description}}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">
+				<label>Type:</label> {{transaction.type}}
+			</div>
+			<div class="col-sm-2" ng-if="transaction.type == 'CHECK'">
+				<label>Check Num:</label> {{transaction.check_num}}
+			</div>
+			<div class="col-md-6">
+				<label>Amount:</label> {{transaction.amount|currency}}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2" style="width:22%;">
+				<label for="category">Category</label>
+				<div class="form-group" ng-class="{'has-error':validation.category_id}">
+					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<span class="help-block" ng-show="validation.category_id">{{validation.category_id}}</span>
+				</div>
+			</div>
+			<div class="col-md-2" style="width:46%;">
+				<div class="form-group">
+					<label for="notes">Notes</label>
+					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
+				</div>
+			</div>
+		</div>
+		<div class="table-responsive" ng-if="transactions[0]">
+			<div>
+				<h3>Possible Duplicate Transaction</h3>
+			</div>
+			<table style="width:100%;">
+				<tr>
+					<th><span class="pull-left">Date</span></th>
+					<th><span class="pull-left">Description</span></th>
+					<th><span class="pull-left">Amount</span></th>
+					<th><span class="pull-left">Category</span></th>
+					<th><span class="pull-left">Notes</span></th>
+					<th></th>
+				</tr>
+				<tr ng-repeat="idx in transactions_seq">
+					<td class="col-sm-2">
+						{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}
+					</td>
+					<td class="col-md-2">
+						{{transactions[idx].description}}
+					</td>
+					<td class="col-sm-2">
+						{{transactions[idx].amount|currency}}
+					</td>
+					<td class="col-sm-2">
+						{{transactions[idx].category.name}}
+					</td>
+					<td class="col-md-2">
+						{{transactions[idx].notes}}
+					</td>
+					<td>
+						
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="post()">Post</button>
+		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	</div>
+</script>

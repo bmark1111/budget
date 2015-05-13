@@ -45,10 +45,17 @@ delete $httpProvider.defaults.headers.common['X-Requested-With'];
 app.run(function($rootScope, RestData)
 {
 	// get the badge count for pending uploaded transactions
-	RestData.getCounts(
+	RestData.getUploadCounts(
 		function(response)
 		{
 			$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+		});
+
+	// get the categories
+	RestData.getCategories(
+		function(response)
+		{
+			$rootScope.categories = response.data.categories;
 		});
 });
 

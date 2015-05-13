@@ -31,8 +31,15 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-sm-2" ng-class="{ 'has-error' : validation.type }">
-				<label for="type">Type</label>{{type}}
+			<div class="col-sm-2" style="width:22%;">
+				<label for="category">Category</label>
+				<div class="form-group" ng-class="{'has-error':validation.category_id}">
+					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<span class="help-block" ng-show="validation.category_id">{{validation.category_id}}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="type">Type</label>
 				<div class="form-group" ng-class="{ 'has-error' : validation.type }">
 					<select class="form-control" name="type">
 						<option>Select Type</option>

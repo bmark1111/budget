@@ -1,4 +1,5 @@
-<ng-include src="'app/views/templates/assignModal.html'"></ng-include>
+<ng-include src="'app/views/templates/postUploadedModal.html'"></ng-include>
+<ng-include src="'app/views/templates/deleteUploadedModal.html'"></ng-include>
 
 <div class="container-fluid">
 	<h1 class="page-header">Uploaded Transactions</h1>
@@ -43,7 +44,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="idx in transactions_seq" ng-click="assignTransaction(transactions[idx].id)">
+				<tr ng-repeat="idx in transactions_seq">
 					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
 					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
 					<td><span class="pull-right">{{transactions[idx].type}}</span></td>
@@ -51,7 +52,7 @@
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
-						<span class="glyphicon glyphicon-pencil" ng-click="editTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
+						<span class="glyphicon glyphicon-ok" ng-click="postTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 						<span class="glyphicon glyphicon-trash" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 					</td>
 				</tr>

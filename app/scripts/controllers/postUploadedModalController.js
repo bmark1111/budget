@@ -1,4 +1,4 @@
-app.controller('EditModalController', function ($scope, $rootScope, $modalInstance, RestData, params)
+app.controller('PostUploadedModalController', function ($scope, $rootScope, $modalInstance, RestData, params)
 {
 	$scope.transaction = {
 			splits: {}
@@ -8,7 +8,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 
 //	ngProgress.start();
 
-	RestData.editTransaction(
+	RestData.getUploadedTransaction(
 		{
 			id: params.id
 		},
@@ -19,9 +19,10 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 				if (response.data.result)
 				{
 					$scope.transaction = response.data.result;
+					$scope.transactions = response.data.transactions;
+					$scope.transactions_seq = Object.keys(response.data.transactions);
 				}
 
-//				angular.forEach(response.data.categories,
 				angular.forEach($rootScope.categories,
 					function(category)
 					{
@@ -46,12 +47,12 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 		$scope.opened = true;
 	};
 
-	// save edited transaction
-	$scope.save = function ()
+	// post uploaded transaction
+	$scope.post = function ()
 	{
 		$scope.validation = {};
 
-		RestData.saveTransaction($scope.transaction,
+		RestData.postUploadedTransaction($scope.transaction,
 			function(response)
 			{
 				if (!!response.success)
@@ -117,91 +118,6 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 	$scope.cancel = function ()
 	{
 		$modalInstance.dismiss('cancel');
-	};
-
-	// split transaction
-	$scope.split = function()
-	{
-		var newItem = {
-			amount:			'',
-			category_id:	'',
-			notes:			''
-		}
-		if ($scope.transaction.splits)
-		{
-			return;
-//			// calculate total of all splits
-//			var total = parseFloat(0);
-//			angular.forEach($scope.transaction.splits,
-//				function(split)
-//				{
-//					if (split.is_deleted != 1)
-//					{
-//						total += parseFloat(split.amount);
-//					}
-//				});
-//			newItem.amount = $scope.transaction.amount - total;
-//			var yy = Object.keys($scope.transaction.splits).length
-//			$scope.transaction.splits[yy] = newItem;
-		} else {
-			newItem.amount = $scope.transaction.amount;
-			$scope.transaction.splits = {};
-			$scope.transaction.splits[0] = newItem;
-		}
-	};
-
-	$scope.refreshSplits = function()
-	{
-		var newItem = {
-			amount:			'',
-			category_id:	'',
-			notes:			''
-		}
-		if ($scope.transaction.splits)
-		{
-			// calculate total of all splits
-			var total = parseFloat(0);
-			angular.forEach($scope.transaction.splits,
-				function(split)
-				{
-					if (split.is_deleted != 1)
-					{
-						total += parseFloat(split.amount);
-					}
-				});
-			$scope.calc = Array();
-			var yy = Object.keys($scope.transaction.splits).length
-			if ($scope.transaction.amount > total)
-			{
-				newItem.amount = $scope.transaction.amount - total;
-				$scope.transaction.splits[yy] = newItem;
-			}
-			else if ($scope.transaction.amount < total)
-			{
-				$scope.calc[yy-1] = 'Split amounts do not match Item amount';
-			}
-		}
-	};
-
-	$scope.deleteSplit = function(ele)
-	{
-		$scope.transaction.splits[ele].is_deleted = 1;
-
-		// calculate total of all splits
-		var total = parseFloat(0);
-		angular.forEach($scope.transaction.splits,
-			function(split)
-			{
-				if (split.is_deleted != 1)
-				{
-					total += parseFloat(split.amount);
-				}
-			});
-		$scope.calc = Array();
-		if ($scope.transaction.amount != total)
-		{
-			$scope.calc[ele-1] = 'Split amounts do not match Item amount';
-		}
 	};
 
 });

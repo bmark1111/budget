@@ -83,46 +83,18 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 		$scope.opened = true;
 	};
 
-	$scope.uploadTransactions = function()
+	$scope.postTransaction = function(transaction_id)
 	{
 		var modalInstance = $modal.open({
-			templateUrl: 'uploadModal.html',
-			controller: 'UploadModalController',
-			size: 'sm',
-			resolve: {
-				params: function()
-					{
-						return {
-							title: 'Upload Transactions'
-						}
-					}
-			}
-		});
-
-		modalInstance.result.then(function (response)
-		{
-			$scope.transaction_count = response.count;
-//console.log(response)
-			console.log('successful upload');
-		},
-		function ()
-		{
-			console.log('Upload Modal dismissed at: ' + new Date());
-		});
-	};
-
-	$scope.assignTransaction = function(transaction_id)
-	{
-		var modalInstance = $modal.open({
-			templateUrl: 'assignModal.html',
-			controller: 'AssignModalController',
+			templateUrl: 'postUploadedModal.html',
+			controller: 'PostUploadedModalController',
 			size: 'lg',
 			resolve: {
 				params: function()
 					{
 						return {
 							id: transaction_id,
-							title: 'Assign Transaction'
+							title: 'Post Uploaded Transaction ?'
 						}
 					}
 			}
@@ -134,7 +106,35 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 		},
 		function ()
 		{
-			console.log('Assign Modal dismissed at: ' + new Date());
+			console.log('Edit Modal dismissed at: ' + new Date());
+		});
+	};
+
+	$scope.deleteTransaction = function (transaction_id)
+	{
+		var modalInstance = $modal.open({
+			templateUrl: 'deleteUploadedModal.html',
+			controller: 'DeleteUploadedModalController',
+			size: 'sm',
+			resolve: {
+				params: function()
+					{
+						return {
+							id: transaction_id,
+							title: 'Delete Uploaded Transaction ?',
+							msg: 'Are you sure you want to delete this uploaded transaction. This action cannot be undone.'
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function ()
+		{
+			loadData();
+		},
+		function ()
+		{
+			console.log('Delete Modal dismissed at: ' + new Date());
 		});
 	};
 
