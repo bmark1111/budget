@@ -26,7 +26,6 @@ app.controller('DeleteUploadedModalController', function ($scope, $modalInstance
 				}
 //				ngProgress.complete();
 			});
-//		$modalInstance.close(params.id);
 	};
 
 	$scope.cancel = function ()

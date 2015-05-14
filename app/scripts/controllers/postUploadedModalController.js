@@ -1,10 +1,11 @@
 app.controller('PostUploadedModalController', function ($scope, $rootScope, $modalInstance, RestData, params)
 {
-	$scope.transaction = {
+	$scope.uploaded = {
 			splits: {}
 		};
 	$scope.categories = [];
 	$scope.title = params.title;
+	$scope.post = 'Post New';
 
 //	ngProgress.start();
 
@@ -18,7 +19,7 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 			{
 				if (response.data.result)
 				{
-					$scope.transaction = response.data.result;
+					$scope.uploaded = response.data.result;
 					$scope.transactions = response.data.transactions;
 					$scope.transactions_seq = Object.keys(response.data.transactions);
 				}
@@ -47,12 +48,14 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 		$scope.opened = true;
 	};
 
-	// post uploaded transaction
-	$scope.post = function ()
+	// post uploaded uploaded
+	$scope.postUploaded = function ()
 	{
 		$scope.validation = {};
 
-		RestData.postUploadedTransaction($scope.transaction,
+		$scope.uploaded.transaction_id = $scope.idSelectedTransaction;
+console.log($scope.uploaded)
+		RestData.postUploadedTransaction($scope.uploaded,
 			function(response)
 			{
 				if (!!response.success)
@@ -61,44 +64,15 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 				}
 				else if (response.validation)
 				{
-					$scope.validation.splits = {};
 					angular.forEach(response.validation,
 						function(validation)
 						{
 							switch (validation.fieldName)
 							{
-								case 'transaction_date':
-									$scope.validation.date = validation.errorMessage;
-									break;
-								case 'description':
-									$scope.validation.description = validation.errorMessage;
-									break;
-								case 'type':
-									$scope.validation.type = validation.errorMessage;
-									break;
-								case 'splits':
-									$scope.validation.splits = validation.errorMessage;
+								case 'category_id':
+									$scope.validation.category_id = validation.errorMessage;
 									break;
 								default:
-									if (validation.fieldName.substr(0,6) == 'splits')
-									{
-										var fieldName = validation.fieldName;
-										var matches = fieldName.match(/\[(.*?)\]/g);
-										if (matches)
-										{
-											for (var x = 0; x < matches.length; x++)
-											{
-												matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
-											}
-											if (typeof $scope.validation.splits[matches[1]] == 'undefined')
-											{
-												$scope.validation.splits[matches[1]] = Array();
-											}
-											$scope.validation.splits[matches[1]].push(validation.errorMessage);
-										} else {
-											$scope.validation[fieldName] = validation.errorMessage;
-										}
-									}
 									break;
 							}
 						});
@@ -114,10 +88,48 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 			});
 	};
 
-	// cancel transaction edit
+	$scope.deleteUploaded = function()
+	{
+//		ngProgress.start();
+
+		RestData.deleteUploadedTransaction(
+			{
+				'id': params.id
+			},
+			function(response)
+			{
+				if (!!response.success)
+				{
+					$modalInstance.close();
+				} else {
+					if (response.errors)
+					{
+						$scope.dataErrorMsg = response.errors[0].error;
+					} else {
+						$scope.dataErrorMsg = response;
+					}
+				}
+//				ngProgress.complete();
+			});
+	};
+
+	// cancel uploaded transactionedit
 	$scope.cancel = function ()
 	{
 		$modalInstance.dismiss('cancel');
+	};
+
+	$scope.idSelectedTransaction = null;
+	$scope.setSelected = function (idSelectedTransaction)
+	{
+		if ($scope.idSelectedTransaction !== idSelectedTransaction)
+		{
+			$scope.idSelectedTransaction = idSelectedTransaction;
+			$scope.post = 'Post New & Overwrite';
+		} else {
+			$scope.idSelectedTransaction = null;
+			$scope.post = 'Post New';
+		}
 	};
 
 });

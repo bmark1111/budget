@@ -75,6 +75,10 @@ div.table-responsive tbody tr.odd td {
 	background:#bcd9e1;
 	}
 
+div.table-responsive tbody tr.selected td {
+	background:#90EE90;
+	}
+
 div.table-responsive span.forecast {
 	background:#D0F5A9;
 	}

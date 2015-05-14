@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('UploadsController', function($scope, $modal, $timeout, $rootScope, RestData)
+app.controller('UploadsController', function($scope, $rootScope, $modal, $timeout, RestData)
 {
 	$rootScope.nav_active = 'uploads';
 
@@ -9,7 +9,6 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 	$scope.recCount		= 0;
 	$scope.numPages = 5;
 	$scope.transactions	= [];
-	$scope.transaction_count = '';
 
 	$scope.dataErrorMsg	= false;
 
@@ -45,6 +44,8 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 					$scope.transactions = response.data.result;
 					$scope.transactions_seq = Object.keys(response.data.result);
 					$scope.recCount = response.data.total_rows;
+
+					$rootScope.transaction_count = $scope.recCount;
 				} else {
 					if (response.errors)
 					{
@@ -106,7 +107,7 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 		},
 		function ()
 		{
-			console.log('Edit Modal dismissed at: ' + new Date());
+			console.log('Post Uploaded Modal dismissed at: ' + new Date());
 		});
 	};
 
@@ -134,7 +135,7 @@ app.controller('UploadsController', function($scope, $modal, $timeout, $rootScop
 		},
 		function ()
 		{
-			console.log('Delete Modal dismissed at: ' + new Date());
+			console.log('Delete Uploaded Modal dismissed at: ' + new Date());
 		});
 	};
 

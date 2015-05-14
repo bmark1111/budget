@@ -90,8 +90,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 					$scope.result = response.data.result;
 					$scope.result_seq = Object.keys(response.data.result);
 
-//					$scope.categories = response.data.categories;
-//					$scope.categories_seq = Object.keys(response.data.categories);
 					angular.forEach($rootScope.categories,
 						function(category)
 						{
