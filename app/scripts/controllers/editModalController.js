@@ -21,7 +21,6 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 					$scope.transaction = response.data.result;
 				}
 
-//				angular.forEach(response.data.categories,
 				angular.forEach($rootScope.categories,
 					function(category)
 					{
@@ -129,7 +128,6 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 		}
 		if ($scope.transaction.splits)
 		{
-			return;
 //			// calculate total of all splits
 //			var total = parseFloat(0);
 //			angular.forEach($scope.transaction.splits,

@@ -9,7 +9,6 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 	$scope.recCount		= 0;
 	$scope.numPages = 5;
 	$scope.transactions	= [];
-//	$scope.transaction_count = '';
 
 	$scope.dataErrorMsg	= false;
 
@@ -100,7 +99,8 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 		modalInstance.result.then(function (response)
 		{
-			$rootScope.transaction_count = response.count;
+//			$rootScope.transaction_count = response.count;
+			$rootScope.transaction_count = (parseInt(response.count) > 0) ? parseInt(response.count): '';
 			console.log('successful upload');
 		},
 		function ()
@@ -114,7 +114,8 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 		var modalInstance = $modal.open({
 			templateUrl: 'editModal.html',
 			controller: 'EditModalController',
-			size: 'lg',
+//			size: 'lg',
+			windowClass: 'app-modal-window',
 			resolve: {
 				params: function()
 					{
@@ -141,7 +142,8 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 		var modalInstance = $modal.open({
 			templateUrl: 'editModal.html',
 			controller: 'EditModalController',
-			size: 'lg',
+//			size: 'lg',
+			windowClass: 'app-modal-window',
 			resolve: {
 				params: function()
 					{

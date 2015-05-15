@@ -86,3 +86,7 @@ div.table-responsive span.forecast {
 div.table-responsive div.pointer {
 	cursor: pointer;
 	}
+
+.app-modal-window .modal-dialog {
+	width: 1100px;
+}

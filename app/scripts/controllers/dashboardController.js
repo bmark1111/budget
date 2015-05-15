@@ -3,7 +3,6 @@
 app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $location)
 {
 	$rootScope.nav_active = 'dashboard';
-//	$rootScope.transaction_count = '';
 
 	$scope.totals = [];				// transaction totals by date
 	$scope.startDate = [];			// interval start dates
@@ -113,9 +112,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 
 					// now set the balance forward
 					$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
-
-					// now set the uploaded badge count
-//					$rootScope.transaction_count = 55;
 
 					// now calculate running totals
 					angular.forEach($scope.totals,

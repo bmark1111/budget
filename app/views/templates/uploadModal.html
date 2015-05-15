@@ -8,6 +8,21 @@
 				<input type="file" file-model="myFile"/>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-6" style="width:100%;">
+				<div class="form-group">
+					<input type="checkbox" ng-model="ignoreFirstLine" ng-true-value="1" ng-false-value="0" /> Ignore First Line of File
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="form-group" ng-class="{'has-error':validation.bank_account_id}">
+					<select class="form-control" name="bank_account_id" ng-model="bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
+					<span class="help-block" ng-show="validation.bank_account_id">{{validation.bank_account_id}}</span>
+				</div>
+			</div>
+		</div>
 		<div class="row" ng-class="{ 'has-error': upload_fail }">
 			<div class="col-md-6" style="width:100%;">
 				<span class="help-block" ng-show="upload_fail" ng-repeat="error in upload_errors">{{ error }}</span>

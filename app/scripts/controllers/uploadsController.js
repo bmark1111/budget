@@ -45,7 +45,8 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 					$scope.transactions_seq = Object.keys(response.data.result);
 					$scope.recCount = response.data.total_rows;
 
-					$rootScope.transaction_count = $scope.recCount;
+//					$rootScope.transaction_count = $scope.recCount;
+					$rootScope.transaction_count = (parseInt(response.data.total_rows) > 0) ? parseInt(response.data.total_rows): '';
 				} else {
 					if (response.errors)
 					{

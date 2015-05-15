@@ -44,6 +44,8 @@ delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 app.run(function($rootScope, RestData)
 {
+	$rootScope.bank_accounts = [];
+
 	// get the badge count for pending uploaded transactions
 	RestData.getUploadCounts(
 		function(response)
@@ -56,6 +58,21 @@ app.run(function($rootScope, RestData)
 		function(response)
 		{
 			$rootScope.categories = response.data.categories;
+		});
+
+	// get the categories
+	RestData.getBankAccounts(
+		function(response)
+		{
+//			$rootScope.bank_accounts = response.data.bank_accounts;
+			angular.forEach(response.data.bank_accounts,
+				function(bank_account)
+				{
+					$rootScope.bank_accounts.push({
+						'id': bank_account.id,
+						'name': bank_account.bank.name + ' ' + bank_account.name
+					})
+				});
 		});
 });
 

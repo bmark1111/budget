@@ -4,10 +4,13 @@
 	</div>
 	<div class="modal-body">
 		<div class="row">
-			<div class="col-md-6" style="width:22%;">
+			<div class="col-md-6" style="width:26%;">
+				<label>Bank Account:</label> {{uploaded.bank_account.bank.name}} {{uploaded.bank_account.name}}
+			</div>
+			<div class="col-md-6" style="width:24%;">
 				<label>Date:</label> {{uploaded.transaction_date|date:'EEE MMM dd, yyyy'}}
 			</div>
-			<div class="col-md-6" style="width:78%;">
+			<div class="col-md-6" style="width:50%;">
 				<label>Description:</label> {{uploaded.description}}
 			</div>
 		</div>
