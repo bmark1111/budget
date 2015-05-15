@@ -7,7 +7,8 @@
 			<thead>
 				<tr>
 					<th><span class="pull-right">Interval Beginning</span></th>
-					<th ng-repeat="idx in result_seq"><span class="pull-right" ng-init="thisDate = result[idx].interval_beginning">{{result[idx].interval_beginning|date:'EEE MMM dd, yyyy'}}</span></th>
+					<!--<th ng-repeat="idx in result_seq"><span class="pull-right" ng-init="thisDate = result[idx].interval_beginning">{{result[idx].interval_beginning|date:'EEE MMM dd, yyyy'}}</span></th>-->
+					<th ng-repeat="idx in result_seq"><span class="pull-right">{{result[idx].interval_beginning|date:'EEE MMM dd, yyyy'}}</span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -17,7 +18,7 @@
 				</tr>
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
-					<td ng-repeat="idx2 in result_seq" ng-contextmenu ng-class="{'currentInterval':result[idx2].current_interval}"><!--style="border-left:2px solid red;border-right:2px solid red;">-->
+					<td ng-repeat="idx2 in result_seq" ng-contextmenu ng-class="{'currentInterval':result[idx2].current_interval}">
 						<div class="pull-right" ng-if="result[idx2].totals[category.id] != 0"
 												ng-right-click="showTheseTransactions(result[idx2].interval_beginning, category.id)">
 							{{result[idx2].totals[category.id]|currency}}
@@ -25,7 +26,7 @@
 						</div>
 						<div class="pull-right" ng-if="result[idx2].totals[category.id] == 0 && forecast[idx2].totals[category.id] != 0"
 												ng-right-click="showThisForecast(forecast[idx2].interval_beginning, category.id)">
-							<span class="forecast">{{forecast[idx2].totals[category.id]|currency}}</span>
+							{{forecast[idx2].totals[category.id]|currency}}
 							<ng-include src="'app/views/templates/message.html'"></ng-include>
 						</div>
 						<div class="pull-right" ng-if="result[idx2].totals[category.id] == 0 && forecast[idx2].totals[category.id] == 0">$0.00</div>

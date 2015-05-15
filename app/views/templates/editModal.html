@@ -48,7 +48,7 @@
 			<div class="col-sm-2" style="width:20%;">
 				<label for="type">Type</label>
 				<div class="form-group" ng-class="{ 'has-error' : validation.type }">
-					<select class="form-control" name="type">
+					<select class="form-control" name="type" ng-model="transaction.type">
 						<option>Select Type</option>
 						<option ng-selected="transaction.type == 'CHECK'" value="CHECK">Check</option>
 						<option ng-selected="transaction.type == 'DEBIT'" value="DEBIT">Debit</option>
@@ -61,7 +61,7 @@
 			<div class="col-sm-2" style="width:15%;">
 				<label for="check_num">Check Num</label>
 				<div class="form-group" ng-class="{ 'has-error' : validation.check_num }">
-					<input type="text" name="check_num" class="form-control" />
+					<input type="text" name="check_num" class="form-control" ng-model="transaction.check_num" />
 				</div>
 			</div>
 			<div class="col-md-2" style="width:15%;">
