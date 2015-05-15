@@ -15,25 +15,9 @@
 					<th nowrap>Balance Forward</th>
 					<td ng-repeat="balance in balance_forward"><span class="pull-right">{{balance}}</span></td>
 				</tr>
-<!--				<tr ng-repeat="idx1 in categories_seq">
-					<th nowrap>{{categories[idx1].name}}</th>
-					<td ng-repeat="idx2 in result_seq" ng-contextmenu>
-						<div class="pull-right" ng-if="result[idx2].totals[categories[idx1].id] != 0"
-												ng-right-click="showTheseTransactions(result[idx2].interval_beginning, categories[idx1].id)">
-							{{result[idx2].totals[categories[idx1].id]|currency}}
-							<ng-include src="'app/views/templates/message.html'"></ng-include>
-						</div>
-						<div class="pull-right" ng-if="result[idx2].totals[categories[idx1].id] == 0 && forecast[idx2].totals[categories[idx1].id] != 0"
-												ng-right-click="showThisForecast(forecast[idx2].interval_beginning, categories[idx1].id)">
-							<span class="forecast">{{forecast[idx2].totals[categories[idx1].id]|currency}}</span>
-							<ng-include src="'app/views/templates/message.html'"></ng-include>
-						</div>
-						<div class="pull-right" ng-if="result[idx2].totals[categories[idx1].id] == 0 && forecast[idx2].totals[categories[idx1].id] == 0">$0.00</div>
-					</td>
-				</tr>-->
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
-					<td ng-repeat="idx2 in result_seq" ng-contextmenu>
+					<td ng-repeat="idx2 in result_seq" ng-contextmenu ng-class="{'currentInterval':result[idx2].current_interval}"><!--style="border-left:2px solid red;border-right:2px solid red;">-->
 						<div class="pull-right" ng-if="result[idx2].totals[category.id] != 0"
 												ng-right-click="showTheseTransactions(result[idx2].interval_beginning, category.id)">
 							{{result[idx2].totals[category.id]|currency}}

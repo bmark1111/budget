@@ -103,6 +103,17 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 							$scope.totals[key]			= parseFloat(0);
 							$scope.startDate[key]		= total.interval_beginning;
 							$scope.endDate[key]			= total.interval_ending;
+
+							// set the current interval
+							var sd = new Date(total.interval_beginning);
+							var ed = new Date(total.interval_ending);
+							var now = new Date();
+							if (now >= sd && now <= ed)
+							{
+								total.current_interval = true;
+							} else {
+								total.current_interval = false;
+							}
 							angular.forEach(total.totals,
 								function(value)
 								{
