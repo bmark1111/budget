@@ -110,6 +110,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 							var now = new Date();
 							if (now >= sd && now <= ed)
 							{
+							console.log('BINGO')
 								total.current_interval = true;
 							} else {
 								total.current_interval = false;
