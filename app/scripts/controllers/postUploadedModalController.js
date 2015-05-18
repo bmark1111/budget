@@ -24,11 +24,12 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 					$scope.transactions_seq = Object.keys(response.data.transactions);
 				}
 
-				angular.forEach($rootScope.categories,
-					function(category)
-					{
-						$scope.categories.push(category)
-					});
+				$scope.categories = $rootScope.categories;
+//				angular.forEach($rootScope.categories,
+//					function(category)
+//					{
+//						$scope.categories.push(category)
+//					});
 			} else {
 				if (response.errors)
 				{

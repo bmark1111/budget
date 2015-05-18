@@ -89,11 +89,12 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 					$scope.result = response.data.result;
 					$scope.result_seq = Object.keys(response.data.result);
 
-					angular.forEach($rootScope.categories,
-						function(category)
-						{
-							$scope.categories.push(category)
-						});
+					$scope.categories = $rootScope.categories;
+//					angular.forEach($rootScope.categories,
+//						function(category)
+//						{
+//							$scope.categories.push(category)
+//						});
 
 					// now calulate totals
 					angular.forEach($scope.result,
@@ -110,7 +111,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 							var now = new Date();
 							if (now >= sd && now <= ed)
 							{
-							console.log('BINGO')
 								total.current_interval = true;
 							} else {
 								total.current_interval = false;
@@ -121,7 +121,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 									$scope.totals[key] += parseFloat(value);
 								});
 						});
-
 					// now set the balance forward
 					$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
 

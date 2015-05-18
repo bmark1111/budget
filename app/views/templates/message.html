@@ -2,7 +2,7 @@
 	<table border="1">
 		<tr ng-repeat="idx in transactions_seq">
 			<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
-			<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].description}}<span ng-if="transaction[idx].notes != ''"> - {{transactions[idx].notes}}</spna></td>
+			<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].description}}<div ng-if="transaction[idx].notes"> - {{transactions[idx].notes}}</div></td>
 			<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].type}}</td>
 			<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].amount|currency}}</td>
 		</tr>

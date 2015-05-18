@@ -21,11 +21,12 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 					$scope.transaction = response.data.result;
 				}
 
-				angular.forEach($rootScope.categories,
-					function(category)
-					{
-						$scope.categories.push(category)
-					});
+				$scope.categories = $rootScope.categories;
+//				angular.forEach($rootScope.categories,
+//					function(category)
+//					{
+//						$scope.categories.push(category)
+//					});
 			} else {
 				if (response.errors)
 				{
