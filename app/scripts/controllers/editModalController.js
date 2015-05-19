@@ -1,42 +1,38 @@
-app.controller('EditModalController', function ($scope, $rootScope, $modalInstance, RestData, params)
+app.controller('EditModalController', function ($scope, $modalInstance, RestData, params)
 {
 	$scope.transaction = {
 			splits: {}
 		};
-	$scope.categories = [];
+
 	$scope.title = params.title;
 
-//	ngProgress.start();
+	if (params.id > 0)
+	{
+//		ngProgress.start();
 
-	RestData.editTransaction(
-		{
-			id: params.id
-		},
-		function(response)
-		{
-			if (!!response.success)
+		RestData.editTransaction(
 			{
-				if (response.data.result)
+				id: params.id
+			},
+			function(response)
+			{
+				if (!!response.success)
 				{
-					$scope.transaction = response.data.result;
-				}
-
-				$scope.categories = $rootScope.categories;
-//				angular.forEach($rootScope.categories,
-//					function(category)
-//					{
-//						$scope.categories.push(category)
-//					});
-			} else {
-				if (response.errors)
-				{
-					$scope.dataErrorMsg = response.errors[0].error;
+					if (response.data.result)
+					{
+						$scope.transaction = response.data.result;
+					}
 				} else {
-					$scope.dataErrorMsg = response;
+					if (response.errors)
+					{
+						$scope.dataErrorMsg = response.errors[0].error;
+					} else {
+						$scope.dataErrorMsg = response;
+					}
 				}
-			}
-//			ngProgress.complete();
-		});
+//				ngProgress.complete();
+			});
+	}
 
 	$scope.open = function($event)
 	{

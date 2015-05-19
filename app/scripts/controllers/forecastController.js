@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ForecastController', function($scope, $rootScope, RestData, $filter)
+app.controller('ForecastController', function($scope, $rootScope, $modal, $timeout, RestData, $filter)
 {
 	$rootScope.nav_active = 'forecast';
 
@@ -10,7 +10,22 @@ app.controller('ForecastController', function($scope, $rootScope, RestData, $fil
 	$scope.result = {};
 	$scope.categories = [];
 
+	$scope.itemsPerPage	= 20;
+	$scope.maxSize		= 10;
+	$scope.recCount		= 0;
+	$scope.numPages		= 5;
+	$scope.forecasts	= [];
+
 	$scope.dataErrorMsg = false;
+	$scope.searchDisplay = true;
+	$scope.opened = false;
+
+	$scope.search = {
+		currentPage:		1,
+		first_due_date:		'',
+		description:		'',
+		amount:				''
+	};
 
 	var interval = 0;
 
@@ -28,11 +43,6 @@ app.controller('ForecastController', function($scope, $rootScope, RestData, $fil
 					$scope.result_seq = Object.keys(response.data.result);
 
 					$scope.categories = $rootScope.categories;
-//					angular.forEach($rootScope.categories,
-//						function(category)
-//						{
-//							$scope.categories.push(category)
-//						});
 
 					// now calulate totals
 					angular.forEach($scope.result,
@@ -69,7 +79,44 @@ app.controller('ForecastController', function($scope, $rootScope, RestData, $fil
 			});
 	}
 
-	loadForecast();
+	var loadAllForecasts = function()
+	{
+		$scope.dataErrorMsg = false;
+
+//		ngProgress.start();
+
+		var searchCriteria = {
+						'first_due_date':		$scope.search.first_due_date,
+						'description':			$scope.search.description,
+						'amount':				$scope.search.amount,
+						'sort':					'first_due_date',
+						'sort_dir':				'DESC',
+						'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+						'pagination_amount':	$scope.itemsPerPage
+		};
+
+		RestData.getAllForecasts(searchCriteria,
+			function(response)
+			{
+				if (!!response.success)
+				{
+					$scope.forecasts = response.data.result;
+					$scope.forecasts_seq = Object.keys(response.data.result);
+					$scope.recCount = response.data.total_rows;
+				} else {
+					if (response.errors)
+					{
+						$scope.dataErrorMsg = response.errors[0].error;
+					} else {
+						$scope.dataErrorMsg = response;
+					}
+				}
+//				ngProgress.complete();
+			});
+	}
+
+//	loadForecast();
+	loadAllForecasts();
 
 	$scope.moveInterval = function(direction)
 	{
@@ -77,5 +124,114 @@ app.controller('ForecastController', function($scope, $rootScope, RestData, $fil
 
 		loadForecast();
 	}
+
+	var timer = null;
+	$scope.refreshData = function()
+	{
+		$scope.search.currentPage = 1;
+
+		if (timer) $timeout.cancel(timer);
+		timer = $timeout(loadAllForecasts, 1000);
+		loadAllForecasts();
+	};
+
+	$scope.pageChanged = function()
+	{
+		loadAllForecasts();
+	};
+
+	// open date picker
+	$scope.open = function($event)
+	{
+console.log('open')
+		$event.preventDefault();
+		$event.stopPropagation();
+
+		$scope.opened = true;
+	};
+
+	$scope.addForecast = function()
+	{
+		var modalInstance = $modal.open({
+			templateUrl: 'editForecastModal.html',
+			controller: 'EditForecastModalController',
+//			size: 'lg',
+			windowClass: 'app-modal-window',
+			resolve: {
+				params: function()
+					{
+						return {
+							id: 0,
+							title: 'Add Forecast'
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function ()
+		{
+			loadAllForecasts();
+		},
+		function ()
+		{
+			console.log('Add Forecast Modal dismissed at: ' + new Date());
+		});
+	};
+
+	$scope.editForecast = function(forecast_id)
+	{
+		var modalInstance = $modal.open({
+			templateUrl: 'editForecastModal.html',
+			controller: 'EditForecastModalController',
+//			size: 'lg',
+			windowClass: 'app-modal-window',
+			resolve: {
+				params: function()
+					{
+						return {
+							id: forecast_id,
+							title: 'Edit Forecast'
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function ()
+		{
+			loadAllForecasts();
+		},
+		function ()
+		{
+			console.log('Edit Forecast Modal dismissed at: ' + new Date());
+		});
+	};
+
+	$scope.deleteForecast = function (forecast_id)
+	{
+		var modalInstance = $modal.open({
+			templateUrl: 'deleteForecastModal.html',
+			controller: 'DeleteForecastModalController',
+			size: 'sm',
+			resolve: {
+				params: function()
+					{
+						return {
+							id: forecast_id,
+							title: 'Delete Forecast ?',
+							msg: 'Are you sure you want to delete this forecast. This action cannot be undone.'
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function ()
+		{
+			loadAllForecasts();
+		},
+		function ()
+		{
+			console.log('Delete Forecast Modal dismissed at: ' + new Date());
+		});
+	};
 
 });

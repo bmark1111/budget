@@ -1,5 +1,3 @@
-<!--<ng-include ng-init="nav_active = 'forecast'" src="'app/views/templates/sidenav.html'"></ng-include>-->
-
 <div class="container-fluid">
 	<h1 class="page-header">Forecast</h1>
 	<div class="table-responsive" ng-if="!dataErrorMsg">
@@ -15,10 +13,6 @@
 					<th nowrap>Balance Forward</th>
 					<td ng-repeat="balance in balance_forward"><span class="pull-right">{{balance}}</span></td>
 				</tr>
-<!--				<tr ng-repeat="idx1 in categories_seq">
-					<th nowrap>{{categories[idx1].name}}</th>
-					<td ng-repeat="idx2 in result_seq"><span class="pull-right">{{result[idx2].totals[categories[idx1].id]|currency}}</span></td>
-				</tr>-->
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
 					<td ng-repeat="idx2 in result_seq"><span class="pull-right">{{result[idx2].totals[category.id]|currency}}</span></td>

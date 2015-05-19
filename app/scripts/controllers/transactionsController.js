@@ -11,6 +11,8 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 	$scope.transactions	= [];
 
 	$scope.dataErrorMsg	= false;
+	$scope.searchDisplay = true;
+	$scope.opened = false;
 
 	$scope.search = {
 		currentPage:	1,

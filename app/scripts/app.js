@@ -12,7 +12,7 @@ app.config(function($routeProvider, $httpProvider)
 		.when('/forecast',
 		{
 			controller:		'ForecastController',
-			templateUrl:	'app/views/forecast.html'
+			templateUrl:	'app/views/forecasts.html'
 		})
 		.when('/transactions',
 		{

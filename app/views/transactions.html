@@ -4,13 +4,13 @@
 
 <div class="container-fluid">
 	<h1 class="page-header">Transactions</h1>
-	<div class="form-wrap" ng-if="!dataErrorMsg">
+	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
 			<div class="row">
 				<div class="col-md-2">
 					<label for="date">Date</label>
 					<p class="input-group">
-						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="date" ng-model="search.date" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="refreshData()" />
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="date" ng-model="search.date" is-open="$parent.opened" min-date="minDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="refreshData()" />
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
