@@ -8,7 +8,7 @@
 				<label for="first_due_date">First Due Date</label>
 				<div class="form-group" ng-class="{'has-error':validation.first_due_date}">
 					<p class="input-group">
-						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="first_due_date" ng-model="forecast.first_due_date" is-open="opened1" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="first_due_date" ng-model="forecast.first_due_date" is-open="opened1" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -20,7 +20,7 @@
 				<label for="last_due_date">Last Due Date</label>
 				<div class="form-group" ng-class="{'has-error':validation.last_due_date }">
 					<p class="input-group">
-						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="last_due_date" ng-model="forecast.last_due_date" is-open="opened2" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="last_due_date" ng-model="forecast.last_due_date" is-open="opened2" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
