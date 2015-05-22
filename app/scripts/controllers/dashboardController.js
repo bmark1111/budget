@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $location)
+app.controller('DashboardController', function($scope, $rootScope, RestData, $filter)//, USER_ROLES, AuthService, Session)
 {
 	$rootScope.nav_active = 'dashboard';
 

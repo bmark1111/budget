@@ -1,0 +1,42 @@
+<div class="container-fluid">
+	<h1 class="page-header">Login</h1>
+<!--	<div class="table-responsive" ng-if="!dataErrorMsg">
+		<form name="loginForm" ng-controller="LoginController" ng-submit="login(credentials)" novalidate>
+			<label for="username">Username:</label>
+			<input type="text" id="username" ng-model="credentials.username">
+			<label for="password">Password:</label>
+			<input type="password" id="password" ng-model="credentials.password">
+			<button type="submit">Login</button>
+		</form>
+	</div>
+	<div ng-if="dataErrorMsg">
+		<p class="text-muted">{{ dataErrorMsg }}</p>
+	</div>-->
+
+	<form role="form" ng-submit="login()">
+		<div class="row">
+			<div class="col-md-2">
+				<label for="username">Username:</label>
+				<div class="form-group">
+					<input type="text" class="form-control" id="username" name="username" ng-model="credentials.username"/>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">
+				<label for="password">Password:</label>
+				<div class="form-group">
+					<input type="password" class="form-control" id="password" name="password" ng-model="credentials.password"/>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</div>
+	</form>
+</div>
+<div ng-if="errorMsgs">
+	<div ng-repeat="error in errorMsgs">{{error}}</div>
+</div>

@@ -26,8 +26,16 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body><!-- ng-controller="ApplicationController">-->
 		<div>
+<!--			<div ng-if="currentUser">Welcome, {{ currentUser.name }}</div>
+			<div ng-if="isAuthorized(userRoles.admin)">You're admin.</div>
+			<div ng-switch on="currentUser.role">
+				<div ng-switch-when="userRoles.admin">You're admin.</div>
+				<div ng-switch-when="userRoles.editor">You're editor.</div>
+				<div ng-switch-default>You're something else.</div>
+			</div>-->
+<!--<div login-dialog ng-if="!authenticated"></div>-->
 			<ng-include src="'app/views/templates/sidenav.html'"></ng-include>
 			<div ng-view=""></div>
 		</div>
@@ -45,6 +53,12 @@
 		<script src="scripts/ngContextMenu.js"></script>
 
 		<script src="app/scripts/app.js"></script>
+		<script src="app/scripts/controllers/loginController.js"></script>
+		<script src="app/scripts/controllers/logoutController.js"></script>
+		<!--<script src="app/scripts/controllers/applicationController.js"></script>-->
+<!--		<script src="app/scripts/controllers/navigationController.js"></script>-->
+
+		<script src="app/scripts/controllers/homeController.js"></script>
 		<script src="app/scripts/controllers/dashboardController.js"></script>
 		<script src="app/scripts/controllers/forecastController.js"></script>
 		<script src="app/scripts/controllers/deleteForecastModalController.js"></script>
@@ -57,9 +71,19 @@
 		<script src="app/scripts/controllers/uploadModalController.js"></script>
 		<script src="app/scripts/controllers/postUploadedModalController.js"></script>
 		<script src="app/scripts/controllers/deleteUploadedModalController.js"></script>
+
+		<!--<script src="app/scripts/constants/auth_events.js"></script>-->
+		<script src="app/scripts/constants/user_roles.js"></script>
+
+		<script src="app/scripts/services/auth.js"></script>
+<!--		<script src="app/scripts/services/user.js"></script>-->
+
 		<script src="app/scripts/services/data.js"></script>
 		<script src="app/scripts/services/fileUpload.js"></script>
+
 		<script src="app/scripts/filters/dateFormat.js"></script>
+
+		<!--<script src="app/scripts/directives/login.js"></script>-->
 		<script src="app/scripts/directives/rightClick.js"></script>
 		<script src="app/scripts/directives/fileModel.js"></script>
 	</body>
