@@ -1,5 +1,5 @@
-
-var app = angular.module('budgetApp', ['ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap']);
+//var app = angular.module('budgetApp', ['ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap']);
+var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap']);
 
 app.config(function($routeProvider, $httpProvider, USER_ROLES)
 {
@@ -97,8 +97,84 @@ app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
 		function (event, next)
 		{
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
-			if (!AuthService.isAuthorized(authorizedRoles))
+			if (AuthService.isAuthorized(authorizedRoles))
 			{
+				if (AuthService.isAuthenticated())
+				{
+					// load the upload counts
+					if (typeof($rootScope.transaction_count) == 'undefined')
+					{
+						$rootScope.transaction_count = '';
+						RestData(
+							{
+								Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+								'TOKENID':			$rootScope.token_id,
+								'X-Requested-With': 'XMLHttpRequest'
+							})
+							.getUploadCounts(
+								function(response)
+								{
+									$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+								},
+								function (error)
+								{
+									$rootScope.error = error.status + ' ' + error.statusText;
+								});
+					}
+
+					if (typeof($rootScope.categories) == 'undefined')
+					{	// load the categories
+						$rootScope.categories = [];
+						RestData(
+							{
+								Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+								'TOKENID':			$rootScope.token_id,
+								'X-Requested-With': 'XMLHttpRequest'
+							})
+							.getCategories(
+								function(response)
+								{
+									angular.forEach(response.data.categories,
+										function(category)
+										{
+											$rootScope.categories.push(category)
+										});
+								},
+								function (error)
+								{
+									$rootScope.error = error.status + ' ' + error.statusText;
+								});
+					}
+
+					if (typeof($rootScope.bank_accounts) == 'undefined')
+					{	// load the bank accounts
+						$rootScope.bank_accounts = [];
+						RestData(
+							{
+								Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+								'TOKENID':			$rootScope.token_id,
+								'X-Requested-With': 'XMLHttpRequest'
+							})
+							.getBankAccounts(
+								function(response)
+								{
+									angular.forEach(response.data.bank_accounts,
+										function(bank_account)
+										{
+											$rootScope.bank_accounts.push({
+												'id': bank_account.id,
+												'name': bank_account.bank.name + ' ' + bank_account.name
+											})
+										});
+								},
+								function (error)
+								{
+									$rootScope.error = error.status + ' ' + error.statusText;
+								});
+					}
+				}
+
+			} else {
 				event.preventDefault();
 				if (AuthService.isAuthenticated())
 				{
@@ -111,39 +187,5 @@ app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
 			}
 		});
 
-	$rootScope.categories = [];
-	$rootScope.bank_accounts = [];
-
-	// get the badge count for pending uploaded transactions
-	RestData.getUploadCounts(
-		function(response)
-		{
-			$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
-		});
-
-	// get the categories
-	RestData.getCategories(
-		function(response)
-		{
-			angular.forEach(response.data.categories,
-				function(category)
-				{
-					$rootScope.categories.push(category)
-				});
-		});
-
-	// get the categories
-	RestData.getBankAccounts(
-		function(response)
-		{
-			angular.forEach(response.data.bank_accounts,
-				function(bank_account)
-				{
-					$rootScope.bank_accounts.push({
-						'id': bank_account.id,
-						'name': bank_account.bank.name + ' ' + bank_account.name
-					})
-				});
-		});
 });
 

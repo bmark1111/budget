@@ -17,15 +17,19 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location)
 											{
 												$rootScope.authenticated	= true;
 												$rootScope.authorizedRoles	= JSON.parse(data.data.user.roles);
-												$rootScope.token_id			= data.data.user.last_session_id;
 												$rootScope.userFullName		= data.data.user.firstname + ' ' + data.data.user.lastname;
+												$rootScope.token_id			= data.data.user.last_session_id;
 												$rootScope.userId			= data.data.user.id;
+												$rootScope.username			= credentials.username;
+												$rootScope.password			= credentials.password;
 											} else {
 												$rootScope.authenticated	= false;
 												$rootScope.authorizedRoles	= false;
-												$rootScope.token_id			= false;
 												$rootScope.userFullName		= false;
+												$rootScope.token_id			= false;
 												$rootScope.userId			= false;
+												$rootScope.username			= false;
+												$rootScope.password			= false;
 											}
 											callback && callback();
 										})
@@ -33,9 +37,12 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location)
 										{
 											$rootScope.authenticated	= false;
 											$rootScope.authorizedRoles	= false;
-											$rootScope.token_id			= false;
 											$rootScope.userFullName		= false;
+											$rootScope.token_id			= false;
 											$rootScope.userId			= false;
+											$rootScope.username			= false;
+											$rootScope.password			= false;
+
 											callback && callback();
 										});
 						}
@@ -46,6 +53,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location)
 						authenticate($scope.credentials,
 							function()
 							{
+console.log('longinController - response')
 								if ($rootScope.authenticated)
 								{
 									$location.path("/dashboard");

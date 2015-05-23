@@ -2,19 +2,19 @@ app.factory('AuthService', function ($rootScope, $http)//, Session)
 {
 	var authService = {};
 
-	authService.login = function (credentials)
-	{
-		return $http
-			.post('http://rest.budget.loc/login', credentials)
-			.then(function (response)
-				{
-					if (response.data.success == 1)
-					{
-						Session.create(response.data.data.user.id, response.data.data.user.last_session_id, response.data.data.user.role.roles);
-					}
-					return response.data;
-				});
-	};
+//	authService.login = function (credentials)
+//	{
+//		return $http
+//			.post('http://rest.budget.loc/login', credentials)
+//			.then(function (response)
+//				{
+//					if (response.data.success == 1)
+//					{
+//						Session.create(response.data.data.user.id, response.data.data.user.last_session_id, response.data.data.user.role.roles);
+//					}
+//					return response.data;
+//				});
+//	};
 
 	authService.isAuthenticated = function ()
 	{

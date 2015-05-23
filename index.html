@@ -12,7 +12,8 @@
 		<!-- Bootstrap core CSS -->
 		<link href="app/styles/bootstrap.min.css" rel="stylesheet">
 		<link href="app/styles/jasny-bootstrap.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="app/styles/maxcdn-bootstrap.min.css">
+		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">-->
 
 		<!-- Custom styles for this template -->
 		<link href="app/styles/navmenu.css" rel="stylesheet">
@@ -26,7 +27,7 @@
 		<![endif]-->
 	</head>
 
-	<body><!-- ng-controller="ApplicationController">-->
+	<body>
 		<div>
 <!--			<div ng-if="currentUser">Welcome, {{ currentUser.name }}</div>
 			<div ng-if="isAuthorized(userRoles.admin)">You're admin.</div>
@@ -35,7 +36,6 @@
 				<div ng-switch-when="userRoles.editor">You're editor.</div>
 				<div ng-switch-default>You're something else.</div>
 			</div>-->
-<!--<div login-dialog ng-if="!authenticated"></div>-->
 			<ng-include src="'app/views/templates/sidenav.html'"></ng-include>
 			<div ng-view=""></div>
 		</div>
@@ -45,6 +45,7 @@
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="scripts/angularjs/angular.js"></script>
 		<script src="scripts/angularjs/angular-resource.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-cookies.js"></script>
 		<script src="scripts/angularjs/angular-route.min.js"></script>		
 		<script src="scripts/jquery/jquery-1.10.2.min.js"></script>
 		<script src="scripts/bootstrap.min.js"></script>

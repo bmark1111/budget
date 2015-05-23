@@ -11,13 +11,17 @@ app.controller('LogoutController', function($scope, $rootScope, $location, $http
 		})
 		.success(function()
 				{
-					$rootScope.authenticated = false;
-					$rootScope.authorizedRoles = false;
+					$rootScope.authenticated	= false;
+					$rootScope.authorizedRoles	= false;
+					$rootScope.userFullName		= false;
+					$rootScope.headers = {};
 					$location.path("/");
 				})
 		.error(function(data)
 				{
-					$rootScope.authenticated = false;
-					$rootScope.authorizedRoles = false;
+					$rootScope.authenticated	= false;
+					$rootScope.authorizedRoles	= false;
+					$rootScope.userFullName		= false;
+					$rootScope.headers = {};
 				});
 });

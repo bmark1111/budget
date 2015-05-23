@@ -2,6 +2,18 @@
 
 app.controller('DashboardController', function($scope, $rootScope, RestData, $filter)//, USER_ROLES, AuthService, Session)
 {
+
+//var someSessionObj = { 'innerObj' : 'somesessioncookievalue'};
+//
+//$cookies.dotobject = someSessionObj;
+//$scope.usingCookies = { 'cookies.dotobject' : $cookies.dotobject, "cookieStore.get" : $cookieStore.get('dotobject') };
+//
+//$cookieStore.put('obj', someSessionObj);
+//$scope.usingCookieStore = { "cookieStore.get" : $cookieStore.get('obj'), 'cookies.dotobject' : $cookies.obj };
+//
+//$scope.token_id = $cookieStore.get('token_id');
+
+
 	$rootScope.nav_active = 'dashboard';
 
 	$scope.totals = [];				// transaction totals by date
@@ -24,123 +36,138 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 
 	var currentDate = new Date();
 	var interval = 0;
-	
+
 	var loadForecast = function()
 	{
-		RestData.getForecast(
+		RestData(
 			{
-				interval: interval
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getForecast(
 				{
-					$scope.forecast = response.data.result;
-					$scope.forecast_seq = Object.keys(response.data.result);
+					interval: interval
+				},
+				function(response)
+				{
+					if (!!response.success)
+					{
+						$scope.forecast = response.data.result;
+						$scope.forecast_seq = Object.keys(response.data.result);
 
-					// now calulate totals
-					angular.forEach($scope.forecast,
-						function(total, key)
-						{
-							$scope.ftotals[key]		= parseFloat(0);
-							$scope.fstartDate[key]	= total.interval_beginning;
-							$scope.fendDate[key]	= total.interval_ending;
-							angular.forEach(total.totals,
-								function(value, key2)
-								{
-									if (currentDate.toISOString() <= total.interval_beginning)
-									{	// only add in forecast amounts past the current date
-										$scope.ftotals[key] += parseFloat(value);
-									} else {
-										$scope.forecast[key].totals[key2] = 0;
-									}
-								});
-						});
-
-					// now calculate forecast running totals
-					angular.forEach($scope.ftotals,
-						function(total, key)
-						{
-							if (key == 0)
+						// now calulate totals
+						angular.forEach($scope.forecast,
+							function(total, key)
 							{
-								$scope.rfTotals[key] = parseFloat(total);
-							} else {
-								var x = key - 1;
-								$scope.rfTotals[key] = $scope.rfTotals[x] + parseFloat(total);
-							}
-						});
-				} else {
-					$scope.dataErrorMsg = response.errors[0];
-				}
-	//			ngProgress.complete();
-			});
+								$scope.ftotals[key]		= parseFloat(0);
+								$scope.fstartDate[key]	= total.interval_beginning;
+								$scope.fendDate[key]	= total.interval_ending;
+								angular.forEach(total.totals,
+									function(value, key2)
+									{
+										if (currentDate.toISOString() <= total.interval_beginning)
+										{	// only add in forecast amounts past the current date
+											$scope.ftotals[key] += parseFloat(value);
+										} else {
+											$scope.forecast[key].totals[key2] = 0;
+										}
+									});
+							});
+
+						// now calculate forecast running totals
+						angular.forEach($scope.ftotals,
+							function(total, key)
+							{
+								if (key == 0)
+								{
+									$scope.rfTotals[key] = parseFloat(total);
+								} else {
+									var x = key - 1;
+									$scope.rfTotals[key] = $scope.rfTotals[x] + parseFloat(total);
+								}
+							});
+					} else {
+						$scope.dataErrorMsg = response.errors[0];
+					}
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 	var loadTransactions = function()
 	{
-		RestData.getTransactions(
+		RestData(
 			{
-				interval: interval
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getTransactions(
 				{
-					$scope.result = response.data.result;
-					$scope.result_seq = Object.keys(response.data.result);
+					interval: interval
+				},
+				function(response)
+				{
+					if (!!response.success)
+					{
+						$scope.result = response.data.result;
+						$scope.result_seq = Object.keys(response.data.result);
 
-					$scope.categories = $rootScope.categories;
-//					angular.forEach($rootScope.categories,
-//						function(category)
-//						{
-//							$scope.categories.push(category)
-//						});
+						$scope.categories = $rootScope.categories;
 
-					// now calulate totals
-					angular.forEach($scope.result,
-						function(total, key)
-						{
-							$scope.balance_forward[key]	= '';
-							$scope.totals[key]			= parseFloat(0);
-							$scope.startDate[key]		= total.interval_beginning;
-							$scope.endDate[key]			= total.interval_ending;
-
-							// set the current interval
-							var sd = new Date(total.interval_beginning);
-							var ed = new Date(total.interval_ending);
-							var now = new Date();
-							if (now >= sd && now <= ed)
+						// now calulate totals
+						angular.forEach($scope.result,
+							function(total, key)
 							{
-								total.current_interval = true;
-							} else {
-								total.current_interval = false;
-							}
-							angular.forEach(total.totals,
-								function(value)
+								$scope.balance_forward[key]	= '';
+								$scope.totals[key]			= parseFloat(0);
+								$scope.startDate[key]		= total.interval_beginning;
+								$scope.endDate[key]			= total.interval_ending;
+
+								// set the current interval
+								var sd = new Date(total.interval_beginning);
+								var ed = new Date(total.interval_ending);
+								var now = new Date();
+								if (now >= sd && now <= ed)
 								{
-									$scope.totals[key] += parseFloat(value);
-								});
-						});
-					// now set the balance forward
-					$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
+									total.current_interval = true;
+								} else {
+									total.current_interval = false;
+								}
+								angular.forEach(total.totals,
+									function(value)
+									{
+										$scope.totals[key] += parseFloat(value);
+									});
+							});
+						// now set the balance forward
+						$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
 
-					// now calculate running totals
-					angular.forEach($scope.totals,
-						function(total, key)
-						{
-							if (key == 0)
+						// now calculate running totals
+						angular.forEach($scope.totals,
+							function(total, key)
 							{
-								$scope.rTotals[key] = parseFloat(response.data.balance_forward + total);
-							} else {
-								var x = key - 1;
-								$scope.rTotals[key] = parseFloat($scope.rTotals[x] + total);
-							}
-						});
-				} else {
-					$scope.dataErrorMsg = response.errors[0];
-				}
-	//			ngProgress.complete();
-			});
+								if (key == 0)
+								{
+									$scope.rTotals[key] = parseFloat(response.data.balance_forward + total);
+								} else {
+									var x = key - 1;
+									$scope.rTotals[key] = parseFloat($scope.rTotals[x] + total);
+								}
+							});
+					} else {
+						$scope.dataErrorMsg = response.errors[0];
+					}
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 	loadForecast();
@@ -150,42 +177,62 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 	{
 		$scope.dataErrorMsg2 = false;
 
-		RestData.getTheseTransactions(
+		RestData(
 			{
-				interval_beginning:	interval_beginning,
-				category_id:	category_id
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getTheseTransactions(
 				{
-					$scope.transactions = response.data.result;
-					$scope.transactions_seq = Object.keys(response.data.result);
-				} else {
-					$scope.dataErrorMsg2 = response.errors[0];
-				}
-			});
+					interval_beginning:	interval_beginning,
+					category_id:	category_id
+				},
+				function(response)
+				{
+					if (!!response.success)
+					{
+						$scope.transactions = response.data.result;
+						$scope.transactions_seq = Object.keys(response.data.result);
+					} else {
+						$scope.dataErrorMsg2 = response.errors[0];
+					}
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	};
 
 	$scope.showThisForecast = function(interval_beginning, category_id)
 	{
 		$scope.dataErrorMsg2 = false;
 
-		RestData.getThisForecast(
+		RestData(
 			{
-				interval_beginning:	interval_beginning,
-				category_id:	category_id
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getThisForecast(
 				{
-					$scope.transactions = response.data.result;
-					$scope.transactions_seq = Object.keys(response.data.result);
-				} else {
-					$scope.dataErrorMsg2 = response.errors[0];
-				}
-			});
+					interval_beginning:	interval_beginning,
+					category_id:	category_id
+				},
+				function(response)
+				{
+					if (!!response.success)
+					{
+						$scope.transactions = response.data.result;
+						$scope.transactions_seq = Object.keys(response.data.result);
+					} else {
+						$scope.dataErrorMsg2 = response.errors[0];
+					}
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	};
 
 	$scope.moveInterval = function(direction)

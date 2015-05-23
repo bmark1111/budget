@@ -1,6 +1,12 @@
 <div class="container-fluid">
 	<h1 class="page-header">Dashboard</h1>
-	<div class="table-responsive" ng-if="!dataErrorMsg">
+	<div ng-if="error">{{error}}</div>
+<!--<h3>Cookies</h3>
+<pre>{{usingCookies|json}}</pre>
+<h3>Cookie Store</h3>
+<pre>{{usingCookieStore|json}}</pre>
+<pre>{{token_id}}</pre>-->
+	<div class="table-responsive" ng-if="!dataErrorMsg && !error">
 		<table>
 			<thead>
 				<tr>
