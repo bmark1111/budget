@@ -9,37 +9,41 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 
 //	ngProgress.start();
 
-	RestData.getUploadedTransaction(
+	RestData(
 		{
-			id: params.id
-		},
-		function(response)
-		{
-			if (!!response.success)
+			Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+			'TOKENID':			$rootScope.token_id,
+			'X-Requested-With':	'XMLHttpRequest'
+		})
+		.getUploadedTransaction(
 			{
-				if (response.data.result)
+				id: params.id
+			},
+			function(response)
+			{
+				if (!!response.success)
 				{
-					$scope.uploaded = response.data.result;
-					$scope.transactions = response.data.transactions;
-					$scope.transactions_seq = Object.keys(response.data.transactions);
-				}
-
-				$scope.categories = $rootScope.categories;
-//				angular.forEach($rootScope.categories,
-//					function(category)
-//					{
-//						$scope.categories.push(category)
-//					});
-			} else {
-				if (response.errors)
-				{
-					$scope.dataErrorMsg = response.errors[0].error;
+					if (response.data.result)
+					{
+						$scope.uploaded = response.data.result;
+						$scope.transactions = response.data.transactions;
+						$scope.transactions_seq = Object.keys(response.data.transactions);
+					}
+					$scope.categories = $rootScope.categories;
 				} else {
-					$scope.dataErrorMsg = response;
+					if (response.errors)
+					{
+						$scope.dataErrorMsg = response.errors[0].error;
+					} else {
+						$scope.dataErrorMsg = response;
+					}
 				}
-			}
-//			ngProgress.complete();
-		});
+//				ngProgress.complete();
+			},
+			function (error)
+			{
+				$rootScope.error = error.status + ' ' + error.statusText;
+			});
 
 	$scope.open = function($event)
 	{
@@ -55,63 +59,83 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $mod
 		$scope.validation = {};
 
 		$scope.uploaded.transaction_id = $scope.idSelectedTransaction;
-console.log($scope.uploaded)
-		RestData.postUploadedTransaction($scope.uploaded,
-			function(response)
+
+		RestData(
 			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.postUploadedTransaction($scope.uploaded,
+				function(response)
 				{
-					$modalInstance.close();
-				}
-				else if (response.validation)
-				{
-					angular.forEach(response.validation,
-						function(validation)
-						{
-							switch (validation.fieldName)
-							{
-								case 'category_id':
-									$scope.validation.category_id = validation.errorMessage;
-									break;
-								default:
-									break;
-							}
-						});
-				} else {
-					if (response.errors)
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
-					} else {
-						$scope.dataErrorMsg = response;
+						$modalInstance.close();
 					}
-				}
-//				ngProgress.complete();
-			});
+					else if (response.validation)
+					{
+						angular.forEach(response.validation,
+							function(validation)
+							{
+								switch (validation.fieldName)
+								{
+									case 'category_id':
+										$scope.validation.category_id = validation.errorMessage;
+										break;
+									default:
+										break;
+								}
+							});
+					} else {
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
+					}
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	};
 
 	$scope.deleteUploaded = function()
 	{
 //		ngProgress.start();
 
-		RestData.deleteUploadedTransaction(
+		RestData(
 			{
-				'id': params.id
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.deleteUploadedTransaction(
 				{
-					$modalInstance.close();
-				} else {
-					if (response.errors)
+					'id': params.id
+				},
+				function(response)
+				{
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
+						$modalInstance.close();
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	};
 
 	// cancel uploaded transactionedit

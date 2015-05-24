@@ -37,24 +37,34 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 						'pagination_amount':	$scope.itemsPerPage
 		};
 
-		RestData.getAllTransactions(searchCriteria,
-			function(response)
+		RestData(
 			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getAllTransactions(searchCriteria,
+				function(response)
 				{
-					$scope.transactions = response.data.result;
-					$scope.transactions_seq = Object.keys(response.data.result);
-					$scope.recCount = response.data.total_rows;
-				} else {
-					if (response.errors)
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
+						$scope.transactions = response.data.result;
+						$scope.transactions_seq = Object.keys(response.data.result);
+						$scope.recCount = response.data.total_rows;
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 	loadData();

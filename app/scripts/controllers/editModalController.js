@@ -1,4 +1,4 @@
-app.controller('EditModalController', function ($scope, $modalInstance, RestData, params)
+app.controller('EditModalController', function ($scope, $rootScope, $modalInstance, RestData, params)
 {
 	$scope.transaction = {
 			splits: {}
@@ -10,28 +10,38 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 	{
 //		ngProgress.start();
 
-		RestData.editTransaction(
+		RestData(
 			{
-				id: params.id
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.editTransaction(
 				{
-					if (response.data.result)
+					id: params.id
+				},
+				function(response)
+				{
+					if (!!response.success)
 					{
-						$scope.transaction = response.data.result;
-					}
-				} else {
-					if (response.errors)
-					{
-						$scope.dataErrorMsg = response.errors[0].error;
+						if (response.data.result)
+						{
+							$scope.transaction = response.data.result;
+						}
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 	$scope.open = function($event)
@@ -47,66 +57,76 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 	{
 		$scope.validation = {};
 
-		RestData.saveTransaction($scope.transaction,
-			function(response)
+		RestData(
 			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.saveTransaction($scope.transaction,
+				function(response)
 				{
-					$modalInstance.close();
-				}
-				else if (response.validation)
-				{
-					$scope.validation.splits = {};
-					angular.forEach(response.validation,
-						function(validation)
-						{
-							switch (validation.fieldName)
-							{
-								case 'transaction_date':
-									$scope.validation.date = validation.errorMessage;
-									break;
-								case 'description':
-									$scope.validation.description = validation.errorMessage;
-									break;
-								case 'type':
-									$scope.validation.type = validation.errorMessage;
-									break;
-								case 'splits':
-									$scope.validation.splits = validation.errorMessage;
-									break;
-								default:
-									if (validation.fieldName.substr(0,6) == 'splits')
-									{
-										var fieldName = validation.fieldName;
-										var matches = fieldName.match(/\[(.*?)\]/g);
-										if (matches)
-										{
-											for (var x = 0; x < matches.length; x++)
-											{
-												matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
-											}
-											if (typeof $scope.validation.splits[matches[1]] == 'undefined')
-											{
-												$scope.validation.splits[matches[1]] = Array();
-											}
-											$scope.validation.splits[matches[1]].push(validation.errorMessage);
-										} else {
-											$scope.validation[fieldName] = validation.errorMessage;
-										}
-									}
-									break;
-							}
-						});
-				} else {
-					if (response.errors)
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
-					} else {
-						$scope.dataErrorMsg = response;
+						$modalInstance.close();
 					}
-				}
-//				ngProgress.complete();
-			});
+					else if (response.validation)
+					{
+						$scope.validation.splits = {};
+						angular.forEach(response.validation,
+							function(validation)
+							{
+								switch (validation.fieldName)
+								{
+									case 'transaction_date':
+										$scope.validation.date = validation.errorMessage;
+										break;
+									case 'description':
+										$scope.validation.description = validation.errorMessage;
+										break;
+									case 'type':
+										$scope.validation.type = validation.errorMessage;
+										break;
+									case 'splits':
+										$scope.validation.splits = validation.errorMessage;
+										break;
+									default:
+										if (validation.fieldName.substr(0,6) == 'splits')
+										{
+											var fieldName = validation.fieldName;
+											var matches = fieldName.match(/\[(.*?)\]/g);
+											if (matches)
+											{
+												for (var x = 0; x < matches.length; x++)
+												{
+													matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
+												}
+												if (typeof $scope.validation.splits[matches[1]] == 'undefined')
+												{
+													$scope.validation.splits[matches[1]] = Array();
+												}
+												$scope.validation.splits[matches[1]].push(validation.errorMessage);
+											} else {
+												$scope.validation[fieldName] = validation.errorMessage;
+											}
+										}
+										break;
+								}
+							});
+					} else {
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
+					}
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	};
 
 	// cancel transaction edit

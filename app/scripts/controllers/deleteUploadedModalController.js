@@ -7,25 +7,35 @@ app.controller('DeleteUploadedModalController', function ($scope, $modalInstance
 	{
 //		ngProgress.start();
 
-		RestData.deleteUploadedTransaction(
+		RestData(
 			{
-				'id': params.id
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.deleteUploadedTransaction(
 				{
-					$modalInstance.close();
-				} else {
-					if (response.errors)
+					'id': params.id
+				},
+				function(response)
+				{
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
+						$modalInstance.close();
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	};
 
 	$scope.cancel = function ()

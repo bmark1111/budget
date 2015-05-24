@@ -1,5 +1,6 @@
 <div class="container-fluid">
 	<h1 class="page-header">Forecast</h1>
+	<div ng-if="error">{{error}}</div>
 	<div class="table-responsive" ng-if="!dataErrorMsg">
 		<table>
 			<thead>

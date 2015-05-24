@@ -36,27 +36,36 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 						'pagination_amount':	$scope.itemsPerPage
 		};
 
-		RestData.getAllUploads(searchCriteria,
-			function(response)
+		RestData(
 			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getAllUploads(searchCriteria,
+				function(response)
 				{
-					$scope.transactions = response.data.result;
-					$scope.transactions_seq = Object.keys(response.data.result);
-					$scope.recCount = response.data.total_rows;
-
-//					$rootScope.transaction_count = $scope.recCount;
-					$rootScope.transaction_count = (parseInt(response.data.total_rows) > 0) ? parseInt(response.data.total_rows): '';
-				} else {
-					if (response.errors)
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
+						$scope.transactions = response.data.result;
+						$scope.transactions_seq = Object.keys(response.data.result);
+						$scope.recCount = response.data.total_rows;
+
+						$rootScope.transaction_count = (parseInt(response.data.total_rows) > 0) ? parseInt(response.data.total_rows): '';
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 	loadData();

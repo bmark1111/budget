@@ -31,52 +31,62 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 
 	var loadForecast = function()
 	{
-		RestData.getForecast(
+		RestData(
 			{
-				interval: interval
-			},
-			function(response)
-			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getForecast(
 				{
-					$scope.result = response.data.result;
-					$scope.result_seq = Object.keys(response.data.result);
+					interval: interval
+				},
+				function(response)
+				{
+					if (!!response.success)
+					{
+						$scope.result = response.data.result;
+						$scope.result_seq = Object.keys(response.data.result);
 
-					$scope.categories = $rootScope.categories;
+						$scope.categories = $rootScope.categories;
 
-					// now calulate totals
-					angular.forEach($scope.result,
-						function(total, key)
-						{
-							$scope.balance_forward[key] = ''
-							$scope.totals[key] = parseFloat(0);
-							angular.forEach(total.totals,
-								function(value)
-								{
-									$scope.totals[key] += parseFloat(value);
-								});
-						});
-
-					// now set the balance forward
-					$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
-
-					// now calculate running totals
-					angular.forEach($scope.totals,
-						function(total, key)
-						{
-							if (key == 0)
+						// now calulate totals
+						angular.forEach($scope.result,
+							function(total, key)
 							{
-								$scope.rTotals[key] = parseFloat(response.data.balance_forward) + total;
-							} else {
-								var x = key - 1;
-								$scope.rTotals[key] = $scope.rTotals[x] + total;
-							}
-						});
-				} else {
-					$scope.dataErrorMsg = response.errors[0];
-				}
-	//			ngProgress.complete();
-			});
+								$scope.balance_forward[key] = ''
+								$scope.totals[key] = parseFloat(0);
+								angular.forEach(total.totals,
+									function(value)
+									{
+										$scope.totals[key] += parseFloat(value);
+									});
+							});
+
+						// now set the balance forward
+						$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
+
+						// now calculate running totals
+						angular.forEach($scope.totals,
+							function(total, key)
+							{
+								if (key == 0)
+								{
+									$scope.rTotals[key] = parseFloat(response.data.balance_forward) + total;
+								} else {
+									var x = key - 1;
+									$scope.rTotals[key] = $scope.rTotals[x] + total;
+								}
+							});
+					} else {
+						$scope.dataErrorMsg = response.errors[0];
+					}
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 	var loadAllForecasts = function()
@@ -95,24 +105,34 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 						'pagination_amount':	$scope.itemsPerPage
 		};
 
-		RestData.getAllForecasts(searchCriteria,
-			function(response)
+		RestData(
 			{
-				if (!!response.success)
+				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
+				'TOKENID':			$rootScope.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getAllForecasts(searchCriteria,
+				function(response)
 				{
-					$scope.forecasts = response.data.result;
-					$scope.forecasts_seq = Object.keys(response.data.result);
-					$scope.recCount = response.data.total_rows;
-				} else {
-					if (response.errors)
+					if (!!response.success)
 					{
-						$scope.dataErrorMsg = response.errors[0].error;
+						$scope.forecasts = response.data.result;
+						$scope.forecasts_seq = Object.keys(response.data.result);
+						$scope.recCount = response.data.total_rows;
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors)
+						{
+							$scope.dataErrorMsg = response.errors[0].error;
+						} else {
+							$scope.dataErrorMsg = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+//					ngProgress.complete();
+				},
+				function (error)
+				{
+					$rootScope.error = error.status + ' ' + error.statusText;
+				});
 	}
 
 //	loadForecast();
@@ -143,7 +163,6 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 	// open date picker
 	$scope.open = function($event)
 	{
-console.log('open')
 		$event.preventDefault();
 		$event.stopPropagation();
 
