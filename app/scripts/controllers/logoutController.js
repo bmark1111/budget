@@ -16,8 +16,9 @@ app.controller('LogoutController', function($scope, $rootScope, $localStorage, $
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
 					$localStorage.userId			= false;
-					$localStorage.username			= false;
-					$localStorage.password			= false;
+//					$localStorage.username			= false;
+//					$localStorage.password			= false;
+					$localStorage.authorization		= false;
 					$location.path("/");
 				})
 		.error(function(data)
@@ -27,7 +28,8 @@ app.controller('LogoutController', function($scope, $rootScope, $localStorage, $
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
 					$localStorage.userId			= false;
-					$localStorage.username			= false;
-					$localStorage.password			= false;
+//					$localStorage.username			= false;
+//					$localStorage.password			= false;
+					$localStorage.authorization		= false;
 				});
 });

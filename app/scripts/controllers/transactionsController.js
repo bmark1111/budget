@@ -39,7 +39,8 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				Authorization:		$localStorage.authorization,
+//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
@@ -70,8 +71,9 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
 						$localStorage.userId			= false;
-						$localStorage.username			= false;
-						$localStorage.password			= false;
+//						$localStorage.username			= false;
+//						$localStorage.password			= false;
+						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
 						$rootScope.error = error.status + ' ' + error.statusText;
@@ -124,7 +126,6 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 		modalInstance.result.then(function (response)
 		{
 			$rootScope.transaction_count = (parseInt(response.count) > 0) ? parseInt(response.count): '';
-			console.log('successful upload');
 		},
 		function ()
 		{

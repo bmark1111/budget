@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SettingsController', function($scope, $rootScope, $localStorage, $location, RestData, $location)
+app.controller('SettingsController', function($scope, $rootScope, $localStorage, $location, RestData)
 {
 	$rootScope.nav_active = $location.path().replace("/", "");
 
@@ -8,7 +8,8 @@ app.controller('SettingsController', function($scope, $rootScope, $localStorage,
 
 	RestData(
 		{
-			Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+			Authorization:		$localStorage.authorization,
+//			Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 			'TOKENID':			$localStorage.token_id,
 			'X-Requested-With':	'XMLHttpRequest'
 		})
@@ -35,8 +36,9 @@ app.controller('SettingsController', function($scope, $rootScope, $localStorage,
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
 					$localStorage.userId			= false;
-					$localStorage.username			= false;
-					$localStorage.password			= false;
+//					$localStorage.username			= false;
+//					$localStorage.password			= false;
+					$localStorage.authorization		= false;
 					$location.path("/login");
 				} else {
 					$rootScope.error = error.status + ' ' + error.statusText;

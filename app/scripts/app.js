@@ -92,7 +92,7 @@ delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
 
 
-app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AUTH_EVENTS)
+app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthService)//, AUTH_EVENTS)
 {
 	$route.reload(); 
 
@@ -115,7 +115,8 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 						$rootScope.transaction_count = '';
 						RestData(
 							{
-								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+								Authorization:		$localStorage.authorization,
+//								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
@@ -126,7 +127,20 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 								},
 								function (error)
 								{
-									$rootScope.error = error.status + ' ' + error.statusText;
+									if (error.status == '401' && error.statusText == 'EXPIRED')
+									{
+										$localStorage.authenticated		= false;
+										$localStorage.authorizedRoles	= false;
+										$localStorage.userFullName		= false;
+										$localStorage.token_id			= false;
+										$localStorage.userId			= false;
+//										$localStorage.username			= false;
+//										$localStorage.password			= false;
+										$localStorage.authorization		= false;
+										$location.path("/login");
+									} else {
+										$rootScope.error = error.status + ' ' + error.statusText;
+									}
 								});
 					}
 
@@ -135,7 +149,8 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 						$rootScope.categories = [];
 						RestData(
 							{
-								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+								Authorization:		$localStorage.authorization,
+//								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
@@ -150,7 +165,20 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 								},
 								function (error)
 								{
-									$rootScope.error = error.status + ' ' + error.statusText;
+									if (error.status == '401' && error.statusText == 'EXPIRED')
+									{
+										$localStorage.authenticated		= false;
+										$localStorage.authorizedRoles	= false;
+										$localStorage.userFullName		= false;
+										$localStorage.token_id			= false;
+										$localStorage.userId			= false;
+//										$localStorage.username			= false;
+//										$localStorage.password			= false;
+										$localStorage.authorization		= false;
+										$location.path("/login");
+									} else {
+										$rootScope.error = error.status + ' ' + error.statusText;
+									}
 								});
 					}
 
@@ -159,7 +187,8 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 						$rootScope.bank_accounts = [];
 						RestData(
 							{
-								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+								Authorization:		$localStorage.authorization,
+//								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
@@ -177,7 +206,20 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 								},
 								function (error)
 								{
-									$rootScope.error = error.status + ' ' + error.statusText;
+									if (error.status == '401' && error.statusText == 'EXPIRED')
+									{
+										$localStorage.authenticated		= false;
+										$localStorage.authorizedRoles	= false;
+										$localStorage.userFullName		= false;
+										$localStorage.token_id			= false;
+										$localStorage.userId			= false;
+//										$localStorage.username			= false;
+//										$localStorage.password			= false;
+										$localStorage.authorization		= false;
+										$location.path("/login");
+									} else {
+										$rootScope.error = error.status + ' ' + error.statusText;
+									}
 								});
 					}
 				}

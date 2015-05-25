@@ -11,7 +11,8 @@ app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $l
 
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				Authorization:		$localStorage.authorization,
+//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
@@ -43,8 +44,9 @@ app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $l
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
 						$localStorage.userId			= false;
-						$localStorage.username			= false;
-						$localStorage.password			= false;
+//						$localStorage.username			= false;
+//						$localStorage.password			= false;
+						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
 						$rootScope.error = error.status + ' ' + error.statusText;
