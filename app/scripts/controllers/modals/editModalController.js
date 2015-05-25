@@ -168,27 +168,13 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 	// split transaction
 	$scope.split = function()
 	{
-		var newItem = {
-			amount:			'',
-			category_id:	'',
-			notes:			''
-		}
-		if ($scope.transaction.splits)
+		if (Object.size($scope.transaction.splits) == 0)
 		{
-//			// calculate total of all splits
-//			var total = parseFloat(0);
-//			angular.forEach($scope.transaction.splits,
-//				function(split)
-//				{
-//					if (split.is_deleted != 1)
-//					{
-//						total += parseFloat(split.amount);
-//					}
-//				});
-//			newItem.amount = $scope.transaction.amount - total;
-//			var yy = Object.keys($scope.transaction.splits).length
-//			$scope.transaction.splits[yy] = newItem;
-		} else {
+			var newItem = {
+				amount:			'',
+				category_id:	'',
+				notes:			''
+			}
 			newItem.amount = $scope.transaction.amount;
 			$scope.transaction.splits = {};
 			$scope.transaction.splits[0] = newItem;
@@ -202,7 +188,9 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 			category_id:	'',
 			notes:			''
 		}
-		if ($scope.transaction.splits)
+
+		if (Object.size($scope.transaction.splits) > 0)
+//		if ($scope.transaction.splits)
 		{
 			// calculate total of all splits
 			var total = parseFloat(0);
@@ -247,6 +235,15 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 		{
 			$scope.calc[ele-1] = 'Split amounts do not match Item amount';
 		}
+	};
+
+	Object.size = function(obj)
+	{
+		var size = 0, key;
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) size++;
+		}
+		return size;
 	};
 
 });
