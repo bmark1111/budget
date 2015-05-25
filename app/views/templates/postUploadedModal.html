@@ -49,6 +49,7 @@
 				<thead>
 					<tr>
 						<th><span class="pull-left">Date</span></th>
+						<th><span class="pull-left">Type</span></th>
 						<th><span class="pull-left">Description</span></th>
 						<th><span class="pull-left">Amount</span></th>
 						<th><span class="pull-left">Category</span></th>
@@ -60,7 +61,10 @@
 						<td class="col-md-6" style="width:18%;">
 							<span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span>
 						</td>
-						<td class="col-sm-2" style="width:45%">
+						<td class="col-sm-2" style="width:5%">
+							<span class="pull-left">{{transactions[idx].type}}</span>
+						</td>
+						<td class="col-sm-2" style="width:40%">
 							<span class="pull-left">{{transactions[idx].description}}</span>
 						</td>
 						<td class="col-sm-2" style="width:5%">
