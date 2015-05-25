@@ -1,33 +1,33 @@
 'use strict';
 
-app.controller('LogoutController', function($scope, $rootScope, $location, $http)
+app.controller('LogoutController', function($scope, $rootScope, $localStorage, $location, $http)
 {
 	$rootScope.nav_active = 'logout';
 
 	$http.post('http://rest.budget.loc/logout',
 		{
-			token_id:		$rootScope.token_id,
-			userId:			$rootScope.userId
+			token_id:		$localStorage.token_id,
+			userId:			$localStorage.userId
 		})
 		.success(function()
 				{
-					$rootScope.authenticated	= false;
-					$rootScope.authorizedRoles	= false;
-					$rootScope.userFullName		= false;
-					$rootScope.token_id			= false;
-					$rootScope.userId			= false;
-					$rootScope.username			= false;
-					$rootScope.password			= false;
+					$localStorage.authenticated		= false;
+					$localStorage.authorizedRoles	= false;
+					$localStorage.userFullName		= false;
+					$localStorage.token_id			= false;
+					$localStorage.userId			= false;
+					$localStorage.username			= false;
+					$localStorage.password			= false;
 					$location.path("/");
 				})
 		.error(function(data)
 				{
-					$rootScope.authenticated	= false;
-					$rootScope.authorizedRoles	= false;
-					$rootScope.userFullName		= false;
-					$rootScope.token_id			= false;
-					$rootScope.userId			= false;
-					$rootScope.username			= false;
-					$rootScope.password			= false;
+					$localStorage.authenticated		= false;
+					$localStorage.authorizedRoles	= false;
+					$localStorage.userFullName		= false;
+					$localStorage.token_id			= false;
+					$localStorage.userId			= false;
+					$localStorage.username			= false;
+					$localStorage.password			= false;
 				});
 });

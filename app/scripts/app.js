@@ -1,5 +1,5 @@
 //var app = angular.module('budgetApp', ['ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap']);
-var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap']);
+var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage']);
 
 app.config(function($routeProvider, $httpProvider, USER_ROLES)
 {
@@ -91,15 +91,22 @@ delete $httpProvider.defaults.headers.common['X-Requested-With'];
 ///////////////////////////////
 });
 
-app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
+
+app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AUTH_EVENTS)
 {
+	$route.reload(); 
+
 	$rootScope.$on('$routeChangeStart',
 		function (event, next)
 		{
+			$rootScope.authenticated	= $localStorage.authenticated;
+			$rootScope.userFullName		= $localStorage.userFullName;
+
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
 			if (AuthService.isAuthorized(authorizedRoles))
 			{
-				if (AuthService.isAuthenticated())
+//				if (AuthService.isAuthenticated())
+				if ($localStorage.authenticated)
 				{
 					// load the upload counts
 					if (typeof($rootScope.transaction_count) == 'undefined')
@@ -107,8 +114,8 @@ app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
 						$rootScope.transaction_count = '';
 						RestData(
 							{
-								Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-								'TOKENID':			$rootScope.token_id,
+								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getUploadCounts(
@@ -127,8 +134,8 @@ app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
 						$rootScope.categories = [];
 						RestData(
 							{
-								Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-								'TOKENID':			$rootScope.token_id,
+								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getCategories(
@@ -151,8 +158,8 @@ app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
 						$rootScope.bank_accounts = [];
 						RestData(
 							{
-								Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-								'TOKENID':			$rootScope.token_id,
+								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getBankAccounts(
@@ -176,7 +183,8 @@ app.run(function($rootScope, RestData, AuthService)//, AUTH_EVENTS)
 
 			} else {
 				event.preventDefault();
-				if (AuthService.isAuthenticated())
+//				if (AuthService.isAuthenticated())
+				if ($localStorage.authenticated)
 				{
 					// user is not allowed
 //					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);

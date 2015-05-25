@@ -1,4 +1,4 @@
-app.factory('AuthService', function ($rootScope, $http)//, Session)
+app.factory('AuthService', function ($rootScope, $localStorage, $http)//, Session)
 {
 	var authService = {};
 
@@ -16,11 +16,11 @@ app.factory('AuthService', function ($rootScope, $http)//, Session)
 //				});
 //	};
 
-	authService.isAuthenticated = function ()
-	{
-//		return !!Session.userId;
-		return $rootScope.authenticated;
-	};
+//	authService.isAuthenticated = function ()
+//	{
+////		return !!Session.userId;
+//		return $rootScope.authenticated;
+//	};
 
 	authService.isAuthorized = function (authorizedRoles)
 	{
@@ -30,7 +30,8 @@ app.factory('AuthService', function ($rootScope, $http)//, Session)
 		}
 
 		var auth = false;
-		angular.forEach($rootScope.authorizedRoles,
+//		angular.forEach($rootScope.authorizedRoles,
+		angular.forEach($localStorage.authorizedRoles,
 			function(role)
 			{
 				if (authorizedRoles.indexOf(role) !== -1)

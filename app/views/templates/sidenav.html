@@ -1,5 +1,5 @@
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-	<a class="navmenu-brand visible-md visible-lg" href="#">Budget Tracker</a>
+	<a class="navmenu-brand visible-md visible-lg">Budget Tracker</a>
 	<div ng-if="!authenticated">
 		<ul class="nav navmenu-nav">
 			<li ng-class="{'active': nav_active == 'home'}"><a href="#/">Home</a></li>
@@ -8,11 +8,17 @@
 	</div>
 	<div ng-if="authenticated">
 		<ul class="nav navmenu-nav">
+			<li style="padding-left:12px;font-size:15px;"><b>{{userFullName}}</b></li>
+			<li ng-class="{'active': nav_active == 'logout'}"><a href="#/logout">Logout</a></li>
+			<hr />
+		</ul>
+		<ul class="nav navmenu-nav">
 			<li ng-class="{'active': nav_active == 'dashboard'}"><a href="#/dashboard">Dashboard</a></li>
 			<li ng-class="{'active': nav_active == 'forecast'}"><a href="#/forecast">Forecast</a></li>
 			<li ng-class="{'active': nav_active == 'transactions'}"><a href="#/transactions">Transactions</a></li>
 			<!--<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads  {{ transaction_count }}</a></li>-->
 			<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads <span class="badge">{{ transaction_count }}</span></a></li>
+			<hr />
 		</ul>
 		<ul class="nav navmenu-nav">
 			<li style="padding-left:12px;font-size:15px;"><b>Settings</b></li>
@@ -29,9 +35,7 @@
 					<li><a href="#">One more separated link</a></li>
 				</ul>
 			</li>-->
-		</ul>
-		<ul class="nav navmenu-nav">
-			<li ng-class="{'active': nav_active == 'logout'}"><a href="#/logout">Logout</a></li>
+			<hr />
 		</ul>
 	</div>
 </div>

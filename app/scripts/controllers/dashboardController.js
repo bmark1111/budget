@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData, $filter)//, USER_ROLES, AuthService, Session)
+app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $localStorage)//, USER_ROLES, AuthService, Session)
 {
 
 //var someSessionObj = { 'innerObj' : 'somesessioncookievalue'};
@@ -13,6 +13,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 //
 //$scope.token_id = $cookieStore.get('token_id');
 
+$scope.userFullName = $localStorage.userFullName;
 
 	$rootScope.nav_active = 'dashboard';
 
@@ -41,8 +42,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 	{
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-				'TOKENID':			$rootScope.token_id,
+				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getForecast(
@@ -102,8 +103,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 	{
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-				'TOKENID':			$rootScope.token_id,
+				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getTransactions(
@@ -179,8 +180,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-				'TOKENID':			$rootScope.token_id,
+				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getTheseTransactions(
@@ -210,8 +211,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-				'TOKENID':			$rootScope.token_id,
+				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getThisForecast(

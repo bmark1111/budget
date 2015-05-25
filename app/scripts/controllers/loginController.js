@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginController', function($rootScope, $scope, $http, $location)
+app.controller('LoginController', function($rootScope, $scope, $http, $location, $localStorage)
 {
 	$rootScope.nav_active = 'login';
 
@@ -15,33 +15,33 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location)
 										{
 											if (data.data.user)
 											{
-												$rootScope.authenticated	= true;
-												$rootScope.authorizedRoles	= JSON.parse(data.data.user.roles);
-												$rootScope.userFullName		= data.data.user.firstname + ' ' + data.data.user.lastname;
-												$rootScope.token_id			= data.data.user.last_session_id;
-												$rootScope.userId			= data.data.user.id;
-												$rootScope.username			= credentials.username;
-												$rootScope.password			= credentials.password;
+												$localStorage.authenticated		= true;
+												$localStorage.authorizedRoles	= JSON.parse(data.data.user.roles);
+												$localStorage.userFullName		= data.data.user.firstname + ' ' + data.data.user.lastname;
+												$localStorage.token_id			= data.data.user.last_session_id;
+												$localStorage.userId			= data.data.user.id;
+												$localStorage.username			= credentials.username;
+												$localStorage.password			= credentials.password;
 											} else {
-												$rootScope.authenticated	= false;
-												$rootScope.authorizedRoles	= false;
-												$rootScope.userFullName		= false;
-												$rootScope.token_id			= false;
-												$rootScope.userId			= false;
-												$rootScope.username			= false;
-												$rootScope.password			= false;
+												$localStorage.authenticated		= false;
+												$localStorage.authorizedRoles	= false;
+												$localStorage.userFullName		= false;
+												$localStorage.token_id			= false;
+												$localStorage.userId			= false;
+												$localStorage.username			= false;
+												$localStorage.password			= false;
 											}
 											callback && callback();
 										})
 								.error(function()
 										{
-											$rootScope.authenticated	= false;
-											$rootScope.authorizedRoles	= false;
-											$rootScope.userFullName		= false;
-											$rootScope.token_id			= false;
-											$rootScope.userId			= false;
-											$rootScope.username			= false;
-											$rootScope.password			= false;
+											$localStorage.authenticated		= false;
+											$localStorage.authorizedRoles	= false;
+											$localStorage.userFullName		= false;
+											$localStorage.token_id			= false;
+											$localStorage.userId			= false;
+											$localStorage.username			= false;
+											$localStorage.password			= false;
 
 											callback && callback();
 										});
@@ -53,8 +53,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location)
 						authenticate($scope.credentials,
 							function()
 							{
-console.log('longinController - response')
-								if ($rootScope.authenticated)
+								if ($localStorage.authenticated)
 								{
 									$location.path("/dashboard");
 									$scope.error = false;

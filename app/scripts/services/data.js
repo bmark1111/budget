@@ -1,7 +1,5 @@
 app.factory('RestData', function ($resource)
 {
-console.log('RESTDATA');
-
 //	var headers = {
 //		'Authorization'		: 'Basic cHJvb3ZlYmlvOlByb292ZTIwMTQ=',
 //		'SESSIONID'			: '1234567890',//$cookies.SESSIONID,
@@ -37,14 +35,3 @@ console.log('RESTDATA');
 			});
 	}
 });
-
-//  return function(customHeaders){
-//    return $resource('/api/user', {}, {
-//      connect: { 
-//        method: 'POST',
-//        params: {},
-//        isArray: false,
-//        headers: customHeaders || {}
-//      }
-//    });
-//  };
