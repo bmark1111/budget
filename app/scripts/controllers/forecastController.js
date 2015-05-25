@@ -2,7 +2,7 @@
 
 app.controller('ForecastController', function($scope, $rootScope, $localStorage, $location, $modal, $timeout, RestData, $filter)
 {
-	$rootScope.nav_active = 'forecast';
+//	$rootScope.nav_active = 'forecast';
 
 	$scope.totals = [];
 	$scope.rTotals = [];

@@ -2,7 +2,7 @@
 
 app.controller('HomeController', function($scope, $rootScope, $localStorage, $location)
 {
-	$rootScope.nav_active = 'home';
+//	$rootScope.nav_active = 'home';
 
 
 });

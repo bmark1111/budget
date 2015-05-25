@@ -2,7 +2,7 @@
 
 app.controller('TransactionsController', function($scope, $rootScope, $localStorage, $location, $modal, $timeout, RestData)
 {
-	$rootScope.nav_active = 'transactions';
+//	$rootScope.nav_active = 'transactions';
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;

@@ -2,7 +2,7 @@
 
 app.controller('SettingsController', function($scope, $rootScope, $localStorage, $location, RestData)
 {
-	$rootScope.nav_active = $location.path().replace("/", "");
+//	$rootScope.nav_active = $location.path().replace("/", "");
 
 //	ngProgress.start();
 

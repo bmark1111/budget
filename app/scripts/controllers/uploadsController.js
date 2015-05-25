@@ -2,7 +2,7 @@
 
 app.controller('UploadsController', function($scope, $rootScope, $localStorage, $location, $modal, $timeout, RestData)
 {
-	$rootScope.nav_active = 'uploads';
+//	$rootScope.nav_active = 'uploads';
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;

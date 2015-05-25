@@ -2,9 +2,9 @@
 
 app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $localStorage, $location)
 {
-	$scope.userFullName = $localStorage.userFullName;
+//	$scope.userFullName = $localStorage.userFullName;
 
-	$rootScope.nav_active = 'dashboard';
+//	$rootScope.nav_active = 'dashboard';
 
 	$scope.totals = [];				// transaction totals by date
 	$scope.startDate = [];			// interval start dates
