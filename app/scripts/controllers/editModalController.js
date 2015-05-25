@@ -1,4 +1,6 @@
-app.controller('EditModalController', function ($scope, $rootScope, $modalInstance, RestData, params)
+'use strict';
+
+app.controller('EditModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
 {
 	$scope.transaction = {
 			splits: {}
@@ -12,8 +14,8 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-				'TOKENID':			$rootScope.token_id,
+				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.editTransaction(
@@ -40,7 +42,19 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 				},
 				function (error)
 				{
-					$rootScope.error = error.status + ' ' + error.statusText;
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.username			= false;
+						$localStorage.password			= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
 				});
 	}
 
@@ -59,8 +73,8 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 
 		RestData(
 			{
-				Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-				'TOKENID':			$rootScope.token_id,
+				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.saveTransaction($scope.transaction,
@@ -125,7 +139,19 @@ app.controller('EditModalController', function ($scope, $rootScope, $modalInstan
 				},
 				function (error)
 				{
-					$rootScope.error = error.status + ' ' + error.statusText;
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.username			= false;
+						$localStorage.password			= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
 				});
 	};
 

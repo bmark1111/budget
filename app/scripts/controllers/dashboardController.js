@@ -1,19 +1,8 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $localStorage)//, USER_ROLES, AuthService, Session)
+app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $localStorage, $location)
 {
-
-//var someSessionObj = { 'innerObj' : 'somesessioncookievalue'};
-//
-//$cookies.dotobject = someSessionObj;
-//$scope.usingCookies = { 'cookies.dotobject' : $cookies.dotobject, "cookieStore.get" : $cookieStore.get('dotobject') };
-//
-//$cookieStore.put('obj', someSessionObj);
-//$scope.usingCookieStore = { "cookieStore.get" : $cookieStore.get('obj'), 'cookies.dotobject' : $cookies.obj };
-//
-//$scope.token_id = $cookieStore.get('token_id');
-
-$scope.userFullName = $localStorage.userFullName;
+	$scope.userFullName = $localStorage.userFullName;
 
 	$rootScope.nav_active = 'dashboard';
 
@@ -95,7 +84,19 @@ $scope.userFullName = $localStorage.userFullName;
 				},
 				function (error)
 				{
-					$rootScope.error = error.status + ' ' + error.statusText;
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.username			= false;
+						$localStorage.password			= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
 				});
 	}
 
@@ -167,7 +168,19 @@ $scope.userFullName = $localStorage.userFullName;
 				},
 				function (error)
 				{
-					$rootScope.error = error.status + ' ' + error.statusText;
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.username			= false;
+						$localStorage.password			= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
 				});
 	}
 
@@ -201,7 +214,19 @@ $scope.userFullName = $localStorage.userFullName;
 				},
 				function (error)
 				{
-					$rootScope.error = error.status + ' ' + error.statusText;
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.username			= false;
+						$localStorage.password			= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
 				});
 	};
 
@@ -232,7 +257,19 @@ $scope.userFullName = $localStorage.userFullName;
 				},
 				function (error)
 				{
-					$rootScope.error = error.status + ' ' + error.statusText;
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.username			= false;
+						$localStorage.password			= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
 				});
 	};
 

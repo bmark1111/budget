@@ -1,13 +1,15 @@
 'use strict';
 
-app.controller('SettingsController', function($scope, $rootScope, RestData, $filter, $location)
+app.controller('SettingsController', function($scope, $rootScope, $localStorage, $location, RestData, $location)
 {
 	$rootScope.nav_active = $location.path().replace("/", "");
 
+//	ngProgress.start();
+
 	RestData(
 		{
-			Authorization:		"Basic " + btoa($rootScope.username + ':' + $rootScope.password),
-			'TOKENID':			$rootScope.token_id,
+			Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
+			'TOKENID':			$localStorage.token_id,
 			'X-Requested-With':	'XMLHttpRequest'
 		})
 		.getSetting(
@@ -26,7 +28,19 @@ app.controller('SettingsController', function($scope, $rootScope, RestData, $fil
 			},
 			function (error)
 			{
-				$rootScope.error = error.status + ' ' + error.statusText;
+				if (error.status == '401' && error.statusText == 'EXPIRED')
+				{
+					$localStorage.authenticated		= false;
+					$localStorage.authorizedRoles	= false;
+					$localStorage.userFullName		= false;
+					$localStorage.token_id			= false;
+					$localStorage.userId			= false;
+					$localStorage.username			= false;
+					$localStorage.password			= false;
+					$location.path("/login");
+				} else {
+					$rootScope.error = error.status + ' ' + error.statusText;
+				}
 			});
 
 });

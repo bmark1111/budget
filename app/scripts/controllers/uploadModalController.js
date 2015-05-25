@@ -1,3 +1,5 @@
+'use strict';
+
 app.controller('UploadModalController', function ($scope, $rootScope, $modalInstance, fileUpload, params)
 {
 	$scope.ignoreFirstLine = 0;
@@ -9,7 +11,7 @@ app.controller('UploadModalController', function ($scope, $rootScope, $modalInst
 	$scope.upload_errors = {};
 	$scope.upload_fail = false;
 
-	// save edited transaction
+	// upload transaction file
 	$scope.upload = function ()
 	{
 		var file = $scope.myFile;

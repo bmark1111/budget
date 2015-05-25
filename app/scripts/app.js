@@ -99,6 +99,7 @@ app.run(function($route, $rootScope, $localStorage, RestData, AuthService)//, AU
 	$rootScope.$on('$routeChangeStart',
 		function (event, next)
 		{
+			$rootScope.error			= false;
 			$rootScope.authenticated	= $localStorage.authenticated;
 			$rootScope.userFullName		= $localStorage.userFullName;
 
