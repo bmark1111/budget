@@ -6,7 +6,8 @@
 			<thead>
 				<tr>
 					<th><span class="pull-right">Interval Ending</span></th>
-					<th ng-repeat="idx in result_seq"><span class="pull-right">{{result[idx].interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
+					<!--<th ng-repeat="idx in result_seq"><span class="pull-right">{{result[idx].interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>-->
+					<th ng-repeat="transaction in transactions"><span class="pull-right">{{transaction.interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -16,10 +17,20 @@
 				</tr>
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
+<!--					<td ng-repeat="idx2 in result_seq" ng-class="{'currentInterval':result[idx2].current_interval}">
+						<div class="pull-right" ng-if="result[idx2].totals[category.id] != 0" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}">
+							{{result[idx2].totals[category.id]|currency}}
+<ng-include src="'app/views/templates/myPopoverTemplate.html'"></ng-include>
+						</div>
+						<div class="pull-right" ng-if="result[idx2].totals[category.id] == 0 && forecast[idx2].totals[category.id] != 0">
+							{{forecast[idx2].totals[category.id]|currency}}
+						</div>
+						<div class="pull-right" ng-if="result[idx2].totals[category.id] == 0 && forecast[idx2].totals[category.id] == 0">$0.00</div>
+					</td>-->
+<!-- BELOW IS WHAT WORKED ORIGINALLY
 					<td ng-repeat="idx2 in result_seq" ng-contextmenu ng-class="{'currentInterval':result[idx2].current_interval}">
 						<div class="pull-right" ng-if="result[idx2].totals[category.id] != 0"
 												ng-right-click="showTheseTransactions(result[idx2].interval_beginning, category.id)">
-<!--						<div class="pull-right" ng-right-click="showTheseTransactions(result[idx2].interval_beginning, category.id)">-->
 							{{result[idx2].totals[category.id]|currency}}
 							<ng-include src="'app/views/templates/message.html'"></ng-include>
 						</div>
@@ -29,17 +40,24 @@
 							<ng-include src="'app/views/templates/message.html'"></ng-include>
 						</div>
 						<div class="pull-right" ng-if="result[idx2].totals[category.id] == 0 && forecast[idx2].totals[category.id] == 0">$0.00</div>
+					</td>-->
+					<td ng-repeat="transaction in transactions" nowrap ng-class="{'currentInterval':transaction.current_interval}">
+						<div class="pull-right" ng-class="{'forecast_amount':transaction.types[category.id] == '1'}">
+							{{transaction.totals[category.id]|currency}}
+						</div>
 					</td>
 				</tr>
 			</tbody>
 			<tfoot>
 				<tr>
 					<th nowrap>Totals</th>
-					<td ng-repeat="total in totals track by $index"><span class="pull-right">{{(total + ftotals[$index])|currency}}</span></td>
+					<!--<td ng-repeat="total in totals track by $index"><span class="pull-right">{{(total + ftotals[$index])|currency}}</span></td>-->
+					<td ng-repeat="transaction in transactions"><span class="pull-right">{{transaction.interval_total|currency}}</span></td>
 				</tr>
 				<tr>
 					<th nowrap>Running Totals</th>
-					<td ng-repeat="rTotal in rTotals track by $index"><span class="pull-right">{{(rTotal + rfTotals[$index])|currency}}</span></td>
+					<!--<td ng-repeat="rTotal in rTotals track by $index"><span class="pull-right">{{(rTotal + rfTotals[$index])|currency}}</span></td>-->
+					<td ng-repeat="transaction in transactions"><span class="pull-right">{{transaction.running_total|currency}}</span></td>
 				</tr>
 			</tfoot>
 		</table>
