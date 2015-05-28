@@ -1,0 +1,49 @@
+<div class="popover">
+	<div class="arrow"></div>
+	<h3 class="popover-title">Passwords must meet the following criteria:</h3>
+	<div class="popover-content">
+	<ul class="fa-ul">
+		<li><i class="fa-li fa" ng-class="{'fa-times text-danger':(userForm.password.$error.minimum || userForm.password.$pristine), 'fa-check text-success':(!userForm.password.$error.minimum && userForm.password.$dirty)}"></i> At least 8 characters</li>
+		<li><i class="fa-li fa" ng-class="{'fa-times text-danger':(userForm.password.$error.lowerCase || userForm.password.$pristine), 'fa-check text-success':(!userForm.password.$error.lowerCase && userForm.password.$dirty)}"></i> At least 1 lower case character</li>
+		<li><i class="fa-li fa" ng-class="{'fa-times text-danger':(userForm.password.$error.upperCase || userForm.password.$pristine), 'fa-check text-success':(!userForm.password.$error.upperCase && userForm.password.$dirty)}"></i> At least 1 upper chase character</li>
+		<li><i class="fa-li fa" ng-class="{'fa-times text-danger':(userForm.password.$error.number || userForm.password.$pristine), 'fa-check text-success':(!userForm.password.$error.number && userForm.password.$dirty)}"></i> At least 1 number</li>
+		<li><i class="fa-li fa" ng-class="{'fa-times text-danger':(userForm.password.$error.symbol || userForm.password.$pristine), 'fa-check text-success':(!userForm.password.$error.symbol && userForm.password.$dirty)}"></i> At least 1 symbol</li>
+	</ul>
+	</div>
+</div>
+<!--<script type="text/ng-template" id="myPopoverTemplate.html">-->
+<!--<div class="popover ng-scope am-flip-x right" tabindex="-1" ng-show="content" style="top: 76px; left: 497.015625px; display: block; visibility: visible;">
+	<div class="arrow" style="top: 50%;"></div>
+	<h3 class="popover-title ng-binding" ng-bind-html="title" ng-show="title">Title</h3>
+	<div class="popover-content">
+		<div>{{popover.content}}</div>
+		<div class="form-group">
+			<label>Popup Title:</label>
+			<input type="text" ng-model="popover.title" class="form-control">
+		</div>
+	</div>
+</div>-->
+<!--</script>-->
+
+<!--<div class="popover ng-scope am-flip-x right" tabindex="-1" ng-show="content" style="top: 76px; left: 497.015625px; display: block; visibility: visible;">
+	<div class="arrow" style="top: 50%;"></div>
+	<h3 class="popover-title ng-binding" ng-bind-html="title" ng-show="title">Title</h3>
+	<div class="popover-content">
+		<form name="popoverForm" class="ng-pristine ng-valid">
+			<p ng-bind-html="content" style="min-width:300px" class="ng-binding">
+				Hello Popover<br>This is a multiline message!
+			</p>
+			<pre>2 + 3 = <span class="ng-binding">5</span></pre>
+			<div class="form-group">
+				<div class="input-group">
+					<div class="input-group-addon">@</div>
+					<input class="form-control" type="email" placeholder="Enter email">
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="button" class="btn btn-danger" ng-click="$hide()">Close</button>
+				<button type="button" class="btn btn-primary" ng-click="popover.saved=true;$hide()">Save changes</button>
+			</div>
+		</form>
+	</div>
+</div>-->

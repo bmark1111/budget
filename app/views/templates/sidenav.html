@@ -4,12 +4,13 @@
 		<ul class="nav navmenu-nav">
 			<li ng-class="{'active': nav_active == 'home'}"><a href="#/">Home</a></li>
 			<li ng-class="{'active': nav_active == 'login'}"><a href="#/login">Login</a></li>
-		</ul>
 	</div>
 	<div ng-if="authenticated">
 		<ul class="nav navmenu-nav">
 			<li style="padding-left:12px;font-size:15px;"><b>{{userFullName}}</b></li>
 			<li ng-class="{'active': nav_active == 'logout'}"><a href="#/logout">Logout</a></li>
+			<li ng-class="{'active': nav_active == 'popoverdemo'}"><a href="#/popoverdemo">Popover Demo</a></li>
+		</ul>
 			<hr />
 		</ul>
 		<ul class="nav navmenu-nav">

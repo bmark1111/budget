@@ -1,0 +1,81 @@
+<ng-include src="'app/views/templates/myPopoverTemplate.html'"></ng-include>
+
+<div class="container-fluid">
+	<h1 class="page-header">Popover Demo</h1>
+
+	<span ng-click="showPopover('2015-04-29', 1, 'popover_2015-04-29_1')" id="popover_2015-04-29_1">Popover</span>
+	<span ng-click="showPopover('2015-04-29', 2, 'popover_2015-04-29_2')" id="popover_2015-04-29_2">Popover</span>
+<!--	<script type="text/ng-template" id="example.html">
+		<div>
+			<table>
+				<tr ng-repeat="idx in transactions_seq">
+					<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+					<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].description}}<div ng-if="transaction[idx].notes"> - {{transactions[idx].notes}}</div></td>
+					<td style="text-align:left;min-width:200px;vertical-align:top;">{{transactions[idx].type}}</td>
+					<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].amount|currency}}</td>
+				</tr>
+			</table>
+		</div>
+	</script>-->
+<div class="popover ng-scope am-flip-x right" tabindex="-1" ng-show="content" style="top: 76px; left: 497.015625px; display: block; visibility: visible;">
+	<div class="arrow" style="top: 50%;"></div>
+	<h3 class="popover-title ng-binding" ng-bind-html="title" ng-show="title">Title</h3>
+	<div class="popover-content">
+		<div>{{popover.content}}</div>
+		<div class="form-group">
+			<label>Popup Title:</label>
+			<input type="text" ng-model="popover.title" class="form-control">
+		</div>
+	</div>
+</div>
+		<div class="popover-content">
+			<table st-table="rowCollection" class="table table-striped">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Description</th>
+						<th>Type</th>
+						<th>Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="idx in transactions_seq">
+						<td class="pull-left" style="vertical-align:top;padding-right:5px;" nowrap>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+						<td class="pull-left" style="vertical-align:top;padding-right:5px;">{{transactions[idx].description}}<span ng-if="transaction[idx].notes"> - {{transactions[idx].notes}}</span></td>
+						<td class="pull-left" style="vertical-align:top;padding-right:5px;">{{transactions[idx].type}}</td>
+						<td class="pull-right" style="vertical-align:top;" nowrap>{{transactions[idx].amount|currency}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	<div class="bs-docs-section">
+
+		<!-- You can use a custom html template with the `data-template` attr -->
+<!--		<button type="button" class="btn btn-lg btn-danger" title="{{popover.title}}" data-content="{{popover.content}}" 
+				data-template="popover/docs/popover.demo.tpl.html" data-animation="am-flip-x" data-auto-close="1" bs-popover>-->
+<!--		<button type="button" class="btn btn-lg btn-danger" title="aaaaaaa" data-content="xxxxxxxxx"
+				data-template="app/views/templates/myPopoverTemplate.html" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+			Custom Popover
+			<br />
+			<small>(using data-template)</small>
+		</button>
+
+		<button type="button" id="popover-as-service" class="btn btn-lg btn-primary" title="{{popover.title}}" ng-click="togglePopover()">
+			Click to toggle popover
+			<br>
+			<small>(using $popover service)</small>
+		</button>-->
+<!--		<form id="userForm" name="userForm" class="form-horizontal">
+			<div class="form-group" ng-class="{'has-error':(userForm.password.$invalid && userForm.password.$dirty), 'has-success':!userForm.password.$invalid}">
+				<label class="col-sm-1 control-label" for="password">Password:</label>
+				<div class="col-sm-2">
+					<input class="form-control input-sm" ng-model="user.password" type="password" name="password" id="password" ng-change="passwordValidate()" placeholder="Password" data-placement="bottom" data-trigger="focus" data-content="test" data-template="app/views/templates/myPopoverTemplate.html" bs-popover="" required="" />
+				</div>
+				<span class="text-success" ng-show="userForm.password.$valid && userForm.password.$dirty">
+					<i class="fa fa-check"></i>
+				</span>
+			</div>
+		</form>-->
+	</div>
+</div>

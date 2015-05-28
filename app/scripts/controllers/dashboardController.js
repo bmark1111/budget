@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData, $filter, $localStorage, $location)
+app.controller('DashboardController', function($scope, $rootScope, $popover, RestData, $filter, $localStorage, $location)
 {
 //	$scope.totals = [];				// transaction totals by date
 //	$scope.startDate = [];			// interval start dates
@@ -12,7 +12,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 //	$scope.rfTotals = [];			// running forecast totals
 	$scope.balance_forward = {};
 
-	$scope.transactions = [];
+	$scope.intervals = [];
 //	$scope.result = {};
 //	$scope.forecast = {};
 //	$scope.categories = [];
@@ -52,21 +52,21 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 								if ((now >= sd && now <= ed) || now < ed)
 								{
 									// check to see what current values need to be from the forecast
-									angular.forEach($scope.transactions[key].totals,
+									angular.forEach($scope.intervals[key].totals,
 										function(total, x)
 										{
 											if (total == 0 && interval.totals[x] != 0)
 											{
-												$scope.transactions[key].totals[x] = interval.totals[x];						// use the forcasted amount
-												$scope.transactions[key].types[x] = '1';										// flag this as a forecast total
-												$scope.transactions[key].interval_total += parseFloat(interval.totals[x]);		// update the interval total
+												$scope.intervals[key].totals[x] = interval.totals[x];						// use the forcasted amount
+												$scope.intervals[key].types[x] = '1';										// flag this as a forecast total
+												$scope.intervals[key].interval_total += parseFloat(interval.totals[x]);		// update the interval total
 											}
 										});
 								}
 							});
 
 						// now calculate running totals
-						angular.forEach($scope.transactions,
+						angular.forEach($scope.intervals,
 							function(interval, key)
 							{
 								if (key == 0)
@@ -74,7 +74,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 									interval.running_total = parseFloat(response.data.balance_forward + interval.interval_total);
 								} else {
 									var x = key - 1;
-									interval.running_total = parseFloat($scope.transactions[x].running_total + interval.interval_total);
+									interval.running_total = parseFloat($scope.intervals[x].running_total + interval.interval_total);
 								}
 							});
 					} else {
@@ -125,23 +125,23 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $fi
 								var now = new Date();
 								interval.current_interval = (now >= sd && now <= ed) ? true: false;
 
-								$scope.transactions[key] = interval;
-								$scope.transactions[key].types = [];
+								$scope.intervals[key] = interval;
+								$scope.intervals[key].types = [];
 
-								$scope.transactions[key].interval_total = parseFloat(0);	// zero the interval total
-								angular.forEach($scope.transactions[key].totals,
+								$scope.intervals[key].interval_total = parseFloat(0);	// zero the interval total
+								angular.forEach($scope.intervals[key].totals,
 									function(total, x)
 									{
-										$scope.transactions[key].types[x] = '0';			// flag this as a transaction total
-										$scope.transactions[key].interval_total += parseFloat(total);
+										$scope.intervals[key].types[x] = '0';			// flag this as a transaction total
+										$scope.intervals[key].interval_total += parseFloat(total);
 									});
 							});
-console.log($scope.transactions)
+
 						// now set the balance forward
 						$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
 
 //						// now calculate running totals
-//						angular.forEach($scope.transactions,
+//						angular.forEach($scope.intervals,
 //							function(interval, key)
 //							{
 //								if (key == 0)
@@ -149,7 +149,7 @@ console.log($scope.transactions)
 //									interval.running_total = parseFloat(response.data.balance_forward + interval.interval_total);
 //								} else {
 //									var x = key - 1;
-//									interval.running_total = parseFloat($scope.transactions[x].running_total + interval.interval_total);
+//									interval.running_total = parseFloat($scope.intervals[x].running_total + interval.interval_total);
 //								}
 //							});
 
@@ -180,11 +180,78 @@ console.log($scope.transactions)
 //	loadForecast();
 	loadTransactions();
 
-$scope.dynamicPopover = {
-	content: 'Hello, World!aaaa',
-	templateUrl: 'myPopoverTemplate.html',
-	title: 'Title'
-};
+//$scope.dynamicPopover = {
+//	content: 'Hello, World!aaaa',
+//	templateUrl: 'myPopoverTemplate.html',
+//	title: 'Title'
+//};
+//$scope.popover = {title: 'Title', content: 'Hello Popover<br />This is a multiline message!'};
+//
+//  var asAServiceOptions = {
+//    title: $scope.popover.title,
+//    content: $scope.popover.content,
+//    trigger: 'manual'
+//  }
+
+//  var myPopover = $popover(angular.element(document.querySelector('#popover-as-service')), asAServiceOptions);
+
+//  $scope.togglePopover = function() {
+//	myPopover.$promise.then(myPopover.toggle);
+//  };
+
+
+	$scope.showPopover = function(interval_beginning, category_id, index)
+	{
+		$scope.myPopover = $popover(angular.element(document.querySelector('#popover_' + index + '_' + category_id)),
+			{
+				title:				interval_beginning + ' for category ' + category_id,
+				contentTemplate:	'myPopoverTemplate.html',
+				html:				true,
+				trigger:			'manual',
+				autoClose:			true,
+				scope:				$scope,
+				container:			'div'
+			});
+
+		RestData(
+			{
+				Authorization:		$localStorage.authorization,
+				'TOKENID':			$localStorage.token_id,
+				'X-Requested-With':	'XMLHttpRequest'
+			})
+			.getTheseTransactions(
+				{
+					interval_beginning:	interval_beginning,
+					category_id:	category_id
+				},
+				function(response)
+				{
+					if (!!response.success)
+					{
+						$scope.myPopover.show();
+
+						$scope.transactions = response.data.result;
+						$scope.transactions_seq = Object.keys(response.data.result);
+					} else {
+						$scope.dataErrorMsg2 = response.errors[0];
+					}
+				},
+				function (error)
+				{
+					if (error.status == '401' && error.statusText == 'EXPIRED')
+					{
+						$localStorage.authenticated		= false;
+						$localStorage.authorizedRoles	= false;
+						$localStorage.userFullName		= false;
+						$localStorage.token_id			= false;
+						$localStorage.userId			= false;
+						$localStorage.authorization		= false;
+						$location.path("/login");
+					} else {
+						$rootScope.error = error.status + ' ' + error.statusText;
+					}
+				});
+	}
 
 	$scope.showTheseTransactions = function(interval_beginning, category_id)
 	{

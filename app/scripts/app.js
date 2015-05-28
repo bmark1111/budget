@@ -1,7 +1,6 @@
-//var app = angular.module('budgetApp', ['ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap']);
-var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage']);
+var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'ngAnimate', 'ngSanitize', 'mgcrea.ngStrap']);
 
-app.config(function($routeProvider, $httpProvider, USER_ROLES)
+app.config(function($routeProvider, $httpProvider, $popoverProvider, USER_ROLES)
 {
 //	$httpProvider.interceptors.push([
 //		'$injector',
@@ -11,12 +10,20 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)
 //			return $injector.get('AuthInterceptor');
 //		}
 //	]);
+	angular.extend($popoverProvider.defaults, {
+			html: true
+		});
 
 	$routeProvider
 		.when('/',
 		{
 			controller:		'HomeController',
 			templateUrl:	'app/views/home.html'
+		})
+		.when('/popoverdemo',
+		{
+			controller:		'PopoverdemoController',
+			templateUrl:	'app/views/popover_demo.html'
 		})
 		.when('/login',
 		{
