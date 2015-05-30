@@ -155,7 +155,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 		$scope.dataErrorMsgThese = false;
 
 		var date = $filter('date')(interval_ending, "EEE MMM dd, yyyy");
-		$scope.title = $('#popover_' + index + '_' + category_id).parent().siblings('th').text() + ' transactions for interval ending ' + date;
+		$scope.title = $('#popover_' + index + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
 
 		RestData(
 			{
@@ -181,7 +181,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 							{
 								$scope.dataErrorMsgThese += (error.error + "<br />");
 							});
-console.log($scope.dataErrorMsgThese)
 					}
 				},
 				function (error)
