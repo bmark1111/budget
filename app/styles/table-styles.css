@@ -96,8 +96,8 @@ div.table-responsive .currentInterval {
 	width: 1100px;
 }
 
-div.forecast_amount {
-	color:#04B431;
+div.forecast_amount a {
+	color:#04B431 !important;
 }
 div.ns-popover-custom-theme {
 /*	max-width:80%;*/
