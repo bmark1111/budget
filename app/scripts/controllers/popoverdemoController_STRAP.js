@@ -1,20 +1,7 @@
 'use strict';
 
-app.controller('PopoverdemoController', function($scope, $localStorage, $location, $rootScope, RestData, $filter)
+app.controller('PopoverdemoController', function($scope, $popover, $localStorage, $location, $rootScope, RestData)
 {
-
-    $scope.items = [{
-      name: "Action"
-    }, {
-      name: "Another action"
-    }, {
-      name: "Something else here"
-    }];
-
-    $scope.shouldDisplayPopover = function() {
-      return $scope.displayPopover;
-    }
-
 //	$scope.user = {
 //			name: ""
 //		};
@@ -27,48 +14,18 @@ app.controller('PopoverdemoController', function($scope, $localStorage, $locatio
 //			autoClose: true,
 //			scope: $scope
 //		});
-//		$scope.dynamicPopover = {
-//				content:		'Hello, World!',
-//				templateUrl:	'myPopoverTemplate.html',
-//				title:			'vvvvvvvvv'
-//			};
 
-	$scope.showTheseTransactions = function(interval_ending, category_id, index)
+	$scope.showPopover = function(interval_beginning, category_id, ele)
 	{
-//   $scope.transactions = [{
-//      name: "AAAAAAA"
-//    }, {
-//      name: "BBBBBB"
-//    }, {
-//      name: "CCCCCC"
-//    }];
-//		return true;
-//	}
-
-//		$scope.dynamicPopover = {
-//				content:		'Hello, World!',
-//				templateUrl:	'myPopoverTemplate.html',
-//				title:			'Dynamic Popover'
-//			};
-//		$scope.dynamicPopover.content = 'showTheseTransactions';
-
-		var date = $filter('date')(interval_ending, "EEE MMM dd, yyyy");
-		var title = $('#popover_' + index + '_' + category_id).parent().siblings('th').text() + ' transactions for interval ending ' + date;
-
-//		var myPopover = $popover(angular.element(document.querySelector('#popover_' + index + '_' + category_id)),
-//			{
-//				title:				title,
-//				contentTemplate:	'myPopoverTemplate.html',
-//				html:				true,
-//				trigger:			'manual',
-//				autoClose:			true,
-//				scope:				$scope
-//			});
-//		$scope.dynamicPopover = {
-//				content:		'Hello, World!',
-//				templateUrl:	'myPopoverTemplate.html',
-//				title:			'Dynamic Popover'
-//			};
+		var myPopover = $popover(angular.element(document.querySelector('#' + ele)), {
+				title: interval_beginning + ' for category ' + category_id,
+				contentTemplate: 'myPopoverTemplate.html',
+				html: true,
+				trigger: 'manual',
+				autoClose: true,
+				scope: $scope,
+				conbtainer: 'div'
+			});
 
 		RestData(
 			{
@@ -78,21 +35,16 @@ app.controller('PopoverdemoController', function($scope, $localStorage, $locatio
 			})
 			.getTheseTransactions(
 				{
-					interval_ending:	interval_ending,
-					category_id:		category_id
+					interval_beginning:	interval_beginning,
+					category_id:	category_id
 				},
 				function(response)
 				{
 					if (!!response.success)
 					{
-//		$scope.dynamicPopover = {
-////				content:		'Hello, World!',
-////				templateUrl:	'myPopoverTemplate.html',
-////				title:			'Dynamic Popover'
-//			};
-//		$scope.dynamicPopover.title			= 'showTheseTransactions Title';
-//		$scope.dynamicPopover.content		= response.data.result;
-//		$scope.dynamicPopover.templateUrl	= 'myPopoverTemplate.html';
+
+//		$scope.user.name = 'asasasasas';
+		myPopover.show();
 
 						$scope.transactions = response.data.result;
 						$scope.transactions_seq = Object.keys(response.data.result);
@@ -115,7 +67,6 @@ app.controller('PopoverdemoController', function($scope, $localStorage, $locatio
 						$rootScope.error = error.status + ' ' + error.statusText;
 					}
 				});
-		return true;
 	}
 
 /*

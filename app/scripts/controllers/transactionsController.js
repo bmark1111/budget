@@ -2,8 +2,6 @@
 
 app.controller('TransactionsController', function($scope, $rootScope, $localStorage, $location, $modal, $timeout, RestData)
 {
-//	$rootScope.nav_active = 'transactions';
-
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
 	$scope.recCount		= 0;
@@ -40,7 +38,6 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
@@ -71,8 +68,6 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

@@ -1,24 +1,25 @@
-<script type="text/ng-template" id="myPopoverTemplate.html">
-<!--	<div class="popover ng-scope am-flip-x right" tabindex="-1" ng-show="content" style="top: 76px; left: 497.015625px; display: block; visibility: visible;">-->
-		<div class="table-responsive">
-			<table>
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Description</th>
-						<th>Type</th>
-						<th>Amount</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="idx in transactions_seq">
-						<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
-						<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - {{transactions[idx].notes}}</span></td>
-						<td>{{transactions[idx].type}}</td>
-						<td>{{transactions[idx].amount|currency}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	<!--</div>-->
-</script>
+  <script type="text/ng-template" id="menu">
+    <div class="triangle"></div>
+    <div class="ns-popover-tooltip">
+      <ul>
+        <li ng-repeat="item in items"><a>{{item.name}}</a></li>
+      </ul>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="close">
+    <div class="triangle"></div>
+    <div class="ns-popover-tooltip">
+        <ul>
+            <li ng-repeat="item in items"><input type="checkbox">{{item.name}}</li>
+        </ul>
+      <button ng-click="hidePopover()">Close</button>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="tooltip">
+    <div class="triangle"></div>
+    <div class="ns-popover-tooltip">
+      Cool! The <b>nsPopover</b> could be used as a tooptip.
+    </div>
+  </script>

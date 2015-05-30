@@ -1,6 +1,44 @@
-<!--<ng-include src="'app/views/templates/myPopoverTemplate.html'"></ng-include>-->
+<!DOCTYPE html>
+<html ng-app="nsPopoverExample">
+<head>
+  <meta charset="utf-8">
+  <title>nsPopover demo</title>
 
-<div class="container-fluid">
+  <link rel="stylesheet" href="nsPopover.css">
+  <link rel="stylesheet" href="index.css">
+
+  <script src="angular.min.js"></script>
+  <script src="nsPopover.js"></script>
+  <script src="index.js"></script>
+
+  <script type="text/ng-template" id="menu">
+    <div class="triangle"></div>
+    <div class="ns-popover-tooltip">
+      <ul>
+        <li ng-repeat="item in items"><a>{{item.name}}</a></li>
+      </ul>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="close">
+    <div class="triangle"></div>
+    <div class="ns-popover-tooltip">
+        <ul>
+            <li ng-repeat="item in items"><input type="checkbox">{{item.name}}</li>
+        </ul>
+      <button ng-click="hidePopover()">Close</button>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="tooltip">
+    <div class="triangle"></div>
+    <div class="ns-popover-tooltip">
+      Cool! The <b>nsPopover</b> could be used as a tooptip.
+    </div>
+  </script>
+
+</head>
+<body ng-controller="MainCtrl">
 
 <section viewport-width>
   <h1> Menus </h1>
@@ -162,20 +200,8 @@
             ng-bind="displayPopover ? 'Turn off popover' : 'Turn on popover'">
     </button>
   </article>
-  
-<h1>Show Transactions</h1>
-  <article>
-    <a ns-popover="showTheseTransactions('2015-04-28', 4, 1)"
-       ns-popover-placement="right"
-       ns-popover-template="transactions"
-       ns-popover-trigger="click"
-       ns-popover-theme="ns-popover-tooltip-theme"
-       ns-popover-timeout="0">
-      CLICK ME
-    </a>
-
-  </article>
 
   <br>
 </section>
-</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
-var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'ngAnimate', 'ngSanitize', 'mgcrea.ngStrap']);
+var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);//, 'ngAnimate', 'ngSanitize', 'mgcrea.ngStrap']);
 
-app.config(function($routeProvider, $httpProvider, $popoverProvider, USER_ROLES)
+app.config(function($routeProvider, $httpProvider, USER_ROLES)//, $popoverProvider)
 {
 //	$httpProvider.interceptors.push([
 //		'$injector',
@@ -10,9 +10,10 @@ app.config(function($routeProvider, $httpProvider, $popoverProvider, USER_ROLES)
 //			return $injector.get('AuthInterceptor');
 //		}
 //	]);
-	angular.extend($popoverProvider.defaults, {
-			html: true
-		});
+
+//	angular.extend($popoverProvider.defaults, {
+//			html: true
+//		});
 
 	$routeProvider
 		.when('/',
@@ -106,8 +107,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 	$rootScope.$on('$routeChangeStart',
 		function (event, next)
 		{
-//var path = $location.path();
-//console.log(path)
 			$rootScope.nav_active = $location.path().replace("/", "");
 
 			$rootScope.error			= false;
@@ -145,8 +144,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
 										$localStorage.userId			= false;
-//										$localStorage.username			= false;
-//										$localStorage.password			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
@@ -161,7 +158,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 						RestData(
 							{
 								Authorization:		$localStorage.authorization,
-//								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
@@ -183,8 +179,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
 										$localStorage.userId			= false;
-//										$localStorage.username			= false;
-//										$localStorage.password			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
@@ -199,7 +193,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 						RestData(
 							{
 								Authorization:		$localStorage.authorization,
-//								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
@@ -224,8 +217,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
 										$localStorage.userId			= false;
-//										$localStorage.username			= false;
-//										$localStorage.password			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {

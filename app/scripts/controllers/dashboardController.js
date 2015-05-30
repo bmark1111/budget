@@ -1,28 +1,14 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, $popover, RestData, $filter, $localStorage, $location)
+app.controller('DashboardController', function($scope, $rootScope, RestData, $localStorage, $location, $filter)//, $popover)
 {
-//	$scope.totals = [];				// transaction totals by date
-//	$scope.startDate = [];			// interval start dates
-//	$scope.endDate = [];			// interval end dates
-//	$scope.ftotals = [];			// forecast totals by date
-//	$scope.fstartDate = [];			// forecast start dates
-//	$scope.fendDate = [];			// forecast end dates
-//	$scope.rTotals = [];			// running transaction totals
-//	$scope.rfTotals = [];			// running forecast totals
-	$scope.balance_forward = {};
-
 	$scope.intervals = [];
-//	$scope.result = {};
-//	$scope.forecast = {};
-//	$scope.categories = [];
+
 	$scope.categories = $rootScope.categories;
 
 	$scope.dataErrorMsg = false;
-	$scope.dataErrorMsg2 = false;
-	$scope.isVisible = false;
+	$scope.dataErrorMsgThese = false;
 
-	var currentDate = new Date();
 	var interval = 0;
 
 	var loadForecast = function()
@@ -71,7 +57,8 @@ app.controller('DashboardController', function($scope, $rootScope, $popover, Res
 							{
 								if (key == 0)
 								{
-									interval.running_total = parseFloat(response.data.balance_forward + interval.interval_total);
+//									interval.running_total = parseFloat(response.data.balance_forward + interval.interval_total);
+									interval.running_total = parseFloat(interval.balance_forward + interval.interval_total);
 								} else {
 									var x = key - 1;
 									interval.running_total = parseFloat($scope.intervals[x].running_total + interval.interval_total);
@@ -137,22 +124,6 @@ app.controller('DashboardController', function($scope, $rootScope, $popover, Res
 									});
 							});
 
-						// now set the balance forward
-						$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
-
-//						// now calculate running totals
-//						angular.forEach($scope.intervals,
-//							function(interval, key)
-//							{
-//								if (key == 0)
-//								{
-//									interval.running_total = parseFloat(response.data.balance_forward + interval.interval_total);
-//								} else {
-//									var x = key - 1;
-//									interval.running_total = parseFloat($scope.intervals[x].running_total + interval.interval_total);
-//								}
-//							});
-
 						// load the forecast
 						loadForecast();
 					} else {
@@ -177,41 +148,14 @@ app.controller('DashboardController', function($scope, $rootScope, $popover, Res
 				});
 	}
 
-//	loadForecast();
 	loadTransactions();
 
-//$scope.dynamicPopover = {
-//	content: 'Hello, World!aaaa',
-//	templateUrl: 'myPopoverTemplate.html',
-//	title: 'Title'
-//};
-//$scope.popover = {title: 'Title', content: 'Hello Popover<br />This is a multiline message!'};
-//
-//  var asAServiceOptions = {
-//    title: $scope.popover.title,
-//    content: $scope.popover.content,
-//    trigger: 'manual'
-//  }
-
-//  var myPopover = $popover(angular.element(document.querySelector('#popover-as-service')), asAServiceOptions);
-
-//  $scope.togglePopover = function() {
-//	myPopover.$promise.then(myPopover.toggle);
-//  };
-
-
-	$scope.showPopover = function(interval_beginning, category_id, index)
+	$scope.showTheseTransactions = function(interval_ending, category_id, index)
 	{
-		$scope.myPopover = $popover(angular.element(document.querySelector('#popover_' + index + '_' + category_id)),
-			{
-				title:				interval_beginning + ' for category ' + category_id,
-				contentTemplate:	'myPopoverTemplate.html',
-				html:				true,
-				trigger:			'manual',
-				autoClose:			true,
-				scope:				$scope,
-				container:			'div'
-			});
+		$scope.dataErrorMsgThese = false;
+
+		var date = $filter('date')(interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = $('#popover_' + index + '_' + category_id).parent().siblings('th').text() + ' transactions for interval ending ' + date;
 
 		RestData(
 			{
@@ -221,19 +165,23 @@ app.controller('DashboardController', function($scope, $rootScope, $popover, Res
 			})
 			.getTheseTransactions(
 				{
-					interval_beginning:	interval_beginning,
-					category_id:	category_id
+					interval_ending:	interval_ending,
+					category_id:		category_id
 				},
 				function(response)
 				{
 					if (!!response.success)
 					{
-						$scope.myPopover.show();
-
 						$scope.transactions = response.data.result;
 						$scope.transactions_seq = Object.keys(response.data.result);
 					} else {
-						$scope.dataErrorMsg2 = response.errors[0];
+						$scope.dataErrorMsgThese = '';
+						angular.forEach(response.errors,
+							function(error)
+							{
+								$scope.dataErrorMsgThese += (error.error + "<br />");
+							});
+console.log($scope.dataErrorMsgThese)
 					}
 				},
 				function (error)
@@ -248,11 +196,11 @@ app.controller('DashboardController', function($scope, $rootScope, $popover, Res
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
+						$scope.errorThese = error.status + ' ' + error.statusText;
 					}
 				});
 	}
-
+/*
 	$scope.showTheseTransactions = function(interval_beginning, category_id)
 	{
 		$scope.dataErrorMsg2 = false;
@@ -336,12 +284,11 @@ app.controller('DashboardController', function($scope, $rootScope, $popover, Res
 					}
 				});
 	};
-
+*/
 	$scope.moveInterval = function(direction)
 	{
 		interval = interval + direction;
 
-//		loadForecast();
 		loadTransactions();
 	}
 

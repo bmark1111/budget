@@ -13,29 +13,56 @@
 		<link href="app/styles/bootstrap.min.css" rel="stylesheet">
 		<link href="app/styles/jasny-bootstrap.min.css" rel="stylesheet">
 		<link href="app/styles/maxcdn-bootstrap.min.css" rel="stylesheet">
-		<link href="app/styles/animate.css" rel="stylesheet">
+		<!--<link href="app/styles/animate.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="scripts/nsPopover-master/example/nsPopover.css">
+		<link rel="stylesheet" href="scripts/nsPopover-master/example/index.css">
 
 		<!-- Custom styles for this template -->
 		<link href="app/styles/navmenu.css" rel="stylesheet">
 		<link href="app/styles/message.css" rel="stylesheet">
 		<link href="app/styles/table-styles.css" rel="stylesheet">
 
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.css">
+
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
+
+		<script type="text/ng-template" id="transactions">
+			<div class="triangle"></div>
+			<div ng-if="!dataErrorMsgThese" style="font-size:12px;max-width:100%;">
+				<div>{{title}}</div>
+				<div class="table-responsive">
+					<table>
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Description</th>
+								<th>Type</th>
+								<th>Amount</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="idx in transactions_seq">
+								<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
+								<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - {{transactions[idx].notes}}</span></td>
+								<td>{{transactions[idx].type}}</td>
+								<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div ng-if="dataErrorMsgThese" class="popoverError">
+				{{dataErrorMsgThese}}
+			</div>
+		</script>
 	</head>
 
 	<body>
 		<div>
-<!--			<div ng-if="currentUser">Welcome, {{ currentUser.name }}</div>
-			<div ng-if="isAuthorized(userRoles.admin)">You're admin.</div>
-			<div ng-switch on="currentUser.role">
-				<div ng-switch-when="userRoles.admin">You're admin.</div>
-				<div ng-switch-when="userRoles.editor">You're editor.</div>
-				<div ng-switch-default>You're something else.</div>
-			</div>-->
 			<ng-include src="'app/views/templates/sidenav.html'"></ng-include>
 			<div ng-view=""></div>
 		</div>
@@ -43,23 +70,9 @@
 		<!-- Bootstrap core JavaScript
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.css">
-<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.4/css/bootstrap.min.css">
-<!--<link rel="stylesheet" href="style.css" />-->
-<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libs.min.css">
-<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/docs.min.css">
-<script src="//cdn.jsdelivr.net/angularjs/1.3.15/angular.min.js" data-semver="1.3.15"></script>
-<script src="//cdn.jsdelivr.net/angularjs/1.3.15/angular-animate.min.js" data-semver="1.3.15"></script>
-<script src="//cdn.jsdelivr.net/angularjs/1.3.15/angular-sanitize.min.js" data-semver="1.3.15"></script>
-<script src="//mgcrea.github.io/angular-strap/dist/angular-strap.js" data-semver="v2.2.3"></script>
-<script src="//mgcrea.github.io/angular-strap/dist/angular-strap.tpl.js" data-semver="v2.2.3"></script>
-<script src="//mgcrea.github.io/angular-strap/docs/angular-strap.docs.tpl.js" data-semver="v2.2.3"></script>
-  		<!--<script src="scripts/angularjs/angular.js"></script>-->
+		<script src="scripts/angularjs/angular.js"></script>
 		<script src="scripts/angularjs/angular-resource.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-cookies.js"></script>
-		<!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-animate.min.js"></script>-->
-<!--		<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>-->
 
 		<script src="scripts/angularjs/angular-route.min.js"></script>		
 		<script src="scripts/jquery/jquery-1.10.2.min.js"></script>
@@ -68,6 +81,7 @@
 		<script src="scripts/jasny-bootstrap.min.js"></script>
 		<script src="scripts/ngContextMenu.js"></script>
 		<script src="scripts/ngStorage-master/ngStorage.min.js"></script>
+		<script src="scripts/nsPopover-master/src/nsPopover.js"></script>
 
 		<script src="app/scripts/app.js"></script>
 		<script src="app/scripts/controllers/loginController.js"></script>
@@ -78,7 +92,7 @@
 		<script src="app/scripts/controllers/transactionsController.js"></script>
 		<script src="app/scripts/controllers/settingsController.js"></script>
 		<script src="app/scripts/controllers/uploadsController.js"></script>
-<script src="app/scripts/controllers/popoverdemoController.js"></script>
+		<script src="app/scripts/controllers/popoverdemoController.js"></script>
 
 		<script src="app/scripts/controllers/modals/deleteForecastModalController.js"></script>
 		<script src="app/scripts/controllers/modals/editForecastModalController.js"></script>
@@ -99,7 +113,6 @@
 
 		<script src="app/scripts/filters/dateFormat.js"></script>
 
-		<!--<script src="app/scripts/directives/login.js"></script>-->
 		<script src="app/scripts/directives/rightClick.js"></script>
 		<script src="app/scripts/directives/fileModel.js"></script>
 <script src="app/scripts/directives/popover.js"></script>
