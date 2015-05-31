@@ -32,7 +32,7 @@
 
 		<script type="text/ng-template" id="transactions">
 			<div class="triangle"></div>
-			<div ng-if="!dataErrorMsgThese" style="font-size:12px;max-width:100%;">
+			<div style="font-size:12px;max-width:100%;">
 				<div>{{title}}</div>
 				<div class="table-responsive">
 					<table>
@@ -45,18 +45,18 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="idx in transactions_seq">
+							<tr ng-repeat="idx in transactions_seq" ng-if="!dataErrorMsgThese">
 								<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
 								<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - {{transactions[idx].notes}}</span></td>
 								<td>{{transactions[idx].type}}</td>
 								<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
 							</tr>
+							<tr ng-repeat="error in dataErrorMsgThese" ng-if="dataErrorMsgThese">
+								<td colspan="4">{{error.error}}</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
-			</div>
-			<div ng-if="dataErrorMsgThese" class="popoverError">
-				{{dataErrorMsgThese}}
 			</div>
 		</script>
 	</head>

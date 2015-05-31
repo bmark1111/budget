@@ -124,7 +124,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 									});
 							});
 
-						// load the forecast
 						loadForecast();
 					} else {
 						$scope.dataErrorMsg = response.errors[0];
@@ -175,12 +174,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 						$scope.transactions = response.data.result;
 						$scope.transactions_seq = Object.keys(response.data.result);
 					} else {
-						$scope.dataErrorMsgThese = '';
-						angular.forEach(response.errors,
-							function(error)
-							{
-								$scope.dataErrorMsgThese += (error.error + "<br />");
-							});
+						$scope.dataErrorMsgThese = response.errors;
 					}
 				},
 				function (error)
@@ -199,91 +193,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 					}
 				});
 	}
-/*
-	$scope.showTheseTransactions = function(interval_beginning, category_id)
-	{
-		$scope.dataErrorMsg2 = false;
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.getTheseTransactions(
-				{
-					interval_beginning:	interval_beginning,
-					category_id:	category_id
-				},
-				function(response)
-				{
-					if (!!response.success)
-					{
-						$scope.transactions = response.data.result;
-						$scope.transactions_seq = Object.keys(response.data.result);
-					} else {
-						$scope.dataErrorMsg2 = response.errors[0];
-					}
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.userId			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
-				});
-	};
-
-	$scope.showThisForecast = function(interval_beginning, category_id)
-	{
-		$scope.dataErrorMsg2 = false;
-
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.getThisForecast(
-				{
-					interval_beginning:	interval_beginning,
-					category_id:	category_id
-				},
-				function(response)
-				{
-					if (!!response.success)
-					{
-						$scope.transactions = response.data.result;
-						$scope.transactions_seq = Object.keys(response.data.result);
-					} else {
-						$scope.dataErrorMsg2 = response.errors[0];
-					}
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.userId			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
-				});
-	};
-*/
 	$scope.moveInterval = function(direction)
 	{
 		interval = interval + direction;
