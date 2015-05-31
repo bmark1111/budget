@@ -51,6 +51,7 @@
 			<thead>
 				<tr>
 					<th>Date</th>
+					<th>Uploaded</th>
 					<th>Check Num</th>
 					<th colspan="2">Description</th>
 					<th>DEBIT</th>
@@ -61,6 +62,8 @@
 			<tbody>
 				<tr ng-repeat-start="idx in transactions_seq">
 					<td rowspan="2">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+					<!--<td rowspan="2">{{transactions[idx].is_uploaded}}</td>-->
+					<td rowspan="2"><span class="glyphicon glyphicon-upload" ng-if="transactions[idx].is_uploaded == 1"></span></td>
 					<td rowspan="2"><span class="pull-left">{{transactions[idx].check_num}}</span></td>
 					<td colspan="2"><span class="pull-left">{{transactions[idx].description}}</span></td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
