@@ -26,7 +26,7 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 //		ngProgress.start();
 
 		var searchCriteria = {
-						'status':				0,					// get all pending uploaded transactions
+//						'status':				1,					// get all pending uploaded transactions
 						'date':					$scope.search.date,
 						'description':			$scope.search.description,
 						'amount':				$scope.search.amount,
@@ -39,7 +39,6 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
@@ -52,8 +51,9 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 						$scope.transactions_seq = Object.keys(response.data.result);
 						$scope.recCount = response.data.total_rows;
 
-						$rootScope.transaction_count = (parseInt(response.data.total_rows) > 0) ? parseInt(response.data.total_rows): '';
+						$rootScope.transaction_count = (parseInt(response.data.pending_count) > 0) ? parseInt(response.data.pending_count): '';
 					} else {
+						$rootScope.transaction_count = '';
 						if (response.errors)
 						{
 							$scope.dataErrorMsg = response.errors[0].error;
@@ -65,6 +65,7 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 				},
 				function (error)
 				{
+					$rootScope.transaction_count = '';
 					if (error.status == '401' && error.statusText == 'EXPIRED')
 					{
 						$localStorage.authenticated		= false;
@@ -72,8 +73,6 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

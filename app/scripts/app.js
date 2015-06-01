@@ -107,6 +107,7 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 	$rootScope.$on('$routeChangeStart',
 		function (event, next)
 		{
+console.log('routeChangeStart');
 			$rootScope.nav_active = $location.path().replace("/", "");
 
 			$rootScope.error			= false;
@@ -116,9 +117,11 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
 			if (AuthService.isAuthorized(authorizedRoles))
 			{
+console.log('routeChangeStart 111111');
 //				if (AuthService.isAuthenticated())
 				if ($localStorage.authenticated)
 				{
+console.log('routeChangeStart 222222');
 					// load the upload counts
 					if (typeof($rootScope.transaction_count) == 'undefined')
 					{
@@ -126,7 +129,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 						RestData(
 							{
 								Authorization:		$localStorage.authorization,
-//								Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 								'TOKENID':			$localStorage.token_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})

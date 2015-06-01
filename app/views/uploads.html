@@ -36,8 +36,8 @@
 			<thead>
 				<tr>
 					<th>Date</th>
+					<th>Bank Account</th>
 					<th>Description</th>
-					<th>Type</th>
 					<th>Check Num</th>
 					<th>DEBIT</th>
 					<th>CREDIT</th>
@@ -47,14 +47,14 @@
 			<tbody>
 				<tr ng-repeat="idx in transactions_seq">
 					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+					<td><span class="pull-left">{{transactions[idx].bank_account.bank.name}} {{transactions[idx].bank_account.name}}</span></td>
 					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
-					<td><span class="pull-right">{{transactions[idx].type}}</span></td>
 					<td><span class="pull-right">{{transactions[idx].check_num}}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
-						<span class="glyphicon glyphicon-ok" ng-click="postTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
-						<span class="glyphicon glyphicon-trash" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
+						<span class="glyphicon glyphicon-ok" ng-if="transactions[idx].status == 0" ng-click="postTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
+						<span class="glyphicon glyphicon-trash" ng-if="transactions[idx].status == 0" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 					</td>
 				</tr>
 			</tbody>
