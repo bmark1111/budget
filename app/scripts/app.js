@@ -73,7 +73,7 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)//, $popoverProvid
 		})
 		.when('/bank_settings',
 		{
-			controller:		'SettingsController',
+			controller:		'BankController',
 			templateUrl:	'app/views/bank_settings.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]

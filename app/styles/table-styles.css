@@ -94,6 +94,7 @@ div.table-responsive .currentInterval {
 
 .app-modal-window .modal-dialog {
 	width: 1100px;
+	z-index: 1000;
 }
 
 div.forecast_amount a {
@@ -118,4 +119,8 @@ table.dashboard tbody a {
 	float:right;
 	font-family: arial, sans-serif;
 	padding:0px;
+}
+
+.datepicker {
+	z-index:1051 !important;
 }

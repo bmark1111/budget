@@ -1,10 +1,13 @@
 'use strict';
 
-app.controller('EditModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
+app.controller('EditBankModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
 {
-	$scope.transaction = {
-			splits: {}
+	$scope.bank = {
+			accounts: {}
 		};
+
+	$scope.opened1 = [];
+	$scope.opened2 = [];
 
 	$scope.title = params.title;
 
@@ -18,7 +21,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
-			.editTransaction(
+			.editBank(
 				{
 					id: params.id
 				},
@@ -28,7 +31,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 					{
 						if (response.data.result)
 						{
-							$scope.transaction = response.data.result;
+							$scope.bank = response.data.result;
 						}
 					} else {
 						if (response.errors)
@@ -57,15 +60,27 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 				});
 	}
 
-	$scope.open = function($event)
+	$scope.open1 = function($event, index)
 	{
 		$event.preventDefault();
 		$event.stopPropagation();
 
-		$scope.opened = true;
+		$scope.opened1 = [];
+		$scope.opened2 = [];
+		$scope.opened1[index] = true;
 	};
 
-	// save edited transaction
+	$scope.open2 = function($event, index)
+	{
+		$event.preventDefault();
+		$event.stopPropagation();
+
+		$scope.opened1 = [];
+		$scope.opened2 = [];
+		$scope.opened2[index] = true;
+	};
+
+	// save edited bank
 	$scope.save = function ()
 	{
 		$scope.validation = {};
@@ -76,7 +91,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 				'TOKENID':			$localStorage.token_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
-			.saveTransaction($scope.transaction,
+			.saveBank($scope.bank,
 				function(response)
 				{
 					if (!!response.success)
@@ -85,26 +100,20 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 					}
 					else if (response.validation)
 					{
-						$scope.validation.splits = {};
+						$scope.validation.accounts = {};
 						angular.forEach(response.validation,
 							function(validation)
 							{
 								switch (validation.fieldName)
 								{
-									case 'transaction_date':
-										$scope.validation.date = validation.errorMessage;
+									case 'name':
+										$scope.validation.name = validation.errorMessage;
 										break;
-									case 'description':
-										$scope.validation.description = validation.errorMessage;
-										break;
-									case 'type':
-										$scope.validation.type = validation.errorMessage;
-										break;
-									case 'splits':
-										$scope.validation.splits = validation.errorMessage;
+									case 'accounts':
+										$scope.validation.accounts = validation.errorMessage;
 										break;
 									default:
-										if (validation.fieldName.substr(0,6) == 'splits')
+										if (validation.fieldName.substr(0,8) == 'accounts')
 										{
 											var fieldName = validation.fieldName;
 											var matches = fieldName.match(/\[(.*?)\]/g);
@@ -114,11 +123,11 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 												{
 													matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
 												}
-												if (typeof $scope.validation.splits[matches[1]] == 'undefined')
+												if (typeof $scope.validation.accounts[matches[1]] == 'undefined')
 												{
-													$scope.validation.splits[matches[1]] = Array();
+													$scope.validation.accounts[matches[1]] = Array();
 												}
-												$scope.validation.splits[matches[1]].push(validation.errorMessage);
+												$scope.validation.accounts[matches[1]].push(validation.errorMessage);
 											} else {
 												$scope.validation[fieldName] = validation.errorMessage;
 											}
@@ -153,82 +162,28 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 				});
 	};
 
-	// cancel transaction edit
+	// cancel bank edit
 	$scope.cancel = function ()
 	{
 		$modalInstance.dismiss('cancel');
 	};
 
-	// split transaction
-	$scope.split = function()
+	// add account to Bank
+	$scope.addAccount = function()
 	{
-		if (Object.size($scope.transaction.splits) == 0)
-		{
-			var newItem = {
-				amount:			'',
-				category_id:	'',
-				notes:			''
-			}
-			newItem.amount = $scope.transaction.amount;
-			$scope.transaction.splits = {};
-			$scope.transaction.splits[0] = newItem;
-		}
-	};
+		var idx = Object.size($scope.bank.accounts);
 
-	$scope.refreshSplits = function()
-	{
 		var newItem = {
-			amount:			'',
-			category_id:	'',
-			notes:			''
-		}
+				name:		"",
+				balance:	"0.00"
+			}
 
-		if (Object.size($scope.transaction.splits) > 0)
-//		if ($scope.transaction.splits)
-		{
-			// calculate total of all splits
-			var total = parseFloat(0);
-			angular.forEach($scope.transaction.splits,
-				function(split)
-				{
-					if (split.is_deleted != 1)
-					{
-						total += parseFloat(split.amount);
-					}
-				});
-			$scope.calc = Array();
-			var yy = Object.keys($scope.transaction.splits).length
-			if ($scope.transaction.amount > total)
-			{
-				newItem.amount = $scope.transaction.amount - total;
-				$scope.transaction.splits[yy] = newItem;
-			}
-			else if ($scope.transaction.amount < total)
-			{
-				$scope.calc[yy-1] = 'Split amounts do not match Item amount';
-			}
-		}
+		$scope.bank.accounts[idx] = newItem;
 	};
 
-	$scope.deleteSplit = function(ele)
+	$scope.deleteAccount = function(ele)
 	{
-		$scope.transaction.splits[ele].is_deleted = 1;
-
-		// calculate total of all splits
-		var total = parseFloat(0);
-		angular.forEach($scope.transaction.splits,
-			function(split)
-			{
-				if (split.is_deleted != 1)
-				{
-					total += parseFloat(split.amount);
-				}
-			});
-		$scope.calc = Array();
-		if ($scope.transaction.amount != total)
-		{
-			$scope.calc[ele-1] = 'Split amounts do not match Item amount';
-		}
+		$scope.bank.accounts[ele].is_deleted = 1;
 	};
 
 	Object.size = function(obj)

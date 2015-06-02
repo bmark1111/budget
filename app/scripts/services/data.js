@@ -29,8 +29,13 @@ app.factory('RestData', function ($resource)
 				deleteUploadedTransaction:	{ method: 'GET', headers: headers, params: {object: 'upload', action: 'delete', param: null} },
 				getUploadCounts:			{ method: 'GET', headers: headers, params: {object: 'upload', action: 'counts', param: null} },
 
-				getCategories:				{ method: 'GET', headers: headers, params: {object: 'category', action: '', param: null} },
 				getBankAccounts:			{ method: 'GET', headers: headers, params: {object: 'bank', action: 'accounts', param: null} },
+				getAllBanks:				{ method: 'GET', headers: headers, params: {object: 'bank', action: 'load', param: null} },
+				editBank:					{ method: 'GET', headers: headers, params: {object: 'bank', action: 'edit', param: null} },
+				saveBank:					{ method: 'POST', headers: headers, params: {object: 'bank', action: 'save', param: null} },
+				deleteBank:					{ method: 'GET', headers: headers, params: {object: 'bank', action: 'delete', param: null} },
+
+				getCategories:				{ method: 'GET', headers: headers, params: {object: 'category', action: '', param: null} },
 				getSetting:					{ method: 'GET', headers: headers, params: {object: 'setting', action: 'load', param: null} }
 			});
 	}
