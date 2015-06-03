@@ -2,6 +2,7 @@
 
 app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
 {
+	$scope.dataErrorMsg = [];
 	$scope.title = params.title;
 	$scope.message = params.msg;
 
@@ -28,9 +29,13 @@ app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $l
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

@@ -2,6 +2,8 @@
 
 app.controller('EditBankModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
 {
+	$scope.dataErrorMsg = [];
+
 	$scope.bank = {
 			accounts: {}
 		};
@@ -37,9 +39,13 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();
@@ -141,9 +147,13 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

@@ -6,7 +6,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 
 	$scope.categories = $rootScope.categories;
 
-	$scope.dataErrorMsg = false;
+	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
 
 	var interval = 0;
@@ -66,7 +66,16 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 								}
 							});
 					} else {
-						$scope.dataErrorMsg = response.errors[0];
+						if (response.errors)
+						{
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
+						} else {
+							$scope.dataErrorMsg[0] = response;
+						}
 					}
 //					ngProgress.complete();
 				},
@@ -129,7 +138,16 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 
 						loadForecast();
 					} else {
-						$scope.dataErrorMsg = response.errors[0];
+						if (response.errors)
+						{
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
+						} else {
+							$scope.dataErrorMsg[0] = response;
+						}
 					}
 //					ngProgress.complete();
 				},

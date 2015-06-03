@@ -7,6 +7,8 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 		};
 
 	$scope.title = params.title;
+	
+	$scope.dataErrorMsg = [];
 
 	if (params.id > 0)
 	{
@@ -34,9 +36,13 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();
@@ -132,9 +138,13 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

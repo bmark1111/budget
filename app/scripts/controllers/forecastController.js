@@ -16,7 +16,7 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 	$scope.numPages		= 5;
 	$scope.forecasts	= [];
 
-	$scope.dataErrorMsg = false;
+	$scope.dataErrorMsg = [];
 	$scope.searchDisplay = true;
 	$scope.opened = false;
 
@@ -80,7 +80,16 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 								}
 							});
 					} else {
-						$scope.dataErrorMsg = response.errors[0];
+						if (response.errors)
+						{
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
+						} else {
+							$scope.dataErrorMsg[0] = response;
+						}
 					}
 //					ngProgress.complete();
 				},
@@ -136,9 +145,13 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

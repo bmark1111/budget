@@ -8,7 +8,7 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 	$scope.numPages = 5;
 	$scope.banks	= [];
 
-	$scope.dataErrorMsg	= false;
+	$scope.dataErrorMsg	= [];
 	$scope.searchDisplay = true;
 	$scope.opened = false;
 
@@ -51,9 +51,13 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

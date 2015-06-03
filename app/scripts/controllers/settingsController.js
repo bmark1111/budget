@@ -2,7 +2,7 @@
 
 app.controller('SettingsController', function($scope, $rootScope, $localStorage, $location, RestData)
 {
-//	$rootScope.nav_active = $location.path().replace("/", "");
+	$scope.dataErrorMsg = [];
 
 //	ngProgress.start();
 
@@ -23,7 +23,16 @@ app.controller('SettingsController', function($scope, $rootScope, $localStorage,
 				{
 
 				} else {
-					$scope.dataErrorMsg = '<p class="text-muted">' + response.errors[0];
+					if (response.errors)
+					{
+						angular.forEach(response.errors,
+							function(error)
+							{
+								$scope.dataErrorMsg.push(error.error);
+							})
+					} else {
+						$scope.dataErrorMsg[0] = response;
+					}
 				}
 //				ngProgress.complete();
 			},

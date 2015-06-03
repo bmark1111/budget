@@ -46,7 +46,7 @@
 			</div>
 		</form>
 	</div>
-	<div class="table-responsive" ng-if="!dataErrorMsg">
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
 		<table>
 			<thead>
 				<tr>
@@ -90,7 +90,7 @@
 			</div>
 		</div>
 	</div>
-	<div ng-if="dataErrorMsg">
-		<p class="text-muted">{{ dataErrorMsg }}</p>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
 	</div>
 </div>

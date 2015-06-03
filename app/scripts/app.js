@@ -140,6 +140,7 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
+console.log(error);
 										$rootScope.error = error.status + ' ' + error.statusText;
 									}
 								});
@@ -177,6 +178,7 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
+console.log(error);
 										$rootScope.error = error.status + ' ' + error.statusText;
 									}
 								});
@@ -217,6 +219,7 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
+console.log(error);
 										$rootScope.error = error.status + ' ' + error.statusText;
 									}
 								});

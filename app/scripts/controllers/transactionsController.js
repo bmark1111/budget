@@ -8,7 +8,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 	$scope.numPages = 5;
 	$scope.transactions	= [];
 
-	$scope.dataErrorMsg	= false;
+	$scope.dataErrorMsg	= [];
 	$scope.searchDisplay = true;
 	$scope.opened = false;
 
@@ -53,9 +53,13 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

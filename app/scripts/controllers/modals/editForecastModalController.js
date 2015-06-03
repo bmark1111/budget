@@ -2,6 +2,7 @@
 
 app.controller('EditForecastModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
 {
+	$scope.dataErrorMsg = [];
 	$scope.forecast = {};
 	$scope.title = params.title;
 
@@ -31,9 +32,13 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();
@@ -117,9 +122,13 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 					} else {
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

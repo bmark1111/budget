@@ -10,7 +10,7 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 	$scope.numPages = 5;
 	$scope.transactions	= [];
 
-	$scope.dataErrorMsg	= false;
+	$scope.dataErrorMsg	= [];
 
 	$scope.search = {
 		currentPage:	1,
@@ -21,7 +21,7 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 
 	var loadData = function()
 	{
-		$scope.dataErrorMsg = false;
+		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 
@@ -56,9 +56,13 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 						$rootScope.transaction_count = '';
 						if (response.errors)
 						{
-							$scope.dataErrorMsg = response.errors[0].error;
+							angular.forEach(response.errors,
+								function(error)
+								{
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							$scope.dataErrorMsg = response;
+							$scope.dataErrorMsg[0] = response;
 						}
 					}
 //					ngProgress.complete();

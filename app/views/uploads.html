@@ -4,7 +4,7 @@
 <div class="container-fluid">
 	<h1 class="page-header">Uploaded Transactions</h1>
 	<div ng-if="error">{{error}}</div>
-	<div class="form-wrap" ng-if="!dataErrorMsg">
+	<div class="form-wrap" ng-if="!dataErrorMsg[0] && !error">
 		<form>
 			<div class="row">
 				<div class="col-md-2">
@@ -31,7 +31,7 @@
 			</div>
 		</form>
 	</div>
-	<div class="table-responsive" ng-if="!dataErrorMsg">
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
 		<table>
 			<thead>
 				<tr>
@@ -67,7 +67,7 @@
 			</div>
 		</div>
 	</div>
-	<div ng-if="dataErrorMsg">
-		<p class="text-muted">{{ dataErrorMsg }}</p>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
 	</div>
 </div>
