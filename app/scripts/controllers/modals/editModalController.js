@@ -16,6 +16,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.editTransaction(
@@ -48,6 +49,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
@@ -74,6 +76,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.saveTransaction($scope.transaction,
@@ -144,6 +147,7 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");

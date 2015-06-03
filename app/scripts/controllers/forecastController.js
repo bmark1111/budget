@@ -34,8 +34,8 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getForecast(
@@ -92,9 +92,8 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
@@ -122,8 +121,8 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getAllForecasts(searchCriteria,
@@ -152,9 +151,8 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

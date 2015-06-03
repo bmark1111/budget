@@ -1,20 +1,7 @@
-var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);//, 'ngAnimate', 'ngSanitize', 'mgcrea.ngStrap']);
+var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);
 
-app.config(function($routeProvider, $httpProvider, USER_ROLES)//, $popoverProvider)
+app.config(function($routeProvider, $httpProvider, USER_ROLES)
 {
-//	$httpProvider.interceptors.push([
-//		'$injector',
-//		function ($injector)
-//		{
-//console.log($injector.get('AuthInterceptor'));
-//			return $injector.get('AuthInterceptor');
-//		}
-//	]);
-
-//	angular.extend($popoverProvider.defaults, {
-//			html: true
-//		});
-
 	$routeProvider
 		.when('/',
 		{
@@ -108,6 +95,9 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 		function (event, next)
 		{
 console.log('routeChangeStart');
+			var account = $location.host().split('.');
+			$localStorage.account_id = account[0];
+
 			$rootScope.nav_active = $location.path().replace("/", "");
 
 			$rootScope.error			= false;
@@ -118,7 +108,6 @@ console.log('routeChangeStart');
 			if (AuthService.isAuthorized(authorizedRoles))
 			{
 console.log('routeChangeStart 111111');
-//				if (AuthService.isAuthenticated())
 				if ($localStorage.authenticated)
 				{
 console.log('routeChangeStart 222222');
@@ -130,6 +119,7 @@ console.log('routeChangeStart 222222');
 							{
 								Authorization:		$localStorage.authorization,
 								'TOKENID':			$localStorage.token_id,
+								'ACCOUNTID':		$localStorage.account_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getUploadCounts(
@@ -145,6 +135,7 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorizedRoles	= false;
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
+										$localStorage.account_id		= false;
 										$localStorage.userId			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
@@ -161,6 +152,7 @@ console.log('routeChangeStart 222222');
 							{
 								Authorization:		$localStorage.authorization,
 								'TOKENID':			$localStorage.token_id,
+								'ACCOUNTID':		$localStorage.account_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getCategories(
@@ -180,6 +172,7 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorizedRoles	= false;
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
+										$localStorage.account_id		= false;
 										$localStorage.userId			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
@@ -196,6 +189,7 @@ console.log('routeChangeStart 222222');
 							{
 								Authorization:		$localStorage.authorization,
 								'TOKENID':			$localStorage.token_id,
+								'ACCOUNTID':		$localStorage.account_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getBankAccounts(
@@ -218,6 +212,7 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorizedRoles	= false;
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
+										$localStorage.account_id		= false;
 										$localStorage.userId			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
@@ -230,14 +225,14 @@ console.log('routeChangeStart 222222');
 
 			} else {
 				event.preventDefault();
-//				if (AuthService.isAuthenticated())
+
 				if ($localStorage.authenticated)
 				{
 					// user is not allowed
-//					$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+
 				} else {
 					// user is not logged in
-//					$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+
 				}
 			}
 		});

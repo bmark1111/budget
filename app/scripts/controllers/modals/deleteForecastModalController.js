@@ -12,8 +12,8 @@ app.controller('DeleteForecastModalController', function ($scope, $rootScope, $l
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.deleteForecast(
@@ -43,9 +43,8 @@ app.controller('DeleteForecastModalController', function ($scope, $rootScope, $l
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

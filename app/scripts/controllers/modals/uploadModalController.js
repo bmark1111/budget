@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('UploadModalController', function ($scope, $rootScope, $modalInstance, fileUpload, params)
+app.controller('UploadModalController', function ($scope, $rootScope, $modalInstance, $localStorage, fileUpload, params)
 {
 	$scope.ignoreFirstLine = 0;
 	$scope.bank_account_id = 0;
@@ -14,22 +14,25 @@ app.controller('UploadModalController', function ($scope, $rootScope, $modalInst
 	// upload transaction file
 	$scope.upload = function ()
 	{
-		var file = $scope.myFile;
+		if ($localStorage.authenticated)
+		{
+			var file = $scope.myFile;
 
-		var uploadUrl = 'http://rest.budget.loc/upload/' + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
-		fileUpload.uploadFileToUrl(file, uploadUrl)
-			.success(function(response)
-			{
-				if (response.success === 1)
+			var uploadUrl = 'http://rest.budget.loc/upload/' + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
+			fileUpload.uploadFileToUrl(file, uploadUrl)
+				.success(function(response)
 				{
-					$scope.upload_fail = false;
-					$scope.upload_errors = {};
-					$modalInstance.close(response);
-				} else {
-					$scope.upload_fail = true;
-					$scope.upload_errors = response.errors;
-				}
-			});
+					if (response.success === 1)
+					{
+						$scope.upload_fail = false;
+						$scope.upload_errors = {};
+						$modalInstance.close(response);
+					} else {
+						$scope.upload_fail = true;
+						$scope.upload_errors = response.errors;
+					}
+				});
+		}
 	};
 
 	// cancel transaction edit

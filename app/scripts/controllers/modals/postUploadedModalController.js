@@ -14,8 +14,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 	RestData(
 		{
 			Authorization:		$localStorage.authorization,
-//			Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 			'TOKENID':			$localStorage.token_id,
+			'ACCOUNTID':		$localStorage.account_id,
 			'X-Requested-With':	'XMLHttpRequest'
 		})
 		.getUploadedTransaction(
@@ -51,9 +51,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
+					$localStorage.account_id		= false;
 					$localStorage.userId			= false;
-//					$localStorage.username			= false;
-//					$localStorage.password			= false;
 					$localStorage.authorization		= false;
 					$location.path("/login");
 				} else {
@@ -79,8 +78,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.postUploadedTransaction($scope.uploaded,
@@ -122,9 +121,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
@@ -140,8 +138,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
-//				Authorization:		"Basic " + btoa($localStorage.username + ':' + $localStorage.password),
 				'TOKENID':			$localStorage.token_id,
+				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.deleteUploadedTransaction(
@@ -171,9 +169,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
+						$localStorage.account_id		= false;
 						$localStorage.userId			= false;
-//						$localStorage.username			= false;
-//						$localStorage.password			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
