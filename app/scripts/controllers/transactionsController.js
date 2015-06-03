@@ -21,7 +21,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $localStor
 
 	var loadData = function()
 	{
-		$scope.dataErrorMsg = false;
+		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 

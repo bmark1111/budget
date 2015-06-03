@@ -8,6 +8,8 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 
 	if (params.id > 0)
 	{
+		$scope.dataErrorMsg = [];
+
 //		ngProgress.start();
 
 		RestData(
@@ -80,6 +82,8 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 	// save edited forecast
 	$scope.save = function ()
 	{
+		$scope.dataErrorMsg = [];
+
 		$scope.validation = {};
 
 		RestData(

@@ -8,6 +8,7 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 	$scope.categories = [];
 	$scope.title = params.title;
 	$scope.post = 'Post New';
+
 	$scope.dataErrorMsg = [];
 
 //	ngProgress.start();
@@ -76,6 +77,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 	// post uploaded uploaded
 	$scope.postUploaded = function ()
 	{
+		$scope.dataErrorMsg = [];
+
 		$scope.validation = {};
 
 		$scope.uploaded.transaction_id = $scope.idSelectedTransaction;
@@ -142,6 +145,8 @@ app.controller('PostUploadedModalController', function ($scope, $rootScope, $loc
 
 	$scope.deleteUploaded = function()
 	{
+		$scope.dataErrorMsg = [];
+
 //		ngProgress.start();
 
 		RestData(

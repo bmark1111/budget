@@ -12,6 +12,8 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 
 	if (params.id > 0)
 	{
+		$scope.dataErrorMsg = [];
+
 //		ngProgress.start();
 
 		RestData(
@@ -76,6 +78,8 @@ app.controller('EditModalController', function ($scope, $rootScope, $localStorag
 	// save edited transaction
 	$scope.save = function ()
 	{
+		$scope.dataErrorMsg = [];
+
 		$scope.validation = {};
 
 		RestData(

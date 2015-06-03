@@ -13,6 +13,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 
 	var loadForecast = function()
 	{
+		$scope.dataErrorMsg = [];
+
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
@@ -99,6 +101,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 
 	var loadTransactions = function()
 	{
+		$scope.dataErrorMsg = [];
+
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,

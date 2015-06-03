@@ -21,7 +21,7 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 
 	var loadData = function()
 	{
-		$scope.dataErrorMsg = false;
+		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 

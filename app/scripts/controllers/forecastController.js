@@ -31,6 +31,8 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 
 	var loadForecast = function()
 	{
+		$scope.dataErrorMsg = [];
+
 		RestData(
 			{
 				Authorization:		$localStorage.authorization,
@@ -113,7 +115,7 @@ app.controller('ForecastController', function($scope, $rootScope, $localStorage,
 
 	var loadAllForecasts = function()
 	{
-		$scope.dataErrorMsg = false;
+		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 
