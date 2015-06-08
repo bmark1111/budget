@@ -23,7 +23,6 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.editBank(
@@ -60,8 +59,6 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
@@ -101,7 +98,6 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.saveBank($scope.bank,
@@ -170,8 +166,6 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

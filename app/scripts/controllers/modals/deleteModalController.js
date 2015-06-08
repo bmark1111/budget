@@ -14,7 +14,6 @@ app.controller('DeleteModalController', function ($scope, $rootScope, $localStor
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.deleteTransaction(
@@ -48,8 +47,6 @@ app.controller('DeleteModalController', function ($scope, $rootScope, $localStor
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

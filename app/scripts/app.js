@@ -95,9 +95,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData, AuthSer
 		function (event, next)
 		{
 console.log('routeChangeStart');
-			var account = $location.host().split('.');
-			$localStorage.account_id = account[0];
-
 			$rootScope.nav_active = $location.path().replace("/", "");
 
 			$rootScope.error			= false;
@@ -119,7 +116,6 @@ console.log('routeChangeStart 222222');
 							{
 								Authorization:		$localStorage.authorization,
 								'TOKENID':			$localStorage.token_id,
-								'ACCOUNTID':		$localStorage.account_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getUploadCounts(
@@ -135,12 +131,9 @@ console.log('routeChangeStart 222222');
 										$localStorage.authorizedRoles	= false;
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
-										$localStorage.account_id		= false;
-										$localStorage.userId			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
-console.log(error);
 										$rootScope.error = error.status + ' ' + error.statusText;
 									}
 								});
@@ -153,7 +146,6 @@ console.log(error);
 							{
 								Authorization:		$localStorage.authorization,
 								'TOKENID':			$localStorage.token_id,
-								'ACCOUNTID':		$localStorage.account_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getCategories(
@@ -173,12 +165,9 @@ console.log(error);
 										$localStorage.authorizedRoles	= false;
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
-										$localStorage.account_id		= false;
-										$localStorage.userId			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
-console.log(error);
 										$rootScope.error = error.status + ' ' + error.statusText;
 									}
 								});
@@ -191,7 +180,6 @@ console.log(error);
 							{
 								Authorization:		$localStorage.authorization,
 								'TOKENID':			$localStorage.token_id,
-								'ACCOUNTID':		$localStorage.account_id,
 								'X-Requested-With': 'XMLHttpRequest'
 							})
 							.getBankAccounts(
@@ -214,12 +202,9 @@ console.log(error);
 										$localStorage.authorizedRoles	= false;
 										$localStorage.userFullName		= false;
 										$localStorage.token_id			= false;
-										$localStorage.account_id		= false;
-										$localStorage.userId			= false;
 										$localStorage.authorization		= false;
 										$location.path("/login");
 									} else {
-console.log(error);
 										$rootScope.error = error.status + ' ' + error.statusText;
 									}
 								});

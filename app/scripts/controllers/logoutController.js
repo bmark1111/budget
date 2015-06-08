@@ -6,9 +6,9 @@ app.controller('LogoutController', function($scope, $rootScope, $localStorage, $
 
 	$http.post('http://rest.budget.loc/logout',
 		{
-			token_id:		$localStorage.token_id,
-			userId:			$localStorage.userId,
-			'ACCOUNTID':	$localStorage.account_id
+			Authorization:		$localStorage.authorization,
+			'TOKENID':			$localStorage.token_id,
+			'X-Requested-With':	'XMLHttpRequest'
 		})
 		.success(function()
 				{
@@ -16,8 +16,6 @@ app.controller('LogoutController', function($scope, $rootScope, $localStorage, $
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
-					$localStorage.account_id		= false;
-					$localStorage.userId			= false;
 					$localStorage.authorization		= false;
 					$location.path("/");
 				})
@@ -27,8 +25,6 @@ app.controller('LogoutController', function($scope, $rootScope, $localStorage, $
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
-					$localStorage.account_id		= false;
-					$localStorage.userId			= false;
 					$localStorage.authorization		= false;
 				});
 });

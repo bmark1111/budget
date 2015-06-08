@@ -37,7 +37,6 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getAllBanks(searchCriteria,
@@ -70,8 +69,6 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

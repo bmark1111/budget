@@ -19,7 +19,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getForecast(
@@ -89,8 +88,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
@@ -107,7 +104,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getTransactions(
@@ -163,8 +159,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
@@ -186,7 +180,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getTheseTransactions(
@@ -212,8 +205,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

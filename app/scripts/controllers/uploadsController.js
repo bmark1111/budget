@@ -39,7 +39,6 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.getAllUploads(searchCriteria,
@@ -76,8 +75,6 @@ app.controller('UploadsController', function($scope, $rootScope, $localStorage, 
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {

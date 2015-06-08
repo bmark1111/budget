@@ -16,7 +16,6 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.editForecast(
@@ -53,8 +52,6 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
@@ -90,7 +87,6 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 			{
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,
-				'ACCOUNTID':		$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			})
 			.saveForecast($scope.forecast,
@@ -145,8 +141,6 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 						$localStorage.authorizedRoles	= false;
 						$localStorage.userFullName		= false;
 						$localStorage.token_id			= false;
-						$localStorage.account_id		= false;
-						$localStorage.userId			= false;
 						$localStorage.authorization		= false;
 						$location.path("/login");
 					} else {
