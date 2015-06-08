@@ -1,12 +1,12 @@
 'use strict';
 
-app.controller('BankController', function($scope, $rootScope, $localStorage, $location, $modal, $timeout, RestData)
+app.controller('BankController', function($scope, $modal, $timeout, RestData2)//, $rootScope, $localStorage, $location)
 {
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
 	$scope.recCount		= 0;
-	$scope.numPages = 5;
-	$scope.banks	= [];
+	$scope.numPages		= 5;
+	$scope.banks		= [];
 
 	$scope.dataErrorMsg	= [];
 	$scope.searchDisplay = true;
@@ -25,21 +25,14 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 
 //		ngProgress.start();
 
-		var searchCriteria = {
-						'name':					$scope.search.name,
-						'sort':					'name',
-						'sort_dir':				'DESC',
-						'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
-						'pagination_amount':	$scope.itemsPerPage
-		};
-
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.getAllBanks(searchCriteria,
+		RestData2().getAllBanks(
+				{
+					'name':					$scope.search.name,
+					'sort':					'name',
+					'sort_dir':				'DESC',
+					'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+					'pagination_amount':	$scope.itemsPerPage
+				},
 				function(response)
 				{
 					if (!!response.success)
@@ -60,7 +53,7 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 						}
 					}
 //					ngProgress.complete();
-				},
+/*				},
 				function (error)
 				{
 					if (error.status == '401' && error.statusText == 'EXPIRED')
@@ -74,6 +67,7 @@ app.controller('BankController', function($scope, $rootScope, $localStorage, $lo
 					} else {
 						$rootScope.error = error.status + ' ' + error.statusText;
 					}
+*/
 				});
 	}
 

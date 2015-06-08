@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData, $localStorage, $location, $filter)//, $popover)
+app.controller('DashboardController', function($scope, $rootScope, RestData2, $filter)//, $localStorage, $location)//, $popover)
 {
 	$scope.intervals = [];
 
@@ -15,13 +15,13 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 	{
 		$scope.dataErrorMsg = [];
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.getForecast(
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().getForecast(
 				{
 					interval: interval
 				},
@@ -79,20 +79,20 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	}
 
@@ -100,13 +100,13 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 	{
 		$scope.dataErrorMsg = [];
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.getTransactions(
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().getTransactions(
 				{
 					interval: interval
 				},
@@ -150,20 +150,20 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	}
 
@@ -176,13 +176,13 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 		var date = $filter('date')(interval_ending, "EEE MMM dd, yyyy");
 		$scope.title = $('#popover_' + index + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.getTheseTransactions(
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().getTheseTransactions(
 				{
 					interval_ending:	interval_ending,
 					category_id:		category_id
@@ -196,20 +196,20 @@ app.controller('DashboardController', function($scope, $rootScope, RestData, $lo
 					} else {
 						$scope.dataErrorMsgThese = response.errors;
 					}
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$scope.errorThese = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$scope.errorThese = error.status + ' ' + error.statusText;
+//					}
 				});
 	}
 

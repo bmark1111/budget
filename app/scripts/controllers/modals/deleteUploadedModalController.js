@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
+app.controller('DeleteUploadedModalController', function ($scope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg = [];
 	$scope.title = params.title;
@@ -10,13 +10,13 @@ app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $l
 	{
 //		ngProgress.start();
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.deleteUploadedTransaction(
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().deleteUploadedTransaction(
 				{
 					'id': params.id
 				},
@@ -38,20 +38,20 @@ app.controller('DeleteUploadedModalController', function ($scope, $rootScope, $l
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	};
 

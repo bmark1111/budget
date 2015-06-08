@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('EditForecastModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
+app.controller('EditForecastModalController', function ($scope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg = [];
 	$scope.forecast = {};
@@ -12,13 +12,13 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 
 //		ngProgress.start();
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.editForecast(
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().editForecast(
 				{
 					id: params.id
 				},
@@ -43,20 +43,20 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	}
 
@@ -83,13 +83,13 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 
 		$scope.validation = {};
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.saveForecast($scope.forecast,
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().saveForecast($scope.forecast,
 				function(response)
 				{
 					if (!!response.success)
@@ -132,20 +132,20 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $loc
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	};
 

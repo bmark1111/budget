@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('EditBankModalController', function ($scope, $rootScope, $localStorage, $location, $modalInstance, RestData, params)
+app.controller('EditBankModalController', function ($scope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg = [];
 
@@ -19,13 +19,13 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 
 //		ngProgress.start();
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.editBank(
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().editBank(
 				{
 					id: params.id
 				},
@@ -50,20 +50,20 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	}
 
@@ -94,13 +94,13 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 
 		$scope.validation = {};
 
-		RestData(
-			{
-				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
-				'X-Requested-With':	'XMLHttpRequest'
-			})
-			.saveBank($scope.bank,
+//		RestData(
+//			{
+//				Authorization:		$localStorage.authorization,
+//				'TOKENID':			$localStorage.token_id,
+//				'X-Requested-With':	'XMLHttpRequest'
+//			})
+		RestData2().saveBank($scope.bank,
 				function(response)
 				{
 					if (!!response.success)
@@ -157,20 +157,20 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $localSt
 						}
 					}
 //					ngProgress.complete();
-				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
+//				},
+//				function (error)
+//				{
+//					if (error.status == '401' && error.statusText == 'EXPIRED')
+//					{
+//						$localStorage.authenticated		= false;
+//						$localStorage.authorizedRoles	= false;
+//						$localStorage.userFullName		= false;
+//						$localStorage.token_id			= false;
+//						$localStorage.authorization		= false;
+//						$location.path("/login");
+//					} else {
+//						$rootScope.error = error.status + ' ' + error.statusText;
+//					}
 				});
 	};
 

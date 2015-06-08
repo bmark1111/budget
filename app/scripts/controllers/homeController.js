@@ -1,8 +1,7 @@
 'use strict';
 
-app.controller('HomeController', function($scope, $rootScope, $localStorage, $location)
+app.controller('HomeController', function($scope)
 {
-//	$rootScope.nav_active = 'home';
 
 
 });
