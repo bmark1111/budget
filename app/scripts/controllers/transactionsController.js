@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('TransactionsController', function($scope, $rootScope, $modal, $timeout, RestData2)//, $localStorage, $location)
+app.controller('TransactionsController', function($scope, $rootScope, $modal, $timeout, RestData2)
 {
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
@@ -25,22 +25,6 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 //		ngProgress.start();
 
-//		var searchCriteria = {
-//						'date':					$scope.search.date,
-//						'description':			$scope.search.description,
-//						'amount':				$scope.search.amount,
-//						'sort':					'transaction_date',
-//						'sort_dir':				'DESC',
-//						'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
-//						'pagination_amount':	$scope.itemsPerPage
-//		};
-
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().getAllTransactions(
 				{
 						'date':					$scope.search.date,
@@ -70,21 +54,8 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 							$scope.dataErrorMsg[0] = response;
 						}
 					}
+
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	}
 

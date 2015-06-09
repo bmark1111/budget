@@ -1,24 +1,37 @@
 var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);
 
-//app.config(function($routeProvider, $httpProvider, USER_ROLES)
-app.config(function ($routeProvider, $httpProvider, USER_ROLES)
+app.config(function($routeProvider, $httpProvider, USER_ROLES)
 {
-	$httpProvider.interceptors.push(function ($q, $localStorage, $location, $rootScope) {
+	$httpProvider.interceptors.push(function ($q, $localStorage, $location, $rootScope)
+	{
+//		$rootScope.dataErrorMsg = [];
+
 		return {
 			'response': function (response)
 			{
 				//Will only be called for HTTP up to 300
-console.log("SUCCESS")
-console.log(response);
-				return response;
+//console.log("SUCCESS")
+//console.log(response);
+//				if (response.success == 1)
+//				{
+					return response;
+//				} else {
+//					if (response.errors)
+//					{
+//						angular.forEach(response.errors,
+//							function(error)
+//							{
+//								$rootScope.dataErrorMsg.push(error.error);
+//							})
+//					} else {
+//						$rootScope.dataErrorMsg[0] = response;
+//					}
+//				}
 			},
 			'responseError': function (rejection)
 			{
-console.log("ERROR")
-console.log(rejection);
 				if (rejection.status == '401' && rejection.statusText == 'EXPIRED')
 				{
-console.log('REDIRECT TO LOGIN')
 					$localStorage.authenticated		= false;
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
@@ -144,42 +157,16 @@ console.log('routeChangeStart 222222');
 					if (typeof($rootScope.transaction_count) == 'undefined')
 					{
 						$rootScope.transaction_count = '';
-//						RestData(
-//							{
-//								Authorization:		$localStorage.authorization,
-//								'TOKENID':			$localStorage.token_id,
-//								'X-Requested-With': 'XMLHttpRequest'
-//							})
 						RestData2().getUploadCounts(
 								function(response)
 								{
 									$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
-//								},
-//								function (error)
-//								{
-//									if (error.status == '401' && error.statusText == 'EXPIRED')
-//									{
-//										$localStorage.authenticated		= false;
-//										$localStorage.authorizedRoles	= false;
-//										$localStorage.userFullName		= false;
-//										$localStorage.token_id			= false;
-//										$localStorage.authorization		= false;
-//										$location.path("/login");
-//									} else {
-////										$rootScope.error = error.status + ' ' + error.statusText;
-//									}
 								});
 					}
 
 					if (typeof($rootScope.categories) == 'undefined')
 					{	// load the categories
 						$rootScope.categories = [];
-//						RestData(
-//							{
-//								Authorization:		$localStorage.authorization,
-//								'TOKENID':			$localStorage.token_id,
-//								'X-Requested-With': 'XMLHttpRequest'
-//							})
 						RestData2().getCategories(
 								function(response)
 								{
@@ -188,32 +175,12 @@ console.log('routeChangeStart 222222');
 										{
 											$rootScope.categories.push(category)
 										});
-//								},
-//								function (error)
-//								{
-//									if (error.status == '401' && error.statusText == 'EXPIRED')
-//									{
-//										$localStorage.authenticated		= false;
-//										$localStorage.authorizedRoles	= false;
-//										$localStorage.userFullName		= false;
-//										$localStorage.token_id			= false;
-//										$localStorage.authorization		= false;
-//										$location.path("/login");
-//									} else {
-////										$rootScope.error = error.status + ' ' + error.statusText;
-//									}
 								});
 					}
 
 					if (typeof($rootScope.bank_accounts) == 'undefined')
 					{	// load the bank accounts
 						$rootScope.bank_accounts = [];
-//						RestData(
-//							{
-//								Authorization:		$localStorage.authorization,
-//								'TOKENID':			$localStorage.token_id,
-//								'X-Requested-With': 'XMLHttpRequest'
-//							})
 						RestData2().getBankAccounts(
 								function(response)
 								{
@@ -225,20 +192,6 @@ console.log('routeChangeStart 222222');
 												'name': bank_account.bank.name + ' ' + bank_account.name
 											})
 										});
-//								},
-//								function (error)
-//								{
-//									if (error.status == '401' && error.statusText == 'EXPIRED')
-//									{
-//										$localStorage.authenticated		= false;
-//										$localStorage.authorizedRoles	= false;
-//										$localStorage.userFullName		= false;
-//										$localStorage.token_id			= false;
-//										$localStorage.authorization		= false;
-//										$location.path("/login");
-//									} else {
-////										$rootScope.error = error.status + ' ' + error.statusText;
-//									}
 								});
 					}
 				}
