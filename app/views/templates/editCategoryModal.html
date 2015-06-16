@@ -1,0 +1,42 @@
+<script type="text/ng-template" id="editCategoryModal.html">
+	<div class="modal-header ng-scope">
+		<h3 class="modal-title">{{title}}</h3>
+	</div>
+	<div class="modal-body ng-scope">
+		<div class="row">
+			<div class="col-md-6">
+				<label for="name">Name</label>
+				<div class="form-group" ng-class="{'has-error':validation.name}">
+					<input type="text" name="name" ng-model="category.name" />
+					<span class="help-block" ng-show="validation.name">{{validation.name}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body ng-scope">
+		<div class="row">
+			<div class="col-md-6">
+				<label for="description">Description</label>
+				<div class="form-group" ng-class="{'has-error':validation.description}">
+					<input type="text" name="description" ng-model="category.description" />
+					<span class="help-block" ng-show="validation.description">{{validation.description}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body ng-scope">
+		<div class="row">
+			<div class="col-md-6">
+				<label for="order">Order</label>
+				<div class="form-group" ng-class="{'has-error':validation.order}">
+					<input type="text" name="order" ng-model="category.order" />
+					<span class="help-block" ng-show="validation.order">{{validation.order}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer ng-scope">
+		<button class="btn btn-primary" ng-click="save()">Save</button>
+		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	</div>
+</script>

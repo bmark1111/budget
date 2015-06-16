@@ -1,8 +1,8 @@
 <ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
-<ng-include src="'app/views/templates/editBankModal.html'"></ng-include>
+<ng-include src="'app/views/templates/editCategoryModal.html'"></ng-include>
 
 <div class="container-fluid">
-	<h1 class="page-header">Bank Settings</h1>
+	<h1 class="page-header">Category Settings</h1>
 	<div ng-if="error">{{error}}</div>
 	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
@@ -15,28 +15,32 @@
 				</div>
 				<div class="col-md-2" style="padding-top:20px;">
 					<div class="form-group">
-						<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addBank()">
-							Add Bank
+						<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addCategory()">
+							Add Category
 						</button>
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>
-	<div class="table-responsive" style="width:30%;" ng-if="!dataErrorMsg[0] && !error">
+	<div class="table-responsive" style="width:70%;" ng-if="!dataErrorMsg[0] && !error">
 		<table>
 			<thead>
 				<tr>
-					<th style="width:80%;">Name</th>
+					<th style="width:30%;">Name</th>
+					<th style="width:40%;">Description</th>
+					<th style="width:10%;">Order</th>
 					<th style="width:20%;"></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="idx in banks_seq">
-					<td><span class="pull-left">{{banks[idx].name}}</span></td>
+				<tr ng-repeat="idx in categories_seq">
+					<td><span class="pull-left">{{categories[idx].name}}</span></td>
+					<td><span class="pull-left">{{categories[idx].description}}</span></td>
+					<td><span class="pull-left">{{categories[idx].order}}</span></td>
 					<td>
-						<span class="glyphicon glyphicon-pencil" ng-click="editBank(banks[idx].id)" style="cursor:pointer;" title="Edit Bank ?"></span>
-						<span class="glyphicon glyphicon-trash" ng-click="deleteBank(banks[idx].id)" style="cursor:pointer;" title="Delete Bank ?"></span>
+						<span class="glyphicon glyphicon-pencil" ng-click="editCategory(categories[idx].id)" style="cursor:pointer;" title="Edit Category ?"></span>
+						<span class="glyphicon glyphicon-trash" ng-click="deleteCategory(categories[idx].id)" style="cursor:pointer;" title="Delete Category ?"></span>
 					</td>
 				</tr>
 			</tbody>

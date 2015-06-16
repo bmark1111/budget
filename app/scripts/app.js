@@ -111,6 +111,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+		.when('/categories',
+		{
+			controller:		'CategoryController',
+			templateUrl:	'app/views/categories.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
 		.when('/budget_settings',
 		{
 			controller:		'SettingsController',
