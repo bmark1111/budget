@@ -54,7 +54,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 
 	loadTransactions();
 
-	$scope.showTheseTransactions = function(interval_ending, category_id, index)
+	$scope.showTheseTransactions = function(category_id, index)
 	{
 		$scope.dataErrorMsgThese = false;
 
@@ -63,7 +63,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 
 		RestData2().getTheseTransactions(
 				{
-					interval_ending:	interval_ending,
+					interval_beginning:	$scope.intervals[index].interval_beginning,
+					interval_ending:	$scope.intervals[index].interval_ending,
 					category_id:		category_id
 				},
 				function(response)

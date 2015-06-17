@@ -20,9 +20,8 @@
 					<th nowrap>{{category.name}}</th>
 					<td ng-repeat="interval in intervals" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right" ng-class="{'forecast_amount':interval.types[category.id] == '1'}">
-							<!--<span ng-click="showTheseTransactions(interval.interval_ending, category.id, $index)">{{interval.totals[category.id]|currency}}</span>-->
 							<span>
-								<a ns-popover="showTheseTransactions(interval.interval_ending, category.id, $index)"
+								<a ns-popover="showTheseTransactions(category.id, $index)"
 									ns-popover-placement="right"
 									ns-popover-template="transactions"
 									ns-popover-trigger="click"
