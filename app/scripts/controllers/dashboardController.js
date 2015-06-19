@@ -58,7 +58,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 	{
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')(interval_ending, "EEE MMM dd, yyyy");
+		var date = $filter('date')($scope.intervals[index].interval_ending, "EEE MMM dd, yyyy");
 		$scope.title = $('#popover_' + index + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
 
 		RestData2().getTheseTransactions(
