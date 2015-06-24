@@ -24,12 +24,18 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location,
 												$localStorage.userFullName		= data.data.user.firstname + ' ' + data.data.user.lastname;
 												$localStorage.token_id			= data.data.user.last_session_id;
 												$localStorage.authorization		= "Basic " + btoa(credentials.username + ":" + credentials.password);
+
+												$location.path("/dashboard");
+												$scope.error = false;
 											} else {
 												$localStorage.authenticated		= false;
 												$localStorage.authorizedRoles	= false;
 												$localStorage.userFullName		= false;
 												$localStorage.token_id			= false;
 												$localStorage.authorization		= false;
+
+												$location.path("/login");
+												$scope.error = true;
 											}
 											callback && callback();
 										})
@@ -48,17 +54,17 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location,
 	$scope.credentials = {};
 	$scope.login = function()
 					{
-						authenticate($scope.credentials,
-							function()
-							{
-								if ($localStorage.authenticated)
-								{
-									$location.path("/dashboard");
-									$scope.error = false;
-								} else {
-									$location.path("/login");
-									$scope.error = true;
-								}
-							});
+						authenticate($scope.credentials);//,
+//							function()
+//							{
+//								if ($localStorage.authenticated)
+//								{
+//									$location.path("/dashboard");
+//									$scope.error = false;
+//								} else {
+//									$location.path("/login");
+//									$scope.error = true;
+//								}
+//							});
 					};
 });
