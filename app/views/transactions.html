@@ -75,8 +75,8 @@
 				</tr>
 				<tr ng-repeat-end="">
 					<td>
-						<span class="pull-left" ng-if="transactions[idx].category_id == 0">--Split--</span>
-						<span class="pull-left" ng-if="transactions[idx].category_id != 0">{{transactions[idx].category.name}}</span>
+						<span class="pull-left" ng-if="!transactions[idx].category_id">--Split--</span>
+						<span class="pull-left" ng-if="transactions[idx].category_id">{{transactions[idx].category.name}}</span>
 					</td>
 					<td><span class="pull-left">{{transactions[idx].notes}}</span></td>
 				</tr>
