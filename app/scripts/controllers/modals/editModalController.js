@@ -14,14 +14,6 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 	{
 		$scope.dataErrorMsg = [];
 
-//		ngProgress.start();
-
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().editTransaction(
 				{
 					id: params.id
@@ -46,21 +38,6 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 							$scope.dataErrorMsg[0] = response;
 						}
 					}
-//					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	}
 
@@ -79,12 +56,6 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 
 		$scope.validation = {};
 
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().saveTransaction($scope.transaction,
 				function(response)
 				{
@@ -148,20 +119,6 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 						}
 					}
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	};
 
@@ -178,6 +135,7 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 		{
 			var newItem = {
 				amount:			'',
+				type:			'',
 				category_id:	'',
 				notes:			''
 			}
@@ -191,12 +149,12 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 	{
 		var newItem = {
 			amount:			'',
+			type:			'',
 			category_id:	'',
 			notes:			''
 		}
 
 		if (Object.size($scope.transaction.splits) > 0)
-//		if ($scope.transaction.splits)
 		{
 			// calculate total of all splits
 			var total = parseFloat(0);
@@ -205,9 +163,20 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 				{
 					if (split.is_deleted != 1)
 					{
-						total += parseFloat(split.amount);
+						switch (split.type)
+						{
+							case 'DEBIT':
+							case 'CHECK':
+								total -= parseFloat(split.amount);
+								break;
+							case 'CREDIT':
+							case 'DSLIP':
+								total += parseFloat(split.amount);
+								break;
+						}
 					}
 				});
+
 			$scope.calc = Array();
 			var yy = Object.keys($scope.transaction.splits).length
 			if ($scope.transaction.amount > total)
@@ -224,6 +193,7 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 
 	$scope.deleteSplit = function(ele)
 	{
+console.log('deleteSplit');
 		$scope.transaction.splits[ele].is_deleted = 1;
 
 		// calculate total of all splits

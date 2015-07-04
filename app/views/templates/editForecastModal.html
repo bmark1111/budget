@@ -73,7 +73,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-2">
-				<label for="every">Type</label>
+				<label for="every">Every</label>
 				<div class="form-group" ng-class="{'has-error':validation.every}">
 					<select class="form-control" name="every" ng-model="forecast.every">
 						<option>Select Type</option>
@@ -104,10 +104,17 @@
 				</div>
 			</div>
 			<div class="col-sm-2" style="width:20%;">
-				<label for="every_on">On</label>
+				<label for="every_on">On Date</label>
 				<div class="form-group" ng-class="{'has-error':validation.every_on}">
 					<input type="text" name="every_on" ng-model="forecast.every_on" />
 					<span class="help-block" ng-show="validation.every_on">{{validation.every_on}}</span>
+				</div>
+			</div>
+			<div class="col-sm-2" style="width:20%;">
+				<label for="every_on_month">On Month</label>
+				<div class="form-group" ng-class="{'has-error':validation.every_on_month}">
+					<input type="text" name="every_on_month" ng-model="forecast.every_on_month" />
+					<span class="help-block" ng-show="validation.every_on_month">{{validation.every_on_month}}</span>
 				</div>
 			</div>
 		</div>

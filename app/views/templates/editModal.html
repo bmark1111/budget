@@ -83,6 +83,7 @@
 			<table style="width:100%;">
 				<tr>
 					<th><span class="pull-left">Amount</span></th>
+					<th><span class="pull-left">Type</span></th>
 					<th><span class="pull-left">Category</span></th>
 					<th><span class="pull-left">Notes</span></th>
 					<th></th>
@@ -92,6 +93,17 @@
 						<input type="text" class="form-control" ng-model="t.amount" ng-blur="refreshSplits()" />
 						<span class="help-block" ng-show="validation.splits.amount[$index]">{{ validation.splits.amount[$index] }}</span>
 						<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>
+					</td>
+					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.splits.type[$index] || calc[$index] }">
+<!--						<input type="text" class="form-control" ng-model="t.type" ng-blur="refreshSplits()" />-->
+						<select class="form-control" name="type" ng-model="t.type" ng-blur="refreshSplits()">
+							<option>Select Type</option>
+							<option ng-selected="t.type == 'CHECK'" value="CHECK">Check</option>
+							<option ng-selected="t.type == 'DEBIT'" value="DEBIT">Debit</option>
+							<option ng-selected="t.type == 'CREDIT'" value="CREDIT">Credit</option>
+							<option ng-selected="t.type == 'DSLIP'" value="DSLIP">Deposit</option>
+						</select>
+						<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>
 					</td>
 					<td class="col-sm-2" style="width:20%;vertical-align:top;" ng-class="{ 'has-error' : validation.splits.category_id[$index] }">
 						<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in categories"></select>

@@ -33,12 +33,6 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 	{
 		$scope.dataErrorMsg = [];
 
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().getForecast(
 				{
 					interval: interval
@@ -93,20 +87,6 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 						}
 					}
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	}
 
@@ -114,24 +94,6 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 	{
 		$scope.dataErrorMsg = [];
 
-//		ngProgress.start();
-
-//		var searchCriteria = {
-//						'first_due_date':		$scope.search.first_due_date,
-//						'description':			$scope.search.description,
-//						'amount':				$scope.search.amount,
-//						'sort':					'first_due_date',
-//						'sort_dir':				'DESC',
-//						'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
-//						'pagination_amount':	$scope.itemsPerPage
-//		};
-
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().getAllForecasts(
 				{
 						'first_due_date':		$scope.search.first_due_date,
@@ -162,24 +124,9 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 						}
 					}
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	}
 
-//	loadForecast();
 	loadAllForecasts();
 
 	$scope.moveInterval = function(direction)
@@ -272,7 +219,7 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 	$scope.deleteForecast = function (forecast_id)
 	{
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteForecastModal.html',
+			templateUrl: 'deleteModal.html',
 			controller: 'DeleteForecastModalController',
 			size: 'sm',
 			resolve: {

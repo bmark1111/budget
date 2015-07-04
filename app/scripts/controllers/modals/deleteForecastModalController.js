@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteForecastModalController', function ($scope, $modalInstance, RestData2, params)//, $rootScope, $localStorage, $location)
+app.controller('DeleteForecastModalController', function ($scope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg	= [];
 	$scope.title = params.title;
@@ -10,12 +10,6 @@ app.controller('DeleteForecastModalController', function ($scope, $modalInstance
 	{
 //		ngProgress.start();
 
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().deleteForecast(
 				{
 					'id': params.id
@@ -38,20 +32,6 @@ app.controller('DeleteForecastModalController', function ($scope, $modalInstance
 						}
 					}
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	};
 
