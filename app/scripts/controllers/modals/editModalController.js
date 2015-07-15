@@ -71,14 +71,23 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 							{
 								switch (validation.fieldName)
 								{
+									case 'bank_account_id':
+										$scope.validation.bank_account_id = validation.errorMessage;
+										break;
 									case 'transaction_date':
 										$scope.validation.date = validation.errorMessage;
 										break;
 									case 'description':
 										$scope.validation.description = validation.errorMessage;
 										break;
+									case 'category_id':
+										$scope.validation.category_id = validation.errorMessage;
+										break;
 									case 'type':
 										$scope.validation.type = validation.errorMessage;
+										break;
+									case 'amount':
+										$scope.validation.amount = validation.errorMessage;
 										break;
 									case 'splits':
 										$scope.validation.splits = validation.errorMessage;
@@ -131,11 +140,11 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 	// split transaction
 	$scope.split = function()
 	{
-		if (Object.size($scope.transaction.splits) == 0)
+		if (Object.size($scope.transaction.splits) == 0 && $scope.transaction.amount > 0 && typeof($scope.transaction.type) != 'undefined')
 		{
 			var newItem = {
 				amount:			'',
-				type:			'',
+				type:			$scope.transaction.type,
 				category_id:	'',
 				notes:			''
 			}
@@ -147,17 +156,16 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 
 	$scope.refreshSplits = function()
 	{
-		var newItem = {
-			amount:			'',
-			type:			'',
-			category_id:	'',
-			notes:			''
-		}
-
 		if (Object.size($scope.transaction.splits) > 0)
 		{
+			var newItem = {
+				amount:			'',
+				type:			$scope.transaction.type,
+				category_id:	'',
+				notes:			''
+			}
 			// calculate total of all splits
-			var total = parseFloat(0);
+			var split_total = parseFloat(0);
 			angular.forEach($scope.transaction.splits,
 				function(split)
 				{
@@ -167,11 +175,11 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 						{
 							case 'DEBIT':
 							case 'CHECK':
-								total -= parseFloat(split.amount);
+								split_total -= parseFloat(split.amount);
 								break;
 							case 'CREDIT':
 							case 'DSLIP':
-								total += parseFloat(split.amount);
+								split_total += parseFloat(split.amount);
 								break;
 						}
 					}
@@ -179,35 +187,50 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 
 			$scope.calc = Array();
 			var yy = Object.keys($scope.transaction.splits).length
-			if ($scope.transaction.amount > total)
+			switch ($scope.transaction.type)
 			{
-				newItem.amount = $scope.transaction.amount - total;
-				$scope.transaction.splits[yy] = newItem;
+				case 'CREDIT':
+				case 'DSLIP':
+					var transaction_amount = parseFloat($scope.transaction.amount);
+					var split_total = parseFloat(split_total);
+					var new_amount_type = 'DEBIT';
+					break;
+				case 'DEBIT':
+				case 'CHECK':
+					var transaction_amount = parseFloat($scope.transaction.amount);
+					var split_total = -parseFloat(split_total);
+					var new_amount_type = 'CREDIT';
+				break;
 			}
-			else if ($scope.transaction.amount < total)
+			if (transaction_amount != split_total)
 			{
-				$scope.calc[yy-1] = 'Split amounts do not match Item amount';
+				newItem.amount = $scope.transaction.amount - split_total
+				if (newItem.amount < 0)
+				{
+					newItem.amount = -parseFloat(newItem.amount);
+					newItem.type = new_amount_type;
+				}
+				$scope.transaction.splits[yy] = newItem;
 			}
 		}
 	};
 
 	$scope.deleteSplit = function(ele)
 	{
-console.log('deleteSplit');
 		$scope.transaction.splits[ele].is_deleted = 1;
 
-		// calculate total of all splits
-		var total = parseFloat(0);
+		// calculate split_total of all splits
+		var split_total = parseFloat(0);
 		angular.forEach($scope.transaction.splits,
 			function(split)
 			{
 				if (split.is_deleted != 1)
 				{
-					total += parseFloat(split.amount);
+					split_total += parseFloat(split.amount);
 				}
 			});
 		$scope.calc = Array();
-		if ($scope.transaction.amount != total)
+		if ($scope.transaction.amount != split_total)
 		{
 			$scope.calc[ele-1] = 'Split amounts do not match Item amount';
 		}
