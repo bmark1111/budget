@@ -6,17 +6,17 @@
 			<thead>
 				<tr>
 					<th><span class="pull-right">Interval Ending</span></th>
-					<th ng-repeat="interval in intervals" ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
+					<th ng-repeat="interval in intervals|getIntervals:start_interval" ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<th nowrap>Balance Forward</th>
-					<td ng-repeat="interval in intervals" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.balance_forward|currency}}</span></td>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.balance_forward|currency}}</span></td>
 				</tr>
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
-					<td ng-repeat="interval in intervals" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right" ng-class="{'forecast_amount':interval.types[category.id] == '1'}">
 							<span>
 								<a ns-popover="showTheseTransactions(category.id, $index)"
@@ -35,11 +35,11 @@
 			<tfoot>
 				<tr>
 					<th nowrap>Totals</th>
-					<td ng-repeat="interval in intervals" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.interval_total|currency}}</span></td>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.interval_total|currency}}</span></td>
 				</tr>
 				<tr>
 					<th nowrap>Running Totals</th>
-					<td ng-repeat="interval in intervals" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.running_total|currency}}</span></td>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.running_total|currency}}</span></td>
 				</tr>
 			</tfoot>
 		</table>

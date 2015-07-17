@@ -23,7 +23,6 @@
 
 app.directive('formAutofillFix', function ($timeout)
 {
-console.log('formAutofillFix')
 	return function (scope, element, attrs)
 	{
 		element.prop('method', 'post');
