@@ -82,9 +82,10 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 
 	$scope.moveInterval = function(direction)
 	{
-//		interval = interval + direction;
-//
+		interval = interval + direction;
+
 //		loadTransactions();
+//return;
 //////////////////////////////////////////////////////////////////
 //		var moved = Array();
 		if (direction == -1)
@@ -134,10 +135,12 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 			sd.setDate(sd.getDate() + 7);
 		}
 
-		RestData2().getInterval(
+//		RestData2().getInterval(
+		RestData2().getTransactions(
 				{
-					interval_beginning: sd.toISOString(),
-					interval_ending: ed.toISOString()
+					interval: interval
+//					interval_beginning: sd.toISOString(),
+//					interval_ending: ed.toISOString()
 				},
 				function(response)
 				{
@@ -147,7 +150,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 						// if moving backwards add interval to front of array
 						if (direction == -1)
 						{
-							moved.push(response.data.result);
+							moved.push(response.data.result[0]);
 						}
 						// add the current intervals
 						angular.forEach($scope.intervals,
@@ -158,7 +161,7 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 						// if moving forward add interval to end of array
 						if (direction == 1)
 						{
-							moved.push(response.data.result);
+							moved.push(response.data.result[0]);
 						}
 						$scope.intervals = moved;
 					} else {
