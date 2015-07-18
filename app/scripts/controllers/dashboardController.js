@@ -86,8 +86,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 
 //		loadTransactions();
 //return;
-//////////////////////////////////////////////////////////////////
-//		var moved = Array();
 		if (direction == -1)
 		{
 			if ($scope.start_interval > 0)
@@ -95,52 +93,25 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 				$scope.start_interval--;
 			} else {
 				// add an array element at the beginning
-//				moved.push(getNext(0));
 				getNext(0, direction);
 			}
 		}
-
-//		angular.forEach($scope.intervals,
-//			function(interval)
-//			{
-//				moved.push(interval)
-//			});
-
 		else if (direction == 1)
 		{
 			$scope.start_interval++;
 			var last_interval = $scope.start_interval + 11;
 			if (typeof($scope.intervals[last_interval]) == 'undefined')
 			{
-//				moved.push(getNext($scope.intervals.length - 1));
 				getNext($scope.intervals.length - 1, direction);
 			}
 		}
-
-//		$scope.intervals = moved;
 	};
 
 	var getNext = function(index, direction)
 	{
-		var ed = new Date($scope.intervals[index].interval_ending);
-		var sd = new Date($scope.intervals[index].interval_beginning);
-
-// TODO: this will have to be changed to accomodate other interval types (ie. 2 weeks, month, etc)
-		if (index == 0)
-		{
-			ed.setDate(ed.getDate() - 7);
-			sd.setDate(sd.getDate() - 7);
-		} else {
-			ed.setDate(ed.getDate() + 7);
-			sd.setDate(sd.getDate() + 7);
-		}
-
-//		RestData2().getInterval(
 		RestData2().getTransactions(
 				{
 					interval: interval
-//					interval_beginning: sd.toISOString(),
-//					interval_ending: ed.toISOString()
 				},
 				function(response)
 				{
@@ -161,6 +132,8 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 						// if moving forward add interval to end of array
 						if (direction == 1)
 						{
+							response.data.result[0].balance_forward = moved[moved.length-1].running_total;
+							response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;
 							moved.push(response.data.result[0]);
 						}
 						$scope.intervals = moved;
@@ -178,37 +151,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 					}
 //					ngProgress.complete();
 				});
-//		return {
-//			balance_forward:	'',
-//			current_interval:	false,
-//			interval_beginning:	sd.toISOString(),
-//			interval_ending:	ed.toISOString(),
-//			interval_total:		0,
-//			running_total:		0,
-//			totals:				{
-//									1:	0,
-//									2:	0,
-//									3:	0,
-//									4:	0,
-//									5:	0,
-//									6:	0,
-//									7:	0,
-//									8:	0,
-//									9:	0,
-//									10:	0,
-//									11:	0,
-//									12:	0,
-//									13:	0,
-//									14:	0,
-//									15:	0,
-//									16:	0,
-//									17:	0,
-//									18:	0,
-//									19:	0,
-//									21:	0
-//								}
-//				}
-
 	}
 
 });

@@ -12,7 +12,7 @@
 			<tbody>
 				<tr>
 					<th nowrap>Balance Forward</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right" >{{interval.balance_forward|currency}}</span></td>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right" ng-if="$index == 0">{{interval.balance_forward|currency}}</span></td>
 				</tr>
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
