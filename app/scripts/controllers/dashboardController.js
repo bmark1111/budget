@@ -57,15 +57,17 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 
 	$scope.showTheseTransactions = function(category_id, index)
 	{
+		var idx = index + $scope.start_interval;
+
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')($scope.intervals[index].interval_ending, "EEE MMM dd, yyyy");
-		$scope.title = $('#popover_' + index + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
+		var date = $filter('date')($scope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
 
 		RestData2().getTheseTransactions(
 				{
-					interval_beginning:	$scope.intervals[index].interval_beginning,
-					interval_ending:	$scope.intervals[index].interval_ending,
+					interval_beginning:	$scope.intervals[idx].interval_beginning,
+					interval_ending:	$scope.intervals[idx].interval_ending,
 					category_id:		category_id
 				},
 				function(response)
@@ -84,8 +86,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 	{
 		interval = interval + direction;
 
-//		loadTransactions();
-//return;
 		if (direction == -1)
 		{
 			if ($scope.start_interval > 0)
