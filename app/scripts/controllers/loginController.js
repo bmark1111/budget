@@ -5,7 +5,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location,
 	$rootScope.nav_active = 'login';
 
 	$scope.error = false;
-
+console.log('LOGIN CONTROLLER')
 	var authenticate = function(credentials, callback)
 						{
 							var headers = credentials ? {authorization : "Basic " + btoa(credentials.username + ":" + credentials.password)} : {};

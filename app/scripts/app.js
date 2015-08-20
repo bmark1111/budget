@@ -157,7 +157,7 @@ console.log('routeChangeStart - ' + $rootScope.nav_active);
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
 			if (AuthService.isAuthorized(authorizedRoles))
 			{
-console.log('routeChangeStart 11111 - ' + $rootScope.nav_active);
+console.log('routeChangeStart 111111 - ' + $rootScope.nav_active);
 				if ($localStorage.authenticated)
 				{
 console.log('routeChangeStart 222222 - ' + $rootScope.nav_active);
@@ -202,9 +202,16 @@ console.log('routeChangeStart 222222 - ' + $rootScope.nav_active);
 										});
 								});
 					}
+				} else {
+//					// user is not authenticated
+//					console.log('USER NOT AUTHENTICATED');
+//					$rootScope.nav_active = 'login';
+//					$location.path("/login");
 				}
-
 			} else {
+				// role not authorized
+				console.log('ROLE NOT AUTHORIZED');
+
 				event.preventDefault();
 
 				if ($localStorage.authenticated)
@@ -215,6 +222,7 @@ console.log('routeChangeStart 222222 - ' + $rootScope.nav_active);
 					// user is not logged in
 
 				}
+				$location.path("/");
 			}
 		});
 
