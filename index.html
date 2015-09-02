@@ -47,7 +47,7 @@
 						<tbody>
 							<tr ng-repeat="idx in transactions_seq" ng-if="!dataErrorMsgThese">
 								<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
-								<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - {{transactions[idx].notes}}</span></td>
+								<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - <em>{{transactions[idx].notes}}</em></span></td>
 								<td>{{transactions[idx].type}}</td>
 								<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
 							</tr>
@@ -88,6 +88,7 @@
 		<script src="app/scripts/controllers/logoutController.js"></script>
 		<script src="app/scripts/controllers/homeController.js"></script>
 		<script src="app/scripts/controllers/dashboardController.js"></script>
+		<script src="app/scripts/controllers/budgetController.js"></script>
 		<script src="app/scripts/controllers/forecastController.js"></script>
 		<script src="app/scripts/controllers/transactionsController.js"></script>
 		<script src="app/scripts/controllers/uploadsController.js"></script>

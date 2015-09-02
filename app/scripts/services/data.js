@@ -9,11 +9,10 @@ app.factory('RestData2', function ($resource, $localStorage)
 			}
 
 		return $resource('//rest.budget.loc/data/:object/:action/:param', {}, {
-				getTransactions:			{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'load', param: null} },
-//				getInterval:				{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'interval', param: null} },
-				getTheseTransactions:		{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'these', param: null} },
-//				getForecast:				{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'load2', param: null} },
-//				getThisForecast:			{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'this', param: null} },
+				getTransactions:			{ method: 'GET', headers: headers, params: {object: 'budget', action: 'load', param: null} },
+				getTheseTransactions:		{ method: 'GET', headers: headers, params: {object: 'budget', action: 'these', param: null} },
+
+				getYTDTotals:				{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'ytdTotals', param: null} },
 
 				getAllTransactions:			{ method: 'GET', headers: headers, params: {object: 'transaction', action: 'loadAll', param: null} },
 				deleteTransaction:			{ method: 'GET', headers: headers, params: {object: 'transaction', action: 'delete', param: null} },

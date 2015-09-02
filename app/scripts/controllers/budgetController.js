@@ -1,42 +1,42 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData2, $filter)
+app.controller('BudgetController', function($scope, $rootScope, RestData2, $filter)
 {
-//	$scope.intervals = [];
-//	$scope.start_interval = 0;
+	$scope.intervals = [];
+	$scope.start_interval = 0;
 
-//	$scope.categories = $rootScope.categories;
+	$scope.categories = $rootScope.categories;
 
-//	$scope.dataErrorMsg = [];
-//	$scope.dataErrorMsgThese = false;
+	$scope.dataErrorMsg = [];
+	$scope.dataErrorMsgThese = false;
 
-//	var interval = 0;
+	var interval = 0;
 
-//	var loadTransactions = function()
-//	{
+	var loadTransactions = function()
+	{
 		$scope.dataErrorMsg = [];
-		$scope.ytdTotals = [];
 
-		RestData2().getYTDTotals(
-				{},
+		RestData2().getTransactions(
+				{
+					interval: interval
+				},
 				function(response)
 				{
 					if (!!response.success)
 					{
-//console.log($rootScope.categories)
-//console.log(response.data.result)
 						// set current interval
-						angular.forEach($rootScope.categories,
-							function(category, key)
+						angular.forEach(response.data.result,
+							function(interval, key)
 							{
-								var category = {
-									id:		category.id,
-									name:	category.name,
-									total:	response.data.result['total_' + category.id]
-								};
-								$scope.ytdTotals.push(category);
+								// set the current interval
+								var sd = new Date(interval.interval_beginning);
+								var ed = new Date(interval.interval_ending);
+								var now = new Date();
+								interval.current_interval = (now >= sd && now <= ed) ? true: false;
+
+								$scope.start_interval = 0;
+								$scope.intervals[key] = interval;
 							});
-//console.log($scope.ytdTotals);
 					} else {
 						if (response.errors)
 						{
@@ -51,10 +51,10 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 					}
 //					ngProgress.complete();
 				});
-//	};
+	};
 
-//	loadTransactions();
-/*
+	loadTransactions();
+
 	$scope.showTheseTransactions = function(category_id, index)
 	{
 		var idx = index + $scope.start_interval;
@@ -151,7 +151,6 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 					}
 //					ngProgress.complete();
 				});
-	};
-*/
+	}
 
 });

@@ -53,11 +53,11 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)
 			controller:		'HomeController',
 			templateUrl:	'app/views/home.html'
 		})
-		.when('/popoverdemo',
-		{
-			controller:		'PopoverdemoController',
-			templateUrl:	'app/views/popover_demo.html'
-		})
+//		.when('/popoverdemo',
+//		{
+//			controller:		'PopoverdemoController',
+//			templateUrl:	'app/views/popover_demo.html'
+//		})
 		.when('/login',
 		{
 			controller:		'LoginController',
@@ -67,6 +67,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)
 		{
 			controller:		'DashboardController',
 			templateUrl:	'app/views/dashboard.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
+		.when('/budget',
+		{
+			controller:		'BudgetController',
+			templateUrl:	'app/views/budget.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
