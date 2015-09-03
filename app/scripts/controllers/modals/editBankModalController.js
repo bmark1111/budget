@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('EditBankModalController', function ($scope, $modalInstance, RestData2, params)
+app.controller('EditBankModalController', function ($scope, $rootScope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg = [];
 
@@ -19,12 +19,6 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 
 //		ngProgress.start();
 
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().editBank(
 				{
 					id: params.id
@@ -50,20 +44,6 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 						}
 					}
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	}
 
@@ -94,18 +74,27 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 
 		$scope.validation = {};
 
-//		RestData(
-//			{
-//				Authorization:		$localStorage.authorization,
-//				'TOKENID':			$localStorage.token_id,
-//				'X-Requested-With':	'XMLHttpRequest'
-//			})
 		RestData2().saveBank($scope.bank,
 				function(response)
 				{
 					if (!!response.success)
 					{
 						$modalInstance.close();
+
+						// now update the global bank account data
+						$rootScope.bank_accounts = [];
+						RestData2().getBankAccounts(
+								function(response)
+								{
+									angular.forEach(response.data.bank_accounts,
+										function(bank_account)
+										{
+											$rootScope.bank_accounts.push({
+												'id': bank_account.id,
+												'name': bank_account.bank.name + ' ' + bank_account.name
+											})
+										});
+								});
 					}
 					else if (response.validation)
 					{
@@ -157,20 +146,6 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 						}
 					}
 //					ngProgress.complete();
-//				},
-//				function (error)
-//				{
-//					if (error.status == '401' && error.statusText == 'EXPIRED')
-//					{
-//						$localStorage.authenticated		= false;
-//						$localStorage.authorizedRoles	= false;
-//						$localStorage.userFullName		= false;
-//						$localStorage.token_id			= false;
-//						$localStorage.authorization		= false;
-//						$location.path("/login");
-//					} else {
-//						$rootScope.error = error.status + ' ' + error.statusText;
-//					}
 				});
 	};
 
@@ -185,12 +160,11 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 	{
 		var idx = Object.size($scope.bank.accounts);
 
-		var newItem = {
+		$scope.bank.accounts[idx] = {
+				bank_id:	$scope.bank.id,
 				name:		"",
 				balance:	"0.00"
-			}
-
-		$scope.bank.accounts[idx] = newItem;
+			};
 	};
 
 	$scope.deleteAccount = function(ele)

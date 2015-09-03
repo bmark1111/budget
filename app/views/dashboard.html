@@ -2,13 +2,39 @@
 	<h1 class="page-header">Dashboard</h1>
 	<div ng-if="error">{{error}}</div>
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-3">
 			<h3>YTD Totals by category</h3>
 			<div ng-repeat="ytdTotal in ytdTotals">
 				<div class="row">
-					<div class="col-md-2">{{ytdTotal.name}}</div>
-					<div class="col-md-2"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
+					<div class="col-md-6">{{ytdTotal.name}}</div>
+					<div class="col-md-6" ng-click="getYTDTransactions(ytdTotal.id, ytdYear)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
 				</div>
+			</div>
+		</div>
+		<div class="col-md-5" ng-show="transactions">
+			<h3>YTD Transactions for Category</h3>
+			<div class="table-responsive">
+				<table>
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Description</th>
+							<th>Type</th>
+							<th>Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="idx in transactions_seq" ng-if="!dataErrorMsgThese">
+							<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
+							<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - <em>{{transactions[idx].notes}}</em></span></td>
+							<td>{{transactions[idx].type}}</td>
+							<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
+						</tr>
+						<tr ng-repeat="error in dataErrorMsgThese" ng-if="dataErrorMsgThese">
+							<td colspan="4">{{error.error}}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -17,52 +43,6 @@
 			<h3>Upcoming forecast payments</h3>
 		</div>
 	</div>
-<!-- 		<table class="dashboard">
-			<thead>
-				<tr>
-					<th><span class="pull-right">Interval Ending</span></th>
-					<th ng-repeat="interval in intervals|getIntervals:start_interval" ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<th nowrap>Balance Forward</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right" ng-if="$index == 0">{{interval.balance_forward|currency}}</span></td>
-				</tr>
-				<tr ng-repeat="category in categories">
-					<th nowrap>{{category.name}}</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
-						<div class="pull-right" ng-class="{'forecast_amount':interval.types[category.id] == '1'}">
-							<span>
-								<a ns-popover="showTheseTransactions(category.id, $index)"
-									ns-popover-placement="right"
-									ns-popover-template="transactions"
-									ns-popover-trigger="click"
-									ns-popover-theme="ns-popover-custom-theme"
-									ns-popover-timeout="0">
-									{{interval.totals[category.id]|currency}}
-								</a>
-							</span>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-			<tfoot>
-				<tr>
-					<th nowrap>Totals</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.interval_total|currency}}</span></td>
-				</tr>
-				<tr>
-					<th nowrap>Running Totals</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}"><span class="pull-right">{{interval.running_total|currency}}</span></td>
-				</tr>
-			</tfoot>
-		</table>
-		<div>
-			<div class="pull-left pointer" ng-click="moveInterval(-1)"><<<</div>
-			<div class="pull-right pointer" ng-click="moveInterval(1)">>>></div>
-		</div>
-	</div>-->
 	<div ng-if="dataErrorMsg[0]">
 		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
 	</div>

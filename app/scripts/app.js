@@ -156,53 +156,43 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 		function (event, next)
 		{
 			$rootScope.nav_active = $location.path().replace("/", "");
-console.log('routeChangeStart - ' + $rootScope.nav_active);
 
 			$rootScope.error			= false;
 			$rootScope.authenticated	= $localStorage.authenticated;
 			$rootScope.userFullName		= $localStorage.userFullName;
 
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
-			if (AuthService.isAuthorized(authorizedRoles))
-			{
-console.log('routeChangeStart 111111 - ' + $rootScope.nav_active);
-				if ($localStorage.authenticated)
-				{
-console.log('routeChangeStart 222222 - ' + $rootScope.nav_active);
+			if (AuthService.isAuthorized(authorizedRoles)) {
+				if ($localStorage.authenticated) {
 					// load the upload counts
-					if (typeof($rootScope.transaction_count) == 'undefined')
-					{
+					if (typeof($rootScope.transaction_count) == 'undefined') {
 						$rootScope.transaction_count = '';
 						RestData2().getUploadCounts(
-								function(response)
-								{
+								function(response) {
 									$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
 								});
 					}
 
-					if (typeof($rootScope.categories) == 'undefined')
-					{	// load the categories
-						$rootScope.categories = [];
-						RestData2().getCategories(
-								function(response)
-								{
-									angular.forEach(response.data.categories,
-										function(category)
-										{
-											$rootScope.categories.push(category)
-										});
-								});
-					}
+//					if (typeof($rootScope.categories) == 'undefined')
+//					{	// load the categories
+//						$rootScope.categories = [];
+//						RestData2().getCategories(
+//								function(response)
+//								{
+//									angular.forEach(response.data.categories,
+//										function(category)
+//										{
+//											$rootScope.categories.push(category)
+//										});
+//								});
+//					}
 
-					if (typeof($rootScope.bank_accounts) == 'undefined')
-					{	// load the bank accounts
+					if (typeof($rootScope.bank_accounts) == 'undefined') {	// load the bank accounts
 						$rootScope.bank_accounts = [];
 						RestData2().getBankAccounts(
-								function(response)
-								{
+								function(response) {
 									angular.forEach(response.data.bank_accounts,
-										function(bank_account)
-										{
+										function(bank_account) {
 											$rootScope.bank_accounts.push({
 												'id': bank_account.id,
 												'name': bank_account.bank.name + ' ' + bank_account.name
@@ -212,25 +202,24 @@ console.log('routeChangeStart 222222 - ' + $rootScope.nav_active);
 					}
 				} else {
 //					// user is not authenticated
-//					console.log('USER NOT AUTHENTICATED');
+					console.log('USER NOT AUTHENTICATED');
 //					$rootScope.nav_active = 'login';
 //					$location.path("/login");
 				}
 			} else {
 				// role not authorized
-				console.log('ROLE NOT AUTHORIZED');
-
 				event.preventDefault();
 
 				if ($localStorage.authenticated)
 				{
 					// user is not allowed
-
+					console.log('ROLE NOT AUTHORIZED BUT AUTHENTICATED');
+					$location.path("/dashboard");
 				} else {
 					// user is not logged in
-
+					console.log('ROLE NOT AUTHORIZED AND  NOT AUTHENTICATED');
+					$location.path("/");
 				}
-				$location.path("/");
 			}
 		});
 

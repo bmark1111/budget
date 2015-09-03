@@ -1,79 +1,87 @@
 'use strict';
 
-app.controller('DashboardController', function($scope, $rootScope, RestData2, $filter)
-{
-//	$scope.intervals = [];
-//	$scope.start_interval = 0;
+app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2', function($q, $scope, $rootScope, RestData2) {
 
-//	$scope.categories = $rootScope.categories;
-
-//	$scope.dataErrorMsg = [];
-//	$scope.dataErrorMsgThese = false;
-
-//	var interval = 0;
-
-//	var loadTransactions = function()
-//	{
-		$scope.dataErrorMsg = [];
-		$scope.ytdTotals = [];
-
-		RestData2().getYTDTotals(
-				{},
-				function(response)
-				{
-					if (!!response.success)
-					{
-//console.log($rootScope.categories)
-//console.log(response.data.result)
-						// set current interval
-						angular.forEach($rootScope.categories,
-							function(category, key)
-							{
-								var category = {
-									id:		category.id,
-									name:	category.name,
-									total:	response.data.result['total_' + category.id]
-								};
-								$scope.ytdTotals.push(category);
-							});
-//console.log($scope.ytdTotals);
-					} else {
-						if (response.errors)
-						{
-							angular.forEach(response.errors,
-								function(error)
-								{
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
-					}
-//					ngProgress.complete();
-				});
-//	};
-
-//	loadTransactions();
-/*
-	$scope.showTheseTransactions = function(category_id, index)
+	var getYTDTotals = function()
 	{
-		var idx = index + $scope.start_interval;
+		RestData2().getYTDTotals(
+			function(response) {
+				if (!!response.success) {
+					$scope.ytdYear = response.data.year;
+					// set current interval
+					angular.forEach($rootScope.categories,
+						function(category, key) {
+							var category = {
+								id:		category.id,
+								name:	category.name,
+								total:	response.data.result['total_' + category.id]
+							};
+							$scope.ytdTotals.push(category);
+						});
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
+					} else {
+						$scope.dataErrorMsg[0] = response;
+					}
+				}
+//				ngProgress.complete();
+			});
+	};
 
+	var getCategories = function() {
+		var deferred = $q.defer();
+
+//		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
+			RestData2().getCategories().$promise.then(
+				function(results) {
+					deferred.resolve(results);
+				},
+				function(err) {
+					deferred.resolve(err);
+				}
+			);
+//		}
+
+		return deferred.promise;
+	};
+
+	$scope.dataErrorMsg = [];
+	$scope.ytdTotals = [];
+
+	if (typeof($rootScope.categories) == 'undefined') {
+		// first check to see if we need to load the categories
+		var categoryPromise = getCategories();
+		categoryPromise.then(
+			function (categoryPromiseResult) {
+				if (typeof($rootScope.categories) == 'undefined' && categoryPromiseResult.data.categories) {
+					$rootScope.categories = [];
+					angular.forEach(categoryPromiseResult.data.categories,
+						function(category)
+						{
+							$rootScope.categories.push(category)
+						});
+				}
+
+				// now get the YTD totals
+				getYTDTotals();
+			});
+		} else {
+			getYTDTotals();
+		}
+
+	$scope.getYTDTransactions = function(category_id, year) {
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')($scope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
-		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
-
-		RestData2().getTheseTransactions(
-				{
-					interval_beginning:	$scope.intervals[idx].interval_beginning,
-					interval_ending:	$scope.intervals[idx].interval_ending,
-					category_id:		category_id
+		RestData2().getYTDTransactions( {
+					year:			year,
+					category_id:	category_id
 				},
-				function(response)
-				{
-					if (!!response.success)
-					{
+				function(response) {
+					if (!!response.success) {
 						$scope.transactions = response.data.result;
 						$scope.transactions_seq = Object.keys(response.data.result);
 					} else {
@@ -82,76 +90,4 @@ app.controller('DashboardController', function($scope, $rootScope, RestData2, $f
 				});
 	};
 
-	$scope.moveInterval = function(direction)
-	{
-		interval = interval + direction;
-
-		if (direction == -1)
-		{
-			if ($scope.start_interval > 0)
-			{	// move the start pointer
-				$scope.start_interval--;
-			} else {
-				// add an array element at the beginning
-				getNext(0, direction);
-			}
-		}
-		else if (direction == 1)
-		{
-			$scope.start_interval++;
-			var last_interval = $scope.start_interval + 11;
-			if (typeof($scope.intervals[last_interval]) == 'undefined')
-			{
-				getNext($scope.intervals.length - 1, direction);
-			}
-		}
-	};
-
-	var getNext = function(index, direction)
-	{
-		RestData2().getTransactions(
-				{
-					interval: interval
-				},
-				function(response)
-				{
-					if (!!response.success)
-					{
-						var moved = Array();
-						// if moving backwards add interval to front of array
-						if (direction == -1)
-						{
-							moved.push(response.data.result[0]);
-						}
-						// add the current intervals
-						angular.forEach($scope.intervals,
-							function(interval)
-							{
-								moved.push(interval)
-							});
-						// if moving forward add interval to end of array
-						if (direction == 1)
-						{
-							response.data.result[0].balance_forward = moved[moved.length-1].running_total;
-							response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;
-							moved.push(response.data.result[0]);
-						}
-						$scope.intervals = moved;
-					} else {
-						if (response.errors)
-						{
-							angular.forEach(response.errors,
-								function(error)
-								{
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
-					}
-//					ngProgress.complete();
-				});
-	};
-*/
-
-});
+}]);

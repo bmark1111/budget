@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteBankModalController', function ($scope, $modalInstance, RestData2, params)
+app.controller('DeleteBankModalController', function ($scope, $rootScope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg	= [];
 	$scope.title = params.title;
@@ -19,6 +19,21 @@ app.controller('DeleteBankModalController', function ($scope, $modalInstance, Re
 					if (!!response.success)
 					{
 						$modalInstance.close();
+
+						// now update the global bank account data
+						$rootScope.bank_accounts = [];
+						RestData2().getBankAccounts(
+								function(response)
+								{
+									angular.forEach(response.data.bank_accounts,
+										function(bank_account)
+										{
+											$rootScope.bank_accounts.push({
+												'id': bank_account.id,
+												'name': bank_account.bank.name + ' ' + bank_account.name
+											})
+										});
+								});
 					} else {
 						if (response.errors)
 						{
