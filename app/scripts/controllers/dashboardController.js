@@ -35,7 +35,7 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 	var getCategories = function() {
 		var deferred = $q.defer();
 
-//		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
+		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
 			RestData2().getCategories().$promise.then(
 				function(results) {
 					deferred.resolve(results);
@@ -44,7 +44,7 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 					deferred.resolve(err);
 				}
 			);
-//		}
+		}
 
 		return deferred.promise;
 	};
@@ -69,9 +69,9 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 				// now get the YTD totals
 				getYTDTotals();
 			});
-		} else {
-			getYTDTotals();
-		}
+	} else {
+		getYTDTotals();
+	}
 
 	$scope.getYTDTransactions = function(category_id, year) {
 		$scope.dataErrorMsgThese = false;

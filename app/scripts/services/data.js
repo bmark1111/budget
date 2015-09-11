@@ -11,6 +11,7 @@ app.factory('RestData2', function ($resource, $localStorage)
 		return $resource('//rest.budget.loc/data/:object/:action/:param', {}, {
 				getTransactions:			{ method: 'GET', headers: headers, params: {object: 'budget', action: 'load', param: null} },
 				getTheseTransactions:		{ method: 'GET', headers: headers, params: {object: 'budget', action: 'these', param: null} },
+//				getBankBalances:			{ method: 'GET', headers: headers, params: {object: 'budget', action: 'bankBalances', param: null} },
 
 				getYTDTotals:				{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'ytdTotals', param: null} },
 				getYTDTransactions:			{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'these', param: null} },
