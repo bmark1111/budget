@@ -28,14 +28,13 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-//				ngProgress.complete();
 			});
 	};
 
 	var getCategories = function() {
 		var deferred = $q.defer();
 
-		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
+//		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
 			RestData2().getCategories().$promise.then(
 				function(results) {
 					deferred.resolve(results);
@@ -44,24 +43,61 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 					deferred.resolve(err);
 				}
 			);
-		}
-
+//		}
 		return deferred.promise;
+	};
+
+	var interval = 0;
+	var loadIntervals = function() {
+		$scope.dataErrorMsg = [];
+
+		$rootScope.start_interval = 0;
+		$rootScope.intervals = [];
+
+		RestData2().getTransactions(
+				{
+					interval: interval
+				},
+				function(response)
+				{
+					if (!!response.success) {
+						// set current interval
+						angular.forEach(response.data.result,
+							function(interval, key) {
+								var sd = new Date(interval.interval_beginning);
+								var ed = new Date(interval.interval_ending);
+								var now = new Date();
+								interval.current_interval = (now >= sd && now <= ed) ? true: false;
+
+								$rootScope.start_interval = 0;
+								$rootScope.intervals[key] = interval;
+							});
+					} else {
+						if (response.errors) {
+							angular.forEach(response.errors,
+								function(error) {
+									$scope.dataErrorMsg.push(error.error);
+								})
+						} else {
+							$scope.dataErrorMsg[0] = response;
+						}
+					}
+				});
 	};
 
 	$scope.dataErrorMsg = [];
 	$scope.ytdTotals = [];
 
-	if (typeof($rootScope.categories) == 'undefined') {
+	if (typeof($rootScope.categories) === 'undefined') {
 		// first check to see if we need to load the categories
 		var categoryPromise = getCategories();
 		categoryPromise.then(
 			function (categoryPromiseResult) {
-				if (typeof($rootScope.categories) == 'undefined' && categoryPromiseResult.data.categories) {
+//				if (typeof($rootScope.categories) === 'undefined' && categoryPromiseResult.data.categories) {
+				if (categoryPromiseResult.data.categories) {
 					$rootScope.categories = [];
 					angular.forEach(categoryPromiseResult.data.categories,
-						function(category)
-						{
+						function(category) {
 							$rootScope.categories.push(category)
 						});
 				}
@@ -89,5 +125,9 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 					}
 				});
 	};
+	
+	if (typeof($rootScope.intervals) == 'undefined') {
+		loadIntervals();
+	}
 
 }]);

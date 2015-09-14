@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('EditModalController', function ($scope, $modalInstance, RestData2, params)
-{
+//app.controller('EditModalController', function ($scope, $modalInstance, RestData2, params) {
+app.controller('DashboardController', ['$q', '$scope', '$rootScope', '$modalInstance', 'RestData2', 'params', function($q, $scope, $rootScope, $modalInstance, RestData2, params) {
 	$scope.transaction = {
 			splits: {}
 		};
@@ -10,36 +10,75 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 	
 	$scope.dataErrorMsg = [];
 
-	if (params.id > 0)
-	{
-		$scope.dataErrorMsg = [];
+	if (typeof($rootScope.categories) === 'undefined') {
+		// first check to see if we need to load the categories
+		var categoryPromise = getCategories();
+		categoryPromise.then(
+			function (categoryPromiseResult) {
+//				if (typeof($rootScope.categories) === 'undefined' && categoryPromiseResult.data.categories) {
+				if (categoryPromiseResult.data.categories) {
+					$rootScope.categories = [];
+					angular.forEach(categoryPromiseResult.data.categories,
+						function(category) {
+							$rootScope.categories.push(category)
+						});
+				}
 
-		RestData2().editTransaction(
-				{
-					id: params.id
-				},
-				function(response)
-				{
-					if (!!response.success)
-					{
-						if (response.data.result)
-						{
-							$scope.transaction = response.data.result;
-						}
-					} else {
-						if (response.errors)
-						{
-							angular.forEach(response.errors,
-								function(error)
-								{
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
-					}
-				});
+				// now get the YTD totals
+				getTransaction();
+			});
+	} else {
+		getTransaction();
 	}
+
+	var getTransaction = function() {
+		if (params.id > 0)
+		{	// if we are editing a transaction - get it from the REST
+			$scope.dataErrorMsg = [];
+
+			RestData2().editTransaction(
+					{
+						id: params.id
+					},
+					function(response)
+					{
+						if (!!response.success)
+						{
+							if (response.data.result)
+							{
+								$scope.transaction = response.data.result;
+							}
+						} else {
+							if (response.errors)
+							{
+								angular.forEach(response.errors,
+									function(error)
+									{
+										$scope.dataErrorMsg.push(error.error);
+									})
+							} else {
+								$scope.dataErrorMsg[0] = response;
+							}
+						}
+					});
+		}
+	};
+
+	var getCategories = function() {
+		var deferred = $q.defer();
+
+//		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
+			RestData2().getCategories().$promise.then(
+				function(results) {
+					deferred.resolve(results);
+				},
+				function(err) {
+					deferred.resolve(err);
+				}
+			);
+//		}
+		return deferred.promise;
+	};
 
 	$scope.open = function($event)
 	{
@@ -245,4 +284,4 @@ app.controller('EditModalController', function ($scope, $modalInstance, RestData
 		return size;
 	};
 
-});
+}]);

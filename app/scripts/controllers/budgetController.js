@@ -2,58 +2,13 @@
 
 app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '$filter', function($q, $scope, $rootScope, RestData2, $filter) {
 
-	$scope.intervals = [];
-	$scope.start_interval = 0;
+//	$scope.intervals = [];
+//	$scope.start_interval = 0;
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
 
 	var interval = 0;
-/*
-INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, `updated_by`, `updated_at`, `created_by`, `created_at`) VALUES
-(1, '2015-06-10', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-06-17', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-06-24', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-07-01', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-07-08', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-07-15', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-07-22', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-07-29', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-08-05', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-08-12', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-08-19', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-08-26', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-09-02', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(1, '2015-09-09', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-06-10', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-06-17', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-06-24', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-07-01', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-07-08', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-07-15', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-07-22', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-07-29', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-08-05', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-08-12', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-08-19', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-08-26', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-09-02', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(2, '2015-09-09', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-06-10', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-06-17', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-06-24', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-07-01', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-07-08', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-07-15', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-07-22', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-07-29', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-08-05', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-08-12', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-08-19', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-08-26', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-09-02', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19'),
-(3, '2015-09-09', 2147.30, 0, 1, '2015-09-10 00:00:00', 1, '2015-09-10 21:17:19');
-*/
 
 //	RestData2().getBankBalances(
 //		function(response)
@@ -75,41 +30,41 @@ INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, 
 //			}
 //		});
 
-	var loadTransactions = function() {
-		$scope.dataErrorMsg = [];
-
-		RestData2().getTransactions(
-				{
-					interval: interval
-				},
-				function(response)
-				{
-					if (!!response.success) {
-						// set current interval
-						angular.forEach(response.data.result,
-							function(interval, key) {
-								var sd = new Date(interval.interval_beginning);
-								var ed = new Date(interval.interval_ending);
-								var now = new Date();
-								interval.current_interval = (now >= sd && now <= ed) ? true: false;
-
-								$scope.start_interval = 0;
-								$scope.intervals[key] = interval;
-							});
-					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
-					}
-//					ngProgress.complete();
-				});
-	};
-
+//	var loadTransactions = function() {
+//		$scope.dataErrorMsg = [];
+//
+//		RestData2().getTransactions(
+//				{
+//					interval: interval
+//				},
+//				function(response)
+//				{
+//					if (!!response.success) {
+//						// set current interval
+//						angular.forEach(response.data.result,
+//							function(interval, key) {
+//								var sd = new Date(interval.interval_beginning);
+//								var ed = new Date(interval.interval_ending);
+//								var now = new Date();
+//								interval.current_interval = (now >= sd && now <= ed) ? true: false;
+//
+//								$scope.start_interval = 0;
+//								$scope.intervals[key] = interval;
+//							});
+//					} else {
+//						if (response.errors) {
+//							angular.forEach(response.errors,
+//								function(error) {
+//									$scope.dataErrorMsg.push(error.error);
+//								})
+//						} else {
+//							$scope.dataErrorMsg[0] = response;
+//						}
+//					}
+////					ngProgress.complete();
+//				});
+//	};
+/*
 	var getCategories = function() {
 		var deferred = $q.defer();
 
@@ -140,27 +95,31 @@ INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, 
 						});
 				}
 
-				// now get the budget
-				loadTransactions();
+//				// now get the budget
+//				loadTransactions();
 			});
 	} else {
-		loadTransactions();
+//		loadTransactions();
 	}
 
 //	loadTransactions();
-
+*/
 	$scope.showTheseTransactions = function(category_id, index) {
-		var idx = index + $scope.start_interval;
+//		var idx = index + $scope.start_interval;
+		var idx = index + $rootScope.start_interval;
 
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')($scope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
+//		var date = $filter('date')($scope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
+		var date = $filter('date')($rootScope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
 		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
 
 		RestData2().getTheseTransactions(
 				{
-					interval_beginning:	$scope.intervals[idx].interval_beginning,
-					interval_ending:	$scope.intervals[idx].interval_ending,
+//					interval_beginning:	$scope.intervals[idx].interval_beginning,
+//					interval_ending:	$scope.intervals[idx].interval_ending,
+					interval_beginning:	$rootScope.intervals[idx].interval_beginning,
+					interval_ending:	$rootScope.intervals[idx].interval_ending,
 					category_id:		category_id
 				},
 				function(response)
@@ -181,9 +140,11 @@ INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, 
 
 		if (direction == -1)
 		{
-			if ($scope.start_interval > 0)
+//			if ($scope.start_interval > 0)
+			if ($rootScope.start_interval > 0)
 			{	// move the start pointer
-				$scope.start_interval--;
+//				$scope.start_interval--;
+				$rootScope.start_interval--;
 			} else {
 				// add an array element at the beginning
 				getNext(0, direction);
@@ -191,11 +152,15 @@ INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, 
 		}
 		else if (direction == 1)
 		{
-			$scope.start_interval++;
-			var last_interval = $scope.start_interval + 11;
-			if (typeof($scope.intervals[last_interval]) == 'undefined')
+//			$scope.start_interval++;
+//			var last_interval = $scope.start_interval + 11;
+			$rootScope.start_interval++;
+			var last_interval = $rootScope.start_interval + 11;
+//			if (typeof($scope.intervals[last_interval]) == 'undefined')
+			if (typeof($rootScope.intervals[last_interval]) == 'undefined')
 			{
-				getNext($scope.intervals.length - 1, direction);
+//				getNext($scope.intervals.length - 1, direction);
+				getNext($rootScope.intervals.length - 1, direction);
 			}
 		}
 	};
@@ -216,7 +181,8 @@ INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, 
 							moved.push(response.data.result[0]);
 						}
 						// add the current intervals
-						angular.forEach($scope.intervals,
+//						angular.forEach($scope.intervals,
+						angular.forEach($rootScope.intervals,
 							function(interval) {
 								moved.push(interval)
 							});
@@ -226,7 +192,8 @@ INSERT INTO `bank_account_balance` (`bank_id`, `date`, `balance`, `is_deleted`, 
 							response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;
 							moved.push(response.data.result[0]);
 						}
-						$scope.intervals = moved;
+//						$scope.intervals = moved;
+						$rootScope.intervals = moved;
 					} else {
 						if (response.errors) {
 							angular.forEach(response.errors,
