@@ -173,33 +173,30 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 								});
 					}
 
-//					if (typeof($rootScope.categories) == 'undefined')
-//					{	// load the categories
+//					if (typeof($rootScope.categories) == 'undefined') {	// load the categories
 //						$rootScope.categories = [];
 //						RestData2().getCategories(
-//								function(response)
-//								{
+//								function(response) {
 //									angular.forEach(response.data.categories,
-//										function(category)
-//										{
+//										function(category) {
 //											$rootScope.categories.push(category)
 //										});
 //								});
 //					}
 
-					if (typeof($rootScope.bank_accounts) == 'undefined') {	// load the bank accounts
-						$rootScope.bank_accounts = [];
-						RestData2().getBankAccounts(
-								function(response) {
-									angular.forEach(response.data.bank_accounts,
-										function(bank_account) {
-											$rootScope.bank_accounts.push({
-												'id': bank_account.id,
-												'name': bank_account.bank.name + ' ' + bank_account.name
-											})
-										});
-								});
-					}
+//					if (typeof($rootScope.bank_accounts) == 'undefined') {	// load the bank accounts
+//						$rootScope.bank_accounts = [];
+//						RestData2().getBankAccounts(
+//								function(response) {
+//									angular.forEach(response.data.bank_accounts,
+//										function(bank_account) {
+//											$rootScope.bank_accounts.push({
+//												'id': bank_account.id,
+//												'name': bank_account.bank.name + ' ' + bank_account.name
+//											})
+//										});
+//								});
+//					}
 				} else {
 //					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');

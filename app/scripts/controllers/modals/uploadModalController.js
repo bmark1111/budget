@@ -1,11 +1,27 @@
 'use strict';
 
-app.controller('UploadModalController', function ($scope, $rootScope, $modalInstance, $localStorage, fileUpload, params)
+app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$localStorage', 'fileUpload', 'params', 'BankAccounts', function ($q, $scope, $rootScope, $modalInstance, $localStorage, fileUpload, params, BankAccounts)
 {
 	$scope.ignoreFirstLine = 0;
 	$scope.bank_account_id = 0;
 
-	$scope.bank_accounts = $rootScope.bank_accounts;
+//	$scope.bank_accounts = $rootScope.bank_accounts;
+
+	$q.all([
+		BankAccounts.get()
+	]).then(function(response) {
+		// get the bank account
+		if (!!response[0].success) {
+			$rootScope.bank_accounts = [];
+			angular.forEach(response[0].data.bank_accounts,
+				function(bank_account) {
+					$rootScope.bank_accounts.push({
+						'id': bank_account.id,
+						'name': bank_account.bank.name + ' ' + bank_account.name
+					})
+				});
+		}
+	});
 
 	$scope.title = params.title;
 	$scope.upload_errors = {};
@@ -41,4 +57,4 @@ app.controller('UploadModalController', function ($scope, $rootScope, $modalInst
 		$modalInstance.dismiss('cancel');
 	};
 
-});
+}]);

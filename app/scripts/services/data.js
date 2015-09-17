@@ -1,7 +1,6 @@
-app.factory('RestData2', function ($resource, $localStorage)
-{
-	return function()
-	{
+app.factory('RestData2', function ($resource, $localStorage) {
+
+	return function() {
 		var headers = {
 				Authorization:		$localStorage.authorization,
 				'TOKENID':			$localStorage.token_id,

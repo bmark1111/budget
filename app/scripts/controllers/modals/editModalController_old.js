@@ -1,6 +1,7 @@
 'use strict';
 
-app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInstance', 'RestData2', 'params', 'Categories', 'BankAccounts', function($q, $scope, $rootScope, $modalInstance, RestData2, params, Categories, BankAccounts) {
+//app.controller('EditModalController', function ($scope, $modalInstance, RestData2, params) {
+app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInstance', 'RestData2', 'params', function($q, $scope, $rootScope, $modalInstance, RestData2, params) {
 
 	$scope.transaction = {
 			splits: {}
@@ -11,93 +12,67 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 	$scope.dataErrorMsg = [];
 
 	var getTransaction = function() {
-		var deferred = $q.defer();
 		if (params.id > 0) {	// if we are editing a transaction - get it from the REST
-			var result = RestData2().editTransaction({ id: params.id},
-				function(response) {
-					deferred.resolve(result);
+			$scope.dataErrorMsg = [];
+
+			RestData2().editTransaction(
+					{
+						id: params.id
+					},
+					function(response) {
+						if (!!response.success) {
+							if (response.data.result) {
+								$scope.transaction = response.data.result;
+							}
+						} else {
+							if (response.errors) {
+								angular.forEach(response.errors,
+									function(error) {
+										$scope.dataErrorMsg.push(error.error);
+									})
+							} else {
+								$scope.dataErrorMsg[0] = response;
+							}
+						}
+					});
+		}
+	};
+
+	var getCategories = function() {
+		var deferred = $q.defer();
+
+//		if (typeof($rootScope.categories) == 'undefined') {	// load the categories
+			RestData2().getCategories().$promise.then(
+				function(results) {
+					deferred.resolve(results);
 				},
 				function(err) {
 					deferred.resolve(err);
-				});
-		} else {
-			deferred.resolve(true);
-		}
+				}
+			);
+//		}
 		return deferred.promise;
 	};
 
-//	var getCategories = function() {
-//		var deferred = $q.defer();
-//		if (typeof($rootScope.categories) === 'undefined') {
-//			var result = RestData2().getCategories(
-//				function(response) {
-//					deferred.resolve(result);
-//				},
-//				function(err) {
-//					deferred.resolve(err);
-//				});
-//		} else {
-//			deferred.resolve(true);
-//		}
-//		return deferred.promise;
-//	};
+	if (typeof($rootScope.categories) === 'undefined') {
+		// first check to see if we need to load the categories
+		var categoryPromise = getCategories();
+		categoryPromise.then(
+			function (categoryPromiseResult) {
+				if (categoryPromiseResult.data.categories) {
+					$rootScope.categories = [];
+					angular.forEach(categoryPromiseResult.data.categories,
+						function(category) {
+							$rootScope.categories.push(category)
+						});
+				}
 
-//	var getBankAccounts = function() {
-//		var deferred = $q.defer();
-//		if (typeof($rootScope.bank_accounts) === 'undefined') {
-//			var result = RestData2().getBankAccounts(
-//				function(response) {
-//					deferred.resolve(result);
-//				},
-//				function(err) {
-//					deferred.resolve(err);
-//				});
-//		} else {
-//			deferred.resolve(true);
-//		}
-//		return deferred.promise;
-//	};
-
-	$q.all([
-		BankAccounts.get(),	//getBankAccounts(),
-		Categories.get(),	//getCategories(),
-		getTransaction()
-	]).then(function(response) {
-		// get the bank account
-		if (!!response[0].success) {
-			$rootScope.bank_accounts = [];
-			angular.forEach(response[0].data.bank_accounts,
-				function(bank_account) {
-					$rootScope.bank_accounts.push({
-						'id': bank_account.id,
-						'name': bank_account.bank.name + ' ' + bank_account.name
-					})
-				});
-		}
-		// load the categories
-		if (!!response[1].success) {
-			$rootScope.categories = [];
-			angular.forEach(response[1].data.categories,
-				function(category) {
-					$rootScope.categories.push(category)
-				});
-		}
-		// load the transaction
-		if (!!response[2].success) {
-			if (response[2].data.result) {
-				$scope.transaction = response[2].data.result;
-			}
-//		} else {
-//			if (response[2].errors) {
-//				angular.forEach(response[2].errors,
-//					function(error) {
-//						$scope.dataErrorMsg.push(error.error);
-//					})
-//			} else {
-//				$scope.dataErrorMsg[0] = response[2];
-//			}
-		}
-	});
+				// now get the YTD totals
+				getTransaction();
+			});
+	} else {
+		getTransaction();
+	}
 
 	$scope.open = function($event) {
 		$event.preventDefault();
@@ -116,8 +91,6 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 				function(response) {
 					if (!!response.success) {
 						$modalInstance.close();
-						// now update the global intervals data
-						delete $rootScope.intervals;
 					} else if (response.validation) {
 						$scope.validation.splits = {};
 						angular.forEach(response.validation,

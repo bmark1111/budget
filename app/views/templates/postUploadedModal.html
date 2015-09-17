@@ -49,6 +49,7 @@
 				<thead>
 					<tr>
 						<th><span class="pull-left">Date</span></th>
+						<th><span class="pull-left">Bank</span></th>
 						<th><span class="pull-left">Type</span></th>
 						<th><span class="pull-left">Description</span></th>
 						<th><span class="pull-left">Amount</span></th>
@@ -60,6 +61,9 @@
 					<tr ng-repeat="idx in transactions_seq" ng-click="setSelected(transactions[idx].id)" ng-class="{selected: transactions[idx].id === idSelectedTransaction}">
 						<td class="col-md-6" style="width:18%;">
 							<span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span>
+						</td>
+						<td class="col-md-6" style="width:18%;">
+							<span class="pull-left">{{transactions[idx].bank_account_id}}</span>
 						</td>
 						<td class="col-sm-2" style="width:5%">
 							<span class="pull-left">{{transactions[idx].type}}</span>

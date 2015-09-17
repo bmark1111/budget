@@ -19,33 +19,27 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 		amount:			''
 	};
 
-	var loadData = function()
-	{
+	var loadData = function() {
 		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 
-		RestData2().getAllBanks(
-				{
+		RestData2().getAllBanks( {
 					'name':					$scope.search.name,
 					'sort':					'name',
 					'sort_dir':				'DESC',
 					'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
 					'pagination_amount':	$scope.itemsPerPage
 				},
-				function(response)
-				{
-					if (!!response.success)
-					{
+				function(response) {
+					if (!!response.success) {
 						$scope.banks = response.data.result;
 						$scope.banks_seq = Object.keys(response.data.result);
 						$scope.recCount = response.data.total_rows;
 					} else {
-						if (response.errors)
-						{
+						if (response.errors) {
 							angular.forEach(response.errors,
-								function(error)
-								{
+								function(error) {
 									$scope.dataErrorMsg.push(error.error);
 								})
 						} else {
@@ -53,29 +47,13 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 						}
 					}
 //					ngProgress.complete();
-/*				},
-				function (error)
-				{
-					if (error.status == '401' && error.statusText == 'EXPIRED')
-					{
-						$localStorage.authenticated		= false;
-						$localStorage.authorizedRoles	= false;
-						$localStorage.userFullName		= false;
-						$localStorage.token_id			= false;
-						$localStorage.authorization		= false;
-						$location.path("/login");
-					} else {
-						$rootScope.error = error.status + ' ' + error.statusText;
-					}
-*/
 				});
 	}
 
 	loadData();
 
 	var timer = null;
-	$scope.refreshData = function()
-	{
+	$scope.refreshData = function() {
 		$scope.search.currentPage = 1;
 
 		if (timer) $timeout.cancel(timer);
@@ -83,14 +61,12 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 		loadData();
 	};
 
-	$scope.pageChanged = function()
-	{
+	$scope.pageChanged = function() {
 		loadData();
 	};
 
 	// open date picker
-	$scope.open = function($event)
-	{
+	$scope.open = function($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
 
@@ -115,68 +91,58 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Add Bank Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.editBank = function(bank_id)
-	{
+	$scope.editBank = function(bank_id) {
 		var modalInstance = $modal.open({
 			templateUrl: 'editBankModal.html',
 			controller: 'EditBankModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
 			resolve: {
-				params: function()
-					{
-						return {
-							id: bank_id,
-							title: 'Edit Bank'
+				params: function() {
+							return {
+								id: bank_id,
+								title: 'Edit Bank'
+							}
 						}
-					}
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Edit Bank Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.deleteBank = function (bank_id)
-	{
+	$scope.deleteBank = function (bank_id) {
 		var modalInstance = $modal.open({
 			templateUrl: 'deleteBankModal.html',
 			controller: 'DeleteBankModalController',
 			size: 'sm',
 			resolve: {
-				params: function()
-					{
-						return {
-							id: bank_id,
-							title: 'Delete Bank ?',
-							msg: 'Are you sure you want to delete this bank. This action cannot be undone.'
+				params: function() {
+							return {
+								id: bank_id,
+								title: 'Delete Bank ?',
+								msg: 'Are you sure you want to delete this bank. This action cannot be undone.'
+							}
 						}
-					}
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Delete Bank Modal dismissed at: ' + new Date());
 		});
 	};

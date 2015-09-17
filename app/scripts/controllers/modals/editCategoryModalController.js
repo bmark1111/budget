@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('EditCategoryModalController', function ($scope, $modalInstance, RestData2, params)
+app.controller('EditCategoryModalController', function ($scope, $rootScope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg = [];
 
@@ -11,8 +11,7 @@ app.controller('EditCategoryModalController', function ($scope, $modalInstance, 
 
 	$scope.title = params.title;
 
-	if (params.id > 0)
-	{
+	if (params.id > 0) {
 		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
@@ -21,20 +20,15 @@ app.controller('EditCategoryModalController', function ($scope, $modalInstance, 
 				{
 					id: params.id
 				},
-				function(response)
-				{
-					if (!!response.success)
-					{
-						if (response.data.result)
-						{
+				function(response) {
+					if (!!response.success) {
+						if (response.data.result) {
 							$scope.category = response.data.result;
 						}
 					} else {
-						if (response.errors)
-						{
+						if (response.errors) {
 							angular.forEach(response.errors,
-								function(error)
-								{
+								function(error) {
 									$scope.dataErrorMsg.push(error.error);
 								})
 						} else {
@@ -45,8 +39,7 @@ app.controller('EditCategoryModalController', function ($scope, $modalInstance, 
 				});
 	}
 
-	$scope.open = function($event, index)
-	{
+	$scope.open = function($event, index) {
 		$event.preventDefault();
 		$event.stopPropagation();
 
@@ -54,27 +47,24 @@ app.controller('EditCategoryModalController', function ($scope, $modalInstance, 
 	};
 
 	// save edited Category
-	$scope.save = function ()
-	{
+	$scope.save = function () {
 		$scope.dataErrorMsg = [];
 
 		$scope.validation = {};
 
 		RestData2().saveCategory($scope.category,
-				function(response)
-				{
-					if (!!response.success)
-					{
+				function(response) {
+					if (!!response.success) {
 						$modalInstance.close();
-					}
-					else if (response.validation)
-					{
+						// now update the global categories data
+						delete $rootScope.categories;
+						// now update the global intervals data
+						delete $rootScope.intervals;
+					} else if (response.validation) {
 						$scope.validation.accounts = {};
 						angular.forEach(response.validation,
-							function(validation)
-							{
-								switch (validation.fieldName)
-								{
+							function(validation) {
+								switch (validation.fieldName) {
 									case 'name':
 										$scope.validation.name = validation.errorMessage;
 										break;
@@ -84,11 +74,9 @@ app.controller('EditCategoryModalController', function ($scope, $modalInstance, 
 								}
 							});
 					} else {
-						if (response.errors)
-						{
+						if (response.errors) {
 							angular.forEach(response.errors,
-								function(error)
-								{
+								function(error) {
 									$scope.dataErrorMsg.push(error.error);
 								})
 						} else {
@@ -100,8 +88,7 @@ app.controller('EditCategoryModalController', function ($scope, $modalInstance, 
 	};
 
 	// cancel Category edit
-	$scope.cancel = function ()
-	{
+	$scope.cancel = function () {
 		$modalInstance.dismiss('cancel');
 	};
 
