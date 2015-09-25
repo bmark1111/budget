@@ -21,24 +21,8 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 		return deferred.promise;
 	};
 
-//	var getCategories = function() {
-//		var deferred = $q.defer();
-//		if (typeof($rootScope.categories) === 'undefined') {
-//			var result = RestData2().getCategories(
-//				function(response) {
-//					deferred.resolve(result);
-//				},
-//				function(err) {
-//					deferred.resolve(err);
-//				});
-//		} else {
-//			deferred.resolve(true);
-//		}
-//		return deferred.promise;
-//	};
-
 	$q.all([
-		Categories.get(),	//getCategories(),
+		Categories.get(),
 		loadIntervals()
 	]).then(function(response) {
 		// load the categories
@@ -61,18 +45,8 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 					var now = new Date();
 					interval.current_interval = (now >= sd && now <= ed) ? true: false;		// mark the current interval
 
-//					$rootScope.start_interval = 0;
 					$rootScope.intervals[key] = interval;
 				});
-//		} else {
-//			if (response[1].errors) {
-//				angular.forEach(response[1].errors,
-//					function(error) {
-//						$scope.dataErrorMsg.push(error.error);
-//					})
-//			} else {
-//				$scope.dataErrorMsg[0] = response[1];
-//			}
 		}
 	});
 
