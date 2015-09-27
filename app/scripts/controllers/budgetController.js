@@ -5,10 +5,11 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
 
+	var interval = 0;
 	var loadIntervals = function() {
 		var deferred = $q.defer();
 		if (typeof($rootScope.intervals) === 'undefined') {
-			var result = RestData2().getTransactions({ interval: 0 },
+			var result = RestData2().getTransactions({ interval: interval },
 				function(response) {
 					deferred.resolve(result);
 				},
