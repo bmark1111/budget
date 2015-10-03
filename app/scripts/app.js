@@ -1,14 +1,12 @@
 var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);
 
-app.config(function($routeProvider, $httpProvider, USER_ROLES)
-{
-	$httpProvider.interceptors.push(function ($q, $localStorage, $location, $rootScope)
-	{
+app.config(function($routeProvider, $httpProvider, USER_ROLES) {
+
+	$httpProvider.interceptors.push(function ($q, $localStorage, $location, $rootScope) {
 //		$rootScope.dataErrorMsg = [];
 
 		return {
-			'response': function (response)
-			{
+			'response': function (response) {
 				//Will only be called for HTTP up to 300
 //console.log("SUCCESS")
 //console.log(response);
@@ -28,10 +26,8 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)
 //					}
 //				}
 			},
-			'responseError': function (rejection)
-			{
-				if (rejection.status == '401' && rejection.statusText == 'EXPIRED')
-				{
+			'responseError': function (rejection) {
+				if (rejection.status == '401' && rejection.statusText == 'EXPIRED') {
 					$localStorage.authenticated		= false;
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
@@ -45,7 +41,6 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES)
 			}
 		};
 	});
-
 
 	$routeProvider
 		.when('/',
@@ -148,13 +143,12 @@ delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
 
 
-app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService)//, AUTH_EVENTS)
-{
+app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService) { //, AUTH_EVENTS)
+
 	$route.reload(); 
 
 	$rootScope.$on('$routeChangeStart',
-		function (event, next)
-		{
+		function (event, next) {
 			$rootScope.nav_active = $location.path().replace("/", "");
 
 			$rootScope.error			= false;
@@ -207,8 +201,7 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 				// role not authorized
 				event.preventDefault();
 
-				if ($localStorage.authenticated)
-				{
+				if ($localStorage.authenticated) {
 					// user is not allowed
 					console.log('ROLE NOT AUTHORIZED BUT AUTHENTICATED');
 					$location.path("/dashboard");

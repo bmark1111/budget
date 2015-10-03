@@ -1,4 +1,4 @@
-app.factory('RestData2', function ($resource, $localStorage) {
+app.factory('RestData2', function ($resource, $localStorage, API) {
 
 	return function() {
 		var headers = {
@@ -7,10 +7,10 @@ app.factory('RestData2', function ($resource, $localStorage) {
 				'X-Requested-With':	'XMLHttpRequest'
 			}
 
-		return $resource('//rest.budget.loc/data/:object/:action/:param', {}, {
+		return $resource(API.url, {}, {
+//		return $resource('//rest.budget.loc/data/:object/:action/:param', {}, {
 				getTransactions:			{ method: 'GET', headers: headers, params: {object: 'budget', action: 'load', param: null} },
 				getTheseTransactions:		{ method: 'GET', headers: headers, params: {object: 'budget', action: 'these', param: null} },
-//				getBankBalances:			{ method: 'GET', headers: headers, params: {object: 'budget', action: 'bankBalances', param: null} },
 
 				getYTDTotals:				{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'ytdTotals', param: null} },
 				getYTDTransactions:			{ method: 'GET', headers: headers, params: {object: 'dashboard', action: 'these', param: null} },
