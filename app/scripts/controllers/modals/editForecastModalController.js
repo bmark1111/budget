@@ -1,38 +1,67 @@
 'use strict';
 
-app.controller('EditForecastModalController', function ($scope, $rootScope, $modalInstance, RestData2, params)
-{
+app.controller('EditForecastModalController', ['$q', '$scope', '$rootScope', '$modalInstance', 'RestData2', 'params', 'Categories', 'BankAccounts', function($q, $scope, $rootScope, $modalInstance, RestData2, params, Categories, BankAccounts) {
+
 	$scope.dataErrorMsg = [];
 	$scope.forecast = {};
 	$scope.title = params.title;
 
-	if (params.id > 0) {
-		$scope.dataErrorMsg = [];
-
-//		ngProgress.start();
-
-		RestData2().editForecast(
-				{
-					id: params.id
-				},
+	var getForecast = function() {
+		var deferred = $q.defer();
+		if (params.id > 0) {	// if we are editing a forecast - get it from the REST
+			var result = RestData2().editForecast({ id: params.id},
 				function(response) {
-					if (!!response.success) {
-						if (response.data.result) {
-							$scope.forecast = response.data.result;
-						}
-					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
-					}
-//					ngProgress.complete();
+					deferred.resolve(result);
+				},
+				function(err) {
+					deferred.resolve(err);
 				});
-	}
+		} else {
+			deferred.resolve(true);
+		}
+		return deferred.promise;
+	};
+
+	$q.all([
+		BankAccounts.get(),
+		Categories.get(),
+		getForecast()
+	]).then(function(response) {
+		// get the bank accounts
+		if (!!response[0].success) {
+			$rootScope.bank_accounts = [];
+			angular.forEach(response[0].data.bank_accounts,
+				function(bank_account) {
+					$rootScope.bank_accounts.push({
+						'id': bank_account.id,
+						'name': bank_account.bank.name + ' ' + bank_account.name
+					})
+				});
+		}
+		// load the categories
+		if (!!response[1].success) {
+			$rootScope.categories = [];
+			angular.forEach(response[1].data.categories,
+				function(category) {
+					$rootScope.categories.push(category)
+				});
+		}
+		// load the forecast
+		if (!!response[2].success) {
+			if (response[2].data.result) {
+				$scope.forecast = response[2].data.result;
+			}
+//		} else {
+//			if (response[2].errors) {
+//				angular.forEach(response[2].errors,
+//					function(error) {
+//						$scope.dataErrorMsg.push(error.error);
+//					})
+//			} else {
+//				$scope.dataErrorMsg[2] = response;
+//			}
+		}
+	});
 
 	$scope.open1 = function($event) {
 		$event.preventDefault();
@@ -99,4 +128,4 @@ app.controller('EditForecastModalController', function ($scope, $rootScope, $mod
 		$modalInstance.dismiss('cancel');
 	};
 
-});
+}]);

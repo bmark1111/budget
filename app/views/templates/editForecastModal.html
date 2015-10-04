@@ -4,6 +4,13 @@
 	</div>
 	<div class="modal-body">
 		<div class="row">
+			<div class="col-md-6" style="width:15%;">
+				<label for="date">Bank Account</label>
+				<div class="form-group" ng-class="{'has-error':validation.bank_account_id}">
+					<select class="form-control" name="bank_account_id" ng-model="forecast.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
+					<span class="help-block" ng-show="validation.bank_account_id">{{validation.bank_account_id}}</span>
+				</div>
+			</div>
 			<div class="col-md-6" style="width:22%;">
 				<label for="first_due_date">First Due Date</label>
 				<div class="form-group" ng-class="{'has-error':validation.first_due_date}">
@@ -28,7 +35,7 @@
 					<span class="help-block" ng-show="validation.last_due_date">{{validation.last_due_date}}</span>
 				</div>
 			</div>
-			<div class="col-md-2" style="width:56%;">
+			<div class="col-md-2" style="width:41%;">
 				<div class="form-group" ng-class="{'has-error':validation.description}">
 					<label for="description">Description</label>
 					<input type="text" name="description" class="form-control" ng-model="forecast.description" />

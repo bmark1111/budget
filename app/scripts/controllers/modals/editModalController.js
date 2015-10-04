@@ -2,13 +2,12 @@
 
 app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInstance', 'RestData2', 'params', 'Categories', 'BankAccounts', function($q, $scope, $rootScope, $modalInstance, RestData2, params, Categories, BankAccounts) {
 
+	$scope.dataErrorMsg = [];
 	$scope.transaction = {
 			splits: {}
 		};
-
 	$scope.title = params.title;
 	
-	$scope.dataErrorMsg = [];
 
 	var getTransaction = function() {
 		var deferred = $q.defer();
@@ -26,44 +25,12 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		return deferred.promise;
 	};
 
-//	var getCategories = function() {
-//		var deferred = $q.defer();
-//		if (typeof($rootScope.categories) === 'undefined') {
-//			var result = RestData2().getCategories(
-//				function(response) {
-//					deferred.resolve(result);
-//				},
-//				function(err) {
-//					deferred.resolve(err);
-//				});
-//		} else {
-//			deferred.resolve(true);
-//		}
-//		return deferred.promise;
-//	};
-
-//	var getBankAccounts = function() {
-//		var deferred = $q.defer();
-//		if (typeof($rootScope.bank_accounts) === 'undefined') {
-//			var result = RestData2().getBankAccounts(
-//				function(response) {
-//					deferred.resolve(result);
-//				},
-//				function(err) {
-//					deferred.resolve(err);
-//				});
-//		} else {
-//			deferred.resolve(true);
-//		}
-//		return deferred.promise;
-//	};
-
 	$q.all([
-		BankAccounts.get(),	//getBankAccounts(),
-		Categories.get(),	//getCategories(),
+		BankAccounts.get(),
+		Categories.get(),
 		getTransaction()
 	]).then(function(response) {
-		// get the bank account
+		// get the bank accounts
 		if (!!response[0].success) {
 			$rootScope.bank_accounts = [];
 			angular.forEach(response[0].data.bank_accounts,
