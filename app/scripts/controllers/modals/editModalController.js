@@ -180,16 +180,17 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 						switch (split.type) {
 							case 'DEBIT':
 							case 'CHECK':
-								split_total -= parseFloat(split.amount);
+//								split_total -= parseFloat(split.amount);
+								split_total -= Math.round(split.amount, -2);
 								break;
 							case 'CREDIT':
 							case 'DSLIP':
-								split_total += parseFloat(split.amount);
+//								split_total += parseFloat(split.amount);
+								split_total += Math.round(split.amount, -2);
 								break;
 						}
 					}
 				});
-
 			$scope.calc = Array();
 			var yy = Object.keys($scope.transaction.splits).length
 			switch ($scope.transaction.type) {
@@ -207,7 +208,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 				break;
 			}
 			if (transaction_amount != split_total) {
-				newItem.amount = $scope.transaction.amount - split_total
+				newItem.amount = Math.round(parseFloat($scope.transaction.amount) - parseFloat(split_total), -2);
 				if (newItem.amount < 0) {
 					newItem.amount = -parseFloat(newItem.amount);
 					newItem.type = new_amount_type;
