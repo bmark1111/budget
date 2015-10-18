@@ -116,13 +116,18 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 							// make adjustment to the account balances
 							angular.forEach(response.data.result[0].accounts,
 								function(account, index) {
-									if (account.balance) {
-										// if an adjustment
-										account.balance = parseFloat(account.balance) + parseFloat(moved[moved.length-1].accounts[index].balance);
+									if (typeof(response.data.result[0].adjustments[account.bank_account_id]) !== 'undefined') {
+										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance) + parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
 									} else {
-										// if no adjustment just grab last month's account balance
-										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance);
+										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
 									}
+//									if (account.balance) {
+//										// if an adjustment
+//										account.balance = parseFloat(account.balance) + parseFloat(moved[moved.length-1].accounts[index].balance);
+//									} else {
+//										// if no adjustment just grab last month's account balance
+//										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance);
+//									}
 								});
 							response.data.result[0].balance_forward = moved[moved.length-1].running_total;
 							response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;
