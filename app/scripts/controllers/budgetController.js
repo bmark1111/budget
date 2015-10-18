@@ -112,6 +112,8 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 								moved.push(interval)
 							});
 						// if moving forward add interval to end of array
+//console.log(response.data.result[0]);
+//console.log(moved[moved.length-1]);
 						if (direction == 1) {
 							// make adjustment to the account balances
 							angular.forEach(response.data.result[0].accounts,
@@ -120,6 +122,19 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance) + parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
 									} else {
 										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
+									}
+//console.log(moved[moved.length-1].balances[account.bank_account_id]);
+//console.log(response.data.result[0].balances[account.bank_account_id]);
+//console.log(response.data.result[0].balances)
+//console.log("account.bank_account_id = "+account.bank_account_id)
+									if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
+										var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
+										var this_account_balance = (typeof(response.data.result[0].balances[account.bank_account_id]) !== 'undefined') ? response.data.result[0].balances[account.bank_account_id]: 0;
+//console.log("prev_account_balance = " + prev_account_balance);
+//console.log("this_account_balance = " + this_account_balance);
+										if (this_account_balance > prev_account_balance) {
+											account.balance += (this_account_balance - prev_account_balance);
+										}
 									}
 //									if (account.balance) {
 //										// if an adjustment
