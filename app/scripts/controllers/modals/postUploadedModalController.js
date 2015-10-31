@@ -5,7 +5,7 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 	$scope.uploaded = {
 			splits: {}
 		};
-//	$scope.categories = [];
+
 	$scope.title = params.title;
 	$scope.post = 'Post New';
 
@@ -23,44 +23,9 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 		return deferred.promise;
 	};
 
-//	var getCategories = function() {
-//		var deferred = $q.defer();
-//
-//		RestData2().getCategories().$promise.then(
-//			function(results) {
-//				deferred.resolve(results);
-//			},
-//			function(err) {
-//				deferred.resolve(err);
-//			}
-//		);
-//
-//		return deferred.promise;
-//	};
-//
-//	if (typeof($rootScope.categories) === 'undefined') {
-//		// first check to see if we need to load the categories
-//		var categoryPromise = getCategories();
-//		categoryPromise.then(
-//			function (categoryPromiseResult) {
-//				if (categoryPromiseResult.data.categories) {
-//					$rootScope.categories = [];
-//					angular.forEach(categoryPromiseResult.data.categories,
-//						function(category) {
-//							$rootScope.categories.push(category)
-//						});
-//				}
-//
-//				// now get the YTD totals
-//				getTransaction();
-//			});
-//	} else {
-//		getTransaction();
-//	}
-
 	$q.all([
-		BankAccounts.get(),	//getBankAccounts(),
-		Categories.get(),	//getCategories(),
+		BankAccounts.get(),
+		Categories.get(),
 		getTransaction()
 	]).then(function(response) {
 		// get the bank account
@@ -117,34 +82,45 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 		$scope.uploaded.transaction_id = $scope.idSelectedTransaction;
 
 		RestData2().postUploadedTransaction($scope.uploaded,
-				function(response) {
-					if (!!response.success) {
-						$modalInstance.close();
-						// now update the global intervals data
-						delete $rootScope.intervals;
-					} else if (response.validation) {
-						angular.forEach(response.validation,
-							function(validation) {
-								switch (validation.fieldName) {
-									case 'category_id':
-										$scope.validation.category_id = validation.errorMessage;
-										break;
-									default:
-										break;
-								}
-							});
+			function(response) {
+				if (!!response.success) {
+					$modalInstance.close();
+					// now update the global intervals data
+					delete $rootScope.intervals;
+					// set the date to reset the balances
+					if (typeof($rootScope.accountBalancesResetDate) === 'undefined') {
+						$rootScope.accountBalancesResetDate = response.data.reset_account_balances_date;
 					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
+						var d1 = new Date($rootScope.accountBalancesResetDate);
+						var d2 = new Date(response.data.reset_account_balances_date);
+						if (+d1 > +d2) {
+							// we have an earlier reset account balance date
+							$rootScope.accountBalancesResetDate = response.data.reset_account_balances_date;
 						}
 					}
-//					ngProgress.complete();
-				});
+				} else if (response.validation) {
+					angular.forEach(response.validation,
+						function(validation) {
+							switch (validation.fieldName) {
+								case 'category_id':
+									$scope.validation.category_id = validation.errorMessage;
+									break;
+								default:
+									break;
+							}
+						});
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
+					} else {
+						$scope.dataErrorMsg[0] = response;
+					}
+				}
+//				ngProgress.complete();
+			});
 	};
 
 	$scope.deleteUploaded = function() {
@@ -152,25 +128,24 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 
 //		ngProgress.start();
 
-		RestData2().deleteUploadedTransaction(
-				{
-					'id': params.id
-				},
-				function(response) {
-					if (!!response.success) {
-						$modalInstance.close();
+		RestData2().deleteUploadedTransaction({
+				'id': params.id
+			},
+			function(response) {
+				if (!!response.success) {
+					$modalInstance.close();
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
 					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
+						$scope.dataErrorMsg[0] = response;
 					}
-//					ngProgress.complete();
-				});
+				}
+//				ngProgress.complete();
+			});
 	};
 
 	// cancel uploaded transactionedit

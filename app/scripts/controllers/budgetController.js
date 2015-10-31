@@ -44,7 +44,7 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 					var sd = new Date(interval.interval_beginning);
 					var ed = new Date(interval.interval_ending);
 					var now = new Date();
-					interval.current_interval = (now >= sd && now <= ed) ? true: false;		// mark the current interval
+					interval.current_interval = (+now >= +sd && +now <= +ed) ? true: false;		// mark the current interval
 
 					$rootScope.intervals[key] = interval;
 				});
@@ -112,8 +112,6 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 								moved.push(interval)
 							});
 						// if moving forward add interval to end of array
-//console.log(response.data.result[0]);
-//console.log(moved[moved.length-1]);
 						if (direction == 1) {
 							// make adjustment to the account balances
 							angular.forEach(response.data.result[0].accounts,
@@ -123,26 +121,21 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 									} else {
 										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
 									}
-//console.log(moved[moved.length-1].balances[account.bank_account_id]);
-//console.log(response.data.result[0].balances[account.bank_account_id]);
-//console.log(response.data.result[0].balances)
-//console.log("account.bank_account_id = "+account.bank_account_id)
+//console.log("------- account.bank_account_id = "+account.bank_account_id+" ------")
+//console.log("prev balances = "+moved[moved.length-1].balances[account.bank_account_id]);
+//console.log("this balances = "+response.data.result[0].balances[account.bank_account_id]);
 									if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
 										var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
 										var this_account_balance = (typeof(response.data.result[0].balances[account.bank_account_id]) !== 'undefined') ? response.data.result[0].balances[account.bank_account_id]: 0;
-//console.log("prev_account_balance = " + prev_account_balance);
-//console.log("this_account_balance = " + this_account_balance);
-										if (this_account_balance > prev_account_balance) {
-											account.balance += (this_account_balance - prev_account_balance);
+//console.log("prev_account_balances = " + prev_account_balance);
+//console.log("this_account_balances = " + this_account_balance);
+//console.log("account.balance = "+account.balance);
+										if (parseFloat(this_account_balance) > parseFloat(prev_account_balance)) {
+//console.log('+++++++++')
+											account.balance += (parseFloat(this_account_balance) - parseFloat(prev_account_balance));
 										}
+//console.log("account.balance = "+account.balance);
 									}
-//									if (account.balance) {
-//										// if an adjustment
-//										account.balance = parseFloat(account.balance) + parseFloat(moved[moved.length-1].accounts[index].balance);
-//									} else {
-//										// if no adjustment just grab last month's account balance
-//										account.balance = parseFloat(moved[moved.length-1].accounts[index].balance);
-//									}
 								});
 							response.data.result[0].balance_forward = moved[moved.length-1].running_total;
 							response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;

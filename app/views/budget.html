@@ -45,7 +45,7 @@
 				<tr ng-repeat="account in intervals[0].accounts track by $index">
 					<td class="banks" nowrap>{{account.name}}</td>
 					<td class="balances" ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
-                        <span class="pull-right">{{interval.accounts[$parent.$index].balance|currency}}</span>
+                        <span class="pull-right">{{interval.accounts[$parent.$index].balance|resetBalance:interval.interval_beginning:interval.interval_ending}}</span>
                     </td>
 				</tr>
 			</tfoot>

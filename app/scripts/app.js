@@ -142,15 +142,13 @@ delete $httpProvider.defaults.headers.common['X-Requested-With'];
 ///////////////////////////////
 });
 
-
 app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService) { //, AUTH_EVENTS)
 
 	$route.reload(); 
 
 	$rootScope.$on('$routeChangeStart',
 		function (event, next) {
-			$rootScope.nav_active = $location.path().replace("/", "");
-
+			$rootScope.nav_active		= $location.path().replace("/", "");
 			$rootScope.error			= false;
 			$rootScope.authenticated	= $localStorage.authenticated;
 			$rootScope.userFullName		= $localStorage.userFullName;
@@ -159,38 +157,13 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 			if (AuthService.isAuthorized(authorizedRoles)) {
 				if ($localStorage.authenticated) {
 					// load the upload counts
-					if (typeof($rootScope.transaction_count) == 'undefined') {
+					if (typeof($rootScope.transaction_count) === 'undefined') {
 						$rootScope.transaction_count = '';
 						RestData2().getUploadCounts(
-								function(response) {
-									$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
-								});
+							function(response) {
+								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+							});
 					}
-
-//					if (typeof($rootScope.categories) == 'undefined') {	// load the categories
-//						$rootScope.categories = [];
-//						RestData2().getCategories(
-//								function(response) {
-//									angular.forEach(response.data.categories,
-//										function(category) {
-//											$rootScope.categories.push(category)
-//										});
-//								});
-//					}
-
-//					if (typeof($rootScope.bank_accounts) == 'undefined') {	// load the bank accounts
-//						$rootScope.bank_accounts = [];
-//						RestData2().getBankAccounts(
-//								function(response) {
-//									angular.forEach(response.data.bank_accounts,
-//										function(bank_account) {
-//											$rootScope.bank_accounts.push({
-//												'id': bank_account.id,
-//												'name': bank_account.bank.name + ' ' + bank_account.name
-//											})
-//										});
-//								});
-//					}
 				} else {
 //					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');
@@ -214,4 +187,3 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 		});
 
 });
-
