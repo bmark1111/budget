@@ -4,8 +4,6 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 
 	$scope.dataErrorMsg = [];
 
-//	var categoryPromise = Categories.get();
-
 	var getYTDTotals = function() {
 		var deferred = $q.defer();
 		var result = RestData2().getYTDTotals(
@@ -19,7 +17,7 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 	};
 
 	$q.all([
-		Categories.get(),	//categoryPromise,	//getCategories(),
+		Categories.get(),
 		getYTDTotals()
 	]).then(function(response) {
 		// load the categories

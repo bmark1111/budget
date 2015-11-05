@@ -1,3 +1,5 @@
+<ng-include src="'app/views/templates/resetBalanceModal.html'"></ng-include>
+
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
 	<a class="navmenu-brand visible-md visible-lg">Budget Tracker</a>
 	<div ng-if="!authenticated">
@@ -39,8 +41,8 @@
 			</li>-->
 			<hr />
 		</ul>
-		<ul class="nav navmenu-nav" ng-if="accountBalancesResetDate">
-			<li ng-class="{'active': nav_active == 'reset'}"><a href="#/reset">Reset Account Balances</a>{{ accountBalancesResetDate }}</li>
+		<ul class="nav navmenu-nav"><!-- ng-if="accountBalancesResetDate">-->
+			<li ng-class="::{'active': nav_active == 'reset'}"><a href="javascript:void(0)" ng-click="openResetBalancesModal()">Reset Account Balances {{ accountBalancesResetDate }}</a></li>
 		</ul>
 	</div>
 </div>

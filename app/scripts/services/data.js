@@ -36,6 +36,7 @@ app.factory('RestData2', function ($resource, $localStorage, API) {
 				saveBank:					{ method: 'POST', headers: headers, params: {object: 'bank', action: 'save', param: null} },
 				deleteBank:					{ method: 'GET', headers: headers, params: {object: 'bank', action: 'delete', param: null} },
 				getBankAccounts:			{ method: 'GET', headers: headers, params: {object: 'bank', action: 'accounts', param: null} },
+				resetAccountBalances:		{ method: 'POST', headers: headers, params: {object: 'rest', action: 'resetAccountBalances', param: null} },
 
 				getAllCategories:			{ method: 'GET', headers: headers, params: {object: 'category', action: 'load', param: null} },
 				editCategory:				{ method: 'GET', headers: headers, params: {object: 'category', action: 'edit', param: null} },

@@ -1,20 +1,16 @@
-app.service('fileUpload', ['$http', function ($http)
-{
-	this.uploadFileToUrl = function(file, uploadUrl)
-	{
+app.service('fileUpload', ['$http', function ($http) {
+
+	this.uploadFileToUrl = function(file, uploadUrl) {
 		var fd = new FormData();
 		fd.append('file', file);
-		return $http.post(uploadUrl, fd,
-		{
+		return $http.post(uploadUrl, fd, {
 			transformRequest: angular.identity,
 			headers: {'Content-Type': undefined}
 		})
-		.success(function(data)
-		{
+		.success(function(data) {
 			console.log('upload success');
 		})
-		.error(function(data)
-		{
+		.error(function(data) {
 			console.log('upload failure');
 		});
 	}

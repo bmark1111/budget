@@ -63,7 +63,9 @@
 
 	<body>
 		<div>
-			<ng-include src="'app/views/templates/sidenav.html'"></ng-include>
+			<div ng-controller="MenuController">
+				<ng-include src="'app/views/templates/sidenav.html'"></ng-include>
+			</div>
 			<div ng-view=""></div>
 		</div>
 
@@ -95,6 +97,7 @@
 		<script src="app/scripts/controllers/uploadsController.js"></script>
 		<script src="app/scripts/controllers/bankController.js"></script>
 		<script src="app/scripts/controllers/categoryController.js"></script>
+		<script src="app/scripts/controllers/menuController.js"></script>
 		<script src="app/scripts/controllers/settingsController.js"></script>
 
 		<!--<script src="app/scripts/controllers/popoverdemoController.js"></script>-->
@@ -110,12 +113,14 @@
 		<script src="app/scripts/controllers/modals/deleteUploadedModalController.js"></script>
 		<script src="app/scripts/controllers/modals/deleteCategoryModalController.js"></script>
 		<script src="app/scripts/controllers/modals/editCategoryModalController.js"></script>
+		<script src="app/scripts/controllers/modals/resetBalanceModalController.js"></script>
 
 		<!--<script src="app/scripts/constants/auth_events.js"></script>-->
 		<script src="app/scripts/constants/user_roles.js"></script>
 		<script src="app/scripts/constants/api.js"></script>
 
 		<script src="app/scripts/services/auth.js"></script>
+		<script src="app/scripts/services/modalDialog.js"></script>
 <!--		<script src="app/scripts/services/user.js"></script>-->
 
 		<script src="app/scripts/services/data.js"></script>

@@ -1,6 +1,6 @@
 var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);
 
-app.config(function($routeProvider, $httpProvider, USER_ROLES) {
+app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 
 	$httpProvider.interceptors.push(function ($q, $localStorage, $location, $rootScope) {
 //		$rootScope.dataErrorMsg = [];
@@ -130,6 +130,18 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+//		.when('/reset',
+//		{
+//			controller:		'',
+//			template:		" ",
+//			resolve:		function() {
+//console.log('asasasasas');
+//								$dialog.dialog({}).open('resetBalanceModal.html');  
+//							},
+//			data:			{
+//								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+//							}
+//		})
 		.otherwise(
 		{
 			redirectTo: '/'
