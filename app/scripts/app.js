@@ -164,6 +164,7 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 			$rootScope.error			= false;
 			$rootScope.authenticated	= $localStorage.authenticated;
 			$rootScope.userFullName		= $localStorage.userFullName;
+			$rootScope.accountBalancesResetDate = $localStorage.accountBalancesResetDate;
 
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
 			if (AuthService.isAuthorized(authorizedRoles)) {

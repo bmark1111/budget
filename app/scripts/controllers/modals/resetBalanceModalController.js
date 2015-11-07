@@ -2,12 +2,13 @@
 
 app.controller('ResetBalanceModalController', ResetBalanceModalController);
 
-function ResetBalanceModalController($scope, $rootScope, $modalInstance, RestData2, params) {
+function ResetBalanceModalController($rootScope, $localStorage, $modalInstance, RestData2, params) {
 console.log('ResetBalanceModalController');
 	this.dataErrorMsg	= [];
 	this.title = params.title;
 	this.message = params.message;
-$rootScope.accountBalancesResetDate = '2015-10-30';
+//$rootScope.accountBalancesResetDate = '2015-10-30';
+//$rootScope.accountBalanceResetId = 1;
 	this.ok = function () {
 //		ngProgress.start();
 		RestData2().resetAccountBalances({
@@ -18,6 +19,8 @@ $rootScope.accountBalancesResetDate = '2015-10-30';
 					$modalInstance.close();
 					// now update the global intervals data
 					delete $rootScope.intervals;
+					delete $rootScope.accountBalancesResetDate;
+					delete $localStorage.accountBalancesResetDate;
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,

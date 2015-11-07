@@ -41,7 +41,7 @@
 			</li>-->
 			<hr />
 		</ul>
-		<ul class="nav navmenu-nav"><!-- ng-if="accountBalancesResetDate">-->
+		<ul class="nav navmenu-nav" ng-if="accountBalancesResetDate">
 			<li ng-class="::{'active': nav_active == 'reset'}"><a href="javascript:void(0)" ng-click="openResetBalancesModal()">Reset Account Balances {{ accountBalancesResetDate }}</a></li>
 		</ul>
 	</div>
