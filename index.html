@@ -12,7 +12,7 @@
 		<!-- Bootstrap core CSS -->
 		<link href="app/styles/bootstrap.min.css" rel="stylesheet">
 		<link href="app/styles/jasny-bootstrap.min.css" rel="stylesheet">
-		<link href="app/styles/maxcdn-bootstrap.min.css" rel="stylesheet">
+		<!--<link href="app/styles/maxcdn-bootstrap.min.css" rel="stylesheet">-->
 		<!--<link href="app/styles/animate.css" rel="stylesheet">-->
 <!--		<link rel="stylesheet" href="scripts/nsPopover-master/example/nsPopover.css">
 		<link rel="stylesheet" href="scripts/nsPopover-master/example/index.css">-->
@@ -87,6 +87,7 @@
 		<script src="scripts/nsPopover-master/src/nsPopover.js"></script>
 
 		<script src="app/scripts/app.js"></script>
+		<script src="app/scripts/controllers/admin/adminController.js"></script>
 		<script src="app/scripts/controllers/loginController.js"></script>
 		<script src="app/scripts/controllers/logoutController.js"></script>
 		<script src="app/scripts/controllers/homeController.js"></script>
@@ -135,5 +136,15 @@
 		<script src="app/scripts/directives/rightClick.js"></script>
 		<script src="app/scripts/directives/fileModel.js"></script>
 		<!--<script src="app/scripts/directives/popover.js"></script>-->
+
+		<!-- keeps dropdown menu displayed when clicked -->
+		<script language="javascript">
+		$(document).ready(function() {
+			$('body').on('click', '#admin-menu > ul > li > a', function (e) {
+				e.stopPropagation();
+				$('#admin-menu').addClass('open');
+			});
+		});
+		</script>
 	</body>
 </html>

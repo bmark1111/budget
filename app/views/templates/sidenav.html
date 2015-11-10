@@ -42,11 +42,23 @@
 			<hr />
 		</ul>
 		<ul class="nav navmenu-nav" ng-if="accountBalancesResetDate">
-			<li ng-class="::{'active': nav_active == 'reset'}"><a href="javascript:void(0)" ng-click="openResetBalancesModal()">Reset Account Balances {{ accountBalancesResetDate }}</a></li>
+			<li ng-class="{'active': nav_active == 'reset'}"><a href="javascript:void(0)" ng-click="openResetBalancesModal()">Reset Account Balances</a></li>
+		</ul>
+		<ul class="nav navmenu-nav" ng-if="is_admin">
+			<li class="dropdown" id="admin-menu">
+				<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Admin Functions{{isActive}} <b class="caret"></b></a>
+				<ul class="dropdown-menu navmenu-nav">
+					<li ng-class="{'active': nav_active == 'admin_transactions'}"><a id="xxxxxx" href="#/admin_transactions">Transactions</a></li>
+<!--					<li><a href="#/budget_settings">Budget</a></li>
+					<li class="divider"></li>
+					<li class="dropdown-header">Nav header</li>
+					<li><a href="#">Separated link</a></li>
+					<li><a href="#">One more separated link</a></li>-->
+				</ul>
+			</li>
 		</ul>
 	</div>
 </div>
-
 <div class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg">
 	<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
 		<span class="icon-bar"></span>

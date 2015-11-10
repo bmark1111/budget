@@ -3,7 +3,7 @@
 <ng-include src="'app/views/templates/uploadModal.html'"></ng-include>
 
 <div class="container-fluid">
-	<h1 class="page-header">Transactions</h1>
+	<h1 class="page-header">Transactions<span ng-if="is_admin"> - Admin View</span></h1>
 	<div ng-if="error">{{error}}</div>
 	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
