@@ -1,0 +1,38 @@
+<div class="container-fluid">
+	<h1 class="page-header">Reconcile Accounts</h1>
+	<div ng-if="error">{{error}}</div>
+	<h4 class="table-responsive" style="width:70%;">
+		If a button appears below with the balance then it is waiting to be be reconciled. No button indicates that reconciliation has already occurred.<br /><br />
+		This will allow you to reconcile your financial institution balances with your budget tracker system. Go ahead and check
+		the balance displayed with your financial institution.
+		If they match click on the button with the balance and that will reconcile your budget tracker balance with your financial institution.<br /><br />
+		Once transactions are reconciled they will not be able to be edited except for notes and category.
+	</h4>
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
+		<table class="dashboard">
+			<thead>
+				<tr>
+					<th><span class="pull-right">Interval Ending</span></th>
+					<th ng-repeat="interval in recIntervals"><span class="pull-right">{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- now get the bank accounts -->
+				<tr ng-repeat="account in recIntervals[0].accounts track by $index">
+					<td class="banks" nowrap>{{account.name}}</td>
+					<td class="balances" ng-repeat="interval in recIntervals" nowrap>
+						<button type="button" class="pull-right" style="width:100px;" title="Reconcile this account" ng-show="interval.reconciled > 0">
+							{{interval.accounts[$parent.$index].balance|currency}}
+						</button>
+						<span class="pull-right" ng-show="interval.reconciled <= 0">
+							{{interval.accounts[$parent.$index].balance|currency}}
+						</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
+	</div>
+</div>

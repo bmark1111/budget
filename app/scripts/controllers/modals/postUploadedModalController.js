@@ -87,22 +87,22 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$l
 					$modalInstance.close();
 					// now update the global intervals data
 					delete $rootScope.intervals;
-					// set the date to reset the balances
-					if (typeof($rootScope.accountBalancesResetDate) === 'undefined') {
-						$rootScope.accountBalancesResetDate = Array();
-						$rootScope.accountBalancesResetDate[response.data.reset_bank_account_id] = response.data.reset_account_balances_date;
-					} else if (typeof($rootScope.accountBalancesResetDate[response.data.reset_bank_account_id]) === 'undefined') {
-						$rootScope.accountBalancesResetDate[response.data.reset_bank_account_id] = response.data.reset_account_balances_date;
-					} else {
-						var d1 = new Date($rootScope.accountBalancesResetDate[response.data.reset_bank_account_id]);
-						var d2 = new Date(response.data.reset_account_balances_date);
-						if (+d1 > +d2) {
-							// we have an earlier reset account balance date
-							$rootScope.accountBalancesResetDate[response.data.reset_bank_account_id] = response.data.reset_account_balances_date;
-						}
-					}
-					// save reset data in localStorage
-					$localStorage.accountBalancesResetDate = $rootScope.accountBalancesResetDate;
+//					// set the date to reset the balances
+//					if (typeof($rootScope.accountBalancesResetDate) === 'undefined') {
+//						$rootScope.accountBalancesResetDate = Array();
+//						$rootScope.accountBalancesResetDate[response.data.reset_bank_account_id] = response.data.reset_account_balances_date;
+//					} else if (typeof($rootScope.accountBalancesResetDate[response.data.reset_bank_account_id]) === 'undefined') {
+//						$rootScope.accountBalancesResetDate[response.data.reset_bank_account_id] = response.data.reset_account_balances_date;
+//					} else {
+//						var d1 = new Date($rootScope.accountBalancesResetDate[response.data.reset_bank_account_id]);
+//						var d2 = new Date(response.data.reset_account_balances_date);
+//						if (+d1 > +d2) {
+//							// we have an earlier reset account balance date
+//							$rootScope.accountBalancesResetDate[response.data.reset_bank_account_id] = response.data.reset_account_balances_date;
+//						}
+//					}
+//					// save reset data in localStorage
+//					$localStorage.accountBalancesResetDate = $rootScope.accountBalancesResetDate;
 				} else if (response.validation) {
 					angular.forEach(response.validation,
 						function(validation) {

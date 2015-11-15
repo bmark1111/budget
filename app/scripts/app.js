@@ -98,6 +98,14 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+		.when('/reconcile',
+		{
+			controller:		'ReconcileController',
+			templateUrl:	'app/views/reconcile.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
 		.when('/uploads',
 		{
 			controller:		'UploadsController',
@@ -130,7 +138,7 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
-		.when('/admin_transactions',
+		.when('/admin',
 		{
 			controller:		'AdminController',
 			templateUrl:	"app/views/admin/admin.html",
@@ -160,7 +168,7 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 			$rootScope.error			= false;
 			$rootScope.authenticated	= $localStorage.authenticated;
 			$rootScope.userFullName		= $localStorage.userFullName;
-			$rootScope.accountBalancesResetDate = $localStorage.accountBalancesResetDate;
+//			$rootScope.accountBalancesResetDate = $localStorage.accountBalancesResetDate;
 
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
 			if (AuthService.isAuthorized(authorizedRoles)) {

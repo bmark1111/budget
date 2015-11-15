@@ -70,7 +70,7 @@
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
 					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editTransaction(transactions[idx].id)" style="cursor:pointer;" title="Edit Transaction ?"></span>
-						<span class="glyphicon glyphicon-trash" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>
+						<span class="glyphicon glyphicon-trash" ng-if="is_admin || (!transactions[idx].reconciled_date && transactions[idx].is_uploaded == 0)" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>
 					</td>
 				</tr>
 				<tr ng-repeat-end="">

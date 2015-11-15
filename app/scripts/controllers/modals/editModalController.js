@@ -73,12 +73,29 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		$scope.opened = true;
 	};
 
+	/**
+	 * @name _addZero
+	 * @desc local function to add leading zeros to time parameters
+	 * @type {Function}
+	 * @param {hours | minutes}
+	 * @return {string} hours or minutes woth leading zeros
+	 */
+	var _addZero = function(i) {
+		if (i < 10) {
+			i = "0" + i;
+		}
+		return i;
+	}
+
 	// save edited transaction
 	$scope.save = function () {
 		$scope.dataErrorMsg = [];
 
 		$scope.validation = {};
-
+//console.log($scope.transaction);
+		var dt = new Date($scope.transaction.transaction_date);
+//console.log(dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate()));
+		$scope.transaction.transaction_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
 		RestData2().saveTransaction($scope.transaction,
 				function(response) {
 					if (!!response.success) {

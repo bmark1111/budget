@@ -2,6 +2,7 @@ app.filter('resetBalance', function ($rootScope, $filter) {
 
 	return function (balance, interval_ending, account_id) {
 //console.log('=========================')
+//console.log(balance)
 //console.log(interval_ending)
 //console.log(account_id)
 		if (typeof($rootScope.accountBalancesResetDate) !== 'undefined' && typeof($rootScope.accountBalancesResetDate[account_id]) !== 'undefined') {
