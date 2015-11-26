@@ -104,7 +104,7 @@ div.table-responsive .currentInterval {
 	z-index: 1000;
 }
 
-div.forecast_amount a {
+span.forecast_amount {
 	color:#04B431 !important;
 }
 div.ns-popover-custom-theme {
