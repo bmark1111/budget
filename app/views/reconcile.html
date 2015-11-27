@@ -26,8 +26,10 @@
 				<tr ng-repeat="account in recIntervals[0].accounts track by $index">
 					<td class="banks" nowrap>{{account.name}}</td>
 					<td class="balances" ng-repeat="interval in recIntervals" nowrap>
-						<button type="button" class="pull-right" ng-show="interval.accounts[$parent.$index].reconciled != 1" style="width:100px;" title="Reconcile this account" ng-click="reconcile(account.name, account.bank_account_id, interval.interval_ending)">
-							{{interval.accounts[$parent.$index].balance|currency}}
+						<button type="button" class="pull-right" ng-show="interval.accounts[$parent.$index].reconciled != 1" style="width:100px;" title="Reconcile this account"><!-- ng-click="reconcile(account.name, account.bank_account_id, interval.interval_ending)">-->
+							<span ng-click="reconcile(account.name, account.bank_account_id, interval.interval_ending, interval.alt_ending)">
+								{{interval.accounts[$parent.$index].balance|currency}}
+							</span>
 						</button>
 						<span class="pull-right" ng-show="interval.accounts[$parent.$index].reconciled == 1">
 							{{interval.accounts[$parent.$index].balance|currency}}

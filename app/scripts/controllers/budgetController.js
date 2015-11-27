@@ -6,7 +6,38 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 	$scope.dataErrorMsgThese = false;
 
 	var interval = 0;
-	var loadIntervals = function() {
+
+	var buildPeriods = function(response) {
+		$rootScope.intervals = [];
+		$rootScope.start_interval = 0;
+		angular.forEach(response.data.result,
+			function(interval, key) {
+				var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
+				var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
+				var now = new Date(new Date().setHours(0,0,0,0));
+				if (+now >= +sd && +now <= +ed) {
+					interval.alt_ending = now;				// set alternative ending
+					interval.current_interval = true;		// mark the current interval
+				}
+
+				angular.forEach(interval.accounts,
+					function(account) {
+						if (account.reconciled_date) {
+							var dt = account.reconciled_date.split('-');
+							var rd = new Date(dt[0], --dt[1], dt[2]);
+							var now = new Date(new Date().setHours(0,0,0,0));
+							if (+rd === +ed || +rd === +now) {
+								// if everything has been reconciled up to the period ending date
+								account.reconciled = 1;
+							}
+						}
+					})
+
+				$rootScope.intervals[key] = interval;
+			});
+	};
+
+	var loadPeriods = function() {
 		var deferred = $q.defer();
 		if (typeof($rootScope.intervals) === 'undefined') {
 			var result = RestData2().getTransactions({ interval: interval },
@@ -24,7 +55,7 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 
 	$q.all([
 		Categories.get(),
-		loadIntervals()
+		loadPeriods()
 	]).then(function(response) {
 		// load the categories
 		if (!!response[0].success) {
@@ -36,33 +67,34 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 		}
 		// load the intervals
 		if (!!response[1].success) {
-			// set current interval
-			$rootScope.intervals = [];
-			$rootScope.start_interval = 0;
-			angular.forEach(response[1].data.result,
-				function(interval, key) {
-					var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
-					var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
-					var now = new Date(new Date().setHours(0,0,0,0));
-					if (+now >= +sd && +now <= +ed) {
-						interval.alt_ending = now;				// set alternative ending
-						interval.current_interval = true;		// mark the current interval
-					}
-
-					angular.forEach(interval.accounts,
-						function(account) {
-							if (account.reconciled_date) {
-								var dt = account.reconciled_date.split('-');
-								var rd = new Date(dt[0], --dt[1], dt[2]);
-								if (+rd === +ed) {
-									// if everything has been reconciled up to the period ending date
-									account.reconciled = 1;
-								}
-							}
-						});
-
-					$rootScope.intervals[key] = interval;
-				});
+			buildPeriods(response[1]);
+//			// set current interval
+//			$rootScope.intervals = [];
+//			$rootScope.start_interval = 0;
+//			angular.forEach(response[1].data.result,
+//				function(interval, key) {
+//					var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
+//					var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
+//					var now = new Date(new Date().setHours(0,0,0,0));
+//					if (+now >= +sd && +now <= +ed) {
+//						interval.alt_ending = now;				// set alternative ending
+//						interval.current_interval = true;		// mark the current interval
+//					}
+//
+//					angular.forEach(interval.accounts,
+//						function(account) {
+//							if (account.reconciled_date) {
+//								var dt = account.reconciled_date.split('-');
+//								var rd = new Date(dt[0], --dt[1], dt[2]);
+//								if (+rd === +ed) {
+//									// if everything has been reconciled up to the period ending date
+//									account.reconciled = 1;
+//								}
+//							}
+//						});
+//
+//					$rootScope.intervals[key] = interval;
+//				});
 		}
 	});
 

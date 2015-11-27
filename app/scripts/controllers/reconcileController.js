@@ -25,7 +25,8 @@ app.controller('ReconcileController', ['$q', '$scope', '$rootScope', '$modal', '
 						if (account.reconciled_date) {
 							var dt = account.reconciled_date.split('-');
 							var rd = new Date(dt[0], --dt[1], dt[2]);
-							if (+rd === +ed) {
+							var now = new Date(new Date().setHours(0,0,0,0));
+							if (+rd === +ed || +rd === +now) {
 								// if everything has been reconciled up to the period ending date
 								account.reconciled = 1;
 							}
@@ -77,7 +78,8 @@ app.controller('ReconcileController', ['$q', '$scope', '$rootScope', '$modal', '
 			});
 	});
 
-	$scope.reconcile = function(account_name, account_id, date) {
+	$scope.reconcile = function(account_name, account_id, date, alt_date) {
+		var use_date = (alt_date) ? alt_date: date;
 		var modalInstance = $modal.open({
 			templateUrl: 'reconcileTransactionsModal.html',
 			controller: 'ReconcileTransactionsModalController',
@@ -87,7 +89,7 @@ app.controller('ReconcileController', ['$q', '$scope', '$rootScope', '$modal', '
 						return {
 							account_name:	account_name,
 							account_id:		account_id,
-							date:			date
+							date:			use_date
 						}
 					}
 			}
