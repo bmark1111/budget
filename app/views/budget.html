@@ -5,7 +5,7 @@
 		<table class="dashboard">
 			<thead>
 				<tr>
-					<th><span class="pull-right">Interval Ending</span></th>
+					<th><span class="pull-right">Period Ending</span></th>
 					<th colspan="2" style="text-align:center;" ng-repeat="interval in intervals|getIntervals:start_interval:1" ng-class="{'currentInterval':interval.current_interval}">
 						<span>{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span>
 					</th>

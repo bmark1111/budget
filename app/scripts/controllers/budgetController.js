@@ -41,10 +41,25 @@ app.controller('BudgetController', ['$q', '$scope', '$rootScope', 'RestData2', '
 			$rootScope.start_interval = 0;
 			angular.forEach(response[1].data.result,
 				function(interval, key) {
-					var sd = new Date(interval.interval_beginning);
-					var ed = new Date(interval.interval_ending);
-					var now = new Date();
-					interval.current_interval = (+now >= +sd && +now <= +ed) ? true: false;		// mark the current interval
+					var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
+					var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
+					var now = new Date(new Date().setHours(0,0,0,0));
+					if (+now >= +sd && +now <= +ed) {
+						interval.alt_ending = now;				// set alternative ending
+						interval.current_interval = true;		// mark the current interval
+					}
+
+					angular.forEach(interval.accounts,
+						function(account) {
+							if (account.reconciled_date) {
+								var dt = account.reconciled_date.split('-');
+								var rd = new Date(dt[0], --dt[1], dt[2]);
+								if (+rd === +ed) {
+									// if everything has been reconciled up to the period ending date
+									account.reconciled = 1;
+								}
+							}
+						});
 
 					$rootScope.intervals[key] = interval;
 				});

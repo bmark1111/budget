@@ -1,12 +1,42 @@
 'use strict';
 
-app.controller('ReconcileController', ['$q', '$scope', '$rootScope', 'RestData2', '$filter', 'Categories', function($q, $scope, $rootScope, RestData2, $filter, Categories) {
+app.controller('ReconcileController', ['$q', '$scope', '$rootScope', '$modal', 'RestData2', 'Categories', function($q, $scope, $rootScope, $modal, RestData2, Categories) {
 
 	$scope.dataErrorMsg = [];
 	$scope.recIntervals = [];
 
 	var interval = 0;
-	var loadIntervals = function() {
+
+	var buildPeriods = function(response) {
+		$rootScope.intervals = [];
+		$rootScope.start_interval = 0;
+		angular.forEach(response.data.result,
+			function(interval, key) {
+				var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
+				var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
+				var now = new Date(new Date().setHours(0,0,0,0));
+				if (+now >= +sd && +now <= +ed) {
+					interval.alt_ending = now;				// set alternative ending
+					interval.current_interval = true;		// mark the current interval
+				}
+
+				angular.forEach(interval.accounts,
+					function(account) {
+						if (account.reconciled_date) {
+							var dt = account.reconciled_date.split('-');
+							var rd = new Date(dt[0], --dt[1], dt[2]);
+							if (+rd === +ed) {
+								// if everything has been reconciled up to the period ending date
+								account.reconciled = 1;
+							}
+						}
+					})
+
+				$rootScope.intervals[key] = interval;
+			});
+	};
+
+	var loadPeriods = function() {
 		var deferred = $q.defer();
 		if (typeof($rootScope.intervals) === 'undefined') {
 			var result = RestData2().getTransactions({ interval: interval },
@@ -24,7 +54,7 @@ app.controller('ReconcileController', ['$q', '$scope', '$rootScope', 'RestData2'
 
 	$q.all([
 		Categories.get(),
-		loadIntervals()
+		loadPeriods()
 	]).then(function(response) {
 		// load the categories
 		if (!!response[0].success) {
@@ -34,43 +64,55 @@ app.controller('ReconcileController', ['$q', '$scope', '$rootScope', 'RestData2'
 					$rootScope.categories.push(category)
 				});
 		}
-		// load the intervals
+		// build the periods
 		if (!!response[1].success) {
-			// set current interval
-			$rootScope.intervals = [];
-			$rootScope.start_interval = 0;
-			angular.forEach(response[1].data.result,
-				function(interval, key) {
-					var sd = new Date(interval.interval_beginning);
-					var ed = new Date(interval.interval_ending);
-					var now = new Date();
-					interval.current_interval = (+now >= +sd && +now <= +ed) ? true: false;		// mark the current interval
-
-					$rootScope.intervals[key] = interval;
-				});
+			buildPeriods(response[1]);
 		}
+		$rootScope.recIntervals = [];
 		angular.forEach($scope.intervals,
 			function(interval, key) {
-				var ed = new Date(interval.interval_ending);
-				var now = new Date();
-				if (+now > +ed) {
-					var dt = interval.reconciled_date.split('-');
-//console.log('==============')
-//console.log(dt);
-					var xx = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
-//console.log(xx);
-//console.log(xx.getTime());
-					var dt = interval.interval_ending.split('T');
-					var dt = dt[0].split('-');
-//console.log(dt);
-					var yy = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
-//console.log(yy);
-//console.log(yy.getTime());
-					$scope.recIntervals[key] = interval;
-					$scope.recIntervals[key].reconciled = yy.getTime() - xx.getTime();
+				if (interval.forecast != 1) {
+					$scope.recIntervals.push(interval);
 				}
 			});
-//console.log($scope.recIntervals)
 	});
+
+	$scope.reconcile = function(account_name, account_id, date) {
+		var modalInstance = $modal.open({
+			templateUrl: 'reconcileTransactionsModal.html',
+			controller: 'ReconcileTransactionsModalController',
+			size: 'md',
+			resolve: {
+				params: function() {
+						return {
+							account_name:	account_name,
+							account_id:		account_id,
+							date:			date
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function () {
+			$q.all([
+				loadPeriods()
+			]).then(function(response) {
+				// build the periods
+				if (!!response[0].success) {
+					buildPeriods(response[0]);
+				}
+				$scope.recIntervals = [];
+				angular.forEach($scope.intervals,
+					function(interval, key) {
+						if (interval.forecast != 1) {
+							$scope.recIntervals.push(interval);
+						}
+					});
+			});
+		},
+		function () {
+			console.log('Reconcile Modal dismissed at: ' + new Date());
+		});
+	};
 
 }]);

@@ -1,3 +1,5 @@
+<ng-include src="'app/views/templates/reconcileTransactionsModal.html'"></ng-include>
+
 <div class="container-fluid">
 	<h1 class="page-header">Reconcile Accounts</h1>
 	<div ng-if="error">{{error}}</div>
@@ -12,8 +14,11 @@
 		<table class="dashboard">
 			<thead>
 				<tr>
-					<th><span class="pull-right">Interval Ending</span></th>
-					<th ng-repeat="interval in recIntervals"><span class="pull-right">{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span></th>
+					<th><span class="pull-right">Account Balance As Of</span></th>
+					<th ng-repeat="interval in recIntervals">
+						<span class="pull-right" ng-if="!interval.alt_ending">{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span>
+						<span class="pull-right" ng-if="interval.alt_ending">{{interval.alt_ending|date:'EEE MMM dd, yyyy'}}</span>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -21,10 +26,10 @@
 				<tr ng-repeat="account in recIntervals[0].accounts track by $index">
 					<td class="banks" nowrap>{{account.name}}</td>
 					<td class="balances" ng-repeat="interval in recIntervals" nowrap>
-						<button type="button" class="pull-right" style="width:100px;" title="Reconcile this account" ng-show="interval.reconciled > 0">
+						<button type="button" class="pull-right" ng-show="interval.accounts[$parent.$index].reconciled != 1" style="width:100px;" title="Reconcile this account" ng-click="reconcile(account.name, account.bank_account_id, interval.interval_ending)">
 							{{interval.accounts[$parent.$index].balance|currency}}
 						</button>
-						<span class="pull-right" ng-show="interval.reconciled <= 0">
+						<span class="pull-right" ng-show="interval.accounts[$parent.$index].reconciled == 1">
 							{{interval.accounts[$parent.$index].balance|currency}}
 						</span>
 					</td>

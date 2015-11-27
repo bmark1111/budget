@@ -1,0 +1,13 @@
+<script type="text/ng-template" id="reconcileTransactionsModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Reconcile Transactions for {{account_name}} until {{date}}</h3>
+	</div>
+	<div class="modal-body">
+		This will reconcile all transactions up until {{date}}. Once a transaction is reconciled it cannot be deleted. Only the category and notes can be edited.
+		Make sure you check this balance and date against your financial institutions records.
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="ok()">OK</button>
+		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	</div>
+</script>
