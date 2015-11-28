@@ -23,11 +23,15 @@ app.controller('ReconcileController', ['$q', '$scope', '$rootScope', '$modal', '
 				angular.forEach(interval.accounts,
 					function(account) {
 						if (account.reconciled_date) {
+							var dt = account.balance_date.split('-');
+							var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
 							var dt = account.reconciled_date.split('-');
-							var rd = new Date(dt[0], --dt[1], dt[2]);
+							var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
 							var now = new Date(new Date().setHours(0,0,0,0));
-							if (+rd === +ed || +rd === +now) {
-								// if everything has been reconciled up to the period ending date
+							if (+rd === +ed || +rd === +now || +rd >= +bd) {
+								// if everything has been reconciled up to the period ending date...
+								// ... OR reconciled date is today...
+								// ... OR reconciled date is >= balance date
 								account.reconciled = 1;
 							}
 						}
