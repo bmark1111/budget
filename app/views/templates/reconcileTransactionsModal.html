@@ -3,8 +3,10 @@
 		<h3 class="modal-title">Reconcile Transactions for {{account_name}} until {{date}}</h3>
 	</div>
 	<div class="modal-body">
-		This will reconcile all transactions up until {{date}}. Once a transaction is reconciled it cannot be deleted. Only the category and notes can be edited.
-		Make sure you check this balance and date against your financial institutions records.
+		This will reconcile your financial institution ({{account_name}}) balance with your budget tracker system up until {{date}}. Check
+		the balance displayed with your financial institution records as of that date.
+		If they match click 'OK' and that will reconcile your budget tracker balance with your financial institution.<br /><br />
+		{{account_name}} {{date}} {{balance|currency}}
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-primary" ng-click="ok()">OK</button>

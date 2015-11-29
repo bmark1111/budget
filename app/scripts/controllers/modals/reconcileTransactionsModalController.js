@@ -6,6 +6,7 @@ app.controller('ReconcileTransactionsModalController', function ($scope, $rootSc
 
 	$scope.account_name	= params.account_name;
 	$scope.account_id	= params.account_id;
+	$scope.balance		= params.balance;
 	$scope.date			= $filter('date')(params.date, "EEE MMM dd, yyyy");
 
 	$scope.ok = function () {

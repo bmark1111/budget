@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('BudgetController', ['$q', '$scope', '$rootScope', '$localStorage', '$modal', 'RestData2', '$filter', 'Categories',
+app.controller('SheetController', ['$q', '$scope', '$rootScope', '$localStorage', 'RestData2', '$filter', 'Categories',
 
-function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Categories) {
+function($q, $scope, $rootScope, $localStorage, RestData2, $filter, Categories) {
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
@@ -142,6 +142,32 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						});
 					// if moving forward add interval to end of array
 					if (direction == 1) {
+//						// make adjustment to the account balances
+//						angular.forEach(response.data.result[0].accounts,
+//							function(account, index) {
+//								if (typeof(response.data.result[0].adjustments[account.bank_account_id]) !== 'undefined') {
+//									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance) + parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
+//								} else {
+//									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
+//								}
+////console.log("------- account.bank_account_id = "+account.bank_account_id+" ------")
+////console.log("prev balances = "+moved[moved.length-1].balances[account.bank_account_id]);
+////console.log("this balances = "+response.data.result[0].balances[account.bank_account_id]);
+//								if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
+//									var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
+//									var this_account_balance = (typeof(response.data.result[0].balances[account.bank_account_id]) !== 'undefined') ? response.data.result[0].balances[account.bank_account_id]: 0;
+////console.log("prev_account_balances = " + prev_account_balance);
+////console.log("this_account_balances = " + this_account_balance);
+////console.log("account.balance = "+account.balance);
+//									if (parseFloat(this_account_balance) > parseFloat(prev_account_balance)) {
+////console.log('+++++++++')
+//										account.balance += (parseFloat(this_account_balance) - parseFloat(prev_account_balance));
+//									}
+////console.log("account.balance = "+account.balance);
+//								}
+//							});
+//						response.data.result[0].balance_forward = moved[moved.length-1].running_total;
+//						response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;
 						moved.push(response.data.result[0]);	// add forecast
 						moved.push(response.data.result[1]);	// add actual
 					}
@@ -159,55 +185,5 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 //					ngProgress.complete();
 			});
 	}
-
-	/**
-	 * @name reconcile
-	 * @type method
-	 * @param {type} account_name
-	 * @param {type} account_id
-	 * @param {type} date
-	 * @param {type} alt_date
-	 * @returns {undefined}
-	 */
-	$scope.reconcile = function(account_name, account_id, balance, date, alt_date) {
-		var use_date = (alt_date) ? alt_date: date;
-		var modalInstance = $modal.open({
-			templateUrl: 'reconcileTransactionsModal.html',
-			controller: 'ReconcileTransactionsModalController',
-			size: 'md',
-			resolve: {
-				params: function() {
-						return {
-							account_name:	account_name,
-							account_id:		account_id,
-							date:			use_date,
-							balance:		balance
-						}
-					}
-			}
-		});
-
-		modalInstance.result.then(function () {
-			loadData();
-//			$q.all([
-//				loadPeriods()
-//			]).then(function(response) {
-//				// build the periods
-//				if (!!response[0].success) {
-//					buildPeriods(response[0]);
-//				}
-//				$scope.recIntervals = [];
-//				angular.forEach($scope.intervals,
-//					function(interval, key) {
-//						if (interval.forecast != 1) {
-//							$scope.recIntervals.push(interval);
-//						}
-//					});
-//			});
-		},
-		function () {
-			console.log('Reconcile Modal dismissed at: ' + new Date());
-		});
-	};
 
 }]);
