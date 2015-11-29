@@ -74,6 +74,14 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+		.when('/sheet',
+		{
+			controller:		'SheetController',
+			templateUrl:	'app/views/sheet.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
 		.when('/logout',
 		{
 			controller:		'LogoutController',
