@@ -18,6 +18,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location,
 					$localStorage.token_id			= data.data.user.last_session_id;
 					$localStorage.authorization		= "Basic " + btoa(credentials.username + ":" + credentials.password);
 					$localStorage.budget_views		= data.data.budget_views;
+					$localStorage.sheet_views		= data.data.sheet_views;
 
 					$location.path("/dashboard");
 					$scope.error = false;
@@ -27,6 +28,8 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location,
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
 					$localStorage.authorization		= false;
+					$localStorage.budget_views		= false;
+					$localStorage.sheet_views		= false;
 
 					$location.path("/login");
 					$scope.error = true;
@@ -39,6 +42,8 @@ app.controller('LoginController', function($rootScope, $scope, $http, $location,
 				$localStorage.userFullName		= false;
 				$localStorage.token_id			= false;
 				$localStorage.authorization		= false;
+				$localStorage.budget_views		= false;
+				$localStorage.sheet_views		= false;
 
 				callback && callback();
 			});

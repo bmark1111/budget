@@ -68,11 +68,12 @@
 					<td class="balances" ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
                         <button type="button" class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 0" style="width:100px;"
 										title="Click to Reconcile {{account.name}} Account">
-							<span ng-click="reconcile(account.name, account.bank_account_id, interval.accounts[$parent.$index].balance, interval.interval_ending, interval.alt_ending)">
+							<span class="pull-right" ng-click="reconcile(account.name, account.bank_account_id, interval.accounts[$parent.$index].balance, interval.interval_ending, interval.alt_ending)">
 								{{interval.accounts[$parent.$index].balance|currency}}
 							</span>
 						</button>
 						<span class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 1">
+							<img ng-src="app/images/transparent-green-checkmark-th.png" height="16" width="16" title="{{account.name}} Account is Reconciled" />
 							{{interval.accounts[$parent.$index].balance|currency}}
 						</span>
                     </td>

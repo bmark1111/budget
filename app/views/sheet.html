@@ -6,55 +6,37 @@
 			<thead>
 				<tr>
 					<th><span class="pull-right">Period Ending</span></th>
-					<th colspan="2" style="text-align:center;" ng-repeat="interval in intervals|getIntervals:start_interval:1" ng-class="{'currentInterval':interval.current_interval}">
-						<span>{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span>
-					</th>
-				</tr>
-				<tr>
-					<th> </th>
-					<th style="text-align:center;" ng-repeat="interval in intervals|getIntervals:start_interval" ng-class="{'currentInterval':interval.current_interval}">
-						<span ng-if="interval.forecast == '1'" class="pull-right">Forecast</span>
-						<span ng-if="interval.forecast != '1'" class="pull-right">Actual</span>
+					<th style="text-align:center;" ng-repeat="period in periods|getIntervals:period_start" ng-class="{'currentInterval':period.current_interval}">
+						<span>{{period.interval_ending|date:'EEE MMM dd, yyyy'}}</span>
 					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<th nowrap>Balance Forward</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
-						<span class="pull-right" ng-if="$index == 1">{{interval.balance_forward|currency}}</span>
+					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
+						<span class="pull-right" ng-if="$index == 0">{{period.balance_forward|currency}}</span>
 					</td>
 				</tr>
 				<tr ng-repeat="category in categories">
 					<th nowrap>{{category.name}}</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
-						<div class="pull-right">
-							<span ng-if="interval.forecast == '1'" class='forecast_amount'>
-								{{interval.totals[category.id]|currency}}
-							</span>
-						</div>
+					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
+						<span class="pull-right" ng-class="{'forecast_amount':period.types[category.id] == '1'}">{{period.totals[category.id]|currency}}</span>
 					</td>
 				</tr>
 			</tbody>
 			<tfoot>
 				<tr>
 					<th nowrap>Totals</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
-						<span class="pull-right" ng-class="{'forecast_amount':interval.forecast == '1'}">{{interval.interval_total|currency}}</span>
+					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
+						<span class="pull-right">{{period.interval_total|currency}}</span>
 					</td>
 				</tr>
 				<tr>
 					<th nowrap>Running Totals</th>
-					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
-						<span class="pull-right">{{interval.running_total|currency}}</span>
+					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
+						<span class="pull-right">{{period.running_total|currency}}</span>
 					</td>
-				</tr>
-				<!-- now get the bank accounts -->
-				<tr ng-repeat="account in intervals[1].accounts track by $index">
-					<td class="banks" nowrap>{{account.name}}</td>
-					<td class="balances" ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
-                        <span class="pull-right">{{interval.accounts[$parent.$index].balance|currency}}</span>
-                    </td>
 				</tr>
 			</tfoot>
 		</table>

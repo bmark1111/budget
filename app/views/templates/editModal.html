@@ -13,7 +13,7 @@
 			</div>
 			<div class="col-md-6" style="width:22%;">
 				<label for="date">Date</label>
-				<div class="form-group" ng-class="{ 'has-error' : validation.date }">
+				<div class="form-group" ng-class="{'has-error': validation.date }">
 					<p class="input-group">
 						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" name="date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 						<span class="input-group-btn">
@@ -24,7 +24,7 @@
 				</div>
 			</div>
 			<div class="col-md-2" style="width:32%;">
-				<div class="form-group" ng-class="{ 'has-error' : validation.description }">
+				<div class="form-group" ng-class="{'has-error': validation.description }">
 					<label for="description">Description</label>
 					<input type="text" name="description" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.description" />
 					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
@@ -47,7 +47,7 @@
 			</div>
 			<div class="col-sm-2" style="width:20%;">
 				<label for="type">Type</label>
-				<div class="form-group" ng-class="{ 'has-error' : validation.type }">
+				<div class="form-group" ng-class="{'has-error': validation.type }">
 					<select class="form-control" name="type" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.type">
 						<option>Select Type</option>
 						<option ng-selected="transaction.type == 'CHECK'" value="CHECK">Check</option>
@@ -60,13 +60,13 @@
 			</div>
 			<div class="col-sm-2" style="width:15%;">
 				<label for="check_num">Check Num</label>
-				<div class="form-group" ng-class="{ 'has-error' : validation.check_num }">
+				<div class="form-group" ng-class="{'has-error': validation.check_num }">
 					<input type="text" name="check_num" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.check_num" />
 				</div>
 			</div>
 			<div class="col-md-2" style="width:15%;">
 				<label for="amount">Amount</label>
-				<div class="form-group" ng-class="{ 'has-error' : validation.amount }">
+				<div class="form-group" ng-class="{'has-error': validation.amount }">
 					<input type="text" name="amount" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.amount" ng-blur="refreshSplits()" />
 					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
 				</div>
@@ -89,12 +89,12 @@
 					<th></th>
 				</tr>
 				<tr ng-repeat="t in transaction.splits" ng-if="t.is_deleted != 1">
-					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.splits.amount[$index] || calc[$index] }">
-						<input type="text" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="t.amount" ng-blur="refreshSplits()" />
+					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{'has-error': validation.splits.amount[$index] || calc[$index] }">
+						<input type="text" class="form-control" ng-model="t.amount" ng-blur="refreshSplits()" />
 						<span class="help-block" ng-show="validation.splits.amount[$index]">{{ validation.splits.amount[$index] }}</span>
 						<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>
 					</td>
-					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.splits.type[$index] || calc[$index] }">
+					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{'has-error': validation.splits.type[$index] || calc[$index] }">
 						<select class="form-control" name="type" ng-model="t.type" ng-blur="refreshSplits()">
 							<option>Select Type</option>
 							<option ng-selected="t.type == 'CHECK'" value="CHECK">Check</option>
@@ -104,7 +104,7 @@
 						</select>
 						<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>
 					</td>
-					<td class="col-sm-2" style="width:20%;vertical-align:top;" ng-class="{ 'has-error' : validation.splits.category_id[$index] }">
+					<td class="col-sm-2" style="width:20%;vertical-align:top;" ng-class="{'has-error': validation.splits.category_id[$index] }">
 						<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in categories"></select>
 						<span class="help-block" ng-show="validation.splits.category_id[$index]">{{ validation.splits.category_id[$index] }}</span>
 					</td>

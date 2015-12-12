@@ -33,6 +33,8 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
 					$localStorage.authorization		= false;
+					$localStorage.budget_views		= false;
+					$localStorage.sheet_views		= false;
 					$location.path("/login");
 				} else {
 					$rootScope.error = rejection.status + ' ' + rejection.statusText;
@@ -182,13 +184,13 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 			if (AuthService.isAuthorized(authorizedRoles)) {
 				if ($localStorage.authenticated) {
 					// load the upload counts
-					if (typeof($rootScope.transaction_count) === 'undefined') {
+//					if (typeof($rootScope.transaction_count) === 'undefined') {
 						$rootScope.transaction_count = '';
 						RestData2().getUploadCounts(
 							function(response) {
 								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
 							});
-					}
+//					}
 				} else {
 //					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');
