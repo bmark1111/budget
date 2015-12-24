@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('SheetController', ['$q', '$scope', '$rootScope', '$localStorage', 'RestData2', 'Categories',
+app.controller('SheetController', ['$q', '$scope', '$rootScope', '$localStorage', '$modal', 'RestData2', '$filter', 'Categories',
 
-function($q, $scope, $rootScope, $localStorage, RestData2, Categories) {
+function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Categories) {
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
@@ -14,49 +14,67 @@ function($q, $scope, $rootScope, $localStorage, RestData2, Categories) {
 		$rootScope.period_start = 0;
 		angular.forEach(response.data.result,
 			function(period, key) {
-				var sd = new Date(new Date(period.interval_beginning).setHours(0,0,0,0));
-				var ed = new Date(new Date(period.interval_ending).setHours(0,0,0,0));
-				var now = new Date(new Date().setHours(0,0,0,0));
-				if (+now >= +sd && +now <= +ed) {
+//				var sd = new Date(new Date(period.interval_beginning).setHours(0,0,0,0));
+//				var ed = new Date(new Date(period.interval_ending).setHours(0,0,0,0));
+				var dt = period.interval_beginning.split('T');
+				var dt = dt[0].split('-');
+				var sd = new Date(dt[0], --dt[1], dt[2]);
+				var dt = period.interval_ending.split('T');
+				var dt = dt[0].split('-');
+				var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59);
+//console.log('----------------------')
+//console.log(interval.interval_beginning)
+//console.log(sd)
+//				var now = new Date(new Date().setHours(0,0,0,0));
+				var now = new Date();
+//console.log("now = " + now);
+//console.log("sd = " + sd);
+//console.log("ed = " + ed);
+//				if (+now >= +sd && +now <= +ed) {
+				if (now >= sd && now <= ed) {
 					period.alt_ending = now;			// set alternative ending
 					period.current_interval = true;		// mark the current period
 				}
 
-				if (period.forecast !== 1) {
-//					_isReconciled(period.accounts, ed);
-				}
+				_isReconciled(period.accounts, ed);
 
 				$rootScope.periods[key] = period;
 			});
 	};
 
-//	/**
-//	 * Checks account balances to see if they are reconciled
-//	 * @name _isReconciled
-//	 * @param {type} accounts	accounts object
-//	 * @param {type} ed			end date for the period
-//	 * @returns {undefined}
-//	 */
-//	var _isReconciled = function(accounts, ed) {
-//		angular.forEach(accounts,
-//					function(account) {
-//						if (account.reconciled_date) {
-//							var dt = account.balance_date.split('-');
-//							var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
-//							var dt = account.reconciled_date.split('-');
-//							var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
-//							var now = new Date(new Date().setHours(0,0,0,0));
-//							if (+rd === +ed || +rd === +now || +rd >= +bd) {
-//								// if everything has been reconciled up to the period ending date...
-//								// ... OR reconciled date is today...
-//								// ... OR reconciled date is >= balance date
-//								account.reconciled = 1;
-//					} else {
-//						account.reconciled = 0;
-//							}
-//						}
-//					})
-//	};
+	/**
+	 * Checks account balances to see if they are reconciled
+	 * @name _isReconciled
+	 * @param {type} accounts	accounts object
+	 * @param {type} ed			end date for the period
+	 * @returns {undefined}
+	 */
+	var _isReconciled = function(accounts, ed) {
+		var now = new Date(new Date().setHours(0,0,0,0));
+		angular.forEach(accounts,
+			function(account) {
+				if (ed <= now) {
+					if (account.reconciled_date) {
+						var dt = account.balance_date.split('-');
+						var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
+						var dt = account.reconciled_date.split('-');
+						var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
+						if (+rd === +ed || +rd === +now || +rd >= +bd) {
+							// if everything has been reconciled up to the period ending date...
+							// ... OR reconciled date is today...
+							// ... OR reconciled date is >= balance date
+							account.reconciled = 2;
+						} else {
+							account.reconciled = 1;
+						}
+					} else {
+						account.reconciled = 1;
+					}
+				} else {
+					account.reconciled = 0;
+				}
+			});
+	};
 
 	var loadPeriods = function() {
 		var deferred = $q.defer();
@@ -87,13 +105,36 @@ function($q, $scope, $rootScope, $localStorage, RestData2, Categories) {
 						$rootScope.categories.push(category)
 					});
 			}
-			// load the intervals
+			// load the periods
 			if (!!response[1].success) {
 				buildPeriods(response[1]);
 			}
 		});
 	}
 	loadData();
+
+	$scope.showTheseTransactions = function(category_id, index) {
+		var idx = index + $rootScope.period_start;
+
+		$scope.dataErrorMsgThese = false;
+
+		var date = $filter('date')($rootScope.periods[idx].interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
+
+		RestData2().getTheseTransactions({
+				interval_beginning:	$rootScope.periods[idx].interval_beginning,
+				interval_ending:	$rootScope.periods[idx].interval_ending,
+				category_id:		category_id
+			},
+			function(response) {
+				if (!!response.success) {
+					$scope.transactions = response.data.result;
+					$scope.transactions_seq = Object.keys(response.data.result);
+				} else {
+					$scope.dataErrorMsgThese = response.errors;
+				}
+			});
+	};
 
 	$scope.moveInterval = function(direction) {
 		interval = interval + direction;
@@ -127,7 +168,7 @@ function($q, $scope, $rootScope, $localStorage, RestData2, Categories) {
 					if (direction == -1) {
 						moved.push(response.data.result[0]);
 					}
-					// add the current intervals
+					// add the current periods
 					angular.forEach($rootScope.periods,
 						function(interval) {
 							moved.push(interval)
@@ -176,5 +217,40 @@ function($q, $scope, $rootScope, $localStorage, RestData2, Categories) {
 //					ngProgress.complete();
 			});
 	}
+
+	/**
+	 * @name reconcile
+	 * @type method
+	 * @param {type} account_name
+	 * @param {type} account_id
+	 * @param {type} date
+	 * @param {type} alt_date
+	 * @returns {undefined}
+	 */
+	$scope.reconcile = function(account_name, account_id, balance, date, alt_date) {
+		var use_date = (alt_date) ? alt_date: date;
+		var modalInstance = $modal.open({
+			templateUrl: 'reconcileTransactionsModal.html',
+			controller: 'ReconcileTransactionsModalController',
+			size: 'md',
+			resolve: {
+				params: function() {
+						return {
+							account_name:	account_name,
+							account_id:		account_id,
+							date:			use_date,
+							balance:		balance
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function () {
+			loadData();
+		},
+		function () {
+			console.log('Reconcile Modal dismissed at: ' + new Date());
+		});
+	};
 
 }]);

@@ -60,6 +60,7 @@ app.controller('EditCategoryModalController', function ($scope, $rootScope, $mod
 						delete $rootScope.categories;
 						// now update the global intervals data
 						delete $rootScope.intervals;
+						delete $rootScope.periods;
 					} else if (response.validation) {
 						$scope.validation.accounts = {};
 						angular.forEach(response.validation,

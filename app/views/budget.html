@@ -28,7 +28,7 @@
 					</td>
 				</tr>
 				<tr ng-repeat="category in categories">
-					<th nowrap>{{category.name}}</th>
+					<th>{{category.name}}</th>
 					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
 						<!--<div class="pull-right" ng-class="{'forecast_amount':interval.types[category.id] == '1'}">-->
 						<div class="pull-right">
@@ -66,17 +66,20 @@
 				<tr ng-repeat="account in intervals[1].accounts track by $index">
 					<td class="banks" nowrap>{{account.name}}</td>
 					<td class="balances" ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
-                        <button type="button" class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 0" style="width:100px;"
+						<button type="button" class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 1" style="width:70px;margin:0;padding:0;"
 										title="Click to Reconcile {{account.name}} Account">
-							<span class="pull-right" ng-click="reconcile(account.name, account.bank_account_id, interval.accounts[$parent.$index].balance, interval.interval_ending, interval.alt_ending)">
+							<span class="pull-right" style="margin:0;padding:0;" ng-click="reconcile(account.name, account.bank_account_id, interval.accounts[$parent.$index].balance, interval.interval_ending, interval.alt_ending)">
 								{{interval.accounts[$parent.$index].balance|currency}}
 							</span>
 						</button>
-						<span class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 1">
-							<img ng-src="app/images/transparent-green-checkmark-th.png" height="16" width="16" title="{{account.name}} Account is Reconciled" />
+						<span class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 2">
+							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="{{account.name}} Account is Reconciled" />
 							{{interval.accounts[$parent.$index].balance|currency}}
 						</span>
-                    </td>
+						<span class="pull-right forecast_amount" ng-show="period.accounts[$parent.$index].reconciled == 0">
+							{{period.accounts[$parent.$index].balance|currency}}
+						</span>
+					</td>
 				</tr>
 			</tfoot>
 		</table>

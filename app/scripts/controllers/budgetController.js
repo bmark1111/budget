@@ -14,10 +14,24 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		$rootScope.start_interval = 0;
 		angular.forEach(response.data.result,
 			function(interval, key) {
-				var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
-				var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
-				var now = new Date(new Date().setHours(0,0,0,0));
-				if (+now >= +sd && +now <= +ed) {
+//				var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
+//				var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
+				var dt = interval.interval_beginning.split('T');
+				var dt = dt[0].split('-');
+				var sd = new Date(dt[0], --dt[1], dt[2]);
+				var dt = interval.interval_ending.split('T');
+				var dt = dt[0].split('-');
+				var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59);
+//console.log('----------------------')
+//console.log(interval.interval_beginning)
+//console.log(sd)
+//				var now = new Date(new Date().setHours(0,0,0,0));
+				var now = new Date();
+//console.log("now = " + now);
+//console.log("sd = " + sd);
+//console.log("ed = " + ed);
+//				if (+now >= +sd && +now <= +ed) {
+				if (now >= sd && now <= ed) {
 					interval.alt_ending = now;				// set alternative ending
 					interval.current_interval = true;		// mark the current interval
 				}
@@ -25,22 +39,6 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				if (interval.forecast !== 1) {
 					_isReconciled(interval.accounts, ed);
 				}
-//				angular.forEach(interval.accounts,
-//					function(account) {
-//						if (account.reconciled_date) {
-//							var dt = account.balance_date.split('-');
-//							var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
-//							var dt = account.reconciled_date.split('-');
-//							var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
-//							var now = new Date(new Date().setHours(0,0,0,0));
-//							if (+rd === +ed || +rd === +now || +rd >= +bd) {
-//								// if everything has been reconciled up to the period ending date...
-//								// ... OR reconciled date is today...
-//								// ... OR reconciled date is >= balance date
-//								account.reconciled = 1;
-//							}
-//						}
-//					})
 
 				$rootScope.intervals[key] = interval;
 			});
@@ -54,24 +52,30 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	 * @returns {undefined}
 	 */
 	var _isReconciled = function(accounts, ed) {
+		var now = new Date(new Date().setHours(0,0,0,0));
 		angular.forEach(accounts,
 			function(account) {
-				if (account.reconciled_date) {
-					var dt = account.balance_date.split('-');
-					var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
-					var dt = account.reconciled_date.split('-');
-					var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
-					var now = new Date(new Date().setHours(0,0,0,0));
-					if (+rd === +ed || +rd === +now || +rd >= +bd) {
-						// if everything has been reconciled up to the period ending date...
-						// ... OR reconciled date is today...
-						// ... OR reconciled date is >= balance date
+				if (ed <= now) {
+					if (account.reconciled_date) {
+						var dt = account.balance_date.split('-');
+						var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
+						var dt = account.reconciled_date.split('-');
+						var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
+						if (+rd === +ed || +rd === +now || +rd >= +bd) {
+							// if everything has been reconciled up to the period ending date...
+							// ... OR reconciled date is today...
+							// ... OR reconciled date is >= balance date
+							account.reconciled = 2;
+						} else {
 						account.reconciled = 1;
+						}
 					} else {
-						account.reconciled = 0;
+						account.reconciled = 1;
 					}
+				} else {
+					account.reconciled = 0;
 				}
-			})
+			});
 	};
 
 	var loadPeriods = function() {

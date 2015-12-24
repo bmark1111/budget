@@ -20,18 +20,7 @@ app.controller('DeleteBankModalController', function ($scope, $rootScope, $modal
 						delete $rootScope.bank_accounts;
 						// now update the global intervals data
 						delete $rootScope.intervals;
-//						RestData2().getBankAccounts(
-//								function(response)
-//								{
-//									angular.forEach(response.data.bank_accounts,
-//										function(bank_account)
-//										{
-//											$rootScope.bank_accounts.push({
-//												'id': bank_account.id,
-//												'name': bank_account.bank.name + ' ' + bank_account.name
-//											})
-//										});
-//								});
+						delete $rootScope.periods;
 					} else {
 						if (response.errors) {
 							angular.forEach(response.errors,

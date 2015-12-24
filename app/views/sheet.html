@@ -1,3 +1,5 @@
+<ng-include src="'app/views/templates/reconcileTransactionsModal.html'"></ng-include>
+
 <div class="container-fluid"><!-- viewport-width>-->
 	<h1 class="page-header">Budget</h1>
 	<div ng-if="error">{{error}}</div>
@@ -19,9 +21,23 @@
 					</td>
 				</tr>
 				<tr ng-repeat="category in categories">
-					<th nowrap>{{category.name}}</th>
-					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
-						<span class="pull-right" ng-class="{'forecast_amount':period.types[category.id] == '1'}">{{period.totals[category.id]|currency}}</span>
+					<th>{{category.name}}</th>
+					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" id="popover_{{$index}}_{{category.id}}">
+						<div class="pull-right">
+							<span ng-if="!period.types[category.id]">
+								<a ns-popover="showTheseTransactions(category.id, $index)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0">
+									{{period.totals[category.id]|currency}}
+								</a>
+							</span>
+							<span ng-if="period.types[category.id]" class='forecast_amount'>
+								{{period.totals[category.id]|currency}}
+							</span>
+						</div>
 					</td>
 				</tr>
 			</tbody>
@@ -36,6 +52,25 @@
 					<th nowrap>Running Totals</th>
 					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
 						<span class="pull-right">{{period.running_total|currency}}</span>
+					</td>
+				</tr>
+				<!-- now get the bank accounts -->
+				<tr ng-repeat="account in periods[0].accounts track by $index">
+					<td class="banks" nowrap>{{account.name}}</td>
+					<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
+						<button type="button" class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 1" style="width:70px;margin:0;padding:0;"
+										title="Click to Reconcile {{account.name}} Account">
+							<span class="pull-right" style="margin:0;padding:0;" ng-click="reconcile(account.name, account.bank_account_id, period.accounts[$parent.$index].balance, period.interval_ending, period.alt_ending)">
+								{{period.accounts[$parent.$index].balance|currency}}
+							</span>
+						</button>
+						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 2">
+							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="{{account.name}} Account is Reconciled" />
+							{{period.accounts[$parent.$index].balance|currency}}
+						</span>
+						<span class="pull-right forecast_amount" ng-show="period.accounts[$parent.$index].reconciled == 0">
+							{{period.accounts[$parent.$index].balance|currency}}
+						</span>
 					</td>
 				</tr>
 			</tfoot>

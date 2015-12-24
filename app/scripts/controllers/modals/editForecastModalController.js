@@ -89,6 +89,7 @@ app.controller('EditForecastModalController', ['$q', '$scope', '$rootScope', '$m
 						$modalInstance.close();
 						// now update the global intervals data
 						delete $rootScope.intervals;
+						delete $rootScope.periods;
 					} else if (response.validation) {
 						angular.forEach(response.validation,
 							function(validation) {

@@ -102,6 +102,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 						$modalInstance.close();
 						// now update the global intervals data
 						delete $rootScope.intervals;
+						delete $rootScope.periods;
 					} else if (response.validation) {
 						$scope.validation.splits = {};
 						angular.forEach(response.validation,

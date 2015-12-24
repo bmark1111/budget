@@ -18,6 +18,7 @@ app.controller('DeleteForecastModalController', function ($scope, $rootScope, $m
 						$modalInstance.close();
 						// now update the global intervals data
 						delete $rootScope.intervals;
+						delete $rootScope.periods;
 					} else {
 						if (response.errors) {
 							angular.forEach(response.errors,

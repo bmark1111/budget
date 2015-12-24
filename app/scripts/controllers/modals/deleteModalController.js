@@ -18,6 +18,7 @@ app.controller('DeleteModalController', function ($scope, $rootScope, $modalInst
 						$modalInstance.close();
 						// now update the global intervals data
 						delete $rootScope.intervals;
+						delete $rootScope.periods;
 					} else {
 						if (response.errors) {
 							angular.forEach(response.errors,

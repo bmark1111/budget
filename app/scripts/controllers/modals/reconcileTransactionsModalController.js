@@ -21,6 +21,7 @@ app.controller('ReconcileTransactionsModalController', function ($scope, $rootSc
 					$modalInstance.close();
 					// now update the global intervals data
 					delete $rootScope.intervals;
+					delete $rootScope.periods;
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,
