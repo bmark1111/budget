@@ -14,23 +14,13 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		$rootScope.period_start = 0;
 		angular.forEach(response.data.result,
 			function(period, key) {
-//				var sd = new Date(new Date(period.interval_beginning).setHours(0,0,0,0));
-//				var ed = new Date(new Date(period.interval_ending).setHours(0,0,0,0));
 				var dt = period.interval_beginning.split('T');
 				var dt = dt[0].split('-');
 				var sd = new Date(dt[0], --dt[1], dt[2]);
 				var dt = period.interval_ending.split('T');
 				var dt = dt[0].split('-');
 				var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59);
-//console.log('----------------------')
-//console.log(interval.interval_beginning)
-//console.log(sd)
-//				var now = new Date(new Date().setHours(0,0,0,0));
 				var now = new Date();
-//console.log("now = " + now);
-//console.log("sd = " + sd);
-//console.log("ed = " + ed);
-//				if (+now >= +sd && +now <= +ed) {
 				if (now >= sd && now <= ed) {
 					period.alt_ending = now;			// set alternative ending
 					period.current_interval = true;		// mark the current period
@@ -163,7 +153,10 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 			function(response) {
 				if (!!response.success) {
 					var moved = Array();
-//					_isReconciled(response.data.result[1].accounts, response.data.result[1].interval_ending);
+					var dt = response.data.result[1].interval_ending.split('T');
+					var dt = dt[0].split('-');
+					var ed = new Date(dt[0], --dt[1], dt[2]);
+					_isReconciled(response.data.result[1].accounts, ed);
 					// if moving backwards add interval to front of array
 					if (direction == -1) {
 						moved.push(response.data.result[0]);

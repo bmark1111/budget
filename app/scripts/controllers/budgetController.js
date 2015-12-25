@@ -14,23 +14,13 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		$rootScope.start_interval = 0;
 		angular.forEach(response.data.result,
 			function(interval, key) {
-//				var sd = new Date(new Date(interval.interval_beginning).setHours(0,0,0,0));
-//				var ed = new Date(new Date(interval.interval_ending).setHours(0,0,0,0));
 				var dt = interval.interval_beginning.split('T');
 				var dt = dt[0].split('-');
 				var sd = new Date(dt[0], --dt[1], dt[2]);
 				var dt = interval.interval_ending.split('T');
 				var dt = dt[0].split('-');
 				var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59);
-//console.log('----------------------')
-//console.log(interval.interval_beginning)
-//console.log(sd)
-//				var now = new Date(new Date().setHours(0,0,0,0));
 				var now = new Date();
-//console.log("now = " + now);
-//console.log("sd = " + sd);
-//console.log("ed = " + ed);
-//				if (+now >= +sd && +now <= +ed) {
 				if (now >= sd && now <= ed) {
 					interval.alt_ending = now;				// set alternative ending
 					interval.current_interval = true;		// mark the current interval
@@ -67,7 +57,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 							// ... OR reconciled date is >= balance date
 							account.reconciled = 2;
 						} else {
-						account.reconciled = 1;
+							account.reconciled = 1;
 						}
 					} else {
 						account.reconciled = 1;
@@ -151,7 +141,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 			}
 		} else if (direction === 1) {
 			$rootScope.start_interval += 2;
-			var last_interval = $rootScope.start_interval + $localStorage.budget_views;
+			var last_interval = $rootScope.start_interval + $localStorage.budget_views - 1;
 			if (typeof($rootScope.intervals[last_interval]) === 'undefined') {
 				getNext(1);
 			}
@@ -165,7 +155,10 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 			function(response) {
 				if (!!response.success) {
 					var moved = Array();
-					_isReconciled(response.data.result[1].accounts, response.data.result[1].interval_ending);
+					var dt = response.data.result[1].interval_ending.split('T');
+					var dt = dt[0].split('-');
+					var ed = new Date(dt[0], --dt[1], dt[2]);
+					_isReconciled(response.data.result[1].accounts, ed);
 					// if moving backwards add interval to front of array
 					if (direction == -1) {
 						moved.push(response.data.result[0]);	// add forecast

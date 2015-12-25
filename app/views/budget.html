@@ -76,8 +76,8 @@
 							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="{{account.name}} Account is Reconciled" />
 							{{interval.accounts[$parent.$index].balance|currency}}
 						</span>
-						<span class="pull-right forecast_amount" ng-show="period.accounts[$parent.$index].reconciled == 0">
-							{{period.accounts[$parent.$index].balance|currency}}
+						<span class="pull-right forecast_amount" ng-show="interval.accounts[$parent.$index].reconciled == 0">
+							{{interval.accounts[$parent.$index].balance|currency}}
 						</span>
 					</td>
 				</tr>
