@@ -94,17 +94,29 @@ app.controller('EditForecastModalController', ['$q', '$scope', '$rootScope', '$m
 						angular.forEach(response.validation,
 							function(validation) {
 								switch (validation.fieldName) {
+									case 'bank_account_id':
+										$scope.validation.bank_account_id = validation.errorMessage;
+										break;
 									case 'first_due_date':
 										$scope.validation.first_due_date = validation.errorMessage;
 										break;
 									case 'description':
 										$scope.validation.description = validation.errorMessage;
 										break;
+									case 'category_id':
+										$scope.validation.category_id = validation.errorMessage;
+										break;
 									case 'type':
 										$scope.validation.type = validation.errorMessage;
 										break;
 									case 'amount':
 										$scope.validation.amount = validation.errorMessage;
+										break;
+									case 'every':
+										$scope.validation.every = validation.errorMessage;
+										break;
+									case 'every_unit':
+										$scope.validation.every_unit = validation.errorMessage;
 										break;
 									default:
 										break;

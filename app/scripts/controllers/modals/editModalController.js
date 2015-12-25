@@ -93,9 +93,11 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 
 		$scope.validation = {};
 //console.log($scope.transaction);
-		var dt = new Date($scope.transaction.transaction_date);
+		if ($scope.transaction.transaction_date) {
+			var dt = new Date($scope.transaction.transaction_date);
 //console.log(dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate()));
-		$scope.transaction.transaction_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
+			$scope.transaction.transaction_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
+		}
 		RestData2().saveTransaction($scope.transaction,
 				function(response) {
 					if (!!response.success) {

@@ -37,10 +37,8 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 				{
 					interval: interval
 				},
-				function(response)
-				{
-					if (!!response.success)
-					{
+				function(response) {
+					if (!!response.success) {
 						$scope.result = response.data.result;
 						$scope.result_seq = Object.keys(response.data.result);
 
@@ -48,13 +46,11 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 
 						// now calulate totals
 						angular.forEach($scope.result,
-							function(total, key)
-							{
+							function(total, key) {
 								$scope.balance_forward[key] = ''
 								$scope.totals[key] = parseFloat(0);
 								angular.forEach(total.totals,
-									function(value)
-									{
+									function(value) {
 										$scope.totals[key] += parseFloat(value);
 									});
 							});
@@ -64,10 +60,8 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 
 						// now calculate running totals
 						angular.forEach($scope.totals,
-							function(total, key)
-							{
-								if (key == 0)
-								{
+							function(total, key) {
+								if (key == 0) {
 									$scope.rTotals[key] = parseFloat(response.data.balance_forward) + total;
 								} else {
 									var x = key - 1;
@@ -75,11 +69,9 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 								}
 							});
 					} else {
-						if (response.errors)
-						{
+						if (response.errors) {
 							angular.forEach(response.errors,
-								function(error)
-								{
+								function(error) {
 									$scope.dataErrorMsg.push(error.error);
 								})
 						} else {
@@ -90,19 +82,17 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 				});
 	}
 
-	var loadAllForecasts = function()
-	{
+	var loadAllForecasts = function() {
 		$scope.dataErrorMsg = [];
 
-		RestData2().getAllForecasts(
-				{
-						'first_due_date':		$scope.search.first_due_date,
-						'description':			$scope.search.description,
-						'amount':				$scope.search.amount,
-						'sort':					'first_due_date',
-						'sort_dir':				'DESC',
-						'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
-						'pagination_amount':	$scope.itemsPerPage
+		RestData2().getAllForecasts( {
+					'first_due_date':		$scope.search.first_due_date,
+					'description':			$scope.search.description,
+					'amount':				$scope.search.amount,
+					'sort':					'first_due_date',
+					'sort_dir':				'DESC',
+					'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+					'pagination_amount':	$scope.itemsPerPage
 				},
 				function(response)
 				{
