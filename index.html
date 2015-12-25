@@ -40,6 +40,7 @@
 							<tr>
 								<th>Date</th>
 								<th>Description</th>
+								<th>Account</th>
 								<th>Type</th>
 								<th>Amount</th>
 							</tr>
@@ -48,6 +49,7 @@
 							<tr ng-repeat="idx in transactions_seq" ng-if="!dataErrorMsgThese">
 								<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
 								<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - <em>{{transactions[idx].notes}}</em></span></td>
+								<td>{{transactions[idx].name}}</td>
 								<td>{{transactions[idx].type}}</td>
 								<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
 							</tr>

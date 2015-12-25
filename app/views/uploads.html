@@ -36,7 +36,7 @@
 			<thead>
 				<tr>
 					<th>Date</th>
-					<th>Bank Account</th>
+					<th>Account</th>
 					<th>Description</th>
 					<th>Check Num</th>
 					<th>DEBIT</th>
@@ -47,7 +47,7 @@
 			<tbody>
 				<tr ng-repeat="idx in transactions_seq">
 					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
-					<td><span class="pull-left">{{transactions[idx].bank_account.bank.name}} {{transactions[idx].bank_account.name}}</span></td>
+					<td><span class="pull-left">{{transactions[idx].bank_account.name}}</span></td>
 					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
 					<td><span class="pull-right">{{transactions[idx].check_num}}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>

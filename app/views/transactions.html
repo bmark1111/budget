@@ -53,6 +53,7 @@
 					<th>Date</th>
 					<th>Check Num</th>
 					<th colspan="2">Description</th>
+					<th>Account</th>
 					<th>DEBIT</th>
 					<th>CREDIT</th>
 					<th></th>
@@ -66,6 +67,7 @@
 					</td>
 					<td rowspan="2"><span class="pull-left">{{transactions[idx].check_num}}</span></td>
 					<td colspan="2"><span class="pull-left">{{transactions[idx].description}}</span></td>
+					<td rowspan="2">{{transactions[idx].bank_account.name}}</td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
 					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">
