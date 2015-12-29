@@ -64,7 +64,7 @@
 								{{period.accounts[$parent.$index].balance|currency}}
 							</span>
 						</button>
-						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 2">
+						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 2" title="{{account.name}} is reconciled up to {{account.reconciled_date|date:'EEE MMM dd, yyyy'}}">
 							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="{{account.name}} Account is Reconciled" />
 							{{period.accounts[$parent.$index].balance|currency}}
 						</span>

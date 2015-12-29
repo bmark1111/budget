@@ -30,7 +30,6 @@
 				<tr ng-repeat="category in categories">
 					<th>{{category.name}}</th>
 					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
-						<!--<div class="pull-right" ng-class="{'forecast_amount':interval.types[category.id] == '1'}">-->
 						<div class="pull-right">
 							<span ng-if="interval.forecast != '1'">
 								<a ns-popover="showTheseTransactions(category.id, $index)"
@@ -72,7 +71,7 @@
 								{{interval.accounts[$parent.$index].balance|currency}}
 							</span>
 						</button>
-						<span class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 2">
+						<span class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 2" title="{{account.name}} is reconciled up to {{account.reconciled_date|date:'EEE MMM dd, yyyy'}}">
 							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="{{account.name}} Account is Reconciled" />
 							{{interval.accounts[$parent.$index].balance|currency}}
 						</span>

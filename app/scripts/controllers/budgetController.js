@@ -27,7 +27,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				}
 
 				if (interval.forecast !== 1) {
-					_isReconciled(interval.accounts, ed);
+					_isReconciled(interval.accounts, sd, ed);
 				}
 
 				$rootScope.intervals[key] = interval;
@@ -41,11 +41,11 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	 * @param {type} ed			end date for the period
 	 * @returns {undefined}
 	 */
-	var _isReconciled = function(accounts, ed) {
+	var _isReconciled = function(accounts, sd, ed) {
 		var now = new Date(new Date().setHours(0,0,0,0));
 		angular.forEach(accounts,
 			function(account) {
-				if (ed <= now) {
+				if (+ed <= +now) {
 					if (account.reconciled_date) {
 						var dt = account.balance_date.split('-');
 						var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
@@ -63,7 +63,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						account.reconciled = 1;
 					}
 				} else {
-					account.reconciled = 0;
+					account.reconciled = (+sd >= +now) ? 0: 1;
 				}
 			});
 	};
@@ -155,10 +155,13 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 			function(response) {
 				if (!!response.success) {
 					var moved = Array();
+					var dt = response.data.result[1].interval_begining.split('T');
+					var dt = dt[0].split('-');
+					var sd = new Date(dt[0], --dt[1], dt[2]);
 					var dt = response.data.result[1].interval_ending.split('T');
 					var dt = dt[0].split('-');
 					var ed = new Date(dt[0], --dt[1], dt[2]);
-					_isReconciled(response.data.result[1].accounts, ed);
+					_isReconciled(response.data.result[1].accounts, sd, ed);
 					// if moving backwards add interval to front of array
 					if (direction == -1) {
 						moved.push(response.data.result[0]);	// add forecast
