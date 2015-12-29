@@ -6,6 +6,8 @@ app.controller('LoginController', function($rootScope, $scope, $http, RestData2,
 
 	$scope.error = false;
 
+	$scope.credentials = {};
+
 	var authenticate = function(credentials, callback) {
 //		var headers = credentials ? {authorization : "Basic " + btoa(credentials.username + ":" + credentials.password)} : {};
 //
@@ -14,8 +16,8 @@ app.controller('LoginController', function($rootScope, $scope, $http, RestData2,
 		$localStorage.authorization = "Basic " + btoa(credentials.username + ":" + credentials.password);
 		RestData2().login(
 			function(data) {
-console.log(data)
-				if (data.data.user) {
+				if (!!data.success && data.data.user) {
+					// success
 					$localStorage.authenticated		= true;
 					$localStorage.authorizedRoles	= JSON.parse(data.data.user.roles);
 					$localStorage.userFullName		= data.data.user.firstname + ' ' + data.data.user.lastname;
@@ -53,9 +55,7 @@ console.log(data)
 			});
 	}
 
-	$scope.credentials = {};
-
 	$scope.login = function() {
-			authenticate($scope.credentials);
-		};
+		authenticate($scope.credentials);
+	};
 });
