@@ -50,11 +50,11 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 			controller:		'HomeController',
 			templateUrl:	'app/views/home.html'
 		})
-//		.when('/popoverdemo',
-//		{
-//			controller:		'PopoverdemoController',
-//			templateUrl:	'app/views/popover_demo.html'
-//		})
+		.when('/register',
+		{
+			controller:		'RegisterController',
+			templateUrl:	'app/views/register.html'
+		})
 		.when('/login',
 		{
 			controller:		'LoginController',
