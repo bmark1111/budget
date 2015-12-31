@@ -5,9 +5,17 @@
 	<form role="form" ng-submit="login()">
 		<div class="row">
 			<div class="col-md-2">
+				<label for="account">Account:</label>
+				<div class="form-group">
+					<input type="text" class="form-control" name="account" ng-model="credentials.account"/>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">
 				<label for="username">Username:</label>
 				<div class="form-group">
-					<input type="text" class="form-control" id="username" name="username" ng-model="credentials.username"/>
+					<input type="text" class="form-control" name="username" ng-model="credentials.username"/>
 				</div>
 			</div>
 		</div>
@@ -15,7 +23,7 @@
 			<div class="col-md-2">
 				<label for="password">Password:</label>
 				<div class="form-group">
-					<input type="password" class="form-control" id="password" name="password" ng-model="credentials.password"/>
+					<input type="password" class="form-control" name="password" ng-model="credentials.password"/>
 				</div>
 			</div>
 		</div>

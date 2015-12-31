@@ -12,6 +12,7 @@ app.controller('LogoutController', function($scope, $localStorage, $location, Re
 				$localStorage.authorizedRoles	= false;
 				$localStorage.userFullName		= false;
 				$localStorage.token_id			= false;
+				$localStorage.account_id		= false;
 				$localStorage.authorization		= false;
 				$location.path("/login");
 			} else {

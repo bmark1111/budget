@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginController', function($rootScope, $scope, $http, RestData2, $location, $localStorage) {
+app.controller('LoginController', function($rootScope, $scope, RestData2, $location, $localStorage) {
 
 	$rootScope.nav_active = 'login';
 
@@ -8,13 +8,13 @@ app.controller('LoginController', function($rootScope, $scope, $http, RestData2,
 
 	$scope.credentials = {};
 
-	var authenticate = function(credentials, callback) {
+	var authenticate = function(credentials) {//, callback) {
 //		var headers = credentials ? {authorization : "Basic " + btoa(credentials.username + ":" + credentials.password)} : {};
 //
 //		$http.get('http://rest.budget.loc/login', {headers : headers})
 //			.success(function(data) {
 		$localStorage.authorization = "Basic " + btoa(credentials.username + ":" + credentials.password);
-		RestData2().login(
+		RestData2().login({account: credentials.account},
 			function(data) {
 				if (!!data.success && data.data.user) {
 					// success
@@ -22,6 +22,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, RestData2,
 					$localStorage.authorizedRoles	= JSON.parse(data.data.user.roles);
 					$localStorage.userFullName		= data.data.user.firstname + ' ' + data.data.user.lastname;
 					$localStorage.token_id			= data.data.user.last_session_id;
+					$localStorage.account_id		= data.data.account_id;
 					$localStorage.authorization		= "Basic " + btoa(credentials.username + ":" + credentials.password);
 					$localStorage.budget_views		= data.data.budget_views;
 					$localStorage.sheet_views		= data.data.sheet_views;
@@ -33,6 +34,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, RestData2,
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
+					$localStorage.account_id		= false;
 					$localStorage.authorization		= false;
 					$localStorage.budget_views		= false;
 					$localStorage.sheet_views		= false;
@@ -40,7 +42,7 @@ app.controller('LoginController', function($rootScope, $scope, $http, RestData2,
 					$location.path("/login");
 					$scope.error = true;
 				}
-				callback && callback();
+		//		callback && callback();
 //			})
 //			.error(function() {
 //				$localStorage.authenticated		= false;

@@ -32,6 +32,7 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
 					$localStorage.token_id			= false;
+					$localStorage.account_id		= false;
 					$localStorage.authorization		= false;
 					$localStorage.budget_views		= false;
 					$localStorage.sheet_views		= false;
@@ -178,7 +179,6 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 			$rootScope.error			= false;
 			$rootScope.authenticated	= $localStorage.authenticated;
 			$rootScope.userFullName		= $localStorage.userFullName;
-//			$rootScope.accountBalancesResetDate = $localStorage.accountBalancesResetDate;
 
 			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
 			if (AuthService.isAuthorized(authorizedRoles)) {
@@ -186,13 +186,13 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 					// load the upload counts
 //					if (typeof($rootScope.transaction_count) === 'undefined') {
 						$rootScope.transaction_count = '';
-						RestData2().getUploadCounts(
-							function(response) {
-								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
-							});
+//						RestData2().getUploadCounts(
+//							function(response) {
+//								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+//							});
 //					}
 				} else {
-//					// user is not authenticated
+					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');
 //					$rootScope.nav_active = 'login';
 //					$location.path("/login");

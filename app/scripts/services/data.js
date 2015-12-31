@@ -3,7 +3,8 @@ app.factory('RestData2', function ($resource, $localStorage, API) {
 	return function() {
 		var headers = {
 				Authorization:		$localStorage.authorization,
-				'TOKENID':			$localStorage.token_id,
+				TOKENID:			$localStorage.token_id,
+				ACCOUNTID:			$localStorage.account_id,
 				'X-Requested-With':	'XMLHttpRequest'
 			}
 
@@ -49,7 +50,7 @@ app.factory('RestData2', function ($resource, $localStorage, API) {
 
 				logout:						{ method: 'POST', headers: headers, params: {path: 'data', object: 'logout', action: null, param: null} },
 
-				login:						{ method: 'GET', headers: headers, params: {path: 'login', object: null, action: null, param: null} },
+				login:						{ method: 'POST', headers: headers, params: {path: 'login', object: null, action: null, param: null} },
 				register:					{ method: 'POST', headers: headers, params: {path: 'register', object: null, action: null, param: null} }
 			});
 	}
