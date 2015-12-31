@@ -58,7 +58,7 @@
 				<tr ng-repeat="account in periods[0].accounts track by $index">
 					<td class="banks" nowrap>{{account.name}}</td>
 					<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}">
-						<button type="button" class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 1" style="width:70px;margin:0;padding:0;"
+						<button type="button" class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 1" style="width:74px;margin:0;padding:0;"
 										title="Click to Reconcile {{account.name}} Account">
 							<span class="pull-right" style="margin:0;padding:0;" ng-click="reconcile(account.name, account.bank_account_id, period.accounts[$parent.$index].balance, period.interval_ending, period.alt_ending)">
 								{{period.accounts[$parent.$index].balance|currency}}

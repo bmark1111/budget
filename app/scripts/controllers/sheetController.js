@@ -41,10 +41,6 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	 */
 	var _isReconciled = function(accounts, sd, ed) {
 		var now = new Date(new Date().setHours(0,0,0,0));
-console.log('==========================');
-console.log(sd)
-console.log(ed)
-console.log(now)
 		angular.forEach(accounts,
 			function(account) {
 				if (+ed <= +now) {
@@ -57,18 +53,14 @@ console.log(now)
 							// if everything has been reconciled up to the period ending date...
 							// ... OR reconciled date is today...
 							// ... OR reconciled date is >= balance date
-console.log('222222')
 							account.reconciled = 2;
 						} else {
-console.log('111111')
 							account.reconciled = 1;
 						}
 					} else {
-console.log('111111-1')
 						account.reconciled = 1;
 					}
 				} else {
-console.log('000000')
 					account.reconciled = (+sd >= +now) ? 0: 1;
 				}
 			});
@@ -161,13 +153,13 @@ console.log('000000')
 			function(response) {
 				if (!!response.success) {
 					var moved = Array();
-					var dt = response.data.result[1].interval_begining.split('T');
+					var dt = response.data.result[0].interval_beginning.split('T');
 					var dt = dt[0].split('-');
 					var sd = new Date(dt[0], --dt[1], dt[2]);
-					var dt = response.data.result[1].interval_ending.split('T');
+					var dt = response.data.result[0].interval_ending.split('T');
 					var dt = dt[0].split('-');
 					var ed = new Date(dt[0], --dt[1], dt[2]);
-					_isReconciled(response.data.result[1].accounts, sd, ed);
+					_isReconciled(response.data.result[0].accounts, sd, ed);
 					// if moving backwards add interval to front of array
 					if (direction == -1) {
 						moved.push(response.data.result[0]);
@@ -179,30 +171,22 @@ console.log('000000')
 						});
 					// if moving forward add interval to end of array
 					if (direction == 1) {
-//						// make adjustment to the account balances
-//						angular.forEach(response.data.result[0].accounts,
-//							function(account, index) {
-//								if (typeof(response.data.result[0].adjustments[account.bank_account_id]) !== 'undefined') {
-//									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance) + parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
-//								} else {
-//									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
-//								}
-////console.log("------- account.bank_account_id = "+account.bank_account_id+" ------")
-////console.log("prev balances = "+moved[moved.length-1].balances[account.bank_account_id]);
-////console.log("this balances = "+response.data.result[0].balances[account.bank_account_id]);
-//								if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
-//									var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
-//									var this_account_balance = (typeof(response.data.result[0].balances[account.bank_account_id]) !== 'undefined') ? response.data.result[0].balances[account.bank_account_id]: 0;
-////console.log("prev_account_balances = " + prev_account_balance);
-////console.log("this_account_balances = " + this_account_balance);
-////console.log("account.balance = "+account.balance);
-//									if (parseFloat(this_account_balance) > parseFloat(prev_account_balance)) {
-////console.log('+++++++++')
-//										account.balance += (parseFloat(this_account_balance) - parseFloat(prev_account_balance));
-//									}
-////console.log("account.balance = "+account.balance);
-//								}
-//							});
+						// make adjustment to the account balances
+						angular.forEach(response.data.result[0].accounts,
+							function(account, index) {
+								if (typeof(response.data.result[0].adjustments[account.bank_account_id]) !== 'undefined') {
+									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance) + parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
+								} else {
+									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
+								}
+								if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
+									var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
+									var this_account_balance = (typeof(response.data.result[0].balances[account.bank_account_id]) !== 'undefined') ? response.data.result[0].balances[account.bank_account_id]: 0;
+									if (parseFloat(this_account_balance) > parseFloat(prev_account_balance)) {
+										account.balance += (parseFloat(this_account_balance) - parseFloat(prev_account_balance));
+									}
+								}
+							});
 						response.data.result[0].balance_forward = moved[moved.length-1].running_total;
 						response.data.result[0].running_total = response.data.result[0].balance_forward + response.data.result[0].interval_total;
 						moved.push(response.data.result[0]);
@@ -218,7 +202,7 @@ console.log('000000')
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-//					ngProgress.complete();
+//				ngProgress.complete();
 			});
 	}
 

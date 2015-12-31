@@ -155,7 +155,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 			function(response) {
 				if (!!response.success) {
 					var moved = Array();
-					var dt = response.data.result[1].interval_begining.split('T');
+					var dt = response.data.result[1].interval_beginning.split('T');
 					var dt = dt[0].split('-');
 					var sd = new Date(dt[0], --dt[1], dt[2]);
 					var dt = response.data.result[1].interval_ending.split('T');
@@ -178,6 +178,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						moved.push(response.data.result[1]);	// add actual
 					}
 					$rootScope.intervals = moved;
+console.log($rootScope.intervals)
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,
