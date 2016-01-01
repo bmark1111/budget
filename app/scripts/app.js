@@ -186,10 +186,10 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 					// load the upload counts
 //					if (typeof($rootScope.transaction_count) === 'undefined') {
 						$rootScope.transaction_count = '';
-//						RestData2().getUploadCounts(
-//							function(response) {
-//								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
-//							});
+						RestData2().getUploadCounts(
+							function(response) {
+								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+							});
 //					}
 				} else {
 					// user is not authenticated
