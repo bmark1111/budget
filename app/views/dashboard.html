@@ -3,15 +3,25 @@
 	<div ng-if="error">{{error}}</div>
 	<div class="row">
 		<div class="col-md-3">
-			<h3>YTD Totals by category</h3>
+			<h3>Category Yotals YTD</h3>
+			<input type="text" ng-model="ytdYear" placeholder="Enter Year" ng-blur="getYTD()" />
+		</div>
+		<div class="col-md-3">
+			<div ng-if="dataErrorMsg[0]">
+				<p ng-repeat="error in dataErrorMsg"><span style="color:red;">{{error}}</span></p>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3">
 			<div ng-repeat="ytdTotal in ytdTotals">
 				<div class="row">
 					<div class="col-md-6">{{ytdTotal.name}}</div>
-					<div class="col-md-6" ng-click="getYTDTransactions(ytdTotal.id, ytdYear)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
+					<div class="col-md-6" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-5" ng-show="transactions">
+		<div class="col-md-5" ng-show="transactions" style="overflow:scroll; height:400px;">
 			<h3>YTD Transactions for Category</h3>
 			<div class="table-responsive">
 				<table>
@@ -42,8 +52,5 @@
 		<div class="col-md-12">
 			<h3>Upcoming forecast payments</h3>
 		</div>
-	</div>
-	<div ng-if="dataErrorMsg[0]">
-		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
 	</div>
 </div>
