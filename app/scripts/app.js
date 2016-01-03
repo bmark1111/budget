@@ -143,8 +143,8 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 		})
 		.when('/budget_settings',
 		{
-			controller:		'SettingsController',
-			templateUrl:	'app/views/budget_settings.html',
+			controller:		'SettingsController as settings',
+			templateUrl:	'app/views/settings.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}

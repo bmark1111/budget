@@ -46,7 +46,8 @@ app.factory('RestData2', function ($resource, $localStorage, API) {
 				deleteCategory:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'category', action: 'delete', param: null} },
 				getCategories:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'category', action: '', param: null} },
 
-				getSetting:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'setting', action: 'load', param: null} },
+				getSettings:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'setting', action: 'load', param: null} },
+				saveSettings:				{ method: 'POST', headers: headers, params: {path: 'data', object: 'setting', action: 'save', param: null} },
 
 				logout:						{ method: 'POST', headers: headers, params: {path: 'data', object: 'logout', action: null, param: null} },
 
