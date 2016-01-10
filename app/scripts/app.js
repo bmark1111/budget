@@ -36,6 +36,7 @@ app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
 					$localStorage.authorization		= false;
 					$localStorage.budget_views		= false;
 					$localStorage.sheet_views		= false;
+					$localStorage.budget_mode		= false;
 					$location.path("/login");
 				} else {
 					$rootScope.error = rejection.status + ' ' + rejection.statusText;

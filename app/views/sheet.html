@@ -9,7 +9,8 @@
 				<tr>
 					<th><span class="pull-right">Period Ending</span></th>
 					<th style="text-align:center;" ng-repeat="period in periods|getIntervals:period_start" ng-class="{'currentInterval':period.current_interval}">
-						<span>{{period.interval_ending|date:'EEE MMM dd, yyyy'}}</span>
+						<!--<span>{{period.interval_ending|date:'EEE MMM dd, yyyy'}}</span>-->
+						<span>{{period.interval_ending|displayDate:period.budget_mode}}</span>
 					</th>
 				</tr>
 			</thead>

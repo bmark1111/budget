@@ -26,6 +26,7 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 					$localStorage.authorization		= "Basic " + btoa(credentials.username + ":" + credentials.password);
 					$localStorage.budget_views		= data.data.budget_views;
 					$localStorage.sheet_views		= data.data.sheet_views;
+					$localStorage.budget_mode		= data.data.budget_mode;
 
 					$location.path("/dashboard");
 					$scope.error = false;
@@ -38,6 +39,7 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 					$localStorage.authorization		= false;
 					$localStorage.budget_views		= false;
 					$localStorage.sheet_views		= false;
+					$localStorage.budget_mode		= false;
 
 					$location.path("/login");
 					$scope.error = true;
