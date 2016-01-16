@@ -9,7 +9,6 @@
 				<tr>
 					<th><span class="pull-right">Period Ending</span></th>
 					<th colspan="2" style="text-align:center;" ng-repeat="interval in intervals|getIntervals:start_interval:1" ng-class="{'currentInterval':interval.current_interval}">
-						<!--<span>{{interval.interval_ending|date:'EEE MMM dd, yyyy'}}</span>-->
 						<span>{{interval.interval_ending|displayDate:interval.budget_mode}}</span>
 					</th>
 				</tr>
@@ -78,6 +77,9 @@
 						</span>
 						<span class="pull-right forecast_amount" ng-show="interval.accounts[$parent.$index].reconciled == 0">
 							{{interval.accounts[$parent.$index].balance|currency}}
+						</span>
+						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 99">
+							N/A
 						</span>
 					</td>
 				</tr>

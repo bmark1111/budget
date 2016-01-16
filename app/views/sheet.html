@@ -9,7 +9,6 @@
 				<tr>
 					<th><span class="pull-right">Period Ending</span></th>
 					<th style="text-align:center;" ng-repeat="period in periods|getIntervals:period_start" ng-class="{'currentInterval':period.current_interval}">
-						<!--<span>{{period.interval_ending|date:'EEE MMM dd, yyyy'}}</span>-->
 						<span>{{period.interval_ending|displayDate:period.budget_mode}}</span>
 					</th>
 				</tr>
@@ -25,7 +24,7 @@
 					<th>{{category.name}}</th>
 					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right">
-							<span ng-if="!period.types[category.id]">
+							<span ng-if="!period.types[category.id] || period.types[category.id] == 2">
 								<a ns-popover="showTheseTransactions(category.id, $index)"
 									ns-popover-placement="right"
 									ns-popover-template="transactions"
@@ -35,7 +34,7 @@
 									{{period.totals[category.id]|currency}}
 								</a>
 							</span>
-							<span ng-if="period.types[category.id]" class='forecast_amount'>
+							<span ng-if="period.types[category.id] == 1" class='forecast_amount'>
 								{{period.totals[category.id]|currency}}
 							</span>
 						</div>
@@ -71,6 +70,9 @@
 						</span>
 						<span class="pull-right forecast_amount" ng-show="period.accounts[$parent.$index].reconciled == 0">
 							{{period.accounts[$parent.$index].balance|currency}}
+						</span>
+						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 99">
+							N/A
 						</span>
 					</td>
 				</tr>

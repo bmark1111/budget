@@ -58,7 +58,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 							account.reconciled = 1;
 						}
 					} else {
-						account.reconciled = 1;
+						account.reconciled = (account.balance) ? 1: 99;
 					}
 				} else {
 					account.reconciled = (+sd >= +now) ? 0: 1;
@@ -174,10 +174,10 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						// make adjustment to the account balances
 						angular.forEach(response.data.result[0].accounts,
 							function(account, index) {
+								// we are moving foreward so get the last intervals balance and adjust it if necessary
+								account.balance = parseFloat(moved[moved.length-1].accounts[index].balance);
 								if (typeof(response.data.result[0].adjustments[account.bank_account_id]) !== 'undefined') {
-									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance) + parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
-								} else {
-									account.balance = parseFloat(moved[moved.length-1].accounts[index].balance)
+									account.balance += parseFloat(response.data.result[0].adjustments[account.bank_account_id]);
 								}
 								if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
 									var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
