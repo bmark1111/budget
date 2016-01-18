@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SettingsController', function($scope, $rootScope, RestData2) {
+app.controller('SettingsController', function($scope, $rootScope, $localStorage, RestData2) {
 
 	var self = this;
 	
@@ -93,6 +93,17 @@ app.controller('SettingsController', function($scope, $rootScope, RestData2) {
 										if(setting.value.name !== saved_values[index]) {
 											delete $rootScope.intervals;
 											delete $rootScope.periods;
+											switch (setting.name) {
+												case 'budget_views':
+													$localStorage.budget_views	= parseInt((setting.value.name * 2) + 2);
+													break;
+												case 'sheet_views':
+													$localStorage.sheet_views	= parseInt(setting.value.name * 2);
+													break;
+												case 'budget_mode':
+													$localStorage.budget_mode	= setting.value.name;
+													break;
+											}
 										}
 										break;
 									case '2':
