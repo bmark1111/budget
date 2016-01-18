@@ -8,11 +8,7 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 
 	$scope.credentials = {};
 
-	var authenticate = function(credentials) {//, callback) {
-//		var headers = credentials ? {authorization : "Basic " + btoa(credentials.username + ":" + credentials.password)} : {};
-//
-//		$http.get('http://rest.budget.loc/login', {headers : headers})
-//			.success(function(data) {
+	var authenticate = function(credentials) {
 		$localStorage.authorization = "Basic " + btoa(credentials.username + ":" + credentials.password);
 		RestData2().login({account: credentials.account},
 			function(data) {

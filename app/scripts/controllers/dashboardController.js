@@ -6,6 +6,8 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 	var now = new Date();
 	$scope.ytdYear = now.getFullYear();
 	$scope.ytdTotals = [];
+	$scope.transactions = false;
+	$scope.transactions_seq = false;
 
 	var getYTDTotals = function() {
 		var deferred = $q.defer();
@@ -37,6 +39,8 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 		if (!!response[1].success) {
 			$scope.dataErrorMsg = [];
 			$scope.ytdTotals = [];
+			$scope.transactions = false;
+			$scope.transactions_seq = false;
 			angular.forEach($rootScope.categories,
 				function(category, key) {
 					var category = {
@@ -91,6 +95,8 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 			// load the YTD Totals
 			if (!!response.success) {
 				$scope.ytdTotals = [];
+				$scope.transactions = false;
+				$scope.transactions_seq = false;
 				angular.forEach($rootScope.categories,
 					function(category, key) {
 						var category = {

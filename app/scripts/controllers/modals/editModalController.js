@@ -8,6 +8,11 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		};
 	$scope.title = params.title;
 	
+	$scope.minDate = null;
+	$scope.maxDate = null;
+	$scope.status = {
+		opened: false
+	}
 
 	var getTransaction = function() {
 		var deferred = $q.defer();
@@ -53,6 +58,8 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		if (!!response[2].success) {
 			if (response[2].data.result) {
 				$scope.transaction = response[2].data.result;
+				var dt = $scope.transaction.transaction_date.split('-');
+				$scope.transaction.transaction_date = new Date(dt[0], --dt[1], dt[2]);
 			}
 //		} else {
 //			if (response[2].errors) {

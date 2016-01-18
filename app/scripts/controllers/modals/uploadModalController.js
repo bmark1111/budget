@@ -1,53 +1,55 @@
 'use strict';
 
-app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$localStorage', 'fileUpload', 'params', 'BankAccounts', function ($q, $scope, $rootScope, $modalInstance, $localStorage, fileUpload, params, BankAccounts) {
+app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$localStorage', 'fileUpload', 'params', 'BankAccounts', 'API',
 
-	$scope.ignoreFirstLine = 0;
-	$scope.bank_account_id = 0;
+	function ($q, $scope, $rootScope, $modalInstance, $localStorage, fileUpload, params, BankAccounts, API) {
 
-	$q.all([
-		BankAccounts.get()
-	]).then(function(response) {
-		// get the bank account
-		if (!!response[0].success) {
-			$rootScope.bank_accounts = [];
-			angular.forEach(response[0].data.bank_accounts,
-				function(bank_account) {
-					$rootScope.bank_accounts.push({
-						'id': bank_account.id,
-						'name': bank_account.bank.name + ' ' + bank_account.name
-					})
-				});
-		}
-	});
+		$scope.ignoreFirstLine = 0;
+		$scope.bank_account_id = 0;
 
-	$scope.title = params.title;
-	$scope.upload_errors = {};
-	$scope.upload_fail = false;
+		$q.all([
+			BankAccounts.get()
+		]).then(function(response) {
+			// get the bank account
+			if (!!response[0].success) {
+				$rootScope.bank_accounts = [];
+				angular.forEach(response[0].data.bank_accounts,
+					function(bank_account) {
+						$rootScope.bank_accounts.push({
+							'id': bank_account.id,
+							'name': bank_account.bank.name + ' ' + bank_account.name
+						})
+					});
+			}
+		});
 
-	// upload transaction file
-	$scope.upload = function () {
-		if ($localStorage.authenticated) {
-			var file = $scope.myFile;
+		$scope.title = params.title;
+		$scope.upload_errors = {};
+		$scope.upload_fail = false;
 
-			var uploadUrl = 'http://rest.budget.loc/upload/' + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
-			fileUpload.uploadFileToUrl(file, uploadUrl)
-				.success(function(response) {
-					if (response.success === 1) {
-						$scope.upload_fail = false;
-						$scope.upload_errors = {};
-						$modalInstance.close(response);
-					} else {
-						$scope.upload_fail = true;
-						$scope.upload_errors = response.errors;
-					}
-				});
-		}
-	};
+		// upload transaction file
+		$scope.upload = function () {
+			if ($localStorage.authenticated) {
+				var file = $scope.myFile;
 
-	// cancel transaction edit
-	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
-	};
+				var uploadUrl = API.upload_url + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
+				fileUpload.uploadFileToUrl(file, uploadUrl)
+					.success(function(response) {
+						if (response.success === 1) {
+							$scope.upload_fail = false;
+							$scope.upload_errors = {};
+							$modalInstance.close(response);
+						} else {
+							$scope.upload_fail = true;
+							$scope.upload_errors = response.errors;
+						}
+					});
+			}
+		};
 
-}]);
+		// cancel transaction edit
+		$scope.cancel = function () {
+			$modalInstance.dismiss('cancel');
+		};
+	}
+]);

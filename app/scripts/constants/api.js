@@ -1,4 +1,4 @@
 app.constant('API', {
-//	url: '//rest.budget.loc/data/:object/:action/:param'
-	url: '//rest.budget.loc/:path/:object/:action/:param'
+	url:		'//rest.budgettracker.loc/:path/:object/:action/:param',
+	upload_url:	'//rest.budgettracker.loc/upload/'
 });
