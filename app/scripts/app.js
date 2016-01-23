@@ -1,9 +1,8 @@
 var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);
 
-app.config(function($routeProvider, $httpProvider, $modalProvider, USER_ROLES) {
+app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 
 	$httpProvider.interceptors.push(function ($q, $localStorage, $location, $rootScope) {
-//		$rootScope.dataErrorMsg = [];
 
 		return {
 			'response': function (response) {
