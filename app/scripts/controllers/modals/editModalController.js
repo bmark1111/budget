@@ -10,9 +10,10 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 	
 	$scope.minDate = null;
 	$scope.maxDate = null;
-	$scope.status = {
-		opened: false
-	}
+	$scope.opened = false;
+//	$scope.status = {
+//		opened: false
+//	}
 
 	var getTransaction = function() {
 		var deferred = $q.defer();

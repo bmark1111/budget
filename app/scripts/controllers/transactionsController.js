@@ -10,7 +10,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 	$scope.dataErrorMsg	= [];
 	$scope.searchDisplay = true;
-	$scope.opened = false;
+//	$scope.opened = false;
 
 	$scope.search = {
 		currentPage:	1,
@@ -69,13 +69,13 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 		loadData();
 	};
 
-	// open date picker
-	$scope.open = function($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-
-		$scope.opened = true;
-	};
+//	// open date picker
+//	$scope.open = function($event) {
+//		$event.preventDefault();
+//		$event.stopPropagation();
+//
+//		$scope.opened = true;
+//	};
 
 	$scope.uploadTransactions = function() {
 		var modalInstance = $modal.open({

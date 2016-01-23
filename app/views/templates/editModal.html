@@ -16,7 +16,7 @@
 				<div class="form-group" ng-class="{'has-error': validation.date }">
 					<p class="input-group">
 						<!--<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" name="date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />-->
-						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.transaction_date" is-open="status.opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
