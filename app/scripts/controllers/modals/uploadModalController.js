@@ -32,7 +32,6 @@ app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalIn
 			if ($localStorage.authenticated) {
 				var file = $scope.myFile;
 
-//				var uploadUrl = API.upload_url + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
 				var uploadUrl = Config.get('upload_url') + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
 				fileUpload.uploadFileToUrl(file, uploadUrl)
 					.success(function(response) {

@@ -6,14 +6,14 @@
 		<div class="row">
 			<div class="col-md-6" style="width:18%;">
 				<label for="date">Bank Account</label>
-				<div class="form-group" ng-class="{'has-error':validation.bank_account_id}">
+				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
 					<select class="form-control" name="bank_account_id" ng-disabled="transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
-					<span class="help-block" ng-show="validation.bank_account_id">{{validation.bank_account_id}}</span>
+					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
 				</div>
 			</div>
 			<div class="col-md-6" style="width:22%;">
 				<label for="date">Date</label>
-				<div class="form-group" ng-class="{'has-error': validation.date }">
+				<div class="form-group" ng-class="{ 'has-error': validation.date }">
 					<p class="input-group">
 						<!--<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" name="date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />-->
 						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
@@ -25,7 +25,7 @@
 				</div>
 			</div>
 			<div class="col-md-2" style="width:32%;">
-				<div class="form-group" ng-class="{'has-error': validation.description }">
+				<div class="form-group" ng-class="{ 'has-error': validation.description }">
 					<label for="description">Description</label>
 					<input type="text" name="description" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.description" />
 					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
@@ -39,14 +39,14 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-sm-2" style="width:24%;">
+			<div class="col-sm-2">
 				<label for="category">Category</label>
-				<div class="form-group" ng-class="{'has-error':validation.category_id}">
+				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
 					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
-					<span class="help-block" ng-show="validation.category_id">{{validation.category_id}}</span>
+					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
 				</div>
 			</div>
-			<div class="col-sm-2" style="width:20%;">
+			<div class="col-sm-2">
 				<label for="type">Type</label>
 				<div class="form-group" ng-class="{'has-error': validation.type }">
 					<select class="form-control" name="type" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.type">
@@ -59,25 +59,29 @@
 					<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
 				</div>
 			</div>
-			<div class="col-sm-2" style="width:15%;">
+			<div class="col-sm-2">
 				<label for="check_num">Check Num</label>
-				<div class="form-group" ng-class="{'has-error': validation.check_num }">
+				<div class="form-group" ng-class="{ 'has-error': validation.check_num }">
 					<input type="text" name="check_num" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.check_num" />
 				</div>
 			</div>
-			<div class="col-md-2" style="width:15%;">
+			<div class="col-md-2">
 				<label for="amount">Amount</label>
-				<div class="form-group" ng-class="{'has-error': validation.amount }">
+				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
 					<input type="text" name="amount" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.amount" ng-blur="refreshSplits()" />
 					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
 				</div>
 			</div>
-			<div class="col-md-2" style="width:10%;padding-top:25px;">
+			<div class="col-md-1" style="padding-top:25px;">
 				<div class="form-group">
 					<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="split()">
 						Split
 					</button>
 				</div>
+			</div>
+			<div class="col-md-2" style="padding-top:25px;">
+				<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"> Uploaded</span><br />
+				<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> &nbsp; &nbsp; Reconciled</span>
 			</div>
 		</div>
 		<div class="table-responsive" ng-if="transaction.splits[0]">

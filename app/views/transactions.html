@@ -62,25 +62,27 @@
 			<tbody>
 				<tr ng-repeat-start="idx in transactions_seq">
 					<td rowspan="2">
-						{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}
-						<span class="glyphicon glyphicon-upload" ng-if="transactions[idx].is_uploaded == 1" title="Transaction Uploaded"></span>
+						{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}
+						<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
+						<img ng-if="transactions[idx].reconciled_date" ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> 
 					</td>
-					<td rowspan="2"><span class="pull-left">{{transactions[idx].check_num}}</span></td>
-					<td colspan="2"><span class="pull-left">{{transactions[idx].description}}</span></td>
+					<td rowspan="2"><span class="pull-left">{{ transactions[idx].check_num }}</span></td>
+					<td colspan="2"><span class="pull-left">{{ transactions[idx].description }}</span></td>
 					<td rowspan="2">{{transactions[idx].bank_account.name}}</td>
-					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
-					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
+					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{ transactions[idx].amount|currency }}</span></td>
+					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{ transactions[idx].amount|currency }}</span></td>
 					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editTransaction(transactions[idx].id)" style="cursor:pointer;" title="Edit Transaction ?"></span>
-						<span class="glyphicon glyphicon-trash" ng-if="is_admin || (!transactions[idx].reconciled_date && transactions[idx].is_uploaded == 0)" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>
+						<!--<span class="glyphicon glyphicon-trash" ng-if="is_admin || (!transactions[idx].reconciled_date && transactions[idx].is_uploaded == 0)" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>-->
+						<span class="glyphicon glyphicon-trash" ng-if="is_admin || (!transactions[idx].reconciled_date)" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>
 					</td>
 				</tr>
 				<tr ng-repeat-end="">
 					<td>
 						<span class="pull-left" ng-if="!transactions[idx].category_id">--Split--</span>
-						<span class="pull-left" ng-if="transactions[idx].category_id">{{transactions[idx].category.name}}</span>
+						<span class="pull-left" ng-if="transactions[idx].category_id">{{ transactions[idx].category.name }}</span>
 					</td>
-					<td><span class="pull-left">{{transactions[idx].notes}}</span></td>
+					<td><span class="pull-left">{{ transactions[idx].notes }}</span></td>
 				</tr>
 			</tbody>
 		</table>

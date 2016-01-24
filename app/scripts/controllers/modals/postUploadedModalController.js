@@ -144,13 +144,28 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$l
 	};
 
 	$scope.idSelectedTransaction = null;
-	$scope.setSelected = function (idSelectedTransaction) {
-		if ($scope.idSelectedTransaction !== idSelectedTransaction) {
-			$scope.idSelectedTransaction = idSelectedTransaction;
-			$scope.post = 'Post New & Overwrite';
+	$scope.setSelected = function (selectedTransaction) {
+		if ($scope.idSelectedTransaction !== selectedTransaction.id) {
+			// select this transaction
+			if (selectedTransaction.reconciled_date) {
+				// this is a reconciled transaction, youy may want to discard this new uploaded transaction
+				$scope.dataErrorMsg = ['This is a reconciled transaction, you may want to discard this new uploaded transaction'];
+				$scope.idSelectedTransaction = null;
+				$scope.post = 'Post New';
+				$scope.uploaded.category_id = false;
+				$scope.uploaded.notes = '';
+			} else {
+				$scope.idSelectedTransaction = selectedTransaction.id;
+				$scope.post = 'Post New & Overwrite';
+				$scope.uploaded.category_id = selectedTransaction.category_id;
+				$scope.uploaded.notes = selectedTransaction.notes;
+			}
 		} else {
+			// deselect this transaction
 			$scope.idSelectedTransaction = null;
 			$scope.post = 'Post New';
+			$scope.uploaded.category_id = false;
+			$scope.uploaded.notes = '';
 		}
 	};
 
