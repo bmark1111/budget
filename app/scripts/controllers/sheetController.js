@@ -108,13 +108,14 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		$rootScope.categories[idx].isCollapsed = !$rootScope.categories[idx].isCollapsed;
 	};
 
-	$scope.showTheseTransactions = function(category_id, index) {
+	$scope.showTheseTransactions = function(category_id, index, category_name) {
 		var idx = index + $rootScope.period_start;
 
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')($rootScope.periods[idx].interval_ending, "EEE MMM dd, yyyy");
-		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
+		var start_date = $filter('date')($rootScope.periods[idx].interval_beginning, "EEE MMM dd, yyyy");
+		var end_date = $filter('date')($rootScope.periods[idx].interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
 
 		RestData2().getTheseTransactions({
 				interval_beginning:	$rootScope.periods[idx].interval_beginning,
@@ -214,14 +215,13 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	/**
 	 * @name reconcile
 	 * @type method
-	 * @param {type} account_name
-	 * @param {type} account_id
-	 * @param {type} date
-	 * @param {type} alt_date
+	 * @param {type} account
+	 * @param {type} period
+	 * @param {type} bank account index
 	 * @returns {undefined}
 	 */
-	$scope.reconcile = function(account_name, account_id, balance, date, alt_date) {
-		var use_date = (alt_date) ? alt_date: date;
+	$scope.reconcile = function(account, period, index) {
+		var use_date = (period.alt_ending) ? period.alt_ending: period.interval_ending;
 		var modalInstance = $modal.open({
 			templateUrl: 'reconcileTransactionsModal.html',
 			controller: 'ReconcileTransactionsModalController',
@@ -229,10 +229,10 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 			resolve: {
 				params: function() {
 						return {
-							account_name:	account_name,
-							account_id:		account_id,
-							date:			use_date,
-							balance:		balance
+							account:	account,
+							period:		period,
+							index:			index,
+							date:			use_date
 						}
 					}
 			}
