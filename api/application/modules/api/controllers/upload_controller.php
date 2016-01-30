@@ -164,7 +164,8 @@ class upload_controller Extends rest_controller {
 			$uploaded->status = (!empty($_POST['id'])) ? 1: 2;			// set uploaded transaction as added as new or overwrite for existing
 			$uploaded->save();
 
-			$transaction_id = (!empty($_POST['transaction_id'])) ? $_POST['transaction_id']: FALSE;
+			// now save the transaction, possibly overwriting an existing transaction
+			$transaction_id = (!empty($_POST['transaction_id'])) ? $_POST['transaction_id']: NULL;
 			$transaction = new transaction($transaction_id);
 			$transaction_date	= (!empty($transaction->transaction_date)) ? $transaction->transaction_date: FALSE;
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
@@ -178,12 +179,11 @@ class upload_controller Extends rest_controller {
 			$transaction->is_uploaded		= 1;
 			$transaction->save();
 
-//			// resets account balances
-			if ($transaction_date && strtotime($transaction_date) <= strtotime($transaction->transaction_date)) {
-				$this->resetBalances(array($transaction->bank_account_id => $transaction_date));	// adjust the account balance from this transaction forward
-			} else {
-				$this->resetBalances(array($transaction->bank_account_id => $transaction->transaction_date));	// adjust the account balance from this transaction forward
+			// resets account balances, 'resetBalances' method will determine the earlier
+			if ($transaction_date) {	// if we are overwriting a transaction then give this transaction date to resetBalances method
+				$this->resetBalances(array($transaction->bank_account_id => $transaction_date));			// adjust the account balance from the overwritten transaction forward
 			}
+			$this->resetBalances(array($transaction->bank_account_id => $transaction->transaction_date));	// adjust the account balance from the new transaction forward
 		} else {
 			$this->ajax->addError(new AjaxError("403 - Invalid uploaded transaction (upload/post) - " . $_POST['id']));
 		}

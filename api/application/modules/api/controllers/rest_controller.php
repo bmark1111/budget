@@ -97,6 +97,8 @@ class rest_controller Extends EP_Controller {
 	}
 
 	/**
+	 * Saves account id and date to reset balances if necessary, if the date is newer than the 
+	 * already saved date then it ignores request
 	 * @name resetBalances
 	 * @param type $resets
 	 */
