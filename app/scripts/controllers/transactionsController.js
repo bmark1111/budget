@@ -1,14 +1,16 @@
 'use strict';
 
-app.controller('TransactionsController', function($scope, $modal, $timeout, $location, RestData)
-{
+app.controller('TransactionsController', function($scope, $rootScope, $modal, $timeout, RestData2) {
+
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
 	$scope.recCount		= 0;
 	$scope.numPages = 5;
 	$scope.transactions	= [];
 
-	$scope.dataErrorMsg	= false;
+	$scope.dataErrorMsg	= [];
+	$scope.searchDisplay = true;
+//	$scope.opened = false;
 
 	$scope.search = {
 		currentPage:	1,
@@ -17,13 +19,13 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 		amount:			''
 	};
 
-	var loadData = function()
-	{
-		$scope.dataErrorMsg = false;
+	var loadData = function() {
+		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 
-		var searchCriteria = {
+		RestData2().getAllTransactions(
+				{
 						'date':					$scope.search.date,
 						'description':			$scope.search.description,
 						'amount':				$scope.search.amount,
@@ -31,33 +33,31 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 						'sort_dir':				'DESC',
 						'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
 						'pagination_amount':	$scope.itemsPerPage
-		};
-
-		RestData.getAllTransactions(searchCriteria,
-			function(response)
-			{
-				if (!!response.success)
-				{
-					$scope.transactions = response.data.result;
-					$scope.transactions_seq = Object.keys(response.data.result);
-					$scope.recCount = response.data.total_rows;
-				} else {
-					if (response.errors)
-					{
-						$scope.dataErrorMsg = '<p class="text-muted">' + response.errors[0].error;
+				},
+				function(response) {
+					if (!!response.success) {
+						$scope.transactions = response.data.result;
+						$scope.transactions_seq = Object.keys(response.data.result);
+						$scope.recCount = response.data.total_rows;
 					} else {
-						$scope.dataErrorMsg = response;
+						if (response.errors) {
+							angular.forEach(response.errors,
+								function(error) {
+									$scope.dataErrorMsg.push(error.error);
+								})
+						} else {
+							$scope.dataErrorMsg[0] = response;
+						}
 					}
-				}
-//				ngProgress.complete();
-			});
+
+//					ngProgress.complete();
+				});
 	}
 
 	loadData();
 
 	var timer = null;
-	$scope.refreshData = function()
-	{
+	$scope.refreshData = function() {
 		$scope.search.currentPage = 1;
 
 		if (timer) $timeout.cancel(timer);
@@ -65,29 +65,25 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 		loadData();
 	};
 
-	$scope.pageChanged = function()
-	{
+	$scope.pageChanged = function() {
 		loadData();
 	};
 
-	// open date picker
-	$scope.open = function($event)
-	{
-		$event.preventDefault();
-		$event.stopPropagation();
+//	// open date picker
+//	$scope.open = function($event) {
+//		$event.preventDefault();
+//		$event.stopPropagation();
+//
+//		$scope.opened = true;
+//	};
 
-		$scope.opened = true;
-	};
-
-	$scope.uploadTransactions = function()
-	{
+	$scope.uploadTransactions = function() {
 		var modalInstance = $modal.open({
 			templateUrl: 'uploadModal.html',
 			controller: 'UploadModalController',
-			size: 'lg',
+			size: 'sm',
 			resolve: {
-				params: function()
-					{
+				params: function() {
 						return {
 							title: 'Upload Transactions'
 						}
@@ -95,25 +91,22 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
-			loadData();
+		modalInstance.result.then(function (response) {
+			$rootScope.transaction_count = (parseInt(response.count) > 0) ? parseInt(response.count): '';
 		},
-		function ()
-		{
+		function () {
 			console.log('Upload Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.addTransaction = function()
-	{
+	$scope.addTransaction = function() {
 		var modalInstance = $modal.open({
 			templateUrl: 'editModal.html',
 			controller: 'EditModalController',
-			size: 'lg',
+//			size: 'lg',
+			windowClass: 'app-modal-window',
 			resolve: {
-				params: function()
-					{
+				params: function() {
 						return {
 							id: 0,
 							title: 'Add Transaction'
@@ -122,25 +115,22 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Add Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.editTransaction = function(transaction_id)
-	{
+	$scope.editTransaction = function(transaction_id) {
 		var modalInstance = $modal.open({
 			templateUrl: 'editModal.html',
 			controller: 'EditModalController',
-			size: 'lg',
+//			size: 'lg',
+			windowClass: 'app-modal-window',
 			resolve: {
-				params: function()
-					{
+				params: function() {
 						return {
 							id: transaction_id,
 							title: 'Edit Transaction'
@@ -149,25 +139,21 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Edit Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.deleteTransaction = function (transaction_id)
-	{
+	$scope.deleteTransaction = function (transaction_id) {
 		var modalInstance = $modal.open({
 			templateUrl: 'deleteModal.html',
 			controller: 'DeleteModalController',
 			size: 'sm',
 			resolve: {
-				params: function()
-					{
+				params: function() {
 						return {
 							id: transaction_id,
 							title: 'Delete Transaction ?',
@@ -177,12 +163,10 @@ app.controller('TransactionsController', function($scope, $modal, $timeout, $loc
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Delete Modal dismissed at: ' + new Date());
 		});
 	};

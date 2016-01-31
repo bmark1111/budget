@@ -1,0 +1,47 @@
+<div class="container-fluid">
+	<h1 class="page-header">Register</h1>
+	<div ng-if="error">{{error}}</div>
+
+	<div class="row">
+		<div class="col-md-6" ng-class="{'has-error': validation.description }">
+			<label for="description">Description:</label>
+			<div class="form-group">
+				<input type="text" class="form-control" name="description" ng-model="data.description" placeholder="Description:" />
+			</div>
+			<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2" ng-class="{'has-error': validation.firstname }">
+			<label for="firstname">First name:</label>
+			<div class="form-group">
+				<input type="text" class="form-control" name="firstname" ng-model="data.firstname" placeholder="First name" />
+			</div>
+			<span class="help-block" ng-show="validation.firstname">{{ validation.firstname }}</span>
+		</div>
+		<div class="col-md-2" ng-class="{'has-error': validation.lastname }">
+			<label for="lastname">Last name:</label>
+			<div class="form-group">
+				<input type="text" class="form-control" name="lastname" ng-model="data.lastname" placeholder="Last name" />
+			</div>
+			<span class="help-block" ng-show="validation.lastname">{{ validation.lastname }}</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2" ng-class="{'has-error': validation.email }">
+			<label for="email">Email</label>
+			<div class="form-group">
+				<input type="text" class="form-control" name="email" ng-model="data.email" placeholder="Email address" />
+			</div>
+			<span class="help-block" ng-show="validation.email">{{ validation.email }}</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<button class="btn btn-primary" ng-click="register()">Register</button>
+		</div>
+	</div>
+</div>
+<div ng-if="errorMsgs[0]">
+	<div ng-repeat="error in errorMsgs">{{error}}</div>
+</div>

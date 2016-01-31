@@ -21,6 +21,9 @@ div.menu table tr td {
 	/*text-align:right;*/
 	background:#fff;
 }
+div.popover {
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
 /*
 div.menu ul li.title {
     /*padding: 5px 10px;* /

@@ -12,12 +12,12 @@
 		<!-- Bootstrap core CSS -->
 		<link href="app/styles/bootstrap.min.css" rel="stylesheet">
 		<link href="app/styles/jasny-bootstrap.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 
 		<!-- Custom styles for this template -->
 		<link href="app/styles/navmenu.css" rel="stylesheet">
 		<link href="app/styles/message.css" rel="stylesheet">
 		<link href="app/styles/table-styles.css" rel="stylesheet">
+		<link href="app/styles/font-awesome.css" rel="stylesheet">
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries xxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
 		<!--[if lt IE 9]>
@@ -28,6 +28,9 @@
 
 	<body>
 		<div>
+			<div ng-controller="MenuController">
+				<ng-include src="'app/views/templates/sidenav.html'"></ng-include>
+			</div>
 			<div ng-view=""></div>
 		</div>
 
@@ -36,24 +39,78 @@
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="scripts/angularjs/angular.js"></script>
 		<script src="scripts/angularjs/angular-resource.js"></script>
+		<script src="scripts/angularjs/angular-cookies.js"></script>
+
 		<script src="scripts/angularjs/angular-route.min.js"></script>		
 		<script src="scripts/jquery/jquery-1.10.2.min.js"></script>
 		<script src="scripts/bootstrap.min.js"></script>
-		<script src="scripts/jasny-bootstrap.min.js"></script>
 		<script src="scripts/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
+		<script src="scripts/jasny-bootstrap.min.js"></script>
+		<script src="scripts/ngContextMenu.js"></script>
+		<script src="scripts/ngStorage-master/ngStorage.min.js"></script>
+		<script src="scripts/nsPopover-master/src/nsPopover.js"></script>
+
 		<script src="app/scripts/app.js"></script>
+
+		<script src="app/scripts/controllers/admin/adminController.js"></script>
+
+		<script src="app/scripts/controllers/loginController.js"></script>
+		<script src="app/scripts/controllers/logoutController.js"></script>
+		<script src="app/scripts/controllers/homeController.js"></script>
+		<script src="app/scripts/controllers/registerController.js"></script>
+
 		<script src="app/scripts/controllers/dashboardController.js"></script>
+		<script src="app/scripts/controllers/budgetController.js"></script>
+		<script src="app/scripts/controllers/sheetController.js"></script>
 		<script src="app/scripts/controllers/forecastController.js"></script>
 		<script src="app/scripts/controllers/transactionsController.js"></script>
+		<script src="app/scripts/controllers/uploadsController.js"></script>
+		<script src="app/scripts/controllers/bankController.js"></script>
+		<script src="app/scripts/controllers/categoryController.js"></script>
+		<script src="app/scripts/controllers/menuController.js"></script>
 		<script src="app/scripts/controllers/settingsController.js"></script>
-		<script src="app/scripts/controllers/deleteModalController.js"></script>
-		<script src="app/scripts/controllers/editModalController.js"></script>
-		<script src="app/scripts/controllers/uploadModalController.js"></script>
+
+		<script src="app/scripts/controllers/modals/deleteForecastModalController.js"></script>
+		<script src="app/scripts/controllers/modals/editForecastModalController.js"></script>
+		<script src="app/scripts/controllers/modals/deleteModalController.js"></script>
+		<script src="app/scripts/controllers/modals/editModalController.js"></script>
+		<script src="app/scripts/controllers/modals/deleteBankModalController.js"></script>
+		<script src="app/scripts/controllers/modals/editBankModalController.js"></script>
+		<script src="app/scripts/controllers/modals/uploadModalController.js"></script>
+		<script src="app/scripts/controllers/modals/postUploadedModalController.js"></script>
+		<script src="app/scripts/controllers/modals/deleteUploadedModalController.js"></script>
+		<script src="app/scripts/controllers/modals/deleteCategoryModalController.js"></script>
+		<script src="app/scripts/controllers/modals/editCategoryModalController.js"></script>
+		<script src="app/scripts/controllers/modals/reconcileTransactionsModalController.js"></script>
+
+		<script src="app/scripts/constants/user_roles.js"></script>
+		<!--<script src="app/scripts/constants/api.js"></script>-->
+
+		<script src="app/scripts/services/auth.js"></script>
+		<script src="app/scripts/services/modalDialog.js"></script>
+		<!--<script src="app/scripts/services/user.js"></script>-->
+
 		<script src="app/scripts/services/data.js"></script>
 		<script src="app/scripts/services/fileUpload.js"></script>
+		<script src="app/scripts/services/categories.js"></script>
+		<script src="app/scripts/services/bankaccounts.js"></script>
+		<script src="app/scripts/services/config.js"></script>
+
 		<script src="app/scripts/filters/dateFormat.js"></script>
-		<script type="text/javascript" src="scripts/ngContextMenu.js"></script>
+		<script src="app/scripts/filters/getIntervals.js"></script>
+
 		<script src="app/scripts/directives/rightClick.js"></script>
 		<script src="app/scripts/directives/fileModel.js"></script>
+		<script src="app/scripts/directives/datepickerpopup.js"></script>
+
+		<!-- keeps dropdown menu displayed when clicked -->
+		<script language="javascript">
+		$(document).ready(function() {
+			$('body').on('click', '#admin-menu > ul > li > a', function (e) {
+				e.stopPropagation();
+				$('#admin-menu').addClass('open');
+			});
+		});
+		</script>
 	</body>
 </html>

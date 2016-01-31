@@ -1,0 +1,96 @@
+<ng-include src="'app/views/templates/reconcileTransactionsModal.html'"></ng-include>
+
+<div class="container-fluid"><!-- viewport-width>-->
+	<h1 class="page-header">Budget</h1>
+	<div ng-if="error">{{error}}</div>
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
+		<table class="dashboard">
+			<thead>
+				<tr>
+					<th><span class="pull-right">Period Ending</span></th>
+					<th colspan="2" style="text-align:center;" ng-repeat="interval in intervals|getIntervals:start_interval:1" ng-class="{'currentInterval':interval.current_interval}">
+						<span>{{interval.interval_ending|displayDate:interval.budget_mode}}</span>
+					</th>
+				</tr>
+				<tr>
+					<th> </th>
+					<th style="text-align:center;" ng-repeat="interval in intervals|getIntervals:start_interval" ng-class="{'currentInterval':interval.current_interval}">
+						<span ng-if="interval.forecast == '1'" class="pull-right">Forecast</span>
+						<span ng-if="interval.forecast != '1'" class="pull-right">Actual</span>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th nowrap>Balance Forward</th>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
+						<span class="pull-right" ng-if="$index == 1">{{interval.balance_forward|currency}}</span>
+					</td>
+				</tr>
+				<tr ng-repeat="category in categories">
+					<th>{{category.name}}</th>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
+						<div class="pull-right">
+							<span ng-if="interval.forecast != '1'">
+								<a ns-popover="showTheseTransactions(category.id, $index)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0">
+									{{interval.totals[category.id]|currency}}
+								</a>
+							</span>
+							<span ng-if="interval.forecast == '1'" class='forecast_amount'>
+								{{interval.totals[category.id]|currency}}
+							</span>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<th nowrap>Totals</th>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
+						<span class="pull-right" ng-class="{'forecast_amount':interval.forecast == '1'}">{{interval.interval_total|currency}}</span>
+					</td>
+				</tr>
+				<tr>
+					<th nowrap>Running Totals</th>
+					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
+						<span class="pull-right">{{interval.running_total|currency}}</span>
+					</td>
+				</tr>
+				<!-- now get the bank accounts -->
+				<tr ng-repeat="account in intervals[1].accounts track by $index">
+					<td class="banks" nowrap>{{account.name}}</td>
+					<td class="balances" ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}">
+						<button type="button" class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 1" style="width:70px;margin:0;padding:0;"
+										title="Click to Reconcile {{account.name}} Account">
+							<span class="pull-right" style="margin:0;padding:0;" ng-click="reconcile(account.name, account.bank_account_id, interval.accounts[$parent.$index].balance, interval.interval_ending, interval.alt_ending)">
+								{{interval.accounts[$parent.$index].balance|currency}}
+							</span>
+						</button>
+						<span class="pull-right" ng-show="!interval.forecast && interval.accounts[$parent.$index].reconciled == 2" title="{{account.name}} is reconciled up to {{account.reconciled_date|date:'EEE MMM dd, yyyy'}}">
+							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="{{account.name}} Account is Reconciled" />
+							{{interval.accounts[$parent.$index].balance|currency}}
+						</span>
+						<span class="pull-right forecast_amount" ng-show="interval.accounts[$parent.$index].reconciled == 0">
+							{{interval.accounts[$parent.$index].balance|currency}}
+						</span>
+						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 99">
+							N/A
+						</span>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		<div>
+			<div class="pull-left pointer" ng-click="moveInterval(-1)"><<<</div>
+			<div class="pull-right pointer" ng-click="moveInterval(1)">>>></div>
+		</div>
+	</div>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
+	</div>
+</div>

@@ -1,0 +1,15 @@
+<script type="text/ng-template" id="reconcileTransactionsModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Reconcile Transactions for {{ account_name }} until {{date}}</h3>
+	</div>
+	<div class="modal-body">
+		This will reconcile your financial institution ({{ account_name }}) balance with your budget tracker system up until {{ date }}. Check
+		the balance displayed with your financial institution records as of that date.
+		If they match click 'OK' and that will reconcile your budget tracker balance with your financial institution.<br /><br />
+		{{ account_name }} {{ date }} {{ balance|currency }}
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="ok()">OK</button>
+		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	</div>
+</script>

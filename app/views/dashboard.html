@@ -1,54 +1,56 @@
-<ng-include ng-init="nav_active = 'dashboard'" src="'app/views/templates/sidenav.html'"></ng-include>
-
-<div class="container-fluid">
+<div class="container-fluid"><!-- viewport-width>-->
 	<h1 class="page-header">Dashboard</h1>
-	<div class="table-responsive" ng-if="!dataErrorMsg">
-		<table>
-			<thead>
-				<tr>
-					<th> &nbsp; </th>
-					<th ng-repeat="idx in result_seq"><span class="pull-right" ng-init="thisDate = result[idx].interval_beginning">{{result[idx].interval_beginning|date:'EEE MMM dd, yyyy'}}</span></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<th nowrap>Balance Forward</th>
-					<td ng-repeat="balance in balance_forward"><span class="pull-right">{{balance}}</span></td>
-				</tr>
-				<tr ng-repeat="idx1 in categories_seq">
-					<th nowrap>{{categories[idx1].name}}</th>
-					<td ng-repeat="idx2 in result_seq" ng-contextmenu>
-						<div class="pull-right" ng-if="result[idx2].totals[categories[idx1].id] != 0"
-												ng-right-click="showTheseTransactions(result[idx2].interval_beginning, categories[idx1].id)">
-							{{result[idx2].totals[categories[idx1].id]|currency}}
-							<ng-include src="'app/views/templates/message.html'"></ng-include>
-						</div>
-						<div class="pull-right" ng-if="result[idx2].totals[categories[idx1].id] == 0 && forecast[idx2].totals[categories[idx1].id] != 0"
-												ng-right-click="showThisForecast(forecast[idx2].interval_beginning, categories[idx1].id)">
-							<span class="forecast">{{forecast[idx2].totals[categories[idx1].id]|currency}}</span>
-							<ng-include src="'app/views/templates/message.html'"></ng-include>
-						</div>
-						<div class="pull-right" ng-if="result[idx2].totals[categories[idx1].id] == 0 && forecast[idx2].totals[categories[idx1].id] == 0">$0.00</div>
-					</td>
-				</tr>
-			</tbody>
-			<tfoot>
-				<tr>
-					<th nowrap>Totals</th>
-					<td ng-repeat="total in totals track by $index"><span class="pull-right">{{(total + ftotals[$index])|currency}}</span></td>
-				</tr>
-				<tr>
-					<th nowrap>Running Totals</th>
-					<td ng-repeat="rTotal in rTotals track by $index"><span class="pull-right">{{(rTotal + rfTotals[$index])|currency}}</span></td>
-				</tr>
-			</tfoot>
-		</table>
-		<div>
-			<div class="pull-left pointer" ng-click="moveInterval(-1)"><<<</div>
-			<div class="pull-right pointer" ng-click="moveInterval(1)">>>></div>
+	<div ng-if="error">{{error}}</div>
+	<div class="row">
+		<div class="col-md-3">
+			<h3>Category Yotals YTD</h3>
+			<input type="text" ng-model="ytdYear" placeholder="Enter Year" ng-blur="getYTD()" />
+		</div>
+		<div class="col-md-3">
+			<div ng-if="dataErrorMsg[0]">
+				<p ng-repeat="error in dataErrorMsg"><span style="color:red;">{{error}}</span></p>
+			</div>
 		</div>
 	</div>
-	<div ng-if="dataErrorMsg">
-		<p class="text-muted">{{ dataErrorMsg }}</p>
+	<div class="row">
+		<div class="col-md-3">
+			<div ng-repeat="ytdTotal in ytdTotals">
+				<div class="row">
+					<div class="col-md-6">{{ytdTotal.name}}</div>
+					<div class="col-md-6" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-5" ng-show="transactions" style="overflow:scroll; height:400px;">
+			<h3>YTD Transactions for Category</h3>
+			<div class="table-responsive">
+				<table>
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Description</th>
+							<th>Type</th>
+							<th>Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="idx in transactions_seq" ng-if="!dataErrorMsgThese">
+							<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
+							<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - <em>{{transactions[idx].notes}}</em></span></td>
+							<td>{{transactions[idx].type}}</td>
+							<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
+						</tr>
+						<tr ng-repeat="error in dataErrorMsgThese" ng-if="dataErrorMsgThese">
+							<td colspan="4">{{error.error}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Upcoming forecast payments</h3>
+		</div>
 	</div>
 </div>

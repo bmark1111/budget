@@ -1,0 +1,66 @@
+<div class="container-fluid">
+	<h1 class="page-header">Budget Settings</h1>
+	<div ng-if="setting.error">{{setting.error}}</div>
+	<form>
+		<div class="row" ng-repeat="setting in settings.settings">
+			<div class="col-sm-2">
+				<div class="form-group" ng-class="{'has-error': setting.validation.settings.description[$index] }">
+					<input type="text" ng-model="setting.description" />
+					<span class="help-block" ng-show="setting.validation.settings.description[$index]">{{ setting.validation.settings.description[$index] }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<div class="form-group" ng-class="{'has-error': setting.validation.settings.name[$index] }">
+					<input type="text" ng-model="setting.name" />
+					<span class="help-block" ng-show="setting.validation.settings.name[$index]">{{ setting.validation.settings.name[$index] }}</span>
+				</div>
+			</div>
+			<div class="col-sm-1">
+				<div class="form-group" ng-class="{'has-error': setting.validation.settings.type[$index] }">
+					<select name="type" ng-model="setting.type">
+						<option ng-selected="setting.type == '0'" value="0">Text</option>
+						<option ng-selected="setting.type == '1'" value="1">Select</option>
+						<option ng-selected="setting.type == '2'" value="2">Date</option>
+					</select>
+					<span class="help-block" ng-show="setting.validation.settings.type[$inde]">{{ setting.validation.settings.type[$index] }}</span>
+				</div>
+			</div>
+			<div class="col-sm-3" ng-if="setting.type == 0">
+				<div class="form-group" ng-class="{'has-error': setting.validation.settings.value[$index] }">
+					<input type="text" ng-model="setting.value" />
+					<span class="help-block" ng-show="setting.validation.settings.value[$index]">{{ setting.validation.settings.value[$index] }}</span>
+				</div>
+			</div>
+			<div class="col-sm-3" ng-if="setting.type == 1">
+				<div class="form-group" ng-class="{'has-error': setting.validation.settings.value[$index] }">
+					<select ng-model="setting.value" ng-options="option.name for option in setting.options"></select>
+					<span class="help-block" ng-show="setting.validation.settings.value[$index]">{{ setting.validation.settings.value[$index] }}</span>
+				</div>
+			</div>
+			<div class="col-md-3" ng-if="setting.type == 2">
+				<div class="form-group" ng-class="{'has-error': setting.validation.settings.value[$index] }">
+					<p class="input-group">
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="setting.value" is-open="status.opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="setting.validation.settings.value[$index]">{{ setting.validation.settings.value[$index] }}</span>
+				</div>
+			</div>
+			<br /><br />
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<button class="btn btn-primary" ng-click="save()">Save</button>
+			</div>
+		</div>
+	</form>
+	<div class="row">
+		<div class="col-md-3">
+			<div ng-if="dataErrorMsg[0]">
+				<p ng-repeat="error in dataErrorMsg">{{error}}</p>
+			</div>
+		</div>
+	</div>
+</div>

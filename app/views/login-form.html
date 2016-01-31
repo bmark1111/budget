@@ -1,0 +1,39 @@
+<div class="container-fluid">
+	<h1 class="page-header">Login</h1>
+	<div ng-if="error">{{error}}</div>
+
+	<form role="form" ng-submit="login()">
+		<div class="row">
+			<div class="col-md-2">
+				<label for="account">Account:</label>
+				<div class="form-group">
+					<input type="text" class="form-control" name="account" ng-model="credentials.account" autocomplete="off" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">
+				<label for="username">Username:</label>
+				<div class="form-group">
+					<input type="text" class="form-control" name="username" ng-model="credentials.username" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">
+				<label for="password">Password:</label>
+				<div class="form-group">
+					<input type="password" class="form-control" name="password" ng-model="credentials.password" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</div>
+	</form>
+</div>
+<div ng-if="errorMsgs[0]">
+	<div ng-repeat="error in errorMsgs">{{error}}</div>
+</div>

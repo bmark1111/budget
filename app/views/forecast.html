@@ -1,8 +1,7 @@
-<ng-include ng-init="nav_active = 'forecast'" src="'app/views/templates/sidenav.html'"></ng-include>
-
 <div class="container-fluid">
 	<h1 class="page-header">Forecast</h1>
-	<div class="table-responsive" ng-if="!dataErrorMsg">
+	<div ng-if="error">{{error}}</div>
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
 		<table>
 			<thead>
 				<tr>
@@ -15,9 +14,9 @@
 					<th nowrap>Balance Forward</th>
 					<td ng-repeat="balance in balance_forward"><span class="pull-right">{{balance}}</span></td>
 				</tr>
-				<tr ng-repeat="idx1 in categories_seq">
-					<th nowrap>{{categories[idx1].name}}</th>
-					<td ng-repeat="idx2 in result_seq"><span class="pull-right">{{result[idx2].totals[categories[idx1].id]|currency}}</span></td>
+				<tr ng-repeat="category in categories">
+					<th nowrap>{{category.name}}</th>
+					<td ng-repeat="idx2 in result_seq"><span class="pull-right">{{result[idx2].totals[category.id]|currency}}</span></td>
 				</tr>
 			</tbody>
 			<tfoot>
@@ -36,7 +35,7 @@
 			<div class="pull-right pointer" ng-click="moveInterval(1)">>>></div>
 		</div>
 	</div>
-	<div ng-if="dataErrorMsg">
-		<p class="text-muted">{{ dataErrorMsg }}</p>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
 	</div>
 </div>

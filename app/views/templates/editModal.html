@@ -4,77 +4,120 @@
 	</div>
 	<div class="modal-body">
 		<div class="row">
+			<div class="col-md-6" style="width:18%;">
+				<label for="date">Bank Account</label>
+				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
+					<select class="form-control" name="bank_account_id" ng-disabled="transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
+					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
+				</div>
+			</div>
 			<div class="col-md-6" style="width:22%;">
 				<label for="date">Date</label>
-				<p class="input-group" ng-class="{ 'has-error' : validation.date }">
-					<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-					</span>
-				</p>
-				<span class="help-block" ng-show="validation.date">{{ validation.date }}</span>
+				<div class="form-group" ng-class="{ 'has-error': validation.date }">
+					<p class="input-group">
+						<!--<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" name="date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />-->
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="validation.date">{{ validation.date }}</span>
+				</div>
 			</div>
-			<div class="col-md-2" style="width:42%;">
-				<div class="form-group" ng-class="{ 'has-error' : validation.description }">
+			<div class="col-md-2" style="width:32%;">
+				<div class="form-group" ng-class="{ 'has-error': validation.description }">
 					<label for="description">Description</label>
-					<input type="text" name="description" class="form-control" ng-model="transaction.description" />
+					<input type="text" name="description" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.description" />
 					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
 				</div>
 			</div>
-			<div class="col-md-2" style="width:20%;">
+			<div class="col-md-2" style="width:28%;">
 				<div class="form-group">
-					<label for="description">Amount</label>
-					<span class="form-control">{{getTotal()}}</span>
+					<label for="notes">Notes</label>
+					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
 				</div>
 			</div>
-			<div class="col-md-2" style="width:14%;padding-top:25px;">
+		</div>
+		<div class="row">
+			<div class="col-sm-2">
+				<label for="category">Category</label>
+				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
+					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="type">Type</label>
+				<div class="form-group" ng-class="{'has-error': validation.type }">
+					<select class="form-control" name="type" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.type">
+						<option>Select Type</option>
+						<option ng-selected="transaction.type == 'CHECK'" value="CHECK">Check</option>
+						<option ng-selected="transaction.type == 'DEBIT'" value="DEBIT">Debit</option>
+						<option ng-selected="transaction.type == 'CREDIT'" value="CREDIT">Credit</option>
+						<option ng-selected="transaction.type == 'DSLIP'" value="DSLIP">Deposit</option>
+					</select>
+					<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="check_num">Check Num</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.check_num }">
+					<input type="text" name="check_num" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.check_num" />
+				</div>
+			</div>
+			<div class="col-md-2">
+				<label for="amount">Amount</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
+					<input type="text" name="amount" class="form-control" ng-disabled="transaction.is_uploaded == 1 || transaction.reconciled_date" ng-model="transaction.amount" ng-blur="refreshSplits()" />
+					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
+				</div>
+			</div>
+			<div class="col-md-1" style="padding-top:25px;">
 				<div class="form-group">
-					<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addItem()">
-						Add Item
+					<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="split()">
+						Split
 					</button>
 				</div>
 			</div>
-		</div>
-		<div class="row" ng-class="{ 'has-error' : validation.categories }">
-			<div class="col-md-2" style="width:40%;">
-				<span class="help-block" ng-show="validation.categories">{{ validation.categories }}</span>
+			<div class="col-md-2" style="padding-top:25px;">
+				<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"> Uploaded</span><br />
+				<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> &nbsp; &nbsp; Reconciled</span>
 			</div>
 		</div>
-		<div class="table-responsive">
+		<div class="table-responsive" ng-if="transaction.splits[0]">
 			<table style="width:100%;">
 				<tr>
-					<th><span class="pull-left">Type</span></th>
-					<th><span class="pull-left">Check Num</span></th>
 					<th><span class="pull-left">Amount</span></th>
+					<th><span class="pull-left">Type</span></th>
 					<th><span class="pull-left">Category</span></th>
 					<th><span class="pull-left">Notes</span></th>
 					<th></th>
 				</tr>
-				<tr ng-repeat="t in transaction.categories" ng-if="t.is_deleted != 1">
-					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.items.type[$index] }">
-						<select class="form-control" ng-model="t.type">
+				<tr ng-repeat="t in transaction.splits" ng-if="t.is_deleted != 1">
+					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{'has-error': validation.splits.amount[$index] || calc[$index] }">
+						<input type="text" class="form-control" ng-model="t.amount" ng-blur="refreshSplits()" />
+						<span class="help-block" ng-show="validation.splits.amount[$index]">{{ validation.splits.amount[$index] }}</span>
+						<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>
+					</td>
+					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{'has-error': validation.splits.type[$index] || calc[$index] }">
+						<select class="form-control" name="type" ng-model="t.type" ng-blur="refreshSplits()">
+							<option>Select Type</option>
 							<option ng-selected="t.type == 'CHECK'" value="CHECK">Check</option>
 							<option ng-selected="t.type == 'DEBIT'" value="DEBIT">Debit</option>
 							<option ng-selected="t.type == 'CREDIT'" value="CREDIT">Credit</option>
+							<option ng-selected="t.type == 'DSLIP'" value="DSLIP">Deposit</option>
 						</select>
-						<span class="help-block" ng-show="validation.items.type[$index]">{{ validation.items.type[$index] }}</span>
+						<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>
 					</td>
-					<td class="col-sm-2" style="width:15%;vertical-align:top;">
-						<input type="text" class="form-control" ng-model="t.check_num" />
-					</td>
-					<td class="col-sm-2" style="width:15%;vertical-align:top;" ng-class="{ 'has-error' : validation.items.amount[$index] }">
-						<input type="text" class="form-control" ng-model="t.amount" />
-						<span class="help-block" ng-show="validation.items.amount[$index]">{{ validation.items.amount[$index] }}</span>
-					</td>
-					<td class="col-sm-2" style="width:20%;vertical-align:top;" ng-class="{ 'has-error' : validation.items.category_id[$index] }">
+					<td class="col-sm-2" style="width:20%;vertical-align:top;" ng-class="{'has-error': validation.splits.category_id[$index] }">
 						<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in categories"></select>
-						<span class="help-block" ng-show="validation.items.category_id[$index]">{{ validation.items.category_id[$index] }}</span>
+						<span class="help-block" ng-show="validation.splits.category_id[$index]">{{ validation.splits.category_id[$index] }}</span>
 					</td>
 					<td class="col-md-2" style="width:30%;vertical-align:top;">
 						<input type="text" class="form-control" ng-model="t.notes" />
 					</td>
 					<td class="col-md-2" style="width:5%;vertical-align:top;">
-						<span class="glyphicon glyphicon-trash" ng-click="deleteItem($index)" style="cursor:pointer;"></span>
+						<span class="glyphicon glyphicon-trash" ng-click="deleteSplit($index)" style="cursor:pointer;"></span>
 					</td>
 				</tr>
 			</table>

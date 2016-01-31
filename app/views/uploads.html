@@ -1,0 +1,73 @@
+<ng-include src="'app/views/templates/postUploadedModal.html'"></ng-include>
+<ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
+
+<div class="container-fluid">
+	<h1 class="page-header">Uploaded Transactions</h1>
+	<div ng-if="error">{{error}}</div>
+	<div class="form-wrap" ng-if="!dataErrorMsg[0] && !error">
+		<form>
+			<div class="row">
+				<div class="col-md-2">
+					<label for="date">Date</label>
+					<p class="input-group">
+						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="date" ng-model="search.date" is-open="opened" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="refreshData()" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-group">
+						<label for="description">Description</label>
+						<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-group">
+						<label for="amount">Amount</label>
+						<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
+		<table>
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Account</th>
+					<th>Description</th>
+					<th>Check Num</th>
+					<th>DEBIT</th>
+					<th>CREDIT</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="idx in transactions_seq">
+					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
+					<td><span class="pull-left">{{transactions[idx].bank_account.name}}</span></td>
+					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
+					<td><span class="pull-right">{{transactions[idx].check_num}}</span></td>
+					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
+					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
+					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
+						<span class="glyphicon glyphicon-ok" ng-if="transactions[idx].status == 0" ng-click="postTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
+						<span class="glyphicon glyphicon-trash" ng-if="transactions[idx].status == 0" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div ng-if="recCount > itemsPerPage">
+			<div class="col-sm-12">
+				<pagination boundary-links="true" max-size="maxSize" total-items="recCount" items-per-page="itemsPerPage" ng-model="search.currentPage"
+					previous-text="&lsaquo;"  next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged()"></pagination>
+				<span style="vertical-align:middle;padding-left:40px;">Total records: {{recCount | number}}</span>
+			</div>
+		</div>
+	</div>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
+	</div>
+</div>

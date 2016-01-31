@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SkyCare Error Page</title>
+<style>
+
+html {
+	background-color: #fff;
+	background: -moz-linear-gradient(center bottom, #fff 0%, #e6e6e6 50%);
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0.0, #fff), color-stop(0.5, #e6e6e6));
+	height: 100%;
+	position: relative;
+	min-width: 1000px;
+	min-height: 600px;
+}
+
+a {
+	color: #007bbc;
+	font-family: PlatinumSemi, helvetica, arial;
+}
+
+@font-face {
+	font-family: 'PlatinumSemi';
+	src: url('/fonts/platinum-semibold-webfont.eot');
+	src: local('?'), url('/fonts/platinum-semibold-webfont.woff') format('woff'), url('/fonts/platinum-semibold-webfont.svg#webfont24ZpJAwO') format('svg');
+	font-weight: 600;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'PlatinumReg';
+	src: url('/fonts/platinum-regular-webfont.eot');
+	src: local('?'), url('/fonts/platinum-regular-webfont.woff') format('woff'), url('/fonts/platinum-regular-webfont.svg#webfontwWs95jGH') format('svg');
+	font-weight: 400;
+	font-style: normal;
+}
+
+div.errorHolder {
+	position: absolute;
+	width: 650px;
+	height: 450px;
+	top: 50%;
+	left: 50%;
+	margin: -195px 0 0 -320px;
+	background: #fff;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #007bbc;
+	padding: 20px;
+	-moz-box-shadow: 0 0 30px rgba(0,0,0,0.3);
+	-webkit-box-shadow: 0 0 30px rgba(0,0,0,0.3);
+	box-shadow: 0 0 30px rgba(0,0,0,0.3);
+}
+
+div.errorText {
+	font-family: PlatinumReg, helvetica, arial;
+	font-size: 20px;
+	line-height: 28px;
+	letter-spacing: 0.03em;
+}
+
+div.errorText h1 {
+	font-family: PlatinumSemi, helvetica, arial;
+	font-size: 36px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="errorHolder">
+	<img src="/imgs/loginLogo2.png" />
+	<div class="errorText">
+		<h1>Oops... an error occurred.</h1>
+		This issue has been logged and reported.
+		<p/>
+		We have been notified, and are working diligently to fix the issue.
+		<p/>
+		Please <a href="#" onclick="location.replace(location.href); return false">refresh</a> the page, or go to the <a href="/">Dashboard</a>
+		<p/>
+		If the issue persists, please contact us at 888.789.0974 or <a href="mailto:support@SkyCare.com">email us</a>.
+	</div>
+</div>
+
+</body>
+</html>
