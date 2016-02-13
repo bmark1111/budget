@@ -39,7 +39,8 @@ class user extends Nagilum {
 		$this->where('pass', $password);
 		$user = $this->row();
 		if ($user->numRows() && $this->setSession($user)) {
-			return TRUE;
+			return $user->id;
+//			return TRUE;
 		}
 		return FALSE;
 	}

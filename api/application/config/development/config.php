@@ -1,5 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-//die('development/config.php');
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -381,9 +381,9 @@ $config['controller_suffix'] = '_controller';
 $config['enable_profiler'] = FALSE;
 
 $config['database']['hostname'] = 'localhost';
-$config['database']['username'] = 'budget';
-$config['database']['password'] = 'budget';
-//$config['database']['database'] = 'bdm_budget';
+$config['database']['username'] = 'budgettr_budget';
+$config['database']['password'] = 'X120798x!';
+$config['database']['database'] = 'budgettr_b_1_m';
 $config['database']['dbdriver'] = 'mysqli';
 $config['database']['dbprefix'] = '';
 $config['database']['pconnect'] = TRUE;
@@ -398,7 +398,7 @@ $config['database']['stricton'] = FALSE;
 
 require_once(dirname(dirname(__FILE__)).'/version.php');
 
-$config['version']['base'] = floatval($config['version']['major'] . '.'  . $config['version']['minor']);
+//$config['version']['base'] = floatval($config['version']['major'] . '.'  . $config['version']['minor']);
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

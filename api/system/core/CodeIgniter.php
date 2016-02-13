@@ -102,10 +102,10 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * Note: Since the config file data is cached it doesn't
  * hurt to load it here.
  */
-	if (isset($assign_to_config['subclass_prefix']) AND $assign_to_config['subclass_prefix'] != '')
-	{
-		get_config(array('subclass_prefix' => $assign_to_config['subclass_prefix']));
-	}
+//	if (isset($assign_to_config['subclass_prefix']) AND $assign_to_config['subclass_prefix'] != '')
+//	{
+//		get_config(array('subclass_prefix' => $assign_to_config['subclass_prefix']));
+//	}
 
 
 /*
@@ -123,7 +123,10 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  *  Start the timer... tick tock tick tock...
  * ------------------------------------------------------
  */
-	$BM =& load_class('Benchmark', 'core');
+
+//	$BM =& load_class('Benchmark', 'core');
+require_once(BASEPATH.'core/Benchmark.php');
+$BM = new CI_Benchmark();
 	$BM->mark('total_execution_time_start');
 	$BM->mark('loading_time:_base_classes_start');
 
@@ -132,7 +135,9 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  *  Instantiate the hooks class
  * ------------------------------------------------------
  */
-	$EXT =& load_class('Hooks', 'core');
+//	$EXT =& load_class('Hooks', 'core');
+require_once(BASEPATH.'core/Hooks.php');
+$EXT = new CI_Hooks();
 
 /*
  * ------------------------------------------------------
@@ -165,7 +170,6 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * after the Config class is instantiated.
  *
  */
-
 	$UNI =& load_class('Utf8', 'core');
 
 /*

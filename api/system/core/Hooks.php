@@ -52,11 +52,12 @@ class CI_Hooks {
 	 */
 	function _initialize()
 	{
-		$CFG =& load_class('Config', 'core');
+//		$CFG =& load_class('Config', 'core');
+require_once(BASEPATH.'core/Config.php');
+$CFG = new CI_Config();
 
 		// If hooks are not enabled in the config file
 		// there is nothing else to do
-
 		if ($CFG->item('enable_hooks') == FALSE)
 		{
 			return;
@@ -73,7 +74,6 @@ class CI_Hooks {
 		{
 			include(APPPATH.'config/hooks'.EXT);
 		}
-
 
 		if ( ! isset($hook) OR ! is_array($hook))
 		{

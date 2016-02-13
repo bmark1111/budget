@@ -24,7 +24,8 @@ class login_controller extends EP_Controller {
 		$user = new user();
 
 		$data['error'] = '';
-		if (!empty($username) && !empty($password) && $user->login($username, $password)) {
+		if (!empty($username) && !empty($password) && ($nUserId = $user->login($username, $password)) !== FALSE) {
+			$this->nUserId = $nUserId;
 			$user->last_login		= date('Y-m-d H:i:s');
 			$user->last_session_id	= md5(uniqid(mt_rand(), TRUE));
 			$user->save();
@@ -46,7 +47,7 @@ class login_controller extends EP_Controller {
 			$this->ajax->setData('budget_mode', $budget_mode);
 
 			// switch to the master DB
-			$this->switchDatabase('budget_master');
+			$this->switchDatabase('budgettr_master');
 
 			$user_session = new user_session();
 			$user_session->login			= $user->login;

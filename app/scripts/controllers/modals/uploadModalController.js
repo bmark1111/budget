@@ -4,7 +4,7 @@ app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalIn
 
 	function ($q, $scope, $rootScope, $modalInstance, $localStorage, fileUpload, params, BankAccounts, Config) {
 
-		$scope.ignoreFirstLine = 0;
+		$scope.ignoreFirstLine = 1;
 		$scope.bank_account_id = 0;
 
 		$q.all([

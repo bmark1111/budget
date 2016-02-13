@@ -11,6 +11,10 @@ class rest_controller Extends EP_Controller {
 		parent::__construct();
 //$this->_balanceUpdate();				// resets all bank balances
 //die('XXXXXXXXXXXXXXXXXXXXXXXXXXXXx');
+//
+//$xx = scandir('../../../public_ftp');
+//var_dump($xx);
+//die('xxxxxxxxxxxxx');
 		$class = get_class($this);
 		if ($class !== 'upload_controller') {
 			if ($resetBalances = $this->appdata->get('resetBalances')) {	// get resets

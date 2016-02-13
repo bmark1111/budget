@@ -40,29 +40,22 @@
 
 $active_group = 'default';
 $active_record = TRUE;
-die('database config');
-//$db['database']['hostname'] = 'localhost';
-//$db['database']['username'] = 'proovebio';
-//$db['database']['password'] = 'Proove2014';
-//$db['database']['database'] = 'proovebio';
-//$db['default']['dbdriver'] = 'mysqli';
-//$config['database']['hostname'] = 'dev-mysql.cwnupirpmczs.us-west-2.rds.amazonaws.com:3306';
-//$db['database']['hostname'] = '10.10.3.147:3306';
-//$db['database']['username'] = 'proovebio';
-//$db['database']['password'] = 'proovebio';
-//$db['database']['database'] = 'biohelix';
-//$db['database']['database'] = 'proovebio';
+
+$db['default']['hostname'] = 'localhost';
+$db['default']['username'] = 'budgettr_budget';
+$db['default']['password'] = 'X120798x!';
+$db['default']['database'] = 'budgettr_b_1_m';
 $db['default']['dbdriver'] = 'mysqli';
-//$db['default']['dbprefix'] = '';
-//$db['default']['pconnect'] = TRUE;
-//$db['default']['db_debug'] = TRUE;
-//$db['default']['cache_on'] = FALSE;
-//$db['default']['cachedir'] = '';
-//$db['default']['char_set'] = 'utf8';
-//$db['default']['dbcollat'] = 'utf8_general_ci';
-//$db['default']['swap_pre'] = '';
-//$db['default']['autoinit'] = FALSE; // this is set to false as we're going to make sure the database exists before connecting to it
-//$db['default']['stricton'] = FALSE;
+$db['default']['dbprefix'] = '';
+$db['default']['pconnect'] = TRUE;
+$db['default']['db_debug'] = TRUE;
+$db['default']['cache_on'] = FALSE;
+$db['default']['cachedir'] = '';
+$db['default']['char_set'] = 'utf8';
+$db['default']['dbcollat'] = 'utf8_general_ci';
+$db['default']['swap_pre'] = '';
+$db['default']['autoinit'] = FALSE; // this is set to false as we're going to make sure the database exists before connecting to it
+$db['default']['stricton'] = FALSE;
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

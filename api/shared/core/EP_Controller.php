@@ -80,7 +80,7 @@ class EP_Controller extends MX_Controller
 		}
 
 		// switch to the master DB
-		$this->switchDatabase('budget_master');
+		$this->switchDatabase('budgettr_master');
 
 		// set the current instance of the object to this if it's not already set
 		if(!isset(self::$_instance)) {
@@ -156,7 +156,7 @@ class EP_Controller extends MX_Controller
 						$this->nUserId = $uSession->user_id;
 
 						// switch to the right account
-						$this->switchDatabase('budget_'. $uSession->db_suffix_name);
+						$this->switchDatabase('budgettr_'. $uSession->db_suffix_name);
 					} else {
 						$this->ajax->set_header("Not Found", '404');
 						exit;
@@ -205,7 +205,7 @@ class EP_Controller extends MX_Controller
 						$this->dbSuffix = $oRow->db_suffix_name;
 
 						// switch to the user's account
-						$this->switchDatabase('budget_'. $oRow->db_suffix_name);
+						$this->switchDatabase('budgettr_'. $oRow->db_suffix_name);
 					} else {
 						$this->ajax->set_header("Not Found", '404');
 						exit;
