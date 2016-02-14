@@ -30,7 +30,7 @@ class budget_controller Extends rest_controller {
 				$this->budget_interval = 14;
 				$this->budget_interval_unit = 'Days';
 				break;
-			case 'semi-monthy':
+			case 'semi-monthly':
 				$this->budget_interval = 1;
 				$this->budget_interval_unit = 'Months';
 				break;
@@ -518,7 +518,7 @@ class budget_controller Extends rest_controller {
 		$interval_beginning = explode('T', $interval_beginning);
 		$sd = date('Y-m-d', strtotime($interval_beginning[0]));
 
-		$interval_ending	= $this->input->get('interval_ending');
+		$interval_ending = $this->input->get('interval_ending');
 		if (!$interval_ending || !strtotime($interval_ending)) {
 			$this->ajax->addError(new AjaxError("Invalid interval ending - budget/these"));
 			$this->ajax->output();
@@ -526,10 +526,34 @@ class budget_controller Extends rest_controller {
 		$interval_ending = explode('T', $interval_ending);
 		$ed = date('Y-m-d', strtotime($interval_ending[0]));
 
-		$category_id	= $this->input->get('category_id');
+		$category_id = $this->input->get('category_id');
 		if ($category_id == 0 || !is_numeric($category_id)) {
 			$this->ajax->addError(new AjaxError("Invalid category id - budget/these"));
 			$this->ajax->output();
+		}
+
+		$forecasted = array();
+		$forecast = $this->input->get('forecast');
+		if ($forecast && $forecast == 2) {
+			$forecasts = $this->_loadForecast(array('id' => $category_id), $sd, $ed, false);
+			// now format the forecast
+			foreach ($forecasts as $forecast) {
+				foreach($forecast->next_due_dates as $next_due_date) {
+					$data = array();
+					$data['id']					= $forecast->id;
+					$data['transaction_date']	= $next_due_date;
+					$data['type']				= $forecast->type;
+					$data['description']		= $forecast->description;
+					$data['is_forecast']		= 1;
+					$data['is_uploaded']		= 0;
+					$data['reconciled_date']	= NULL;
+					$data['notes']				= $forecast->notes;
+					$data['amount']				= $forecast->amount;
+					$data['accountName']		= 'accountName';
+					$data['bankName']			= 'bankName';
+					$forecasted[] = $data;
+				}
+			}
 		}
 
 		$transactions = new transaction();
@@ -553,13 +577,25 @@ class budget_controller Extends rest_controller {
 						AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
 						AND T.`transaction_date` >=  '" . $sd . "'
 						AND T.`transaction_date` <=  '" . $ed . "')
-			ORDER BY transaction_date DESC, id DESC";
+			ORDER BY transaction_date ASC, id ASC";
 		$transactions->queryAll($sql);
 		if ($transactions->numRows()) {
+			$output = array();
+			$f = 0;
 			foreach ($transactions as $transaction) {
 				$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
+				if (empty($forecasted[$f]) || strtotime($transaction->transaction_date) <= strtotime($forecasted[$f]['transaction_date'])) {
+					$output[] = $transaction->toArray();
+				} else {
+					$output[] = $forecasted[$f];
+					$output[] = $transaction->toArray();
+					$f++;
+				}
 			}
-			$this->ajax->setData('result', $transactions);
+			for(; $f < count($forecasted); $f++) {
+				$output[] = $forecasted[$f];
+			}
+			$this->ajax->setData('result', $output);
 		} else {
 			$this->ajax->addError(new AjaxError("Error - No transactions found"));
 		}
@@ -580,6 +616,7 @@ class budget_controller Extends rest_controller {
 		$forecast->groupStart();
 		$forecast->orWhere('last_due_date IS NULL ', NULL);
 		$forecast->orWhere('last_due_date <= ', $ed);
+		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
 //		$forecast->where('first_due_date >= ', $sd);
 		$forecast->where('first_due_date <= ', $ed);

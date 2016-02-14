@@ -86,9 +86,9 @@ div.table-responsive tbody tr.selected td {
 	background:#90EE90;
 	}
 
-div.table-responsive span.forecast {
+/*div.table-responsive span.forecast {
 	background:#D0F5A9;
-	}
+	}*/
 
 div.table-responsive div.pointer {
 	cursor: pointer;
@@ -104,7 +104,10 @@ div.table-responsive .currentInterval {
 	z-index: 1000;
 }
 
-span.forecast_amount {
+a.includes_forecast_amount {
+	color:#5882FA !important;
+}
+span.forecast_amount, tr.forecast_amount {
 	color:#04B431 !important;
 }
 div.ns-popover-custom-theme {

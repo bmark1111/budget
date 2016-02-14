@@ -105,18 +105,20 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	}
 	loadData();
 
-	$scope.showTheseTransactions = function(category_id, index) {
-		var idx = index + $rootScope.start_interval;
+	$scope.showTheseTransactions = function(category_id, index, category_name, forecast) {
+		var idx = index + $rootScope.period_start;
 
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')($rootScope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
-		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
+		var start_date = $filter('date')($rootScope.periods[idx].interval_beginning, "EEE MMM dd, yyyy");
+		var end_date = $filter('date')($rootScope.periods[idx].interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
 
 		RestData2().getTheseTransactions({
-				interval_beginning:	$rootScope.intervals[idx].interval_beginning,
-				interval_ending:	$rootScope.intervals[idx].interval_ending,
-				category_id:		category_id
+				interval_beginning:	$rootScope.periods[idx].interval_beginning,
+				interval_ending:	$rootScope.periods[idx].interval_ending,
+				category_id:		category_id,
+				forecast:			forecast
 			},
 			function(response) {
 				if (!!response.success) {
@@ -189,7 +191,7 @@ console.log($rootScope.intervals)
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-//					ngProgress.complete();
+//				ngProgress.complete();
 			});
 	}
 

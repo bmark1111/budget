@@ -22,15 +22,11 @@
 					</td>
 				</tr>
 				<tr ng-repeat="category in categories track by $index">
-<!--					<th ng-show="category.isCollapsed" style="line-height: 2px!important;padding:0px 0px 2px 2px!important;"><span class="glyphicon glyphicon-triangle-bottom" ng-click="isCollapsed($index)"></span></th>
-					<th ng-show="!category.isCollapsed" style="padding:2px!important;"><span class="glyphicon glyphicon-triangle-top" ng-click="isCollapsed($index)"></span>{{ category.name }}</th>
-					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" id="popover_{{$index}}_{{category.id}}">
-						<div ng-show="!category.isCollapsed" class="pull-right">-->
 					<th style="padding:2px!important;">{{ category.name }}</th>
 					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval':period.current_interval }" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right">
-							<span ng-if="!period.types[category.id] || period.types[category.id] == 2">
-								<a ns-popover="showTheseTransactions(category.id, $index, category.name)"
+							<span ng-if="!period.types[category.id]">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, null)"
 									ns-popover-placement="right"
 									ns-popover-template="transactions"
 									ns-popover-trigger="click"
@@ -39,7 +35,17 @@
 									{{period.totals[category.id]|currency}}
 								</a>
 							</span>
-							<span ng-if="period.types[category.id] == 1" class='forecast_amount'>
+							<span ng-if="period.types[category.id] == 2">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 2)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0" class="includes_forecast_amount">
+									{{period.totals[category.id]|currency}}
+								</a>
+							</span>
+							<span ng-if="period.types[category.id] == 1" class="forecast_amount">
 								{{ period.totals[category.id]|currency }}
 							</span>
 						</div>

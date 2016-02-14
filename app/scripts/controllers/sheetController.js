@@ -92,7 +92,6 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				$rootScope.categories = [];
 				angular.forEach(response[0].data.categories,
 					function(category) {
-						category.isCollapsed = false;
 						$rootScope.categories.push(category)
 					});
 			}
@@ -104,11 +103,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	}
 	loadData();
 
-	$scope.isCollapsed = function(idx) {
-		$rootScope.categories[idx].isCollapsed = !$rootScope.categories[idx].isCollapsed;
-	};
-
-	$scope.showTheseTransactions = function(category_id, index, category_name) {
+	$scope.showTheseTransactions = function(category_id, index, category_name, forecast) {
 		var idx = index + $rootScope.period_start;
 
 		$scope.dataErrorMsgThese = false;
@@ -120,7 +115,8 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		RestData2().getTheseTransactions({
 				interval_beginning:	$rootScope.periods[idx].interval_beginning,
 				interval_ending:	$rootScope.periods[idx].interval_ending,
-				category_id:		category_id
+				category_id:		category_id,
+				forecast:			forecast
 			},
 			function(response) {
 				if (!!response.success) {

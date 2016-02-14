@@ -500,66 +500,66 @@ class sheet_controller Extends rest_controller {
 		return date_format($myDateTime, "Y-m-d");
 	}
 
-	public function these() {
-		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
-			$this->ajax->addError(new AjaxError("403 - Forbidden (budget/these)"));
-			$this->ajax->output();
-		}
-
-		$interval_beginning	= $this->input->get('interval_beginning');
-		if (!$interval_beginning || !strtotime($interval_beginning)) {
-			$this->ajax->addError(new AjaxError("Invalid interval_beginning - budget/these"));
-			$this->ajax->output();
-		}
-		$interval_beginning = explode('T', $interval_beginning);
-		$sd = date('Y-m-d', strtotime($interval_beginning[0]));
-
-		$interval_ending	= $this->input->get('interval_ending');
-		if (!$interval_ending || !strtotime($interval_ending)) {
-			$this->ajax->addError(new AjaxError("Invalid interval ending - budget/these"));
-			$this->ajax->output();
-		}
-		$interval_ending = explode('T', $interval_ending);
-		$ed = date('Y-m-d', strtotime($interval_ending[0]));
-
-		$category_id	= $this->input->get('category_id');
-		if ($category_id == 0 || !is_numeric($category_id)) {
-			$this->ajax->addError(new AjaxError("Invalid category id - budget/these"));
-			$this->ajax->output();
-		}
-
-		$transactions = new transaction();
-		$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.notes, T.amount, A.name
-				FROM transaction T
-				LEFT JOIN category C1 ON C1.id = T.category_id
-				LEFT JOIN bank_account A ON A.id = T.bank_account_id
-				WHERE T.is_deleted = 0
-						AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
-						AND T.`transaction_date` >=  '" . $sd . "'
-						AND T.`transaction_date` <=  '" . $ed . "')
-			UNION
-				(SELECT T.id, T.transaction_date, TS.type, T.description, TS.notes, TS.amount, A.name
-				FROM transaction T
-				LEFT JOIN bank_account A ON A.id = T.bank_account_id
-				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
-				LEFT JOIN category C2 ON C2.id = TS.category_id
-				WHERE T.is_deleted = 0
-						AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
-						AND T.`transaction_date` >=  '" . $sd . "'
-						AND T.`transaction_date` <=  '" . $ed . "')
-			ORDER BY transaction_date DESC, id DESC";
-		$transactions->queryAll($sql);
-		if ($transactions->numRows()) {
-			foreach ($transactions as $transaction) {
-				$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
-			}
-			$this->ajax->setData('result', $transactions);
-		} else {
-			$this->ajax->addError(new AjaxError("Error - No transactions found"));
-		}
-		$this->ajax->output();
-	}
+//	public function these() {
+//		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+////			$this->ajax->set_header("Forbidden", '403');
+//			$this->ajax->addError(new AjaxError("403 - Forbidden (sheet/these)"));
+//			$this->ajax->output();
+//		}
+//
+//		$interval_beginning	= $this->input->get('interval_beginning');
+//		if (!$interval_beginning || !strtotime($interval_beginning)) {
+//			$this->ajax->addError(new AjaxError("Invalid interval_beginning - sheet/these"));
+//			$this->ajax->output();
+//		}
+//		$interval_beginning = explode('T', $interval_beginning);
+//		$sd = date('Y-m-d', strtotime($interval_beginning[0]));
+//
+//		$interval_ending	= $this->input->get('interval_ending');
+//		if (!$interval_ending || !strtotime($interval_ending)) {
+//			$this->ajax->addError(new AjaxError("Invalid interval ending - sheet/these"));
+//			$this->ajax->output();
+//		}
+//		$interval_ending = explode('T', $interval_ending);
+//		$ed = date('Y-m-d', strtotime($interval_ending[0]));
+//
+//		$category_id	= $this->input->get('category_id');
+//		if ($category_id == 0 || !is_numeric($category_id)) {
+//			$this->ajax->addError(new AjaxError("Invalid category id - sheet/these"));
+//			$this->ajax->output();
+//		}
+//
+//		$transactions = new transaction();
+//		$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.notes, T.amount, A.name
+//				FROM transaction T
+//				LEFT JOIN category C1 ON C1.id = T.category_id
+//				LEFT JOIN bank_account A ON A.id = T.bank_account_id
+//				WHERE T.is_deleted = 0
+//						AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
+//						AND T.`transaction_date` >=  '" . $sd . "'
+//						AND T.`transaction_date` <=  '" . $ed . "')
+//			UNION
+//				(SELECT T.id, T.transaction_date, TS.type, T.description, TS.notes, TS.amount, A.name
+//				FROM transaction T
+//				LEFT JOIN bank_account A ON A.id = T.bank_account_id
+//				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
+//				LEFT JOIN category C2 ON C2.id = TS.category_id
+//				WHERE T.is_deleted = 0
+//						AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
+//						AND T.`transaction_date` >=  '" . $sd . "'
+//						AND T.`transaction_date` <=  '" . $ed . "')
+//			ORDER BY transaction_date DESC, id DESC";
+//		$transactions->queryAll($sql);
+//		if ($transactions->numRows()) {
+//			foreach ($transactions as $transaction) {
+//				$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
+//			}
+//			$this->ajax->setData('result', $transactions);
+//		} else {
+//			$this->ajax->addError(new AjaxError("Error - No transactions found"));
+//		}
+//		$this->ajax->output();
+//	}
 
 	private function _getEndDay() {
 		$xx =  time();
@@ -575,6 +575,7 @@ class sheet_controller Extends rest_controller {
 		$forecast->groupStart();
 		$forecast->orWhere('last_due_date IS NULL ', NULL);
 		$forecast->orWhere('last_due_date <= ', $ed);
+		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
 //		$forecast->where('first_due_date >= ', $sd);
 		$forecast->where('first_due_date <= ', $ed);
