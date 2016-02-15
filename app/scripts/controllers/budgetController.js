@@ -63,7 +63,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						account.reconciled = 1;
 					}
 				} else {
-					account.reconciled = (+sd >= +now) ? 0: 1;
+					account.reconciled = (+sd >= +now) ? 0: 3;
 				}
 			});
 	};
