@@ -107,7 +107,7 @@ div.table-responsive .currentInterval {
 a.includes_forecast_amount {
 	color:#5882FA !important;
 }
-span.forecast_amount, tr.forecast_amount {
+span.forecast_amount, tr.forecast_amount, a.forecast_amount {
 	color:#04B431 !important;
 }
 div.ns-popover-custom-theme {

@@ -534,70 +534,77 @@ class budget_controller Extends rest_controller {
 
 		$forecasted = array();
 		$forecast = $this->input->get('forecast');
-		if ($forecast && $forecast == 2) {
-			$forecasts = $this->_loadForecast(array('id' => $category_id), $sd, $ed, false);
+		if ($forecast >= 1) {
+			// get any forecasted transactions
+			$forecasts = $this->_loadForecast(array('id' => $category_id), $sd, $ed);
 			// now format the forecast
-			foreach ($forecasts as $forecast) {
-				foreach($forecast->next_due_dates as $next_due_date) {
+			foreach ($forecasts as $fc) {
+				foreach($fc->next_due_dates as $next_due_date) {
 					$data = array();
-					$data['id']					= $forecast->id;
+					$data['id']					= $fc->id;
 					$data['transaction_date']	= $next_due_date;
-					$data['type']				= $forecast->type;
-					$data['description']		= $forecast->description;
+					$data['type']				= $fc->type;
+					$data['description']		= $fc->description;
 					$data['is_forecast']		= 1;
 					$data['is_uploaded']		= 0;
 					$data['reconciled_date']	= NULL;
-					$data['notes']				= $forecast->notes;
-					$data['amount']				= $forecast->amount;
-					$data['accountName']		= 'accountName';
-					$data['bankName']			= 'bankName';
+					$data['notes']				= $fc->notes;
+					$data['amount']				= ($fc->type == 'CREDIT' || $fc->type == 'DSLIP') ? $fc->amount: -$fc->amount;
+					$data['accountName']		= $fc->bank_account->name;
+					$data['bankName']			= $fc->bank_account->bank->name;
 					$forecasted[] = $data;
 				}
 			}
 		}
 
-		$transactions = new transaction();
-		$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.is_uploaded, T.reconciled_date, T.notes, T.amount, A.name AS accountName, B.name AS bankName
-				FROM transaction T
-				LEFT JOIN category C1 ON C1.id = T.category_id
-				LEFT JOIN bank_account A ON A.id = T.bank_account_id
-				LEFT JOIN bank B ON B.id = A.bank_id
-				WHERE T.is_deleted = 0
-						AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
-						AND T.`transaction_date` >=  '" . $sd . "'
-						AND T.`transaction_date` <=  '" . $ed . "')
-			UNION
-				(SELECT T.id, T.transaction_date, TS.type, T.description, T.is_uploaded, T.reconciled_date, TS.notes, TS.amount, A.name AS accountName, B.name AS bankName
-				FROM transaction T
-				LEFT JOIN bank_account A ON A.id = T.bank_account_id
-				LEFT JOIN bank B ON B.id = A.bank_id
-				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
-				LEFT JOIN category C2 ON C2.id = TS.category_id
-				WHERE T.is_deleted = 0
-						AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
-						AND T.`transaction_date` >=  '" . $sd . "'
-						AND T.`transaction_date` <=  '" . $ed . "')
-			ORDER BY transaction_date ASC, id ASC";
-		$transactions->queryAll($sql);
-		if ($transactions->numRows()) {
-			$output = array();
-			$f = 0;
-			foreach ($transactions as $transaction) {
-				$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
-				if (empty($forecasted[$f]) || strtotime($transaction->transaction_date) <= strtotime($forecasted[$f]['transaction_date'])) {
-					$output[] = $transaction->toArray();
-				} else {
-					$output[] = $forecasted[$f];
-					$output[] = $transaction->toArray();
-					$f++;
-				}
-			}
-			for(; $f < count($forecasted); $f++) {
-				$output[] = $forecasted[$f];
-			}
-			$this->ajax->setData('result', $output);
+		if ($forecast == 1) {
+			$this->ajax->setData('result', $forecasted);
 		} else {
-			$this->ajax->addError(new AjaxError("Error - No transactions found"));
+			// get actual transactions
+			$transactions = new transaction();
+			$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.is_uploaded, T.reconciled_date, T.notes, T.amount, A.name AS accountName, B.name AS bankName
+					FROM transaction T
+					LEFT JOIN category C1 ON C1.id = T.category_id
+					LEFT JOIN bank_account A ON A.id = T.bank_account_id
+					LEFT JOIN bank B ON B.id = A.bank_id
+					WHERE T.is_deleted = 0
+							AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
+							AND T.`transaction_date` >=  '" . $sd . "'
+							AND T.`transaction_date` <=  '" . $ed . "')
+				UNION
+					(SELECT T.id, T.transaction_date, TS.type, T.description, T.is_uploaded, T.reconciled_date, TS.notes, TS.amount, A.name AS accountName, B.name AS bankName
+					FROM transaction T
+					LEFT JOIN bank_account A ON A.id = T.bank_account_id
+					LEFT JOIN bank B ON B.id = A.bank_id
+					LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
+					LEFT JOIN category C2 ON C2.id = TS.category_id
+					WHERE T.is_deleted = 0
+							AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
+							AND T.`transaction_date` >=  '" . $sd . "'
+							AND T.`transaction_date` <=  '" . $ed . "')
+				ORDER BY transaction_date ASC, id ASC";
+			$transactions->queryAll($sql);
+			if ($transactions->numRows()) {
+				$output = array();
+				$f = 0;
+				// merge forecasted and actual transactions in date order
+				foreach ($transactions as $transaction) {
+					$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
+					if (empty($forecasted[$f]) || strtotime($transaction->transaction_date) <= strtotime($forecasted[$f]['transaction_date'])) {
+						$output[] = $transaction->toArray();
+					} else {
+						$output[] = $forecasted[$f];
+						$output[] = $transaction->toArray();
+						$f++;
+					}
+				}
+				for(; $f < count($forecasted); $f++) {
+					$output[] = $forecasted[$f];
+				}
+				$this->ajax->setData('result', $output);
+			} else {
+				$this->ajax->addError(new AjaxError("Error - No transactions found"));
+			}
 		}
 		$this->ajax->output();
 	}
@@ -620,10 +627,15 @@ class budget_controller Extends rest_controller {
 		$forecast->groupEnd();
 //		$forecast->where('first_due_date >= ', $sd);
 		$forecast->where('first_due_date <= ', $ed);
+		if (count($categories) == 1) {
+			$forecast->where('category_id', $categories['id']);
+		}
 		$forecast->result();
+
 		if ($forecast->numRows()) {
 			// set the next due date(s) for the forecasted expenses
 			foreach ($forecast as $fc) {
+				isset($fc->bank_account->bank);
 				$next_due_dates = array();
 
 				switch ($fc->every_unit) {
@@ -644,7 +656,9 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 				$x = 0;
 				while ($this->_dateDiff($dd[$x], strtotime($ed)) < 0 &&												// while due_date < end_date
 						(!$fc->last_due_date || $this->_dateDiff($dd[$x], strtotime($fc->last_due_date)) <= 0)) {	// ...AND (last_due_date is not set OR due_date <= last_due_date)
-					if ($this->_dateDiff($dd[$x], strtotime($fc->first_due_date)) >= 0) {		// if due_date >= first_due_date
+					if ($this->_dateDiff($dd[$x], strtotime($fc->first_due_date)) >= 0			// if due_date >= first_due_date
+							&&
+						$this->_dateDiff($dd[$x], strtotime($sd)) >= 0) {
 						if ($all || $dd[$x] > time()) {											// and due_date is gt now
 							$next_due_dates[] = date('Y-m-d', $dd[$x]);							// ... then save this due date
 						}

@@ -1,4 +1,5 @@
 <ng-include src="'app/views/templates/reconcileTransactionsModal.html'"></ng-include>
+<ng-include src="'app/views/templates/popover.html'"></ng-include>
 
 <div class="container-fluid"><!-- viewport-width>-->
 	<h1 class="page-header">Budget</h1>
@@ -32,17 +33,24 @@
 					<td ng-repeat="interval in intervals|getIntervals:start_interval" nowrap ng-class="{'currentInterval':interval.current_interval}" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right">
 							<span ng-if="interval.forecast != 1">
-<!--								<a ns-popover="showTheseTransactions(category.id, $index, category.name, null)"
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, null)"
 									ns-popover-placement="right"
 									ns-popover-template="transactions"
 									ns-popover-trigger="click"
 									ns-popover-theme="ns-popover-custom-theme"
-									ns-popover-timeout="0">-->
+									ns-popover-timeout="0">
 									{{ interval.totals[category.id]|currency }}
-								<!--</a>-->
+								</a>
 							</span>
-							<span ng-if="interval.forecast == 1" class='forecast_amount'>
-								{{ interval.totals[category.id]|currency }}
+							<span ng-if="interval.forecast == 1">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 1)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0" class="forecast_amount">
+									{{ interval.totals[category.id]|currency }}
+								</a>
 							</span>
 						</div>
 					</td>

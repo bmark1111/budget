@@ -45,8 +45,15 @@
 									{{ period.totals[category.id]|currency }}
 								</a>
 							</span>
-							<span ng-if="period.types[category.id] == 1" class="forecast_amount">
-								{{ period.totals[category.id]|currency }}
+							<span ng-if="period.types[category.id] == 1">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 1)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0"  class="forecast_amount">
+									{{ period.totals[category.id]|currency }}
+								</a>
 							</span>
 						</div>
 					</td>

@@ -1,7 +1,7 @@
-<ng-include src="'app/views/templates/resetBalanceModal.html'"></ng-include>
+<!--<ng-include src="'app/views/templates/resetBalanceModal.html'"></ng-include>-->
 
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-	<a class="navmenu-brand visible-md visible-lg">Budget Tracker</a>
+	<a class="navmenu-brand visible-md visible-lg">Budget Tracker Pro</a>
 	<div ng-if="!authenticated">
 		<ul class="nav navmenu-nav">
 			<li ng-class="{'active': nav_active == ''}"><a href="#/">Home</a></li>
@@ -12,7 +12,6 @@
 		<ul class="nav navmenu-nav">
 			<li style="padding-left:12px;font-size:15px;"><b>{{userFullName}}<span ng-if="is_admin"> (Admin)</span></b></li>
 			<li ng-class="{'active': nav_active == 'logout'}"><a href="#/logout">Logout</a></li>
-			<!--<li ng-class="{'active': nav_active == 'popoverdemo'}"><a href="#/popoverdemo">Popover Demo</a></li>-->
 		</ul>
 			<hr />
 		</ul>
@@ -22,7 +21,6 @@
 			<li ng-class="{'active': nav_active == 'sheet'}"><a href="#/sheet">Sheet</a></li>
 			<li ng-class="{'active': nav_active == 'forecast'}"><a href="#/forecast">Forecast</a></li>
 			<li ng-class="{'active': nav_active == 'transactions'}"><a href="#/transactions">Transactions</a></li>
-			<!--<li ng-class="{'active': nav_active == 'reconcile'}"><a href="#/reconcile">Reconcile</a></li>-->
 			<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads <span class="badge">{{ transaction_count }}</span></a></li>
 			<hr />
 		</ul>
@@ -44,19 +42,11 @@
 			</li>-->
 			<hr />
 		</ul>
-<!--		<ul class="nav navmenu-nav" ng-if="accountBalancesResetDate">
-			<li ng-class="{'active': nav_active == 'reset'}"><a href="javascript:void(0)" ng-click="openResetBalancesModal()">Reset Account Balances</a></li>
-		</ul>-->
 		<ul class="nav navmenu-nav" ng-if="is_admin">
-			<li class="dropdown" id="admin-menu">
-				<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Admin Functions{{isActive}} <b class="caret"></b></a>
+			<li class="dropdown open" id="admin-menu">
+				<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Admin Functions <b class="caret"></b></a>
 				<ul class="dropdown-menu navmenu-nav">
-					<li ng-class="{'active': nav_active == 'admin_transactions'}"><a id="xxxxxx" href="#/admin">Admin</a></li>
-<!--					<li><a href="#/budget_settings">Budget</a></li>
-					<li class="divider"></li>
-					<li class="dropdown-header">Nav header</li>
-					<li><a href="#">Separated link</a></li>
-					<li><a href="#">One more separated link</a></li>-->
+					<li ng-class="{'active': nav_active == 'users'}"><a href="#/users">Users</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -68,5 +58,5 @@
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 	</button>
-	<a class="navbar-brand" href="#">Budget Tracker</a>
+	<a class="navbar-brand" href="#">Budget Tracker Pro</a>
 </div>

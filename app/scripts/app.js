@@ -151,10 +151,10 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
-		.when('/admin',
+		.when('/users',
 		{
-			controller:		'AdminController',
-			templateUrl:	"app/views/admin/admin.html",
+			controller:		'UserController as user',
+			templateUrl:	"app/views/admin/users.html",
 			data:			{
 								authorizedRoles: [USER_ROLES.admin]
 							}
