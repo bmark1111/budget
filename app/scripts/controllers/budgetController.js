@@ -6,6 +6,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
+	$scope.last_interval_is_current = false;
 
 	var interval = 0;
 
@@ -25,11 +26,13 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 					interval.alt_ending = now;				// set alternative ending
 					interval.current_interval = true;		// mark the current interval
 				}
+				var last_interval_is_current = interval.current_interval;
 
 				if (interval.forecast !== 1) {
 					_isReconciled(interval.accounts, sd, ed);
 				}
 
+				$scope.last_interval_is_current = last_interval_is_current;
 				$rootScope.intervals[key] = interval;
 			});
 	};
@@ -118,7 +121,8 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				interval_beginning:	$rootScope.intervals[idx].interval_beginning,
 				interval_ending:	$rootScope.intervals[idx].interval_ending,
 				category_id:		category_id,
-				forecast:			forecast
+				forecast:			forecast,
+				all:				true
 			},
 			function(response) {
 				if (!!response.success) {
@@ -141,12 +145,14 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				// add an array element at the beginning
 				getNext(-1);
 			}
+			$scope.last_interval_is_current = false;
 		} else if (direction === 1) {
 			$rootScope.start_interval += 2;
-			var last_interval = $rootScope.start_interval + $localStorage.budget_views - 1;
-			if (typeof($rootScope.intervals[last_interval]) === 'undefined') {
-				getNext(1);
-			}
+			$scope.last_interval_is_current = $rootScope.intervals[$rootScope.start_interval + 2].current_interval;
+//			var last_interval = $rootScope.start_interval + $localStorage.budget_views - 1;
+//			if (typeof($rootScope.intervals[last_interval]) === 'undefined') {
+//				getNext(1);
+//			}
 		}
 	};
 
@@ -180,7 +186,6 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						moved.push(response.data.result[1]);	// add actual
 					}
 					$rootScope.intervals = moved;
-console.log($rootScope.intervals)
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,

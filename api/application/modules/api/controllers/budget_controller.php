@@ -447,6 +447,13 @@ class budget_controller Extends rest_controller {
 		$y = 0;
 		foreach ($output as $x => $intervalx) {
 			$output[$x]['accounts'] = array_values(array_filter($output[$x]['accounts']));	// compact the accounts array
+			// now calculate the difference between actual and forecast
+			foreach ($forecast[$x]['totals'] as $category_id => $category_total) {
+				if (isset($category_total) || isset($output[$x]['totals'][$category_id])) {
+					$output[$x]['category_difference'][$category_id] = $output[$x]['totals'][$category_id] - $category_total;
+				}
+			}
+			$output[$x]['difference'] = $forecast[$x]['interval_total'] - $output[$x]['interval_total'];
 			$_output[$y++] = $forecast[$x];
 			$_output[$y++] = $output[$x];
 		}
@@ -533,10 +540,11 @@ class budget_controller Extends rest_controller {
 		}
 
 		$forecasted = array();
+		$all = $this->input->get('all');
 		$forecast = $this->input->get('forecast');
 		if ($forecast >= 1) {
 			// get any forecasted transactions
-			$forecasts = $this->_loadForecast(array('id' => $category_id), $sd, $ed);
+			$forecasts = $this->_loadForecast(array('id' => $category_id), $sd, $ed, $all);
 			// now format the forecast
 			foreach ($forecasts as $fc) {
 				foreach($fc->next_due_dates as $next_due_date) {
@@ -658,7 +666,7 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 						(!$fc->last_due_date || $this->_dateDiff($dd[$x], strtotime($fc->last_due_date)) <= 0)) {	// ...AND (last_due_date is not set OR due_date <= last_due_date)
 					if ($this->_dateDiff($dd[$x], strtotime($fc->first_due_date)) >= 0			// if due_date >= first_due_date
 							&&
-						$this->_dateDiff($dd[$x], strtotime($sd)) >= 0) {
+						$this->_dateDiff($dd[$x], strtotime($sd)) >= 0) {						// and due_date >= start date
 						if ($all || $dd[$x] > time()) {											// and due_date is gt now
 							$next_due_dates[] = date('Y-m-d', $dd[$x]);							// ... then save this due date
 						}

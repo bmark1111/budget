@@ -104,6 +104,10 @@ div.table-responsive .currentInterval {
 	z-index: 1000;
 }
 
+span.overbudget {
+	color:red !important;
+}
+
 a.includes_forecast_amount {
 	color:#5882FA !important;
 }
