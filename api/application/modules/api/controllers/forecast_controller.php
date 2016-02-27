@@ -111,6 +111,7 @@ class forecast_controller Extends rest_controller
 		}
 
 		$forecast = new forecast($_POST['id']);
+		$forecast->bank_account_id	= $_POST['bank_account_id'];
 		$forecast->first_due_date	= date('Y-m-d', strtotime($_POST['first_due_date']));
 		$forecast->last_due_date	= (!empty($_POST['last_due_date'])) ? date('Y-m-d', strtotime($_POST['last_due_date'])): NULL;
 		$forecast->description		= $_POST['description'];
