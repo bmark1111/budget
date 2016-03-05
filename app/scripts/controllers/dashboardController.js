@@ -51,7 +51,6 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 					};
 					$scope.ytdTotals.push(category);
 				});
-console.log($scope.ytdTotals)
 		} else {
 			if (response.errors) {
 				angular.forEach(response.errors,
@@ -102,9 +101,10 @@ console.log($scope.ytdTotals)
 				angular.forEach($rootScope.categories,
 					function(category, key) {
 						var category = {
-							id:		category.id,
-							name:	category.name,
-							total:	response.data.result['total_' + category.id]
+							id:			category.id,
+							name:		category.name,
+							total:		response.data.result['total_' + category.id],
+							forecast:	response.data.forecast[category.id]
 						};
 						$scope.ytdTotals.push(category);
 					});
