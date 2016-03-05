@@ -13,15 +13,23 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-4"><b>Category</b></div>
+				<div class="col-md-2"><span class="pull-right"><b>Actual</b></span></div>
+				<div class="col-md-2"><span class="pull-right"><b>Forecast</b></span></div>
+				<div class="col-md-2"><span class="pull-right"><b>Difference</b></span></div>
+			</div>
 			<div ng-repeat="ytdTotal in ytdTotals">
 				<div class="row">
-					<div class="col-md-6">{{ytdTotal.name}}</div>
-					<div class="col-md-6" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
+					<div class="col-md-4">{{ytdTotal.name}}</div>
+					<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
+					<div class="col-md-2"><span class="pull-right forecast_amount">{{ytdTotal.forecast | currency}}</span></div>
+					<div class="col-md-2"><span class="pull-right" ng-class="{'overbudget':(ytdTotal.total - ytdTotal.forecast) < 0}"><b>{{ ytdTotal.total - ytdTotal.forecast | currency }}</b></span></div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-5" ng-show="transactions" style="overflow:scroll; height:400px;">
+		<div class="col-md-4" ng-show="transactions" style="overflow:scroll; height:500px;">
 			<h3>YTD Transactions for Category</h3>
 			<div class="table-responsive">
 				<table>

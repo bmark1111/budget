@@ -116,7 +116,8 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				interval_beginning:	$rootScope.periods[idx].interval_beginning,
 				interval_ending:	$rootScope.periods[idx].interval_ending,
 				category_id:		category_id,
-				forecast:			forecast
+				forecast:			forecast,
+				all:				1
 			},
 			function(response) {
 				if (!!response.success) {
