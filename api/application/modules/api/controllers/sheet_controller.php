@@ -322,7 +322,8 @@ class sheet_controller Extends rest_controller {
 				$types = array();
 				// check to see what current values need to be from the forecast
 				foreach ($output[$x]['totals'] as $y => $intervalAmount) {
-					if (!empty($forecast[$x]['totals'][$y]) && $forecast[$x]['totals'][$y] !== NULL) {
+//					if (!empty($forecast[$x]['totals'][$y]) && $forecast[$x]['totals'][$y] !== NULL) {
+					if (isset($forecast[$x]['totals'][$y])) {
 						// if forecast has a value then ... add the forecasted amount in
 						$totals[$y] = floatval($intervalAmount) + floatval($forecast[$x]['totals'][$y]);
 						$types[$y]	= ($intervalAmount === NULL) ? '1': '2';		// total type, 1 = just forecast amount, 2 = forecast and actual amounts
