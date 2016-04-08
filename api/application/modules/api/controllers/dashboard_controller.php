@@ -7,7 +7,7 @@ require_once ('rest_controller.php');
 
 class dashboard_controller Extends rest_controller {
 
-	protected $debug = TRUE;
+//	protected $debug = TRUE;
 
 	public function __construct() {
 		parent::__construct();
@@ -27,7 +27,7 @@ class dashboard_controller Extends rest_controller {
 		}
 
 		$year = $this->input->get('year');
-		if ($year < 2015 || !is_numeric($year)) {
+		if (!is_numeric($year) || $year < 2015) {
 			$this->ajax->addError(new AjaxError("Invalid year"));
 			$this->ajax->output();
 		}
@@ -58,10 +58,24 @@ class dashboard_controller Extends rest_controller {
 
 		$transactions = new transaction();
 		$transactions->query(implode(' ', $sql));
-
 		$this->ajax->setData('result', $transactions);
-		$this->ajax->setData('year', date('Y'));
 
+		// get the past forecast
+		$forecasted = $this->loadForecast($categories, $year . '-01-01', $year . '-12-31', 2);
+		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', $year . '-12-31');
+		$totals = array();
+		foreach ($forecast as $fc) {
+			foreach($fc['totals'] as $category_id => $category_total) {
+				if (!empty($totals[$category_id])) {
+					$totals[$category_id] += $category_total;
+				} else {
+					$totals[$category_id] = $category_total;
+				}
+			}
+		}
+		$this->ajax->setData('forecast', $totals);
+
+		$this->ajax->setData('year', date('Y'));
 		$this->ajax->output();
 	}
 

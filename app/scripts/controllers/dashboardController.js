@@ -44,9 +44,10 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 			angular.forEach($rootScope.categories,
 				function(category, key) {
 					var category = {
-						id:		category.id,
-						name:	category.name,
-						total:	response[1].data.result['total_' + category.id]
+						id:			category.id,
+						name:		category.name,
+						total:		response[1].data.result['total_' + category.id],
+						forecast:	response[1].data.forecast[category.id]
 					};
 					$scope.ytdTotals.push(category);
 				});
@@ -100,9 +101,10 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 				angular.forEach($rootScope.categories,
 					function(category, key) {
 						var category = {
-							id:		category.id,
-							name:	category.name,
-							total:	response.data.result['total_' + category.id]
+							id:			category.id,
+							name:		category.name,
+							total:		response.data.result['total_' + category.id],
+							forecast:	response.data.forecast[category.id]
 						};
 						$scope.ytdTotals.push(category);
 					});

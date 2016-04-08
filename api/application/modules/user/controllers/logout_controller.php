@@ -17,7 +17,7 @@ class logout_controller extends EP_Controller {
 		$_POST = json_decode($input, TRUE);
 
 		// switch to the master DB
-		$this->switchDatabase('budget_master');
+		$this->switchDatabase('budgettr_master');
 
 		$user_session = new user_session();
 		$user_session->where('id', $_SERVER['HTTP_TOKENID']);

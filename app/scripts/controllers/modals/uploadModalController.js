@@ -4,7 +4,7 @@ app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalIn
 
 	function ($q, $scope, $rootScope, $modalInstance, $localStorage, fileUpload, params, BankAccounts, Config) {
 
-		$scope.ignoreFirstLine = 0;
+		$scope.ignoreFirstLine = true;
 		$scope.bank_account_id = 0;
 
 		$q.all([
@@ -32,7 +32,7 @@ app.controller('UploadModalController', ['$q', '$scope', '$rootScope', '$modalIn
 			if ($localStorage.authenticated) {
 				var file = $scope.myFile;
 
-				var uploadUrl = Config.get('upload_url') + $scope.bank_account_id + '/' + $scope.ignoreFirstLine;
+				var uploadUrl = Config.get('upload_url') + $scope.bank_account_id + '/' + (($scope.ignoreFirstLine) ? 1: 0);
 				fileUpload.uploadFileToUrl(file, uploadUrl)
 					.success(function(response) {
 						if (response.success === 1) {

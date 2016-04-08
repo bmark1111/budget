@@ -7,41 +7,41 @@ require_once ('rest_controller.php');
 
 class sheet_controller Extends rest_controller {
 
-	protected $debug = TRUE;
+//	protected $debug = TRUE;
 
-	private $budget_interval = FALSE;
-	private $budget_interval_unit = FALSE;
+//	private $budget_interval = FALSE;
+//	private $budget_interval_unit = FALSE;
 
 	public function __construct() {
 		parent::__construct();
 
-		$settings = new setting();
-		$settings->result();
-		foreach ($settings as $setting) {
-			$this->{$setting->name}  = $setting->value;
-		}
+//		$settings = new setting();
+//		$settings->result();
+//		foreach ($settings as $setting) {
+//			$this->{$setting->name}  = $setting->value;
+//		}
 
-		switch ($this->budget_mode) {
-			case 'weekly':
-				$this->budget_interval = 7;
-				$this->budget_interval_unit = 'Days';
-				break;
-			case 'bi-weekly':
-				$this->budget_interval = 14;
-				$this->budget_interval_unit = 'Days';
-				break;
-			case 'semi-monthly':
-				$this->budget_interval = 1;
-				$this->budget_interval_unit = 'Months';
-				break;
-			case 'monthly':
-				$this->budget_interval = 1;
-				$this->budget_interval_unit = 'Months';
-				break;
-			default:
-				$this->ajax->addError(new AjaxError("Invalid budget_mode setting (sheet controller)"));
-				$this->ajax->output();
-		}
+//		switch ($this->budget_mode) {
+//			case 'weekly':
+//				$this->budget_interval = 7;
+//				$this->budget_interval_unit = 'Days';
+//				break;
+//			case 'bi-weekly':
+//				$this->budget_interval = 14;
+//				$this->budget_interval_unit = 'Days';
+//				break;
+//			case 'semi-monthly':
+//				$this->budget_interval = 1;
+//				$this->budget_interval_unit = 'Months';
+//				break;
+//			case 'monthly':
+//				$this->budget_interval = 1;
+//				$this->budget_interval_unit = 'Months';
+//				break;
+//			default:
+//				$this->ajax->addError(new AjaxError("Invalid budget_mode setting (sheet controller)"));
+//				$this->ajax->output();
+//		}
 	}
 
 	public function index() {
@@ -165,29 +165,29 @@ class sheet_controller Extends rest_controller {
 		$accounts->where('bank_account.is_deleted', 0);
 		$accounts->result();
 
-		// get the forecast
-		$forecasted = $this->_loadForecast($categories, $sd, $ed, false);
-
-		// now sum the expenses for the forecast intervals
-		$offset = 0;
-		$forecast = array();
-		$xx = 0;
-		while (strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit) < strtotime($ed)) {
-			$interval_beginning = date('Y-m-d', strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit));
-			$interval_ending = date('Y-m-d', strtotime($sd . ' +' . ($offset + $this->budget_interval) . ' ' . $this->budget_interval_unit));
-			$interval_ending = date('Y-m-d', strtotime($interval_ending . ' -1 Day'));
-
-			$data = $this->_getForecastByCategory($categories, $forecasted, $interval_beginning);
-
-			$forecast[$xx]['totals']				= $data['totals'];			// load the category totals
-			$forecast[$xx]['adjustments']			= $data['adjustments'];		// load the bank account balance adjustments
-			$forecast[$xx]['interval_total']		= (!empty($data['interval_total'])) ? $data['interval_total']: 0;	// load the interval total
-			$forecast[$xx]['interval_beginning']	= date('c', strtotime($interval_beginning));
-			$forecast[$xx]['interval_ending']		= date('c', strtotime($interval_ending . ' 23:59:59'));
-			$forecast[$xx]['forecast']				= 1;						// mark this interval as a forecast
-			$xx++;
-			$offset += $this->budget_interval;
-		}
+		// get the future forecast
+		$forecasted = $this->loadForecast($categories, $sd, $ed, 1);
+		$forecast = $this->forecastIntervals($categories, $forecasted, $sd, $ed);
+//		// now sum the expenses for the forecast intervals
+//		$offset = 0;
+//		$forecast = array();
+//		$xx = 0;
+//		while (strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit) < strtotime($ed)) {
+//			$interval_beginning = date('Y-m-d', strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit));
+//			$interval_ending = date('Y-m-d', strtotime($sd . ' +' . ($offset + $this->budget_interval) . ' ' . $this->budget_interval_unit));
+//			$interval_ending = date('Y-m-d', strtotime($interval_ending . ' -1 Day'));
+//
+//			$data = $this->getForecastByCategory($categories, $forecasted, $interval_beginning);
+//
+//			$forecast[$xx]['totals']				= $data['totals'];			// load the category totals
+//			$forecast[$xx]['adjustments']			= $data['adjustments'];		// load the bank account balance adjustments
+//			$forecast[$xx]['interval_total']		= (!empty($data['interval_total'])) ? $data['interval_total']: 0;	// load the interval total
+//			$forecast[$xx]['interval_beginning']	= date('c', strtotime($interval_beginning));
+//			$forecast[$xx]['interval_ending']		= date('c', strtotime($interval_ending . ' 23:59:59'));
+//			$forecast[$xx]['forecast']				= 1;						// mark this interval as a forecast
+//			$xx++;
+//			$offset += $this->budget_interval;
+//		}
 
 		$data = array();
 		$data['balance_forward'] = $running_total;
@@ -308,46 +308,44 @@ class sheet_controller Extends rest_controller {
 		$running_total = 0;
 
 		// now add the forecast to relevant intervals
-		foreach ($output as $x => &$interval) {
-			$start_date = strtotime($interval['interval_beginning']);
-			$end_date = strtotime($interval['interval_ending']);
+		for ($x = 0; $x < count($output); $x++) {
+			$start_date = strtotime($output[$x]['interval_beginning']);
+			$end_date = strtotime($output[$x]['interval_ending']);
 			$now = time();
 			// only add forecast from current interval through future intervals
 			if (($now >= $start_date && $now <= $end_date) || $now < $end_date) {
 				if ($balance_forward) {
-					$interval['balance_forward'] = $balance_forward;
+					$output[$x]['balance_forward'] = $balance_forward;
 				}
+
+				$totals = array();
+				$types = array();
 				// check to see what current values need to be from the forecast
-				foreach ($interval['totals'] as $y => $intervalAmount) {
-//					if ($intervalAmount === NULL && $forecast[$x]['totals'][$y] !== NULL) {
-//						 if interval amount is not set and the forecast has a value then ... use the forecasted amount
-					if ($forecast[$x]['totals'][$y] !== NULL) {
+				foreach ($output[$x]['totals'] as $y => $intervalAmount) {
+//					if (!empty($forecast[$x]['totals'][$y]) && $forecast[$x]['totals'][$y] !== NULL) {
+					if (isset($forecast[$x]['totals'][$y])) {
 						// if forecast has a value then ... add the forecasted amount in
-						$interval['totals'][$y]		+= floatval($forecast[$x]['totals'][$y]);		// update the category total with the  forcasted
-						$interval['types'][$y]		= ($intervalAmount === NULL) ? '1': '2';		// flag this total has a forecast in it
-						$interval['interval_total']	+= floatval($forecast[$x]['totals'][$y]);		// update the interval total
-						$running_total				+= floatval($forecast[$x]['totals'][$y]);		// update the running total
-//					} else {
-//						// we are not using the forecasted amount so deduct it from the forecasted account balance adjustment
-//						// need to set the adjustment amount to zero
-//						if (!empty($forecast[$x]['adjustments'][$y])) {
-//							foreach ($forecast[$x]['adjustments'][$y] as $bank_account_id => $bank_account_balance) {
-//								unset($forecast[$x]['adjustments'][$y][$bank_account_id]);
-//							}
-//						}
+						$totals[$y] = floatval($intervalAmount) + floatval($forecast[$x]['totals'][$y]);
+						$types[$y]	= ($intervalAmount === NULL) ? '1': '2';		// total type, 1 = just forecast amount, 2 = forecast and actual amounts
+						$output[$x]['interval_total']	+= floatval($forecast[$x]['totals'][$y]);		// update the interval total with the forecasted amount
+						$running_total					+= floatval($forecast[$x]['totals'][$y]);		// update the running total with the forecasted amount
+					} else {
+						$totals[$y] = $intervalAmount;
+						$types[$y]	= 0;
 					}
 				}
-
-				$interval['adjustments'] = $forecast[$x]['adjustments'];
-				if (empty($interval['running_total'])) {
-					$interval['running_total'] = $running_total;
+				$output[$x]['totals'] = $totals;
+				$output[$x]['types'] = $types;
+				$output[$x]['adjustments'] = $forecast[$x]['adjustments'];
+				if (empty($output[$x]['running_total'])) {
+					$output[$x]['running_total'] = $running_total;
 				} else {
-					$interval['running_total'] += $running_total;
+					$output[$x]['running_total'] += $running_total;
 				}
-				$balance_forward = $interval['running_total'];
+				$balance_forward = $output[$x]['running_total'];
 
-				if (!empty($interval['adjustments'])) {
-					foreach ($interval['adjustments'] as $account) {
+				if (!empty($output[$x]['adjustments'])) {
+					foreach ($output[$x]['adjustments'] as $account) {
 						foreach ($account as $bank_account_id => $amount) {
 							if (empty($adjustments[$bank_account_id])) {
 								$adjustments[$bank_account_id] = $amount;
@@ -356,7 +354,7 @@ class sheet_controller Extends rest_controller {
 							}
 						}
 					}
-					$interval['adjustments'] = $adjustments;
+					$output[$x]['adjustments'] = $adjustments;
 				}
 			}
 		}
@@ -500,66 +498,66 @@ class sheet_controller Extends rest_controller {
 		return date_format($myDateTime, "Y-m-d");
 	}
 
-	public function these() {
-		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
-			$this->ajax->addError(new AjaxError("403 - Forbidden (budget/these)"));
-			$this->ajax->output();
-		}
-
-		$interval_beginning	= $this->input->get('interval_beginning');
-		if (!$interval_beginning || !strtotime($interval_beginning)) {
-			$this->ajax->addError(new AjaxError("Invalid interval_beginning - budget/these"));
-			$this->ajax->output();
-		}
-		$interval_beginning = explode('T', $interval_beginning);
-		$sd = date('Y-m-d', strtotime($interval_beginning[0]));
-
-		$interval_ending	= $this->input->get('interval_ending');
-		if (!$interval_ending || !strtotime($interval_ending)) {
-			$this->ajax->addError(new AjaxError("Invalid interval ending - budget/these"));
-			$this->ajax->output();
-		}
-		$interval_ending = explode('T', $interval_ending);
-		$ed = date('Y-m-d', strtotime($interval_ending[0]));
-
-		$category_id	= $this->input->get('category_id');
-		if ($category_id == 0 || !is_numeric($category_id)) {
-			$this->ajax->addError(new AjaxError("Invalid category id - budget/these"));
-			$this->ajax->output();
-		}
-
-		$transactions = new transaction();
-		$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.notes, T.amount, A.name
-				FROM transaction T
-				LEFT JOIN category C1 ON C1.id = T.category_id
-				LEFT JOIN bank_account A ON A.id = T.bank_account_id
-				WHERE T.is_deleted = 0
-						AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
-						AND T.`transaction_date` >=  '" . $sd . "'
-						AND T.`transaction_date` <=  '" . $ed . "')
-			UNION
-				(SELECT T.id, T.transaction_date, TS.type, T.description, TS.notes, TS.amount, A.name
-				FROM transaction T
-				LEFT JOIN bank_account A ON A.id = T.bank_account_id
-				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
-				LEFT JOIN category C2 ON C2.id = TS.category_id
-				WHERE T.is_deleted = 0
-						AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
-						AND T.`transaction_date` >=  '" . $sd . "'
-						AND T.`transaction_date` <=  '" . $ed . "')
-			ORDER BY transaction_date DESC, id DESC";
-		$transactions->queryAll($sql);
-		if ($transactions->numRows()) {
-			foreach ($transactions as $transaction) {
-				$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
-			}
-			$this->ajax->setData('result', $transactions);
-		} else {
-			$this->ajax->addError(new AjaxError("Error - No transactions found"));
-		}
-		$this->ajax->output();
-	}
+//	public function these() {
+//		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+////			$this->ajax->set_header("Forbidden", '403');
+//			$this->ajax->addError(new AjaxError("403 - Forbidden (sheet/these)"));
+//			$this->ajax->output();
+//		}
+//
+//		$interval_beginning	= $this->input->get('interval_beginning');
+//		if (!$interval_beginning || !strtotime($interval_beginning)) {
+//			$this->ajax->addError(new AjaxError("Invalid interval_beginning - sheet/these"));
+//			$this->ajax->output();
+//		}
+//		$interval_beginning = explode('T', $interval_beginning);
+//		$sd = date('Y-m-d', strtotime($interval_beginning[0]));
+//
+//		$interval_ending	= $this->input->get('interval_ending');
+//		if (!$interval_ending || !strtotime($interval_ending)) {
+//			$this->ajax->addError(new AjaxError("Invalid interval ending - sheet/these"));
+//			$this->ajax->output();
+//		}
+//		$interval_ending = explode('T', $interval_ending);
+//		$ed = date('Y-m-d', strtotime($interval_ending[0]));
+//
+//		$category_id	= $this->input->get('category_id');
+//		if ($category_id == 0 || !is_numeric($category_id)) {
+//			$this->ajax->addError(new AjaxError("Invalid category id - sheet/these"));
+//			$this->ajax->output();
+//		}
+//
+//		$transactions = new transaction();
+//		$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.notes, T.amount, A.name
+//				FROM transaction T
+//				LEFT JOIN category C1 ON C1.id = T.category_id
+//				LEFT JOIN bank_account A ON A.id = T.bank_account_id
+//				WHERE T.is_deleted = 0
+//						AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
+//						AND T.`transaction_date` >=  '" . $sd . "'
+//						AND T.`transaction_date` <=  '" . $ed . "')
+//			UNION
+//				(SELECT T.id, T.transaction_date, TS.type, T.description, TS.notes, TS.amount, A.name
+//				FROM transaction T
+//				LEFT JOIN bank_account A ON A.id = T.bank_account_id
+//				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
+//				LEFT JOIN category C2 ON C2.id = TS.category_id
+//				WHERE T.is_deleted = 0
+//						AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
+//						AND T.`transaction_date` >=  '" . $sd . "'
+//						AND T.`transaction_date` <=  '" . $ed . "')
+//			ORDER BY transaction_date DESC, id DESC";
+//		$transactions->queryAll($sql);
+//		if ($transactions->numRows()) {
+//			foreach ($transactions as $transaction) {
+//				$transaction->amount = ($transaction->type == 'CHECK' || $transaction->type == 'DEBIT') ? -$transaction->amount: $transaction->amount;
+//			}
+//			$this->ajax->setData('result', $transactions);
+//		} else {
+//			$this->ajax->addError(new AjaxError("Error - No transactions found"));
+//		}
+//		$this->ajax->output();
+//	}
 
 	private function _getEndDay() {
 		$xx =  time();
@@ -569,121 +567,122 @@ class sheet_controller Extends rest_controller {
 		return ($xx * $this->budget_interval);
 	}
 
-	public function _loadForecast($categories, $sd, $ed, $all = true) {
-		$forecast = new forecast();
-		$forecast->whereNotDeleted();
-		$forecast->groupStart();
-		$forecast->orWhere('last_due_date IS NULL ', NULL);
-		$forecast->orWhere('last_due_date <= ', $ed);
-		$forecast->groupEnd();
-//		$forecast->where('first_due_date >= ', $sd);
-		$forecast->where('first_due_date <= ', $ed);
-		$forecast->result();
-		if ($forecast->numRows()) {
-			// set the next due date(s) for the forecasted expenses
-			foreach ($forecast as $fc) {
-				$next_due_dates = array();
+//	public function _loadForecast($categories, $sd, $ed, $all = true) {
+//		$forecast = new forecast();
+//		$forecast->whereNotDeleted();
+//		$forecast->groupStart();
+//		$forecast->orWhere('last_due_date IS NULL ', NULL);
+//		$forecast->orWhere('last_due_date <= ', $ed);
+//		$forecast->orWhere('last_due_date >= ', $sd);
+//		$forecast->groupEnd();
+////		$forecast->where('first_due_date >= ', $sd);
+//		$forecast->where('first_due_date <= ', $ed);
+//		$forecast->result();
+//		if ($forecast->numRows()) {
+//			// set the next due date(s) for the forecasted expenses
+//			foreach ($forecast as $fc) {
+//				$next_due_dates = array();
+//
+//				switch ($fc->every_unit) {
+//					case 'Days':
+//					case 'Weeks':
+//					case 'Months':
+//					case 'Years':
+//						$dd = array(strtotime($fc->first_due_date));
+//						$fdd = array($fc->first_due_date);
+//						break;
+//					case 'semi-monthly':
+//$first = 15;						// should come from DB record - in forecast entry make this a dropdown with 1 though 15
+//$second = 'last day of month';		// should come from DB record - in forecast entry make this a dropdown with 16 though (28-31) based on $first
+//						$fdd = array(date('Y-m') . '-' . sprintf("%02d", $first), date("Y-m-t"));
+//						$dd = array(strtotime($fdd[0]), strtotime($fdd[1]));
+//						break;
+//				}
+//				$x = 0;
+//				while ($this->_dateDiff($dd[$x], strtotime($ed)) < 0 &&												// while due_date < end_date
+//						(!$fc->last_due_date || $this->_dateDiff($dd[$x], strtotime($fc->last_due_date)) <= 0)) {	// ...AND (last_due_date is not set OR due_date <= last_due_date)
+//					if ($this->_dateDiff($dd[$x], strtotime($fc->first_due_date)) >= 0) {		// if due_date >= first_due_date
+//						if ($all || $dd[$x] > time()) {											// and due_date is gt now
+//							$next_due_dates[] = date('Y-m-d', $dd[$x]);							// ... then save this due date
+//						}
+//					}
+//					if (empty($dd[++$x])) {
+//						for ($y = 0; $y < count($fdd); $y++) {
+//							$dd[$y] = strtotime($fdd[$y] . " +" . $fc->every . " " . $fc->every_unit);	// set next due date
+//							$fdd[$y] = date('Y-m-d', $dd[$y]);
+//						}
+//						$x = 0;
+//					}
+//				}
+//				$fc->next_due_dates = $next_due_dates;
+//			}
+//		}
+//		return $forecast;
+//	}
 
-				switch ($fc->every_unit) {
-					case 'Days':
-					case 'Weeks':
-					case 'Months':
-					case 'Years':
-						$dd = array(strtotime($fc->first_due_date));
-						$fdd = array($fc->first_due_date);
-						break;
-					case 'semi-monthly':
-$first = 15;						// should come from DB record - in forecast entry make this a dropdown with 1 though 15
-$second = 'last day of month';		// should come from DB record - in forecast entry make this a dropdown with 16 though (28-31) based on $first
-						$fdd = array(date('Y-m') . '-' . sprintf("%02d", $first), date("Y-m-t"));
-						$dd = array(strtotime($fdd[0]), strtotime($fdd[1]));
-						break;
-				}
-				$x = 0;
-				while ($this->_dateDiff($dd[$x], strtotime($ed)) < 0 &&												// while due_date < end_date
-						(!$fc->last_due_date || $this->_dateDiff($dd[$x], strtotime($fc->last_due_date)) <= 0)) {	// ...AND (last_due_date is not set OR due_date <= last_due_date)
-					if ($this->_dateDiff($dd[$x], strtotime($fc->first_due_date)) >= 0) {		// if due_date >= first_due_date
-						if ($all || $dd[$x] > time()) {											// and due_date is gt now
-							$next_due_dates[] = date('Y-m-d', $dd[$x]);							// ... then save this due date
-						}
-					}
-					if (empty($dd[++$x])) {
-						for ($y = 0; $y < count($fdd); $y++) {
-							$dd[$y] = strtotime($fdd[$y] . " +" . $fc->every . " " . $fc->every_unit);	// set next due date
-							$fdd[$y] = date('Y-m-d', $dd[$y]);
-						}
-						$x = 0;
-					}
-				}
-				$fc->next_due_dates = $next_due_dates;
-			}
-		}
-		return $forecast;
-	}
+//	// compare two unix timestamps
+//	private function _dateDiff($d1, $d2) {
+//		return $d1 - $d2;
+//	}
 
-	// compare two unix timestamps
-	private function _dateDiff($d1, $d2) {
-		return $d1 - $d2;
-	}
-
-	private function _getForecastByCategory($categories, $forecast, $start_date) {
-		$sd = strtotime($start_date);																		// start date of forecast interval
-		$ed = strtotime($start_date . " +" . $this->budget_interval . " " . $this->budget_interval_unit);	// end date of forecast interval
-		$data = array('totals' => array(), 'adjustments' => array());
-		// for each category
-		foreach ($categories as $x => $category) {
-			$data['totals'][$category->id] = NULL;
-			// now for each forecast
-			foreach ($forecast as $fc) {
-				// if this forecast is for this category
-				if ($fc->category_id == $category->id) {
-					// if this forecast has due dates
-					if (!empty($fc->next_due_dates)) {
-						// check to see if any of the forecasted due date fall in the interval dates
-						foreach ($fc->next_due_dates as $next_due_date) {
-							$fd = strtotime($next_due_date);
-							if ($fd >= $sd && $fd < $ed) {					// while next due date still inside forecast interval
-								// found a forecated due date that falls in this interval
-								switch ($fc->type) {
-									case 'DSLIP':
-									case 'CREDIT':
-										$data['totals'][$category->id] += $fc->amount;
-										// update the bank totals here and return as part of $data
-										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
-											$data['adjustments'][$category->id][$fc->bank_account_id] = $fc->amount;
-										} else {
-											$data['adjustments'][$category->id][$fc->bank_account_id] += $fc->amount;
-										}
-										if (empty($data['interval_total'])) {
-											$data['interval_total'] = $fc->amount;
-										} else {
-											$data['interval_total'] += $fc->amount;
-										}
-										break;
-									case 'DEBIT':
-									case 'CHECK':
-										$data['totals'][$category->id] -= $fc->amount;
-										// update the bank totals here and return as part of $data
-										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
-											$data['adjustments'][$category->id][$fc->bank_account_id] = -$fc->amount;
-										} else {
-											$data['adjustments'][$category->id][$fc->bank_account_id] -= $fc->amount;
-										}
-										if (empty($data['interval_total'])) {
-											$data['interval_total'] = $fc->amount;
-										} else {
-											$data['interval_total'] -= $fc->amount;
-										}
-										break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return $data;
-	}
+//	private function _getForecastByCategory($categories, $forecast, $start_date) {
+//		$sd = strtotime($start_date);																		// start date of forecast interval
+//		$ed = strtotime($start_date . " +" . $this->budget_interval . " " . $this->budget_interval_unit);	// end date of forecast interval
+//		$data = array('totals' => array(), 'adjustments' => array());
+//		// for each category
+//		foreach ($categories as $x => $category) {
+//			$data['totals'][$category->id] = NULL;
+//			// now for each forecast
+//			foreach ($forecast as $fc) {
+//				// if this forecast is for this category
+//				if ($fc->category_id == $category->id) {
+//					// if this forecast has due dates
+//					if (!empty($fc->next_due_dates)) {
+//						// check to see if any of the forecasted due date fall in the interval dates
+//						foreach ($fc->next_due_dates as $next_due_date) {
+//							$fd = strtotime($next_due_date);
+//							if ($fd >= $sd && $fd < $ed) {					// while next due date still inside forecast interval
+//								// found a forecated due date that falls in this interval
+//								switch ($fc->type) {
+//									case 'DSLIP':
+//									case 'CREDIT':
+//										$data['totals'][$category->id] += $fc->amount;
+//										// update the bank totals here and return as part of $data
+//										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
+//											$data['adjustments'][$category->id][$fc->bank_account_id] = $fc->amount;
+//										} else {
+//											$data['adjustments'][$category->id][$fc->bank_account_id] += $fc->amount;
+//										}
+//										if (empty($data['interval_total'])) {
+//											$data['interval_total'] = $fc->amount;
+//										} else {
+//											$data['interval_total'] += $fc->amount;
+//										}
+//										break;
+//									case 'DEBIT':
+//									case 'CHECK':
+//										$data['totals'][$category->id] -= $fc->amount;
+//										// update the bank totals here and return as part of $data
+//										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
+//											$data['adjustments'][$category->id][$fc->bank_account_id] = -$fc->amount;
+//										} else {
+//											$data['adjustments'][$category->id][$fc->bank_account_id] -= $fc->amount;
+//										}
+//										if (empty($data['interval_total'])) {
+//											$data['interval_total'] = $fc->amount;
+//										} else {
+//											$data['interval_total'] -= $fc->amount;
+//										}
+//										break;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return $data;
+//	}
 
 }
 

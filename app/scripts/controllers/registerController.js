@@ -53,6 +53,12 @@ app.controller('RegisterController', function($scope, RestData2) {
 								case 'email':
 									$scope.validation.email = validation.errorMessage;
 									break;
+								case 'login':
+									$scope.validation.login = validation.errorMessage;
+									break;
+								case 'password':
+									$scope.validation.password = validation.errorMessage;
+									break;
 							}
 						});
 				} else {

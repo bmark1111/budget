@@ -8,7 +8,8 @@ class upload_controller extends EP_Controller {
 
 	public function index($bank_account_id = FALSE, $ignoreFirstLine = FALSE) {
 		$config = array();
-		$config['upload_path'] = '../uploads/';
+//		$config['upload_path'] = '../uploads/';
+		$config['upload_path'] = '../../../public_ftp/';
 		$config['allowed_types'] = 'csv';
 		$config['max_size']	= '1000';
 		$config['overwrite'] = TRUE;
@@ -21,11 +22,9 @@ class upload_controller extends EP_Controller {
 			$upload_datetime = date('Y-m-d H:i:s');
 
 			$file_handle = fopen($config['upload_path'] . $this->upload->file_name, "r");
-			while (!feof($file_handle))
-			{
-				$line = fgets($file_handle);
+			while (!feof($file_handle)) {
+				$params = fgetcsv($file_handle);
 				if ($ignoreFirstLine != 1) {
-					$params = array_map('trim', explode(',', $line));
 					if (count($params) == 5) {
 						$transaction = new transaction_upload();
 						$transaction->upload_datetime	= $upload_datetime;
@@ -40,7 +39,8 @@ class upload_controller extends EP_Controller {
 				}
 				$ignoreFirstLine = FALSE;
 			}
-			
+
+			// get count of uploaded transactions
 			$transactions = new transaction_upload();
 			$transactions->select('count(*) as count');
 			$transactions->whereNotDeleted();

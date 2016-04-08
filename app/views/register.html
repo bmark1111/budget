@@ -3,15 +3,6 @@
 	<div ng-if="error">{{error}}</div>
 
 	<div class="row">
-		<div class="col-md-6" ng-class="{'has-error': validation.description }">
-			<label for="description">Description:</label>
-			<div class="form-group">
-				<input type="text" class="form-control" name="description" ng-model="data.description" placeholder="Description:" />
-			</div>
-			<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
-		</div>
-	</div>
-	<div class="row">
 		<div class="col-md-2" ng-class="{'has-error': validation.firstname }">
 			<label for="firstname">First name:</label>
 			<div class="form-group">
@@ -26,14 +17,39 @@
 			</div>
 			<span class="help-block" ng-show="validation.lastname">{{ validation.lastname }}</span>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-2" ng-class="{'has-error': validation.email }">
+		<div class="col-md-3" ng-class="{'has-error': validation.email }">
 			<label for="email">Email</label>
 			<div class="form-group">
 				<input type="text" class="form-control" name="email" ng-model="data.email" placeholder="Email address" />
 			</div>
 			<span class="help-block" ng-show="validation.email">{{ validation.email }}</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2" ng-class="{'has-error': validation.login }">
+			<label for="login">Login</label>
+			<div class="form-group">
+				<input type="text" class="form-control" name="login" ng-model="data.login" placeholder="Login" />
+			</div>
+			<span class="help-block" ng-show="validation.login">{{ validation.login }}</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2" ng-class="{'has-error': validation.password }">
+			<label for="password">Password</label>
+			<div class="form-group">
+				<input type="password" class="form-control" name="password" ng-model="data.password" placeholder="Password" />
+			</div>
+			<span class="help-block" ng-show="validation.password">{{ validation.password }}</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2" ng-class="{'has-error': validation.password2 }">
+			<label for="password2">Retype Password</label>
+			<div class="form-group">
+				<input type="password" class="form-control" name="password2" ng-model="data.password2" placeholder="Password2" />
+			</div>
+			<span class="help-block" ng-show="validation.password2">{{ validation.password2 }}</span>
 		</div>
 	</div>
 	<div class="row">

@@ -6,6 +6,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
+	$scope.last_interval_is_current = false;
 
 	var interval = 0;
 
@@ -25,11 +26,13 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 					interval.alt_ending = now;				// set alternative ending
 					interval.current_interval = true;		// mark the current interval
 				}
+				var last_interval_is_current = interval.current_interval;
 
 				if (interval.forecast !== 1) {
 					_isReconciled(interval.accounts, sd, ed);
 				}
 
+				$scope.last_interval_is_current = last_interval_is_current;
 				$rootScope.intervals[key] = interval;
 			});
 	};
@@ -63,7 +66,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						account.reconciled = 1;
 					}
 				} else {
-					account.reconciled = (+sd >= +now) ? 0: 1;
+					account.reconciled = (+sd >= +now) ? 0: 3;
 				}
 			});
 	};
@@ -105,18 +108,21 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	}
 	loadData();
 
-	$scope.showTheseTransactions = function(category_id, index) {
+	$scope.showTheseTransactions = function(category_id, index, category_name, forecast) {
 		var idx = index + $rootScope.start_interval;
 
 		$scope.dataErrorMsgThese = false;
 
-		var date = $filter('date')($rootScope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
-		$scope.title = $('#popover_' + idx + '_' + category_id).siblings('th').text() + ' transactions for interval ending ' + date;
+		var start_date = $filter('date')($rootScope.intervals[idx].interval_beginning, "EEE MMM dd, yyyy");
+		var end_date = $filter('date')($rootScope.intervals[idx].interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
 
 		RestData2().getTheseTransactions({
 				interval_beginning:	$rootScope.intervals[idx].interval_beginning,
 				interval_ending:	$rootScope.intervals[idx].interval_ending,
-				category_id:		category_id
+				category_id:		category_id,
+				forecast:			forecast,
+				all:				0
 			},
 			function(response) {
 				if (!!response.success) {
@@ -139,12 +145,14 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 				// add an array element at the beginning
 				getNext(-1);
 			}
+			$scope.last_interval_is_current = false;
 		} else if (direction === 1) {
 			$rootScope.start_interval += 2;
-			var last_interval = $rootScope.start_interval + $localStorage.budget_views - 1;
-			if (typeof($rootScope.intervals[last_interval]) === 'undefined') {
-				getNext(1);
-			}
+			$scope.last_interval_is_current = $rootScope.intervals[$rootScope.start_interval + 2].current_interval;
+//			var last_interval = $rootScope.start_interval + $localStorage.budget_views - 1;
+//			if (typeof($rootScope.intervals[last_interval]) === 'undefined') {
+//				getNext(1);
+//			}
 		}
 	};
 
@@ -178,7 +186,6 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 						moved.push(response.data.result[1]);	// add actual
 					}
 					$rootScope.intervals = moved;
-console.log($rootScope.intervals)
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,
@@ -189,7 +196,7 @@ console.log($rootScope.intervals)
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-//					ngProgress.complete();
+//				ngProgress.complete();
 			});
 	}
 

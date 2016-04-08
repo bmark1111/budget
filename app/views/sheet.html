@@ -10,7 +10,7 @@
 				<tr>
 					<th><span class="pull-right">Period Ending</span></th>
 					<th style="text-align:center;" ng-repeat="period in periods|getIntervals:period_start" ng-class="{'currentInterval':period.current_interval}">
-						<span>{{period.interval_ending|displayDate:period.budget_mode}}</span>
+						<span>{{ period.interval_ending|displayDate:period.budget_mode }}</span>
 					</th>
 				</tr>
 			</thead>
@@ -22,25 +22,38 @@
 					</td>
 				</tr>
 				<tr ng-repeat="category in categories track by $index">
-<!--					<th ng-show="category.isCollapsed" style="line-height: 2px!important;padding:0px 0px 2px 2px!important;"><span class="glyphicon glyphicon-triangle-bottom" ng-click="isCollapsed($index)"></span></th>
-					<th ng-show="!category.isCollapsed" style="padding:2px!important;"><span class="glyphicon glyphicon-triangle-top" ng-click="isCollapsed($index)"></span>{{ category.name }}</th>
-					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" id="popover_{{$index}}_{{category.id}}">
-						<div ng-show="!category.isCollapsed" class="pull-right">-->
 					<th style="padding:2px!important;">{{ category.name }}</th>
 					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval':period.current_interval }" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right">
-							<span ng-if="!period.types[category.id] || period.types[category.id] == 2">
-								<a ns-popover="showTheseTransactions(category.id, $index, category.name)"
+							<span ng-if="!period.types[category.id]">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, null)"
 									ns-popover-placement="right"
 									ns-popover-template="transactions"
 									ns-popover-trigger="click"
 									ns-popover-theme="ns-popover-custom-theme"
 									ns-popover-timeout="0">
-									{{period.totals[category.id]|currency}}
+									{{ period.totals[category.id]|currency }}
 								</a>
 							</span>
-							<span ng-if="period.types[category.id] == 1" class='forecast_amount'>
-								{{ period.totals[category.id]|currency }}
+							<span ng-if="period.types[category.id] == 2">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 2)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0" class="includes_forecast_amount">
+									{{ period.totals[category.id]|currency }}
+								</a>
+							</span>
+							<span ng-if="period.types[category.id] == 1">
+								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 1)"
+									ns-popover-placement="right"
+									ns-popover-template="transactions"
+									ns-popover-trigger="click"
+									ns-popover-theme="ns-popover-custom-theme"
+									ns-popover-timeout="0"  class="forecast_amount">
+									{{ period.totals[category.id]|currency }}
+								</a>
 							</span>
 						</div>
 					</td>
@@ -56,27 +69,30 @@
 				<tr>
 					<th nowrap>Running Totals</th>
 					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" style="padding:2px!important;">
-						<span class="pull-right">{{period.running_total|currency}}</span>
+						<span class="pull-right">{{ period.running_total|currency }}</span>
 					</td>
 				</tr>
 				<!-- now get the bank accounts -->
 				<tr ng-repeat="account in periods[0].accounts track by $index">
 					<td class="banks" nowrap>{{ account.name }}</td>
 					<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" style="padding:2px!important;">
-						<button type="button" class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 1" style="width:74px;margin:0;padding:0;"
+						<span ng-show="period.accounts[$parent.$index].reconciled == 0" class="pull-right forecast_amount">
+							{{ period.accounts[$parent.$index].balance|currency }}
+						</span>
+						<button ng-show="period.accounts[$parent.$index].reconciled == 1" type="button" class="pull-right" style="width:74px;margin:0;padding:0;"
 										title="Click to Reconcile {{ account.name }} Account">
 							<span class="pull-right" style="margin:0;padding:0;" ng-click="reconcile(account, period, $parent.$index)">
 								{{ period.accounts[$parent.$index].balance|currency }}
 							</span>
 						</button>
-						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 2" title="{{ account.name }} is reconciled up to {{ account.reconciled_date|date:'EEE MMM dd, yyyy'}}">
+						<span ng-show="period.accounts[$parent.$index].reconciled == 2" class="pull-right" title="{{ account.name }} is reconciled up to {{ account.reconciled_date|date:'EEE MMM dd, yyyy'}}">
 							<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" />
 							{{ period.accounts[$parent.$index].balance|currency }}
 						</span>
-						<span class="pull-right forecast_amount" ng-show="period.accounts[$parent.$index].reconciled == 0">
+						<span ng-show="period.accounts[$parent.$index].reconciled == 3" class="pull-right">
 							{{ period.accounts[$parent.$index].balance|currency }}
 						</span>
-						<span class="pull-right" ng-show="period.accounts[$parent.$index].reconciled == 99">
+						<span ng-show="period.accounts[$parent.$index].reconciled == 99" class="pull-right">
 							N/A
 						</span>
 					</td>

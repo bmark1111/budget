@@ -26,7 +26,9 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 //				}
 			},
 			'responseError': function (rejection) {
-				if (rejection.status == '401' && rejection.statusText == 'EXPIRED') {
+//console.log('responseError rejection')
+//console.log(rejection)
+				if (rejection.status == '401') {// && rejection.statusText == 'EXPIRED') {
 					$localStorage.authenticated		= false;
 					$localStorage.authorizedRoles	= false;
 					$localStorage.userFullName		= false;
@@ -149,10 +151,10 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
-		.when('/admin',
+		.when('/users',
 		{
-			controller:		'AdminController',
-			templateUrl:	"app/views/admin/admin.html",
+			controller:		'UserController as user',
+			templateUrl:	"app/views/admin/users.html",
 			data:			{
 								authorizedRoles: [USER_ROLES.admin]
 							}
@@ -163,8 +165,8 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		});
 
 // CHECK THIS FOR NEED ////////
-$httpProvider.defaults.useXDomain = true;
-delete $httpProvider.defaults.headers.common['X-Requested-With'];
+//$httpProvider.defaults.useXDomain = true;
+//delete $httpProvider.defaults.headers.common['X-Requested-With'];
 //$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';		// TRY THIS ???????
 ///////////////////////////////
 });
@@ -194,6 +196,8 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 				} else {
 					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');
+					$rootScope.authenticated = false;
+					$localStorage.authenticated = false;
 //					$rootScope.nav_active = 'login';
 //					$location.path("/login");
 				}
@@ -208,6 +212,8 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 				} else {
 					// user is not logged in
 					console.log('ROLE NOT AUTHORIZED AND  NOT AUTHENTICATED');
+					$rootScope.authenticated = false;
+					$localStorage.authenticated = false;
 					$location.path("/");
 				}
 			}

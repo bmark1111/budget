@@ -13,8 +13,6 @@ app.service('Config', function Config() {
 				/**
 				 * Add any config properties you want in here for this environment
 				 */
-//				api_url: 'http://rest.budgettracker.loc/:path/:object/:action/:param',
-//				upload_url:	'http://rest.budgettracker.loc/upload/'
 				api_url: 'http://rest.budgettrackerpro.loc/:path/:object/:action/:param',
 				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
 			}
@@ -25,10 +23,8 @@ app.service('Config', function Config() {
 				/**
 				 * Add any config properties you want in here for this environment
 				 */
-//				api_url: 'http://rest.budgettracker.com/:path/:object/:action/:param',
-//				upload_url:	'http://rest.budgettracker.com/upload/'
 				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
-				upload_url:	'http://rest.budgettrackerpro.comupload/'
+				upload_url:	'http://rest.budgettrackerpro.com/upload/'
 			}
 //		},
 //		test: {

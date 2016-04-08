@@ -1,5 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-//die('production/config.php');
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -180,7 +180,7 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 1;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
@@ -357,31 +357,7 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-/*
-|---------------------------------------------------------------------------
-| Paths To CSS And JS
-|---------------------------------------------------------------------------
-|
-| This is the path for css and javascript from the public directory.
-| Do not include the base path
-| Do include an opening and trailing trailing slash
-|
-*/
-
-//$config['css_path'] = '/css/';
-//$config['js_path'] = '/js/';
-
-/*
-|---------------------------------------------------------------------------
-| Show PreRelease And Show Cert
-|---------------------------------------------------------------------------
-|
-| These booleans determine what gets shown based on the flags that are set
-|
-*/
-
-//$config['show_prerelease'] = FALSE;
-//$config['show_cert'] = FALSE;
+$config['referer'] = 'budgettrackerpro';
 
 /*
 |---------------------------------------------------------------------------
@@ -405,9 +381,9 @@ $config['controller_suffix'] = '_controller';
 $config['enable_profiler'] = FALSE;
 
 $config['database']['hostname'] = 'localhost';
-$config['database']['username'] = 'budget';
-$config['database']['password'] = 'budget';
-//$config['database']['database'] = 'bdm_budget';
+$config['database']['username'] = 'budgettr_budget';
+$config['database']['password'] = 'X120798x!';
+$config['database']['database'] = 'budgettr_b_1_m';
 $config['database']['dbdriver'] = 'mysqli';
 $config['database']['dbprefix'] = '';
 $config['database']['pconnect'] = TRUE;

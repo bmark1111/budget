@@ -88,5 +88,11 @@ $route['data/setting/save']						= "api/setting/save";				// POST - save setting
 
 $route['upload/(:num)/(:num)']					= "upload/index/$1/$2";				// Upload transactions
 
+// Admn Routes
+$route['data/user/load']						= "api/admin/user/load";			// GET - load all users in list
+$route['data/user/delete']						= "api/admin/user/delete";			// GET - delete user
+$route['data/user/edit']						= "api/admin/user/edit";			// GET - edit user
+$route['data/user/save']						= "api/admin/user/save";			// POST - save user
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
