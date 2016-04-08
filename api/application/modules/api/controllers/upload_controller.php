@@ -184,6 +184,19 @@ class upload_controller Extends rest_controller {
 				$this->resetBalances(array($transaction->bank_account_id => $transaction_date));			// adjust the account balance from the overwritten transaction forward
 			}
 			$this->resetBalances(array($transaction->bank_account_id => $transaction->transaction_date));	// adjust the account balance from the new transaction forward
+
+			// check if this is a repeat transaction
+			$transaction_repeat = new transaction_repeat();
+			$transaction_repeat->whereNotDeleted();
+			$transaction_repeat->where('description', $_POST['description']);
+			$transaction_repeat->where('type', $_POST['type']);
+			$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
+			$transaction_repeat->result();
+			if ($transaction_repeat->numRows()) {
+				// repeat transaction
+				print $transaction_repeat;
+				die;
+			}
 		} else {
 			$this->ajax->addError(new AjaxError("403 - Invalid uploaded transaction (upload/post) - " . $_POST['id']));
 		}

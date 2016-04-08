@@ -14,7 +14,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-if="!dataErrorMsgThese" ng-repeat="idx in transactions_seq" ng-class="{ 'forecast_amount':transactions[idx].is_forecast }">
+					<tr ng-if="!dataErrorMsgThese" ng-repeat="idx in transactions_seq" ng-class="{ 'forecast_amount':transactions[idx].is_forecast,
+																									'repeat_amount':transactions[idx].is_repeat }">
 						<td>
 							<span class="pull-left">{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span>&nbsp;
 							<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>

@@ -65,7 +65,7 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		})
 		.when('/dashboard',
 		{
-			controller:		'DashboardController',
+			controller:		'DashboardController as dashboard',
 			templateUrl:	'app/views/dashboard.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
@@ -155,6 +155,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		{
 			controller:		'UserController as user',
 			templateUrl:	"app/views/admin/users.html",
+			data:			{
+								authorizedRoles: [USER_ROLES.admin]
+							}
+		})
+		.when('/utils',
+		{
+			controller:		'UtilController as util',
+			templateUrl:	"app/views/admin/utilities.html",
 			data:			{
 								authorizedRoles: [USER_ROLES.admin]
 							}

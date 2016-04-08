@@ -83,6 +83,12 @@
 				<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> &nbsp; &nbsp; Reconciled</span>
 			</div>
 		</div>
+		<div class="table-responsive" ng-if="transaction.repeat">
+			<div>Repeat Every: {{ transaction.repeat.every }} x {{ transaction.repeat.every_unit }}.</div>
+			<div>First Due Date: {{ transaction.repeat.first_due_date|date:'EEE MMM dd, yyyy' }}.</div>
+			<div>Next Due Date: {{ transaction.repeat.next_due_date|date:'EEE MMM dd, yyyy' }}.</div>
+			<div>Amount Due: {{ transaction.repeat.amount|currency }}.</div>
+		</div>
 		<div class="table-responsive" ng-if="transaction.splits[0]">
 			<table style="width:100%;">
 				<tr>

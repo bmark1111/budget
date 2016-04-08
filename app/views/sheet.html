@@ -25,33 +25,17 @@
 					<th style="padding:2px!important;">{{ category.name }}</th>
 					<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval':period.current_interval }" id="popover_{{$index}}_{{category.id}}">
 						<div class="pull-right">
-							<span ng-if="!period.types[category.id]">
-								<a ns-popover="showTheseTransactions(category.id, $index, category.name, null)"
+							<span ng-if="period.types[category.id] >= 0">
+								<a ng-class="{ 'forecast_amount':period.types[category.id] == 1 || period.types[category.id] == 11,
+												'actual_and_forecast_amount':period.types[category.id] == 2,
+												'repeat_amount':period.types[category.id] == 10 || period.types[category.id] == 12 }"
+									tooltip="Iudico aperiam scripserit"
+									ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
 									ns-popover-placement="right"
 									ns-popover-template="transactions"
 									ns-popover-trigger="click"
 									ns-popover-theme="ns-popover-custom-theme"
 									ns-popover-timeout="0">
-									{{ period.totals[category.id]|currency }}
-								</a>
-							</span>
-							<span ng-if="period.types[category.id] == 2">
-								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 2)"
-									ns-popover-placement="right"
-									ns-popover-template="transactions"
-									ns-popover-trigger="click"
-									ns-popover-theme="ns-popover-custom-theme"
-									ns-popover-timeout="0" class="includes_forecast_amount">
-									{{ period.totals[category.id]|currency }}
-								</a>
-							</span>
-							<span ng-if="period.types[category.id] == 1">
-								<a ns-popover="showTheseTransactions(category.id, $index, category.name, 1)"
-									ns-popover-placement="right"
-									ns-popover-template="transactions"
-									ns-popover-trigger="click"
-									ns-popover-theme="ns-popover-custom-theme"
-									ns-popover-timeout="0"  class="forecast_amount">
 									{{ period.totals[category.id]|currency }}
 								</a>
 							</span>

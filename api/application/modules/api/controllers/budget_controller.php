@@ -7,41 +7,8 @@ require_once ('rest_controller.php');
 
 class budget_controller Extends rest_controller {
 
-//	protected $debug = TRUE;
-
-//	private $budget_interval = FALSE;
-//	private $budget_interval_unit = FALSE;
-
 	public function __construct() {
 		parent::__construct();
-
-//		$settings = new setting();
-//		$settings->result();
-//		foreach ($settings as $setting) {
-//			$this->{$setting->name}  = $setting->value;
-//		}
-
-//		switch ($this->budget_mode) {
-//			case 'weekly':
-//				$this->budget_interval = 7;
-//				$this->budget_interval_unit = 'Days';
-//				break;
-//			case 'bi-weekly':
-//				$this->budget_interval = 14;
-//				$this->budget_interval_unit = 'Days';
-//				break;
-//			case 'semi-monthly':
-//				$this->budget_interval = 1;
-//				$this->budget_interval_unit = 'Months';
-//				break;
-//			case 'monthly':
-//				$this->budget_interval = 1;
-//				$this->budget_interval_unit = 'Months';
-//				break;
-//			default:
-//				$this->ajax->addError(new AjaxError("Invalid budget_mode setting (budget controller)"));
-//				$this->ajax->output();
-//		}
 	}
 
 	public function index() {
@@ -156,7 +123,7 @@ class budget_controller Extends rest_controller {
 		$transactions = new transaction();
 		$transactions->queryAll(implode(' ', $sql));
 
-		$running_total = $this->_getBalanceForward($sd);
+//		$running_total = $this->_getBalanceForward($sd);
 
 		// get the accounts
 		$accounts = new bank_account();
@@ -165,34 +132,29 @@ class budget_controller Extends rest_controller {
 		$accounts->where('bank_account.is_deleted', 0);
 		$accounts->result();
 
-		// get the forecast
+		// get any repeats for this interval
+		$repeats = $this->loadRepeats($categories, $sd, $ed);
+		$repeats = $this->sumRepeats($repeats, $sd, $ed);
+
+		// get the future forecast
 		$forecasted = $this->loadForecast($categories, $sd, $ed);
 		$forecast = $this->forecastIntervals($categories, $forecasted, $sd, $ed);
-//		// now sum the expenses for the forecast intervals
-//		$offset = 0;
-//		$forecast = array();
-//		$xx = 0;
-//		while (strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit) < strtotime($ed)) {
-//			$interval_beginning = date('Y-m-d', strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit));
-//			$interval_ending = date('Y-m-d', strtotime($sd . ' +' . ($offset + $this->budget_interval) . ' ' . $this->budget_interval_unit));
-//			$interval_ending = date('Y-m-d', strtotime($interval_ending . ' -1 Day'));
-//
-//			$data = $this->getForecastByCategory($categories, $forecasted, $interval_beginning);
-//
-//			$forecast[$xx]['totals']				= $data['totals'];			// load the category totals
-//			$forecast[$xx]['adjustments']			= $data['adjustments'];		// load the bank account balance adjustments
-//			$forecast[$xx]['interval_total']		= (!empty($data['interval_total'])) ? $data['interval_total']: 0;	// load the interval total
-//			$forecast[$xx]['interval_beginning']	= date('c', strtotime($interval_beginning));
-//			$forecast[$xx]['interval_ending']		= date('c', strtotime($interval_ending . ' 23:59:59'));
-//			$forecast[$xx]['forecast']				= 1;						// mark this interval as a forecast
-//			$xx++;
-//			$offset += $this->budget_interval;
-//		}
+
+		foreach ($forecast as $x => &$fc) {
+			foreach ($fc['totals'] as $category_id => $category_total) {
+				if (!empty($repeats[$x]['totals'][$category_id])) {
+					$fc['totals'][$category_id] = $category_total + $repeats[$x]['totals'][$category_id];
+					$fc['types'][$category_id] = 11;
+				} else {
+					$fc['types'][$category_id] = 1;
+				}
+			}
+		}
 
 		$data = array();
-		$data['balance_forward'] = $running_total;
+//		$data['balance_forward'] = $running_total;
 		$data['interval_total'] = 0;
-		$data['running_total'] = $running_total;
+//		$data['running_total'] = $running_total;
 
 		$output = array();
 		$date_offset = 0;
@@ -235,13 +197,13 @@ class budget_controller Extends rest_controller {
 						// no totals for this interval
 						$data['totals'] = $noTotals;
 					}
-					$data['running_total'] = $running_total;
+//					$data['running_total'] = $running_total;
 					$output[] = $data;
 
 					$data = array();
 					$data['interval_total'] = 0;
-					$data['running_total'] = $running_total;
-					$data['balance_forward'] = $running_total;
+//					$data['running_total'] = $running_total;
+//					$data['balance_forward'] = $running_total;
 
 					$isd = $this->_getNextDate($isd, $this->budget_interval, $this->budget_interval_unit);		// set the interval start date
 					$ied = $this->_getNextDate($isd, $this->budget_interval, $this->budget_interval_unit);
@@ -262,14 +224,14 @@ class budget_controller Extends rest_controller {
 								$data['totals'][$index[1]] = $value;
 							}
 							$data['interval_total'] += $value;
-							$running_total += $value;
+//							$running_total += $value;
 						}
 					}
 				}
 			}
 		}
 
-		$data['running_total']		= $running_total;
+//		$data['running_total']		= $running_total;
 		$data['interval_beginning']	= date('c', strtotime($isd));
 		$data['interval_ending']	= date('c', strtotime($ied . " 23:59:59"));
 		// make accounts entry
@@ -288,165 +250,166 @@ class budget_controller Extends rest_controller {
 				$isd = $this->_getNextDate($isd, $this->budget_interval, $this->budget_interval_unit);		// set the interval start date
 				$ied = $this->_getNextDate($isd, $this->budget_interval, $this->budget_interval_unit);
 				$ied = $this->_getNextDate($ied, -1, 'days');												// set the interval end date
-				$data['running_total']		= $running_total;
+//				$data['running_total']		= $running_total;
 				$data['interval_beginning']	= date('c', strtotime($isd));
 				$data['interval_ending']	= date('c', strtotime($ied . " 23:59:59"));
 				$data['interval_total']		= 0;
-				if (empty($data['running_total']) || $data['running_total'] == 0) {
-					$data['running_total'] = $running_total;
-				}
-				// make accounts entry
-				foreach ($accounts as $account) {
-					$data['accounts'][$account->id] = array('bank_account_id' => $account->id, 'name' => $account->name, 'balance' => NULL);
-				}
+//				if (empty($data['running_total']) || $data['running_total'] == 0) {
+//					$data['running_total'] = $running_total;
+//				}
+//				// make accounts entry
+//				foreach ($accounts as $account) {
+//					$data['accounts'][$account->id] = array('bank_account_id' => $account->id, 'name' => $account->name, 'balance' => NULL);
+//				}
 				$output[] = $data;
 			}
 		}
 
-/*		$adjustments = array();
-		$balance_forward = FALSE;
-		$running_total = 0;
+//		$adjustments = array();
+//		$balance_forward = FALSE;
+//		$running_total = 0;
 
-		// now add the forecast to relevant intervals
-		foreach ($output as $x => &$interval) {
-			$start_date = strtotime($interval['interval_beginning']);
-			$end_date = strtotime($interval['interval_ending']);
-			$now = time();
-			// only add forecast from current interval through future intervals
-			if (($now >= $start_date && $now <= $end_date) || $now < $end_date) {
-				if ($balance_forward) {
-					$interval['balance_forward'] = $balance_forward;
-				}
-				// check to see what current values need to be from the forecast
-				foreach ($interval['totals'] as $y => $intervalAmount) {
-//					if ($intervalAmount === NULL && floatval($forecast[$x]['totals'][$y]) !== (float)0) {
-					if ($intervalAmount === NULL && $forecast[$x]['totals'][$y] !== NULL) {
+//		// now add the repeats to relevant intervals
+//		for ($x = 0; $x < count($output); $x++) {
+//			$start_date = strtotime($output[$x]['interval_beginning']);
+//			$end_date = strtotime($output[$x]['interval_ending']);
+//			$now = time();
+//			// only add repeats from current interval through future intervals
+//			if (($now >= $start_date && $now <= $end_date) || $now < $end_date) {
+//				if ($balance_forward) {
+//					$output[$x]['balance_forward'] = $balance_forward;
+//				}
+//
+//				$totals = array();
+//				$types = array();
+//				// check to see what current values need to be from the repeats
+//				foreach ($output[$x]['totals'] as $y => $categoryTotal) {
+//					$category_total = NULL;
+//					$type = 0;
+//					// check the forecast
+////					if (isset($forecast[$x]['totals'][$y])) {
+////						// if forecast has a value then ... add the forecasted amount into totals
+////						$type			+= ($categoryTotal === NULL) ? '1': '2';		// total type, 1 = just forecast amount, 2 = forecast and actual amounts
+////						$category_total	+= floatval($forecast[$x]['totals'][$y]);		// update the category total with the forecast amount
+////						$running_total	+= floatval($forecast[$x]['totals'][$y]);		// update the running total with the forecast amount
+////						foreach ($accounts as $account) {
+////							if (!empty($forecast[$x]['adjustments'][$y][$account->id])) {
+////								if (empty($adjustments[$account->id])) {
+////									$adjustments[$account->id] = floatval($forecast[$x]['adjustments'][$y][$account->id]);
+////								} else {
+////									$adjustments[$account->id] += floatval($forecast[$x]['adjustments'][$y][$account->id]);
+////								}
+////							}
+////						}
+////					}
+//					// check the repeats
+//					if (isset($repeats[$x]['totals'][$y])) {
+//						// if repeats has a value then ... add the repeat amount into totals
+//						$type			+= 10;											// total type, includes a repeat amount
+//						$category_total	+= floatval($repeats[$x]['totals'][$y]);		// update the category total with the repeat amount
+//						$running_total	+= floatval($repeats[$x]['totals'][$y]);		// update the running total with the repeat amount
+//					}
+//					if ($categoryTotal !== NULL || $category_total !== NULL) {
+//						$totals[$y] = floatval($categoryTotal) + $category_total;		// set the category total
+//					} else {
+//						$totals[$y] = NULL;
+//					}
+//					$types[$y] = $type;													// set the amount type
+//					$output[$x]['interval_total'] += $category_total;					// update the interval total
+//				}
+//				// adjust the account totals for the repeats
+//				foreach ($accounts as $account) {
+//					if (!empty($repeats[$x]['adjustments'][$account->id])) {
+//						if (empty($adjustments[$account->id])) {
+//							$adjustments[$account->id] = floatval($repeats[$x]['adjustments'][$account->id]);
+//						} else {
+//							$adjustments[$account->id] += floatval($repeats[$x]['adjustments'][$account->id]);
+//						}
+//					}
+//				}
+//				$output[$x]['totals']		= $totals;
+//				$output[$x]['types']		= $types;
+//				$output[$x]['adjustments']	= $adjustments;
+//				if (empty($output[$x]['running_total'])) {
+//					$output[$x]['running_total'] = $running_total;
+//				} else {
+//					$output[$x]['running_total'] += $running_total;
+//				}
+//				$balance_forward = $output[$x]['running_total'];
+//			}
+//		}
 
-						// if interval amount is not set and the forecast has a value then ... use the forecasted amount
-						$interval['totals'][$y] = floatval($forecast[$x]['totals'][$y]);			// use the forcasted amount
-						$interval['types'][$y] = '1';												// flag this as a forecast total
-						$interval['interval_total'] += floatval($forecast[$x]['totals'][$y]);		// update the interval total
-						$running_total += floatval($forecast[$x]['totals'][$y]);					// update the running total
-//					} elseif (floatval($forecast[$x]['totals'][$y]) !== (float)0) {
-					} else {
-						// we are not using the forecasted amount so deduct it from the forecasted account balance adjustment
-						// need to set the adjustment amount to zero
-						if (!empty($forecast[$x]['adjustments'][$y])) {
-							foreach ($forecast[$x]['adjustments'][$y] as $bank_account_id => $bank_account_balance) {
-								unset($forecast[$x]['adjustments'][$y][$bank_account_id]);
-							}
-						}
-					}
-				}
+//		// get the current account balances
+//		$balances = $this->_balances($sd, $ed);
+//
+//		// now put the bank balances in for each interval
+//		foreach ($output as $x => $intervalx) {
+//			// find the latest balance for this interval
+//			foreach ($balances as $balance) {
+//				if (strtotime($balance->transaction_date) >= strtotime($intervalx['interval_beginning'])
+//						&& strtotime($balance->transaction_date) <= strtotime(substr($intervalx['interval_ending'],0,10))) {
+//					// if the transaction falls inside the interval then ....
+//					// .... get the latest dated account balance for the interval - earlier balances will be overwritten with the latest
+//					$output[$x]['balances'][$balance->bank_account_id] = $balance->bank_account_balance;	// save the unadjusted account balance
+//					$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $balance->bank_account_balance;
+//					$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $balance->transaction_date;
+//					$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 1;
+//					if (!empty($balance->reconciled_date)
+//							&&
+//						(empty($output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'])
+//								||
+//						strtotime($balance->reconciled_date) > strtotime($output[$x]['accounts'][$balance->bank_account_id]['reconciled_date']))) {
+//						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $balance->reconciled_date;
+//					} else {
+//						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $balance->reconciled_date;
+//					}
+//				} elseif (empty($output[$x]['accounts'][$balance->bank_account_id]['balance'])) {
+//					if ($x > 0) {
+//						// if the balance is not set then get from last interval
+//						$output[$x]['balances'][$balance->bank_account_id] = $output[$x-1]['balances'][$balance->bank_account_id];	// save the unadjusted account balance
+//						$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $output[$x-1]['accounts'][$balance->bank_account_id]['balance'];
+//						$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $output[$x-1]['accounts'][$balance->bank_account_id]['balance_date'];
+//						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $output[$x-1]['accounts'][$balance->bank_account_id]['reconciled_date'];
+//						$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 2;
+//					} else {
+//						// this is first interval, get the last available balance for this account
+//						$accountBalance = $this->getBankAccountBalance($sd, $balance->bank_account_id);
+//						$output[$x]['balances'][$balance->bank_account_id] = $accountBalance[1];	// save the unadjusted account balance
+//						$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $accountBalance[0];
+//						$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $accountBalance[1];
+//						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $accountBalance[2];
+//						$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 3;
+//					}
+//				}
+//			}
 
-				$interval['adjustments'] = $forecast[$x]['adjustments'];
-				if (empty($interval['running_total'])) {
-					$interval['running_total'] = $running_total;
-				} else {
-					$interval['running_total'] += $running_total;
-				}
-				$balance_forward = $interval['running_total'];
+//			// now adjust the bank accounts with the forecasted adjustments
+//			foreach ($output[$x]['accounts'] as $bank_account_id => $account) {
+//				// make sure we have a balance
+//				if (empty($account['balance'])) {
+//					if ($x > 0) {
+//						// if the balance is not set then get from last interval
+//						$output[$x]['balances'][$bank_account_id] = $output[$x-1]['balances'][$bank_account_id];	// save the unadjusted account balance
+//						$output[$x]['accounts'][$bank_account_id]['balance'] = $output[$x-1]['accounts'][$bank_account_id]['balance'];
+//						$output[$x]['accounts'][$bank_account_id]['balance_date'] = $output[$x-1]['accounts'][$bank_account_id]['balance_date'];
+//						$output[$x]['accounts'][$bank_account_id]['reconciled_date'] = $output[$x-1]['accounts'][$bank_account_id]['reconciled_date'];
+//						$output[$x]['accounts'][$bank_account_id]['xxxxx'] = 4;
+//					} else {
+//						$accountBalance = $this->getBankAccountBalance(date('Y-m-d', strtotime($intervalx['interval_beginning'])), $bank_account_id);
+//						$output[$x]['balances'][$bank_account_id] = $accountBalance[1];								// save the unadjusted account balance
+//						$output[$x]['accounts'][$bank_account_id]['balance_date'] = $accountBalance[0];
+//						$output[$x]['accounts'][$bank_account_id]['balance'] = $accountBalance[1];
+//						$output[$x]['accounts'][$bank_account_id]['reconciled_date'] = $accountBalance[2];
+//						$output[$x]['accounts'][$bank_account_id]['xxxxx'] = 5;
+//					}
+//				}
+//			}
+//		}
 
-				if (!empty($interval['adjustments'])) {
-					foreach ($interval['adjustments'] as $account) {
-						foreach ($account as $bank_account_id => $amount) {
-							if (empty($adjustments[$bank_account_id])) {
-								$adjustments[$bank_account_id] = $amount;
-							} else {
-								$adjustments[$bank_account_id] += $amount;
-							}
-						}
-					}
-					$interval['adjustments'] = $adjustments;
-				}
-			}
-		}
-*/
-		// get the current account balances
-		$balances = $this->_balances($sd, $ed);
-
-		// now put the bank balances in for each interval
-		foreach ($output as $x => $intervalx) {
-			// find the latest balance for this interval
-			foreach ($balances as $balance) {
-				if (strtotime($balance->transaction_date) >= strtotime($intervalx['interval_beginning'])
-						&& strtotime($balance->transaction_date) <= strtotime(substr($intervalx['interval_ending'],0,10))) {
-					// if the transaction falls inside the interval then ....
-					// .... get the latest dated account balance for the interval - earlier balances will be overwritten with the latest
-					$output[$x]['balances'][$balance->bank_account_id] = $balance->bank_account_balance;	// save the unadjusted account balance
-					$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $balance->bank_account_balance;
-					$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $balance->transaction_date;
-					$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 1;
-					if (!empty($balance->reconciled_date)
-							&&
-						(empty($output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'])
-								||
-						strtotime($balance->reconciled_date) > strtotime($output[$x]['accounts'][$balance->bank_account_id]['reconciled_date']))) {
-						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $balance->reconciled_date;
-					} else {
-						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $balance->reconciled_date;
-					}
-				} elseif (empty($output[$x]['accounts'][$balance->bank_account_id]['balance'])) {
-					if ($x > 0) {
-						// if the balance is not set then get from last interval
-						$output[$x]['balances'][$balance->bank_account_id] = $output[$x-1]['balances'][$balance->bank_account_id];	// save the unadjusted account balance
-						$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $output[$x-1]['accounts'][$balance->bank_account_id]['balance'];
-						$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $output[$x-1]['accounts'][$balance->bank_account_id]['balance_date'];
-						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $output[$x-1]['accounts'][$balance->bank_account_id]['reconciled_date'];
-						$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 2;
-					} else {
-						// this is first interval, get the last available balance for this account
-						$accountBalance = $this->getBankAccountBalance($sd, $balance->bank_account_id);
-						$output[$x]['balances'][$balance->bank_account_id] = $accountBalance[1];	// save the unadjusted account balance
-						$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $accountBalance[0];
-						$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $accountBalance[1];
-						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $accountBalance[2];
-						$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 3;
-					}
-				}
-			}
-
-			// now adjust the bank accounts with the forecasted adjustments
-			foreach ($output[$x]['accounts'] as $bank_account_id => $account) {
-				// make sure we have a balance
-				if (empty($account['balance'])) {
-					if ($x > 0) {
-						// if the balance is not set then get from last interval
-						$output[$x]['balances'][$bank_account_id] = $output[$x-1]['balances'][$bank_account_id];	// save the unadjusted account balance
-						$output[$x]['accounts'][$bank_account_id]['balance'] = $output[$x-1]['accounts'][$bank_account_id]['balance'];
-						$output[$x]['accounts'][$bank_account_id]['balance_date'] = $output[$x-1]['accounts'][$bank_account_id]['balance_date'];
-						$output[$x]['accounts'][$bank_account_id]['reconciled_date'] = $output[$x-1]['accounts'][$bank_account_id]['reconciled_date'];
-						$output[$x]['accounts'][$bank_account_id]['xxxxx'] = 4;
-					} else {
-						$accountBalance = $this->getBankAccountBalance(date('Y-m-d', strtotime($intervalx['interval_beginning'])), $bank_account_id);
-						$output[$x]['balances'][$bank_account_id] = $accountBalance[1];								// save the unadjusted account balance
-						$output[$x]['accounts'][$bank_account_id]['balance_date'] = $accountBalance[0];
-						$output[$x]['accounts'][$bank_account_id]['balance'] = $accountBalance[1];
-						$output[$x]['accounts'][$bank_account_id]['reconciled_date'] = $accountBalance[2];
-						$output[$x]['accounts'][$bank_account_id]['xxxxx'] = 5;
-					}
-				}
-/*
-				// only add forecast adjustment to current and future intervals
-				if (($now >= $sd && $now <= $ed) || $now < $ed) {
-					if (!empty($output[$x]['adjustments'][$bank_account_id])) {
-						// adjust the account balance
-						if (!empty($output[$x]['balances'][$bank_account_id])) {
-							$output[$x]['accounts'][$bank_account_id]['balance'] = $output[$x]['balances'][$bank_account_id] + $output[$x]['adjustments'][$bank_account_id];
-						} else {
-							$output[$x]['accounts'][$bank_account_id]['balance'] = $output[$x]['adjustments'][$bank_account_id];
-						}
-					}
-				}
-*/
-			}
-		}
-
-		// now put the bank balances in for each interval
 		$_output = array();
 		$y = 0;
 		foreach ($output as $x => $intervalx) {
-			$output[$x]['accounts'] = array_values(array_filter($output[$x]['accounts']));	// compact the accounts array
+//			$output[$x]['accounts'] = array_values(array_filter($output[$x]['accounts']));	// compact the accounts array
 			// now calculate the difference between actual and forecast
 			foreach ($forecast[$x]['totals'] as $category_id => $category_total) {
 				if (isset($category_total) || isset($output[$x]['totals'][$category_id])) {
@@ -463,38 +426,38 @@ class budget_controller Extends rest_controller {
 		$this->ajax->output();
 	}
 
-	private function _getBalanceForward($sd) {
-		// now calculate the balance brought forward
-		$balance = new transaction();
-		$balance->join('transaction_split', 'transaction_split.transaction_id = transaction.id AND transaction_split.is_deleted = 0', 'LEFT');
-		$balance->select("SUM(CASE WHEN transaction.type = 'CREDIT' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
-							" + SUM(CASE WHEN transaction.type = 'DSLIP' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
-							" - SUM(CASE WHEN transaction.type = 'DEBIT' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
-							" - SUM(CASE WHEN transaction.type = 'CHECK' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
-							" + SUM(CASE WHEN transaction_split.type = 'CREDIT' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
-							" + SUM(CASE WHEN transaction_split.type = 'DSLIP' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
-							" - SUM(CASE WHEN transaction_split.type = 'DEBIT' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
-							" - SUM(CASE WHEN transaction_split.type = 'CHECK' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
-							" AS balance_forward");
-		$balance->where('transaction.is_deleted', 0);
-		$balance->where("transaction.transaction_date < '" . $sd . "'");
-		$balance->row();
-
-		return $balance->balance_forward;
-	}
-
-	private function _balances($sd, $ed) {
-		$bank_account_balances = new transaction();
-		$bank_account_balances->select('transaction.bank_account_id, transaction.bank_account_balance, transaction.transaction_date, transaction.reconciled_date, bank_account.name');
-		$bank_account_balances->join('bank_account', 'bank_account.id = transaction.bank_account_id');
-		$bank_account_balances->where('transaction.transaction_date >= ', $sd);
-		$bank_account_balances->where('transaction.transaction_date < ', $ed);
-		$bank_account_balances->where('transaction.is_deleted', 0);
-		$bank_account_balances->orderBy('transaction.transaction_date', 'ASC');
-		$bank_account_balances->orderBy('transaction.id', 'ASC');
-		$bank_account_balances->result();
-		return $bank_account_balances;
-	}
+//	private function _getBalanceForward($sd) {
+//		// now calculate the balance brought forward
+//		$balance = new transaction();
+//		$balance->join('transaction_split', 'transaction_split.transaction_id = transaction.id AND transaction_split.is_deleted = 0', 'LEFT');
+//		$balance->select("SUM(CASE WHEN transaction.type = 'CREDIT' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
+//							" + SUM(CASE WHEN transaction.type = 'DSLIP' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
+//							" - SUM(CASE WHEN transaction.type = 'DEBIT' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
+//							" - SUM(CASE WHEN transaction.type = 'CHECK' AND transaction.category_id IS NOT NULL THEN transaction.amount ELSE 0 END) " .
+//							" + SUM(CASE WHEN transaction_split.type = 'CREDIT' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
+//							" + SUM(CASE WHEN transaction_split.type = 'DSLIP' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
+//							" - SUM(CASE WHEN transaction_split.type = 'DEBIT' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
+//							" - SUM(CASE WHEN transaction_split.type = 'CHECK' AND transaction.category_id IS NULL THEN transaction_split.amount ELSE 0 END) " .
+//							" AS balance_forward");
+//		$balance->where('transaction.is_deleted', 0);
+//		$balance->where("transaction.transaction_date < '" . $sd . "'");
+//		$balance->row();
+//
+//		return $balance->balance_forward;
+//	}
+//
+//	private function _balances($sd, $ed) {
+//		$bank_account_balances = new transaction();
+//		$bank_account_balances->select('transaction.bank_account_id, transaction.bank_account_balance, transaction.transaction_date, transaction.reconciled_date, bank_account.name');
+//		$bank_account_balances->join('bank_account', 'bank_account.id = transaction.bank_account_id');
+//		$bank_account_balances->where('transaction.transaction_date >= ', $sd);
+//		$bank_account_balances->where('transaction.transaction_date < ', $ed);
+//		$bank_account_balances->where('transaction.is_deleted', 0);
+//		$bank_account_balances->orderBy('transaction.transaction_date', 'ASC');
+//		$bank_account_balances->orderBy('transaction.id', 'ASC');
+//		$bank_account_balances->result();
+//		return $bank_account_balances;
+//	}
 
 	private function _getNextDate($myDateTimeISO, $addThese, $unit) {
 		$myDateTime = new DateTime($myDateTimeISO);
@@ -539,12 +502,55 @@ class budget_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
+		$repeats = FALSE;
+		$forecasts = FALSE;
 		$forecasted = array();
 		$all = $this->input->get('all');
 		$forecast = $this->input->get('forecast');
-		if ($forecast >= 1) {
-			// get any forecasted transactions
-			$forecasts = $this->loadForecast(array('id' => $category_id), $sd, $ed, $all);
+		switch ($forecast) {
+			case 1:
+			case 2:
+				// get any forecasted transactions
+				$forecasts = $this->loadForecast(array('id' => $category_id), $sd, $ed, $all);
+				break;
+			case 11:
+			case 12:
+				// get any forecasted transactions
+				$forecasts = $this->loadForecast(array('id' => $category_id), $sd, $ed, $all);
+			case 10:
+				// get any repeated transactions
+				$repeats = $this->loadRepeats(array('id' => $category_id), $sd, $ed, $all);
+//print $repeats;die;
+				break;
+			case 0:
+				break;
+		}
+		if ($repeats) {
+			// now format the forecast
+			foreach ($repeats as $rp) {
+				foreach($rp->next_due_dates as $next_due_date) {
+					$data = array();
+					$data['id']					= $rp->id;
+					$data['transaction_date']	= $next_due_date;
+					$data['type']				= (!empty($rp->split_type)) ? $rp->split_type: $rp->type;
+					$data['description']		= (!empty($rp->split_description)) ? $rp->split_description: $rp->description;
+					$data['is_repeat']			= 1;
+					$data['is_uploaded']		= 0;
+					$data['reconciled_date']	= NULL;
+					$data['notes']				= $rp->notes;
+					if (empty($rp->split_amount)) {
+						$data['amount']			= ($rp->type == 'CREDIT' || $rp->type == 'DSLIP') ? $rp->amount: -$rp->amount;
+					} else {
+						$data['amount']			= ($rp->spli_type == 'CREDIT' || $rp->split_type == 'DSLIP') ? $rp->split_amount: -$rp->split_amount;
+					}
+					$data['accountName']		= $rp->bank_account->name;
+					$data['bankName']			= $rp->bank_account->bank->name;
+					$forecasted[] = $data;
+				}
+			}
+//print_r($forecasted);die;
+		}
+		if ($forecasts) {
 			// now format the forecast
 			foreach ($forecasts as $fc) {
 				foreach($fc->next_due_dates as $next_due_date) {
@@ -565,7 +571,7 @@ class budget_controller Extends rest_controller {
 			}
 		}
 
-		if ($forecast == 1) {
+		if ($forecast == 1 || $forecast == 11) {
 			$this->ajax->setData('result', $forecasted);
 		} else {
 			// get actual transactions
@@ -592,7 +598,7 @@ class budget_controller Extends rest_controller {
 							AND T.`transaction_date` <=  '" . $ed . "')
 				ORDER BY transaction_date ASC, id ASC";
 			$transactions->queryAll($sql);
-			if ($transactions->numRows()) {
+//			if ($transactions->numRows()) {
 				$output = array();
 				$f = 0;
 				// merge forecasted and actual transactions in date order
@@ -602,7 +608,7 @@ class budget_controller Extends rest_controller {
 						$output[] = $transaction->toArray();
 					} else {
 						$output[] = $forecasted[$f];
-						$output[] = $transaction->toArray();
+//						$output[] = $transaction->toArray();
 						$f++;
 					}
 				}
@@ -610,9 +616,9 @@ class budget_controller Extends rest_controller {
 					$output[] = $forecasted[$f];
 				}
 				$this->ajax->setData('result', $output);
-			} else {
-				$this->ajax->addError(new AjaxError("Error - No transactions found"));
-			}
+//			} else {
+//				$this->ajax->addError(new AjaxError("Error - No transactions found"));
+//			}
 		}
 		$this->ajax->output();
 	}
@@ -624,130 +630,6 @@ class budget_controller Extends rest_controller {
 		$xx = intval($xx / $this->budget_interval);
 		return ($xx * $this->budget_interval);
 	}
-
-//	public function _loadForecast($categories, $sd, $ed, $all = true) {
-//		$forecast = new forecast();
-//		$forecast->whereNotDeleted();
-//		$forecast->groupStart();
-//		$forecast->orWhere('last_due_date IS NULL ', NULL);
-//		$forecast->orWhere('last_due_date <= ', $ed);
-//		$forecast->orWhere('last_due_date >= ', $sd);
-//		$forecast->groupEnd();
-////		$forecast->where('first_due_date >= ', $sd);
-//		$forecast->where('first_due_date <= ', $ed);
-//		if (count($categories) == 1) {
-//			$forecast->where('category_id', $categories['id']);
-//		}
-//		$forecast->result();
-//
-//		if ($forecast->numRows()) {
-//			// set the next due date(s) for the forecasted expenses
-//			foreach ($forecast as $fc) {
-//				isset($fc->bank_account->bank);
-//				$next_due_dates = array();
-//
-//				switch ($fc->every_unit) {
-//					case 'Days':
-//					case 'Weeks':
-//					case 'Months':
-//					case 'Years':
-//						$dd = array(strtotime($fc->first_due_date));
-//						$fdd = array($fc->first_due_date);
-//						break;
-//					case 'semi-monthly':
-//$first = 15;						// should come from DB record - in forecast entry make this a dropdown with 1 though 15
-//$second = 'last day of month';		// should come from DB record - in forecast entry make this a dropdown with 16 though (28-31) based on $first
-//						$fdd = array(date('Y-m') . '-' . sprintf("%02d", $first), date("Y-m-t"));
-//						$dd = array(strtotime($fdd[0]), strtotime($fdd[1]));
-//						break;
-//				}
-//				$x = 0;
-//				while ($this->_dateDiff($dd[$x], strtotime($ed)) < 0 &&												// while due_date < end_date
-//						(!$fc->last_due_date || $this->_dateDiff($dd[$x], strtotime($fc->last_due_date)) <= 0)) {	// ...AND (last_due_date is not set OR due_date <= last_due_date)
-//					if ($this->_dateDiff($dd[$x], strtotime($fc->first_due_date)) >= 0			// if due_date >= first_due_date
-//							&&
-//						$this->_dateDiff($dd[$x], strtotime($sd)) >= 0) {						// and due_date >= start date
-//						if ($all || $dd[$x] > time()) {											// and due_date is gt now
-//							$next_due_dates[] = date('Y-m-d', $dd[$x]);							// ... then save this due date
-//						}
-//					}
-//					if (empty($dd[++$x])) {
-//						for ($y = 0; $y < count($fdd); $y++) {
-//							$dd[$y] = strtotime($fdd[$y] . " +" . $fc->every . " " . $fc->every_unit);	// set next due date
-//							$fdd[$y] = date('Y-m-d', $dd[$y]);
-//						}
-//						$x = 0;
-//					}
-//				}
-//				$fc->next_due_dates = $next_due_dates;
-//			}
-//		}
-//		return $forecast;
-//	}
-
-//	// compare two unix timestamps
-//	private function _dateDiff($d1, $d2) {
-//		return $d1 - $d2;
-//	}
-
-//	private function _getForecastByCategory($categories, $forecast, $start_date) {
-//		$sd = strtotime($start_date);																		// start date of forecast interval
-//		$ed = strtotime($start_date . " +" . $this->budget_interval . " " . $this->budget_interval_unit);	// end date of forecast interval
-//		$data = array('totals' => array(), 'adjustments' => array());
-//		// for each category
-//		foreach ($categories as $x => $category) {
-//			$data['totals'][$category->id] = NULL;
-//			// now for each forecast
-//			foreach ($forecast as $fc) {
-//				// if this forecast is for this category
-//				if ($fc->category_id == $category->id) {
-//					// if this forecast has due dates
-//					if (!empty($fc->next_due_dates)) {
-//						// check to see if any of the forecasted due date fall in the interval dates
-//						foreach ($fc->next_due_dates as $next_due_date) {
-//							$fd = strtotime($next_due_date);
-//							if ($fd >= $sd && $fd < $ed) {					// while next due date still inside forecast interval
-//								// found a forecated due date that falls in this interval
-//								switch ($fc->type) {
-//									case 'DSLIP':
-//									case 'CREDIT':
-//										$data['totals'][$category->id] += $fc->amount;
-//										// update the bank totals here and return as part of $data
-////										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
-////											$data['adjustments'][$category->id][$fc->bank_account_id] = $fc->amount;
-////										} else {
-////											$data['adjustments'][$category->id][$fc->bank_account_id] += $fc->amount;
-////										}
-//										if (empty($data['interval_total'])) {
-//											$data['interval_total'] = $fc->amount;
-//										} else {
-//											$data['interval_total'] += $fc->amount;
-//										}
-//										break;
-//									case 'DEBIT':
-//									case 'CHECK':
-//										$data['totals'][$category->id] -= $fc->amount;
-//										// update the bank totals here and return as part of $data
-////										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
-////											$data['adjustments'][$category->id][$fc->bank_account_id] = -$fc->amount;
-////										} else {
-////											$data['adjustments'][$category->id][$fc->bank_account_id] -= $fc->amount;
-////										}
-//										if (empty($data['interval_total'])) {
-//											$data['interval_total'] = $fc->amount;
-//										} else {
-//											$data['interval_total'] -= $fc->amount;
-//										}
-//										break;
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return $data;
-//	}
 
 }
 

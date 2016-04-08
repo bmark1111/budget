@@ -82,6 +82,7 @@ class transaction_controller Extends rest_controller {
 
 		$transaction = new transaction($id);
 		isset($transaction->splits);
+		isset($transaction->repeat);
 		
 		$this->ajax->setData('result', $transaction);
 
@@ -128,7 +129,7 @@ class transaction_controller Extends rest_controller {
 		$amount				= (!empty($transaction->amount)) ? $transaction->amount: FALSE;
 		$type				= (!empty($transaction->type)) ? $transaction->type: FALSE;
 		if ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1) {
-			// can't edit these fields if uploaded or reconciled
+			// can't edit these fields if uploaded or reconciled, only if admin (TODO:)
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->type				= $_POST['type'];
 			$transaction->amount			= $_POST['amount'];

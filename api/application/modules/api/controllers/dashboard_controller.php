@@ -7,21 +7,19 @@ require_once ('rest_controller.php');
 
 class dashboard_controller Extends rest_controller {
 
-//	protected $debug = TRUE;
+	protected $debug = TRUE;
 
 	public function __construct() {
 		parent::__construct();
 	}
 
 	public function index() {
-//		$this->ajax->set_header("Forbidden", '403');
 		$this->ajax->addError(new AjaxError("403 - Forbidden (dashboard/index)"));
 		$this->ajax->output();
 	}
 
 	public function ytdTotals() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (dashboard/ytdTotals)"));
 			$this->ajax->output();
 		}
@@ -81,7 +79,6 @@ class dashboard_controller Extends rest_controller {
 
 	public function these() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("Error: 403 Forbidden - (dashboard/these)"));
 			$this->ajax->output();
 		}

@@ -2,17 +2,19 @@
 
 app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2', 'Categories', function($q, $scope, $rootScope, RestData2, Categories) {
 
-	$scope.dataErrorMsg = [];
+	var self = this;
+
+	self.dataErrorMsg = [];
 	var now = new Date();
-	$scope.ytdYear = now.getFullYear();
-	$scope.ytdTotals = [];
-	$scope.transactions = false;
-	$scope.transactions_seq = false;
+	self.ytdYear = now.getFullYear();
+	self.ytdTotals = [];
+	self.transactions = false;
+	self.transactions_seq = false;
 
 	var getYTDTotals = function() {
 		var deferred = $q.defer();
 		var result = RestData2().getYTDTotals({
-				year: $scope.ytdYear
+				year: self.ytdYear
 			},
 			function(response) {
 				deferred.resolve(result);
@@ -37,10 +39,10 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 		}
 		// load the YTD Totals
 		if (!!response[1].success) {
-			$scope.dataErrorMsg = [];
-			$scope.ytdTotals = [];
-			$scope.transactions = false;
-			$scope.transactions_seq = false;
+			self.dataErrorMsg = [];
+			self.ytdTotals = [];
+			self.transactions = false;
+			self.transactions_seq = false;
 			angular.forEach($rootScope.categories,
 				function(category, key) {
 					var category = {
@@ -49,55 +51,56 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 						total:		response[1].data.result['total_' + category.id],
 						forecast:	response[1].data.forecast[category.id]
 					};
-					$scope.ytdTotals.push(category);
+					self.ytdTotals.push(category);
 				});
 		} else {
 			if (response.errors) {
 				angular.forEach(response.errors,
 					function(error) {
-						$scope.dataErrorMsg.push(error.error);
+						self.dataErrorMsg.push(error.error);
 					})
 			} else {
-				$scope.dataErrorMsg[0] = response;
+				self.dataErrorMsg[0] = response;
 			}
 		}
 	});
 
 	$scope.getYTDTransactions = function(category_id) {
-		$scope.dataErrorMsg = [];
+		self.dataErrorMsg = [];
 
 		RestData2().getYTDTransactions({
-				year:			$scope.ytdYear,
+				year:			self.ytdYear,
 				category_id:	category_id
 			},
 			function(response) {
 				if (!!response.success) {
-					$scope.transactions = response.data.result;
-					$scope.transactions_seq = Object.keys(response.data.result);
+					self.transactions = response.data.result;
+					self.transactions_seq = Object.keys(response.data.result);
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,
 							function(error) {
-								$scope.dataErrorMsg.push(error.error);
+								self.dataErrorMsg.push(error.error);
 							})
 					} else {
-						$scope.dataErrorMsg[0] = response;
+						self.dataErrorMsg[0] = response;
 					}
 				}
 			});
 	};
 
 	$scope.getYTD = function() {
-		$scope.dataErrorMsg = [];
+		self.dataErrorMsg = [];
+console.log(self.ytdYear)
 		RestData2().getYTDTotals({
-				year: $scope.ytdYear
+				year: self.ytdYear
 			},
 			function (response) {
 			// load the YTD Totals
 			if (!!response.success) {
-				$scope.ytdTotals = [];
-				$scope.transactions = false;
-				$scope.transactions_seq = false;
+				self.ytdTotals = [];
+				self.transactions = false;
+				self.transactions_seq = false;
 				angular.forEach($rootScope.categories,
 					function(category, key) {
 						var category = {
@@ -106,16 +109,16 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 							total:		response.data.result['total_' + category.id],
 							forecast:	response.data.forecast[category.id]
 						};
-						$scope.ytdTotals.push(category);
+						self.ytdTotals.push(category);
 					});
 			} else {
 				if (response.errors) {
 					angular.forEach(response.errors,
 						function(error) {
-							$scope.dataErrorMsg.push(error.error);
+							self.dataErrorMsg.push(error.error);
 						})
 				} else {
-					$scope.dataErrorMsg[0] = response;
+					self.dataErrorMsg[0] = response;
 				}
 			}
 		});

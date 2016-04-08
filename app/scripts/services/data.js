@@ -9,11 +9,15 @@ app.factory('RestData2', function ($resource, $localStorage, Config) {
 			}
 
 		return $resource(Config.get('api_url'), {}, {
+			// Admin Functions
 				getAllUsers:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'user', action: 'load', param: null} },
 				deleteUser:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'user', action: 'delete', param: null} },
 				editUser:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'user', action: 'edit', param: null} },
 				saveUser:					{ method: 'POST', headers: headers, params: {path: 'data', object: 'user', action: 'save', param: null} },
+				
+				runUtility:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'utility', action: null, param: null} },
 
+			// user Functions
 				getTransactions:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'budget', action: 'load', param: null} },
 				getTheseTransactions:		{ method: 'GET', headers: headers, params: {path: 'data', object: 'budget', action: 'these', param: null} },
 

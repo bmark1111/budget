@@ -108,12 +108,16 @@ span.overbudget {
 	color:red !important;
 }
 
-a.includes_forecast_amount {
+.repeat_amount {
 	color:#5882FA !important;
 }
 .forecast_amount {
 	color:#04B431 !important;
 }
+.actual_and_forecast_amount {
+	color:#088A08 !important;
+}
+
 div.ns-popover-custom-theme {
 /*	max-width:80%;*/
 	padding:5px;
@@ -138,3 +142,4 @@ table.dashboard tbody a {
 .datepicker {
 	z-index:1051 !important;
 }
+

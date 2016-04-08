@@ -1,0 +1,52 @@
+<div class="container-fluid">
+	<h1 class="page-header">Utilities </h1>
+	<div ng-if="user.error">{{ user.error }}</div>
+	<div class="form-wrap">
+		<div class="row">
+			<div class="col-md-2">
+				<ul>
+					<li ng-class="{'active': nav_active == 'balance'}" ng-click="runUtility('balance')"><a href="">Balance Reset</a></li>
+					<li ng-class="{'active': nav_active == 'assign'}" ng-click="runUtility('assign')"><a href="">Vendor Assign</a></li>
+					<li ng-class="{'active': nav_active == 'migrate'}" ng-click="runUtility('migrate')"><a href="">Migrate DB</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="table-responsive" ng-if="!user.dataErrorMsg[0] && !user.error">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Login</th>
+						<th>Active</th>
+						<th>Join Date</th>
+						<th>Email</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="idx in user.users_seq">
+						<td><span class="pull-left">{{ user.users[idx].firstname }} {{ user.users[idx].lastname }}</span></td>
+						<td><span class="pull-left">{{ user.users[idx].login }}</span></td>
+						<td><span class="pull-left">{{ user.users[idx].active }}</span></td>
+						<td><span class="pull-right">{{ user.users[idx].joindate|toISOString|date:'EEE MMM dd, yyyy' }}</span></td>
+						<td><span class="pull-left">{{ user.users[idx].email }}</span></td>
+						<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
+							<span class="glyphicon glyphicon-pencil" ng-click="editUser(user.users[idx].id)" style="cursor:pointer;" title="Edit User ?"></span>
+							<span class="glyphicon glyphicon-trash" ng-click="deleteUser(user.users[idx].id)" style="cursor:pointer;" title="Delete User ?"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div ng-if="recCount > itemsPerPage">
+				<div class="col-sm-12">
+					<pagination boundary-links="true" max-size="maxSize" total-items="recCount" items-per-page="itemsPerPage" ng-model="user.search.currentPage"
+						previous-text="&lsaquo;"  next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged()"></pagination>
+					<span style="vertical-align:middle;padding-left:40px;">Total records: {{recCount | number}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ng-if="user.dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in user.dataErrorMsg">{{ error }}</p>
+	</div>
+</div>

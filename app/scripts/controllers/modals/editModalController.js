@@ -59,6 +59,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		if (!!response[2].success) {
 			if (response[2].data.result) {
 				$scope.transaction = response[2].data.result;
+console.log($scope.transaction)
 				var dt = $scope.transaction.transaction_date.split('-');
 				$scope.transaction.transaction_date = new Date(dt[0], --dt[1], dt[2]);
 			}

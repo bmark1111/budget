@@ -75,7 +75,7 @@ $route['data/bank/accounts']					= "api/bank/accounts";				// GET - get bank acc
 $route['data/bank/delete']						= "api/bank/delete";				// GET - delete bank
 $route['data/bank/edit']						= "api/bank/edit";					// GET - edit bank
 $route['data/bank/save']						= "api/bank/save";					// POST - save bank
-$route['data/rest/reconcileTransactions']		= "api/rest/reconcileTransactions";	// POST - reconcile transactions
+//$route['data/rest/reconcileTransactions']		= "api/rest/reconcileTransactions";	// POST - reconcile transactions
 
 $route['data/category/load']					= "api/category/load";				// GET - get all categories
 $route['data/category/delete']					= "api/category/delete";			// GET - delete category
@@ -93,6 +93,8 @@ $route['data/user/load']						= "api/admin/user/load";			// GET - load all users
 $route['data/user/delete']						= "api/admin/user/delete";			// GET - delete user
 $route['data/user/edit']						= "api/admin/user/edit";			// GET - edit user
 $route['data/user/save']						= "api/admin/user/save";			// POST - save user
+
+$route['data/utility']							= "api/admin/util";					// GET - run utility
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

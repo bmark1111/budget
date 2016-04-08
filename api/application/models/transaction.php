@@ -9,7 +9,8 @@ class transaction extends Nagilum {
 	public $table = 'transaction';
 	
 	public $hasOne = array(	'category' => array('class' => 'category', 'joinField' => 'category_id'),
-							'bank_account' => array('class' => 'bank_account', 'joinField' => 'bank_account_id')
+							'bank_account' => array('class' => 'bank_account', 'joinField' => 'bank_account_id'),
+							'repeat' => array('class' => 'transaction_repeat', 'joinField' => 'transaction_repeat_id')
 						);
 
 	public $hasMany = array('splits' => array('class' => 'transaction_split', 'joinField' => 'transaction_id')
