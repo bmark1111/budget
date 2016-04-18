@@ -26,10 +26,17 @@ app.factory('RestData2', function ($resource, $localStorage, Config) {
 				getYTDTotals:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'ytdTotals', param: null} },
 				getYTDTransactions:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'these', param: null} },
 
+				liveSearch:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'livesearch', action: null, param: null} },
+
 				getAllTransactions:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'transaction', action: 'loadAll', param: null} },
 				deleteTransaction:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'transaction', action: 'delete', param: null} },
 				editTransaction:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'transaction', action: 'edit', param: null} },
 				saveTransaction:			{ method: 'POST', headers: headers, params: {path: 'data', object: 'transaction', action: 'save', param: null} },
+
+				getAllVendors:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'vendor', action: 'get', param: null} },
+				deleteVendor:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'vendor', action: 'delete', param: null} },
+				editVendor:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'vendor', action: 'edit', param: null} },
+				saveVendor:					{ method: 'POST', headers: headers, params: {path: 'data', object: 'vendor', action: 'save', param: null} },
 
 				getAllForecasts:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'forecast', action: 'loadAll', param: null} },
 				deleteForecast:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'forecast', action: 'delete', param: null} },

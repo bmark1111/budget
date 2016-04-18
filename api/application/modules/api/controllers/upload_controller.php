@@ -150,6 +150,7 @@ class upload_controller Extends rest_controller {
 		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
 		$this->form_validation->set_rules('description', 'Description', 'required');
 		$this->form_validation->set_rules('type', 'Type', 'required');
+		$this->form_validation->set_rules('vendor_id', 'Vendor', 'required|interger');
 		$this->form_validation->set_rules('category_id', 'Category', 'required|interger');
 		$this->form_validation->set_rules('amount', 'Amount', 'required');
 		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|interger');
@@ -171,6 +172,7 @@ class upload_controller Extends rest_controller {
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->description		= $_POST['description'];
 			$transaction->type				= $_POST['type'];
+			$transaction->vendor_id			= $_POST['vendor_id'];
 			$transaction->category_id		= $_POST['category_id'];
 			$transaction->amount			= $_POST['amount'];
 			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;

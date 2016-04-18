@@ -35,26 +35,84 @@ class util_controller Extends EP_Controller {
 			$this->ajax->output();
 		}
 
+		$transactions = new transaction();
+		$transactions->groupStart();
+		$transactions->orLike('description', 'online transfer ', 'right');
+		$transactions->orLike('description', 'interest payment', 'right');
+		$transactions->orLike('description', 'service fee');
+		$transactions->orLike('description', 'INSUFFICIENT FUNDS FEE', 'right');
+		$transactions->orLike('description', 'Opening Deposit');
+		$transactions->groupEnd();
+		$transactions->result();
+		foreach ($transactions as $transaction) {
+			$transaction->vendor_id = 258;		// Chase Bank
+			$transaction->save();
+		}
+
+		$transactions = new transaction();
+		$transactions->like('description', 'online transfer %9570', 'right', FALSE);
+		$transactions->result();
+		foreach ($transactions as $transaction) {
+			$transaction->vendor_id = 44;		// Merrielle Markham
+			$transaction->save();
+		}
+
 		$vendors = new vendor();
 		$vendors->result();
 		foreach ($vendors as $vendor) {
-			$like = str_replace(' ', '%', $vendor->name);
+			$like = str_replace(' ', '%', str_replace('-', '%', $vendor->name));
+			$like .= ($vendor->phone_area_code) ? '%' . $vendor->phone_area_code: '';
+			$like .= ($vendor->phone_prefix) ? '%' . $vendor->phone_prefix: '';
+			$like .= ($vendor->phone_number) ? '%' . $vendor->phone_number: '';
+			$like .= ($vendor->street) ? '%' . $vendor->street: '';
+			$like .= ($vendor->city) ? '%' . $vendor->city: '';
+			$like .= ($vendor->state) ? '%' . $vendor->state: '';
 			$transactions = new transaction();
 			$transactions->like('description', $like, 'both', FALSE);
 			$transactions->result();
-echo $transactions->lastQuery()."\n";
-print $transactions;
-die;
-			$info = array();
 			foreach ($transactions as $transaction) {
 				if (!$transaction->vendor_id || $transaction->vendor_id == 0) {
-					$info[] = array();
+					$transaction->vendor_id = $vendor->id;
+					$transaction->save();
 				}
 			}
-			$this->ajax->setData();
-//			$sql = "UPDATE transaction SET `vendor_id` = " . $vendor->id . " WHERE `description` LIKE '%" . str_replace("'", "\'", $like) . "%'";
-//			$vendor->queryAll($sql);
-//echo $sql."\n";
+		}
+
+		foreach ($vendors as $vendor) {
+			$like = str_replace(' ', '%', $vendor->name);
+			$transactions = new transaction();
+			$transactions->where('vendor_id', 0);
+			$transactions->groupStart();
+			$transactions->orLike('description', $like);
+			$transactions->orLike('notes', $like);
+			$transactions->groupEnd();
+			$transactions->result();
+			foreach ($transactions as $transaction) {
+				if (!$transaction->vendor_id || $transaction->vendor_id == 0) {
+					$transaction->vendor_id = $vendor->id;
+					$transaction->save();
+				}
+			}
+		}
+
+		foreach ($vendors as $vendor) {
+			$like = str_replace(' ', '%', str_replace('-', '%', $vendor->name));
+			$transactions = new transaction();
+			$transactions->where('vendor_id', 0);
+			$transactions->groupStart();
+			$transactions->orLike('description', $like, 'both', FALSE);
+			$transactions->orLike('notes', $like, 'both', FALSE);
+			$transactions->groupEnd();
+			$transactions->result();
+//echo $transactions->lastQuery()."\n";
+//print $transactions;
+//die;
+			foreach ($transactions as $transaction) {
+				if (!$transaction->vendor_id || $transaction->vendor_id == 0) {
+					$transaction->vendor_id = $vendor->id;
+					$transaction->save();
+				}
+			}
 		}
 		$this->ajax->output();
 	}

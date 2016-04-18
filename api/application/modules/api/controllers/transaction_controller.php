@@ -59,6 +59,7 @@ class transaction_controller Extends rest_controller {
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
 				isset($transaction->bank_account);
+				isset($transaction->vendor);
 			}
 			$this->ajax->setData('result', $transactions);
 		} else {
@@ -83,6 +84,7 @@ class transaction_controller Extends rest_controller {
 		$transaction = new transaction($id);
 		isset($transaction->splits);
 		isset($transaction->repeat);
+		isset($transaction->vendor);
 		
 		$this->ajax->setData('result', $transaction);
 
@@ -105,6 +107,7 @@ class transaction_controller Extends rest_controller {
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
 		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
 		$this->form_validation->set_rules('category_id', 'Category', 'callback_isValidCategory');
+		$this->form_validation->set_rules('vendor_id', 'Vendor', 'callback_isValidVendor');
 		$this->form_validation->set_rules('amount', 'Amount', 'callback_isValidAmount');
 
 		// validate split data
@@ -114,6 +117,7 @@ class transaction_controller Extends rest_controller {
 					$this->form_validation->set_rules('splits[' . $idx . '][amount]', 'Split Amount', 'required');
 					$this->form_validation->set_rules('splits[' . $idx . '][type]', 'Split Type', 'required|alpha');
 					$this->form_validation->set_rules('splits[' . $idx . '][category_id]', 'Split Category', 'required|integer');
+					$this->form_validation->set_rules('splits[' . $idx . '][vendor_id]', 'Split Vendor', 'required|integer');
 				}
 			}
 		}
@@ -134,11 +138,13 @@ class transaction_controller Extends rest_controller {
 			$transaction->type				= $_POST['type'];
 			$transaction->amount			= $_POST['amount'];
 			$transaction->bank_account_id	= $_POST['bank_account_id'];
+			$transaction->vendor_id			= $_POST['vendor_id'];
 			$transaction->description		= $_POST['description'];
 			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
 		} elseif ($transaction->is_reconciled != 1 && $transaction->is_uploaded == 1) {
 			// if transaction is not reconciled but uploaded allow account id to be changed
 			$transaction->bank_account_id	= $_POST['bank_account_id'];
+			$transaction->vendor_id			= $_POST['vendor_id'];
 		}
 
 		$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: '';
@@ -199,6 +205,21 @@ class transaction_controller Extends rest_controller {
 		// if no splits then category is required otherwise MUST be NULL (will be ignored in Save)
 		if (empty($_POST['splits']) && empty($_POST['category_id'])) {
 			$this->form_validation->set_message('isValidCategory', 'The Category Field is Required');
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * Checks if splits are entered, if not main vendor_id is a required field
+	 */
+	public function isValidVendor() {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+
+		// if no splits then vendor_id is required otherwise MUST be NULL (will be ignored in Save)
+		if (empty($_POST['splits']) && empty($_POST['vendor_id'])) {
+			$this->form_validation->set_message('isValidVendor', 'The Vendor Field is Required');
 			return FALSE;
 		}
 		return TRUE;
