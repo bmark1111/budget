@@ -102,7 +102,7 @@ class rest_controller Extends EP_Controller {
 		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
-
+//echo $transactions->lastQuery();die;
 		// now calculate all due dates for given period
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
@@ -113,7 +113,7 @@ class rest_controller Extends EP_Controller {
 					$next_due_date = $transaction->first_due_date;
 				}
 				$every = 0;
-				while (strtotime($next_due_date) < strtotime($ed)) {
+				while (strtotime($next_due_date) <= strtotime($ed)) {
 					switch ($transaction->every_unit) {
 						case 'Day':
 							$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
@@ -134,14 +134,28 @@ class rest_controller Extends EP_Controller {
 							throw new Exception('Invalid transaction->repeat->every_unit');
 							break;
 					}
-					if (strtotime($next_due_date) >= strtotime($sd) && strtotime($next_due_date) <= strtotime($ed)) {
-						if ($all === 0 || strtotime($next_due_date) >= strtotime($transaction->next_due_date)) {
+//if ($transaction->id == 12 && $sd == '2016-04-29') {
+//	echo "next_due_date = $next_due_date\n";
+//	echo "last_due_date = $last_due_date\n";
+//	echo "sd = $sd\n";
+//	echo "ed = $ed\n";
+//}
+					$ndd = strtotime($next_due_date);
+					if ($ndd >= strtotime($sd) && $ndd <= strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
+						if ($all === 0 || $ndd >= strtotime($transaction->next_due_date)) {
+//if ($transaction->id == 12 && $sd == '2016-04-29') {
+//	echo "GOT IT\n";
+//}
 							$next_due_dates[] = $next_due_date;
 						}
 					}
 					$every = $transaction->every;
 				}
 			}
+//if ($transaction->id == 12 && $sd == '2016-04-29') {
+//	echo "sd = $sd\n";
+//	die('XXXXXXXXXXXXX');
+//}
 			$transaction->next_due_dates = $next_due_dates;
 		}
 		return $transactions;

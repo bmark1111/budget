@@ -1,7 +1,9 @@
 ALTER TABLE `transaction` ADD `transaction_repeat_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `transaction_date`;
-ALTER TABLE `transaction` ADD `vendor_id` INT(11) UNSIGNED NOT NULL AFTER `transaction_repeat_id`;
+ALTER TABLE `transaction` ADD `vendor_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `transaction_repeat_id`;
 ALTER TABLE `transaction` ADD INDEX(`vendor_id`);
 ALTER TABLE `transaction` CHANGE `bank_account_id` `bank_account_id` INT(11) UNSIGNED NULL;
+
+ALTER TABLE `transaction_split` ADD `vendor_id` INT(11) UNSIGNED NOT NULL AFTER `id`;
 
 UPDATE `transaction` SET transaction_repeat_id = 1 WHERE description LIKE '%NETFLIX.COM%' AND category_id = 9 AND TYPE = 'DEBIT';
 

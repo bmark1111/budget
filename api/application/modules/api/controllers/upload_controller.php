@@ -126,6 +126,7 @@ class upload_controller Extends rest_controller {
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
 				isset($transaction->bank_account->bank);
+				isset($transaction->vendor);
 			}
 
 			$this->ajax->setData('transactions', $transactions);

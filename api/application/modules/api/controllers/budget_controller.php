@@ -520,7 +520,6 @@ class budget_controller Extends rest_controller {
 			case 10:
 				// get any repeated transactions
 				$repeats = $this->loadRepeats(array('id' => $category_id), $sd, $ed, $all);
-//print $repeats;die;
 				break;
 			case 0:
 				break;

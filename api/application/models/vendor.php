@@ -23,5 +23,21 @@ class vendor extends Nagilum {
 		parent::__construct($id);
 	}
 
+	public function postResultHook() {
+		parent::postResultHook();
+
+		$displayName = array($this->name);
+		if ($this->street) {
+			$displayName[] = $this->street;
+		}
+		if ($this->city) {
+			$displayName[] = ($this->state) ? $this->city . ',': $this->city;
+		}
+		if ($this->state) {
+			$displayName[] = $this->state;
+		}
+		$this->display_name = implode(' ', $displayName);
+	}
+
 }
 //EOF

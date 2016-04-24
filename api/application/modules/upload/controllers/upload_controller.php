@@ -28,7 +28,7 @@ class upload_controller extends EP_Controller {
 					if (count($params) == 5) {
 						$transaction = new transaction_upload();
 						$transaction->upload_datetime	= $upload_datetime;
-// bug in downloaded/imported file from chase
+// bug in downloaded/imported file from chase bank
 if ($params[0] == 'DEBIT' && floatval($params[3]) >= 0) {
 	$params[0] = 'CREDIT';
 } elseif ($params[0] == 'CREDIT' && floatval($params[3]) < 0) {

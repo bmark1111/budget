@@ -28,24 +28,9 @@
 		<div class="row">
 			<div class="col-md-4">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
-				<div ng-controller="LiveSearchController">
-						<label for="name">Payee/Payer</label>
-						<input type="text" ng-model="liveSearchId" />
-						<input type="text" name="name" class="form-control" ng-model="liveSearchName"
-								ng-keyup="livesearch($event)"
-								ng-blur="livesearchBlur($event)"
-								ng-focus="livesearchFocus($event)" />
-						<div ng-show="livesearch_results" style="border:1px solid black;font-size:11px;background-color:#ADD8E6;">
-							<div ng-repeat="result in livesearch_results">
-								<div ng-mousedown="livesearchSelect(result)">
-									<a href="">
-										{{ result.name }}
-										<span ng-show="result.city" style="font-size:8px;">{{ result.city }}</span>
-										<span ng-show="result.state" style="font-size:8px;">{{ result.state }}</span>
-									</a>
-								</div>
-							</div>
-						</div>
+					<div id="liveSearch">
+						<label for="name">Payee/Payer</label>{{ display_name }}
+						<div live-search="vendor_id" display_name="{{ display_name }}"></div>
 					</div>
 					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 				</div>

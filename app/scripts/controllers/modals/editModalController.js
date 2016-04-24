@@ -14,38 +14,53 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		$scope.minDate = null;
 		$scope.maxDate = null;
 		$scope.opened = false;
+		$scope.is_split = false;
 
 		//**********************//
 		// Live Search			//
 		//**********************//
 
 		$scope.$on('liveSearchSelect', function (event, result) {
-			$scope.transaction.vendor_id = result.id;
-			$scope.transaction.vendor.name = result.name;
+			if (result.table && result.index) {
+				$scope.transaction[result.table][result.index][result.model] = result.result.id;
+			} else {
+				$scope.transaction[result.model] = result.result.id;
+			}
 		});
 
 		$scope.$on('liveSearchBlur', function(event, result) {
-			var modalInstance = $modal.open({
-				templateUrl: 'addVendorModal.html',
-				controller: 'addVendorModalController',
-				windowClass: 'app-modal-window',
-				resolve: {
-					params: function() {
-							return {
-								name:	result.name,
-								title:	'Add New Vendor'
-							}
-						}
-				}
-			});
+			if (!result.id && result.name) {
+				// nothing has been selected but a name has been entered, so lets see if an new payer/payee should be added
+				var modalInstance = $modal.open({
+					templateUrl: 'addVendorModal.html',
+					controller: 'addVendorModalController',
+					windowClass: 'app-modal-window',
+					resolve: {
+						params: function() {
+									return {
+										name: result.name
+									}
+								}
+					}
+				});
 
-			modalInstance.result.then(function (response) {
-				$scope.transaction.vendor_id = response.data.id;
-			},
-			function () {
-				console.log('Add Vendor Modal dismissed at: ' + new Date());
-				$scope.transaction.vendor_id = null;
-			});
+				modalInstance.result.then(
+					function (response) {
+						if (result.table && result.index) {
+							$scope.transaction[result.table][result.index][result.model] = response.data.id;
+						} else {
+							$scope.transaction[result.model] = response.data.id;
+						}
+					},
+					function () {
+						console.log('Add Vendor Modal dismissed at: ' + new Date());
+						if (result.table && result.index) {
+							$scope.transaction[result.table][result.index][result.model] = null;
+						} else {
+							$scope.transaction[result.model] = null;
+						}
+					});
+			}
 		});
 
 		//**********************//
@@ -98,7 +113,9 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 					$scope.transaction = response[2].data.result;
 					var dt = $scope.transaction.transaction_date.split('-');
 					$scope.transaction.transaction_date = new Date(dt[0], --dt[1], dt[2]);
-					transaction_save = $scope.transaction;	// save to restore after failed live search
+					if ($scope.transaction.splits) {
+						$scope.is_split = true;
+					}
 				}
 	//		} else {
 	//			if (response[2].errors) {
@@ -142,7 +159,6 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 				var dt = new Date($scope.transaction.transaction_date);
 				$scope.transaction.transaction_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
 			}
-console.log($scope.transaction)
 			RestData2().saveTransaction($scope.transaction,
 					function(response) {
 						if (!!response.success) {
@@ -226,9 +242,9 @@ console.log($scope.transaction)
 					category_id:	'',
 					notes:			''
 				}
-	//			newItem.amount = $scope.transaction.amount;
 				$scope.transaction.splits = {};
 				$scope.transaction.splits[0] = newItem;
+				$scope.is_split = true;
 			}
 		};
 

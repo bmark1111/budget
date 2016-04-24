@@ -46,6 +46,8 @@ $route['register']								= "user/register";					// POST - register
 
 $route['data/logout']							= "user/logout";					// POST - logout
 
+$route['data/rest/reconcileTransactions']		= "api/rest/reconcileTransactions";	// POST - reconcile transactions
+
 $route['data/budget/load']						= "api/budget/load";				// GET - load dashboard transactions
 $route['data/budget/these']						= "api/budget/these";				// GET - load dashboard transactions for interval and category
 

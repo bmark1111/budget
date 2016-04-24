@@ -43,9 +43,8 @@ console.log(err)
 
 		$scope.livesearchBlur = function($event) {
 			$scope.livesearch_results = false;
-			if (!$scope.liveSearchId && $scope.liveSearchName) {
-				$scope.$emit('liveSearchBlur', {name: $scope.liveSearchName});
-			}
+			// give the selected result or a new name to the parent
+			$scope.$emit('liveSearchBlur', {id: $scope.liveSearchId, name: $scope.liveSearchName});
 		};
 
 		$scope.livesearchFocus = function($event) {
@@ -53,10 +52,11 @@ console.log(err)
 		};
 
 		$scope.livesearchSelect = function(result) {
-			$scope.liveSearchId		= result.id;
 console.log(result)
-			$scope.liveSearchName	= result.name + ' +++++';
+			$scope.liveSearchId = result.id;
+			$scope.liveSearchName = result.name + ((result.street) ? ' ,' + result.street: '') + ((result.city) ? ' ' + result.city: '') + ((result.state) ? ' ' + result.state: '');
 			$scope.livesearch_results = false;
+			// give the selected result to the parent
 			$scope.$emit('liveSearchSelect', result);
 		};
 

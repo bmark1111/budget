@@ -6,7 +6,7 @@ app.controller('addVendorModalController', ['$scope', '$modalInstance', 'RestDat
 
 		$scope.dataErrorMsg = [];
 
-		$scope.title = params.title;
+//		$scope.title = params.title;
 		$scope.vendor = {
 			name: params.name
 		}

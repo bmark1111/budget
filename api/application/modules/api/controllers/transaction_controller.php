@@ -83,6 +83,9 @@ class transaction_controller Extends rest_controller {
 
 		$transaction = new transaction($id);
 		isset($transaction->splits);
+		foreach ($transaction->splits as $split) {
+			isset($split->vendor);
+		}
 		isset($transaction->repeat);
 		isset($transaction->vendor);
 		
@@ -138,17 +141,16 @@ class transaction_controller Extends rest_controller {
 			$transaction->type				= $_POST['type'];
 			$transaction->amount			= $_POST['amount'];
 			$transaction->bank_account_id	= $_POST['bank_account_id'];
-			$transaction->vendor_id			= $_POST['vendor_id'];
 			$transaction->description		= $_POST['description'];
 			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
 		} elseif ($transaction->is_reconciled != 1 && $transaction->is_uploaded == 1) {
 			// if transaction is not reconciled but uploaded allow account id to be changed
 			$transaction->bank_account_id	= $_POST['bank_account_id'];
-			$transaction->vendor_id			= $_POST['vendor_id'];
 		}
 
 		$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: '';
-		$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL; // ignore category if splits are present
+		$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+		$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 		$transaction->save();
 
 		if (!empty($_POST['splits'])) {
@@ -160,6 +162,7 @@ class transaction_controller Extends rest_controller {
 					$transaction_split->transaction_id	= $transaction->id;
 					$transaction_split->type			= $split['type'];
 					$transaction_split->category_id		= $split['category_id'];
+					$transaction_split->vendor_id		= $split['vendor_id'];
 					$transaction_split->notes			= $split['notes'];
 					$transaction_split->save();
 				} else {
@@ -262,7 +265,7 @@ class transaction_controller Extends rest_controller {
 				return FALSE;
 			}
 		} elseif (empty($_POST['amount']) || $_POST['amount'] == 0) {
-			$this->form_validation->set_message('isValidAmount', 'The Split Fields are Required');
+			$this->form_validation->set_message('isValidAmount', 'The Amount Field is Required');
 			return FALSE;
 		}
 		return TRUE;

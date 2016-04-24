@@ -9,34 +9,46 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 		//**********************//
 
 		$scope.$on('liveSearchSelect', function (event, result) {
-			$scope.uploaded.vendor_id = result.id;
-			$scope.uploaded.vendor.name = result.name;
+			if (result.table && result.index) {
+				$scope.uploaded[result.table][result.index][result.model] = result.result.id;
+			} else {
+				$scope.uploaded[result.model] = result.result.id;
+			}
 		});
 
 		$scope.$on('liveSearchBlur', function(event, result) {
-			var modalInstance = $modal.open({
-				templateUrl: 'addVendorModal.html',
-				controller: 'addVendorModalController',
-				windowClass: 'app-modal-window',
-				resolve: {
-					params: function() {
-							return {
-								name:	result.name,
-								title:	'Add New Vendor'
-							}
-						}
-				}
-			});
-
-			modalInstance.result.then(
-				function (response) {
-					$scope.uploaded.vendor_id = response.data.id;
-console.log(response)
-				},
-				function () {
-					console.log('Add Vendor Modal dismissed at: ' + new Date());
-					$scope.uploaded.vendor_id = null;
+			if (!result.id && result.name) {
+				// nothing has been selected but a name has been entered, so lets see if an new payer/payee should be added
+				var modalInstance = $modal.open({
+					templateUrl: 'addVendorModal.html',
+					controller: 'addVendorModalController',
+					windowClass: 'app-modal-window',
+					resolve: {
+						params: function() {
+									return {
+										name: result.name
+									}
+								}
+					}
 				});
+
+				modalInstance.result.then(
+					function (response) {
+						if (result.table && result.index) {
+							$scope.uploaded[result.table][result.index][result.model] = response.data.id;
+						} else {
+							$scope.uploaded[result.model] = response.data.id;
+						}
+					},
+					function () {
+						console.log('Add Vendor Modal dismissed at: ' + new Date());
+						if (result.table && result.index) {
+							$scope.uploaded[result.table][result.index][result.model] = null;
+						} else {
+							$scope.uploaded[result.model] = null;
+						}
+				});
+			}
 		});
 
 		//******************************//
@@ -190,15 +202,18 @@ console.log(response)
 			if ($scope.idSelectedTransaction !== selectedTransaction.id) {
 				// select this transaction
 				if (selectedTransaction.reconciled_date) {
-					// this is a reconciled transaction, youy may want to discard this new uploaded transaction
+					// this is a reconciled transaction, you may want to discard this new uploaded transaction
 					$scope.dataErrorMsg = ['This is a reconciled transaction, you may want to discard this new uploaded transaction'];
 					$scope.idSelectedTransaction = null;
 					$scope.post = 'Post New';
+					$scope.uploaded.vendor_id = false;
 					$scope.uploaded.category_id = false;
 					$scope.uploaded.notes = '';
 				} else {
 					$scope.idSelectedTransaction = selectedTransaction.id;
 					$scope.post = 'Post New & Overwrite';
+					$( "#liveSearch" ).find('input').val(selectedTransaction.vendor.display_name);
+					$scope.uploaded.vendor_id = selectedTransaction.vendor_id;
 					$scope.uploaded.category_id = selectedTransaction.category_id;
 					$scope.uploaded.notes = selectedTransaction.notes;
 				}

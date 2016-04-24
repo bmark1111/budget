@@ -15,7 +15,7 @@ class livesearch_controller Extends rest_controller {
 
 	public function index() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-			$this->ajax->addError(new AjaxError("403 - Forbidden (livesearch)"));
+			$this->ajax->addError(new AjaxError("403 - Forbidden (livesearch/index)"));
 			$this->ajax->output();
 		}
 
