@@ -26,6 +26,8 @@ class login_controller extends EP_Controller {
 		$data['error'] = '';
 		if (!empty($username) && !empty($password) && ($nUserId = $user->login($username, $password)) !== FALSE) {
 			$this->nUserId = $nUserId;
+			$this->nRoles = json_decode($user->roles);
+
 			$user->last_login		= date('Y-m-d H:i:s');
 			$user->last_session_id	= md5(uniqid(mt_rand(), TRUE));
 			$user->save();
@@ -58,6 +60,7 @@ class login_controller extends EP_Controller {
 			$user_session->request_time		= date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']);
 			$user_session->id				= $user->last_session_id;
 			$user_session->user_id			= $user->id;
+			$user_session->roles			= $user->roles;
 			$user_session->expire			= date('Y-m-d H:i:s', strtotime('+30 MINS'));
 			$user_session->save();
 		} else {

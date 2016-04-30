@@ -5,6 +5,8 @@ ALTER TABLE `transaction` CHANGE `bank_account_id` `bank_account_id` INT(11) UNS
 
 ALTER TABLE `transaction_split` ADD `vendor_id` INT(11) UNSIGNED NOT NULL AFTER `id`;
 
+ALTER TABLE `user_session` ADD `roles` VARCHAR(100) NOT NULL AFTER `user_id`;
+
 UPDATE `transaction` SET transaction_repeat_id = 1 WHERE description LIKE '%NETFLIX.COM%' AND category_id = 9 AND TYPE = 'DEBIT';
 
 UPDATE `transaction` SET transaction_repeat_id = 2 WHERE description LIKE '%Cox Communications%' AND `date` <= '2016-03-31' AND category_id = 9 AND TYPE = 'DEBIT';

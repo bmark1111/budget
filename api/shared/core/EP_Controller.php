@@ -115,10 +115,8 @@ class EP_Controller extends MX_Controller
 					if (!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])
 							&&
 						!empty($_SERVER['HTTP_TOKENID']) && !empty($_SERVER['REMOTE_ADDR'])) {
-//							&&
-//						!empty($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] === 'http://budgettracker.loc/') {
 						// query the database for the correct user & user session information
-						$this->db->select('user_session.user_id, user_session.id as session_id, user_session.expire, user_session.account_id, account.db_suffix_name');
+						$this->db->select('user_session.user_id, user_session.roles, user_session.id as session_id, user_session.expire, user_session.account_id, account.db_suffix_name');
 						$this->db->from('user_session');
 						$this->db->join('account', 'account.id = user_session.account_id', 'left');
 						$this->db->where('user_session.id', $_SERVER['HTTP_TOKENID']);
@@ -154,6 +152,9 @@ class EP_Controller extends MX_Controller
 
 						// set the global logged in user
 						$this->nUserId = $uSession->user_id;
+
+						// set the global roles for this user
+						$this->nRoles = json_decode($uSession->roles);
 
 						// switch to the right account
 						$this->switchDatabase('budgettr_'. $uSession->db_suffix_name);

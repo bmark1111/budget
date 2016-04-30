@@ -597,6 +597,8 @@ class budget_controller Extends rest_controller {
 							AND T.`transaction_date` <=  '" . $ed . "')
 				ORDER BY transaction_date ASC, id ASC";
 			$transactions->queryAll($sql);
+//print $transactions;
+//die($sql);
 //			if ($transactions->numRows()) {
 				$output = array();
 				$f = 0;

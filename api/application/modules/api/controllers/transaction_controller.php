@@ -128,15 +128,16 @@ class transaction_controller Extends rest_controller {
 		if ($this->form_validation->ajaxRun('') === FALSE) {
 			$this->ajax->output();
 		}
-
+//var_dump($this->nRoles);
+//die("nRoles");
 		$id = (!empty($_POST['id'])) ? $_POST['id']: FALSE;
 		$transaction = new transaction($id);
 		$bank_account_id	= (!empty($transaction->bank_account_id)) ? $transaction->bank_account_id: FALSE;
 		$transaction_date	= (!empty($transaction->transaction_date)) ? $transaction->transaction_date: FALSE;
 		$amount				= (!empty($transaction->amount)) ? $transaction->amount: FALSE;
 		$type				= (!empty($transaction->type)) ? $transaction->type: FALSE;
-		if ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1) {
-			// can't edit these fields if uploaded or reconciled, only if admin (TODO:)
+		if (in_array('Admin', $this->nRoles, TRUE) || ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1)) {
+			// can't edit these fields if uploaded or reconciled, only if admin (use with caution)
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->type				= $_POST['type'];
 			$transaction->amount			= $_POST['amount'];
