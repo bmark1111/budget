@@ -127,16 +127,15 @@ class sheet_controller Extends rest_controller {
 
 		// get the accounts
 		$accounts = new bank_account();
-		$accounts->select("bank_account.id, CONCAT(`bank`.`name`,' ',`bank_account`.`name`) as name", FALSE);
+		$accounts->select("bank_account.id, bank_account.date_opened, bank_account.date_closed, CONCAT(`bank`.`name`,' ',`bank_account`.`name`) as name", FALSE);
 		$accounts->join('bank', 'bank.id = bank_account.bank_id');
 		$accounts->where('bank_account.is_deleted', 0);
 		$accounts->result();
 
 		// get any repeats for this interval
 		$repeats = $this->loadRepeats($categories, $sd, $ed, 1);
-//print $repeats;
 		$repeats = $this->sumRepeats($repeats, $sd, $ed);
-//print_r($repeats);die;
+
 		// get the future forecast
 		$forecasted = $this->loadForecast($categories, $sd, $ed, 1);
 		$forecast = $this->forecastIntervals($categories, $forecasted, $sd, $ed);
@@ -337,6 +336,11 @@ class sheet_controller Extends rest_controller {
 		foreach ($output as $x => $intervalx) {
 			// find the latest balance for this interval
 			foreach ($balances as $balance) {
+				if (strtotime($balance->transaction_date) < strtotime($intervalx['interval_beginning'])
+								||
+					strtotime($balance->transaction_date) > strtotime($intervalx['interval_ending'])) {
+					continue;
+				}
 				if (strtotime($balance->transaction_date) >= strtotime($intervalx['interval_beginning'])
 						&& strtotime($balance->transaction_date) <= strtotime(substr($intervalx['interval_ending'],0,10))) {
 					// if the transaction falls inside the interval then ....
@@ -344,6 +348,8 @@ class sheet_controller Extends rest_controller {
 					$output[$x]['balances'][$balance->bank_account_id] = $balance->bank_account_balance;	// save the unadjusted account balance
 					$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $balance->bank_account_balance;
 					$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $balance->transaction_date;
+					$output[$x]['accounts'][$balance->bank_account_id]['date_opened'] = $balance->date_opened;
+					$output[$x]['accounts'][$balance->bank_account_id]['date_closed'] = $balance->date_closed;
 					$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 1;
 					if (!empty($balance->reconciled_date)
 							&&
@@ -361,6 +367,8 @@ class sheet_controller Extends rest_controller {
 						$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $output[$x-1]['accounts'][$balance->bank_account_id]['balance'];
 						$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $output[$x-1]['accounts'][$balance->bank_account_id]['balance_date'];
 						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $output[$x-1]['accounts'][$balance->bank_account_id]['reconciled_date'];
+						$output[$x]['accounts'][$balance->bank_account_id]['date_opened'] = $output[$x-1]['accounts'][$balance->bank_account_id]['date_opened'];
+						$output[$x]['accounts'][$balance->bank_account_id]['date_closed'] = $output[$x-1]['accounts'][$balance->bank_account_id]['date_closed'];
 						$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 2;
 					} else {
 						// this is first interval, get the last available balance for this account
@@ -369,6 +377,8 @@ class sheet_controller Extends rest_controller {
 						$output[$x]['accounts'][$balance->bank_account_id]['balance_date'] = $accountBalance[0];
 						$output[$x]['accounts'][$balance->bank_account_id]['balance'] = $accountBalance[1];
 						$output[$x]['accounts'][$balance->bank_account_id]['reconciled_date'] = $accountBalance[2];
+						$output[$x]['accounts'][$balance->bank_account_id]['date_opened'] = $accountBalance[3];
+						$output[$x]['accounts'][$balance->bank_account_id]['date_closed'] = $accountBalance[4];
 						$output[$x]['accounts'][$balance->bank_account_id]['xxxxx'] = 3;
 					}
 				}
@@ -384,6 +394,8 @@ class sheet_controller Extends rest_controller {
 						$output[$x]['accounts'][$bank_account_id]['balance'] = $output[$x-1]['accounts'][$bank_account_id]['balance'];
 						$output[$x]['accounts'][$bank_account_id]['balance_date'] = $output[$x-1]['accounts'][$bank_account_id]['balance_date'];
 						$output[$x]['accounts'][$bank_account_id]['reconciled_date'] = $output[$x-1]['accounts'][$bank_account_id]['reconciled_date'];
+						$output[$x]['accounts'][$bank_account_id]['date_opened'] = $output[$x-1]['accounts'][$bank_account_id]['date_opened'];
+						$output[$x]['accounts'][$bank_account_id]['date_closed'] = $output[$x-1]['accounts'][$bank_account_id]['date_closed'];
 						$output[$x]['accounts'][$bank_account_id]['xxxxx'] = 4;
 					} else {
 						$accountBalance = $this->getBankAccountBalance(date('Y-m-d', strtotime($intervalx['interval_beginning'])), $bank_account_id);
@@ -391,6 +403,8 @@ class sheet_controller Extends rest_controller {
 						$output[$x]['accounts'][$bank_account_id]['balance_date'] = $accountBalance[0];
 						$output[$x]['accounts'][$bank_account_id]['balance'] = $accountBalance[1];
 						$output[$x]['accounts'][$bank_account_id]['reconciled_date'] = $accountBalance[2];
+						$output[$x]['accounts'][$bank_account_id]['date_opened'] = $accountBalance[3];
+						$output[$x]['accounts'][$bank_account_id]['date_closed'] = $accountBalance[4];
 						$output[$x]['accounts'][$bank_account_id]['xxxxx'] = 5;
 					}
 				}
@@ -444,10 +458,18 @@ class sheet_controller Extends rest_controller {
 
 	private function _balances($sd, $ed) {
 		$bank_account_balances = new transaction();
-		$bank_account_balances->select('transaction.bank_account_id, transaction.bank_account_balance, transaction.transaction_date, transaction.reconciled_date, bank_account.name');
+		$bank_account_balances->select('transaction.bank_account_id, transaction.bank_account_balance, transaction.transaction_date, transaction.reconciled_date, bank_account.name, bank_account.date_opened, bank_account.date_closed');
 		$bank_account_balances->join('bank_account', 'bank_account.id = transaction.bank_account_id');
 		$bank_account_balances->where('transaction.transaction_date >= ', $sd);
 		$bank_account_balances->where('transaction.transaction_date < ', $ed);
+		$bank_account_balances->groupStart();
+		$bank_account_balances->orWhere('bank_account.date_closed IS NULL', FALSE, FALSE);
+		$bank_account_balances->orWhere('bank_account.date_closed >= ', $sd);
+		$bank_account_balances->groupEnd();
+		$bank_account_balances->groupStart();
+		$bank_account_balances->orWhere('bank_account.date_closed IS NULL', FALSE, FALSE);
+		$bank_account_balances->orWhere('bank_account.date_closed < ', $ed);
+		$bank_account_balances->groupEnd();
 		$bank_account_balances->where('transaction.is_deleted', 0);
 		$bank_account_balances->orderBy('transaction.transaction_date', 'ASC');
 		$bank_account_balances->orderBy('transaction.id', 'ASC');

@@ -513,10 +513,12 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 	 */
 	protected function getBankAccountBalance($sd, $account_id) {
 		$transaction = new transaction();
-		$transaction->whereNotDeleted();
-		$transaction->where("transaction_date < '" . $sd . "'", NULL, FALSE);
-		$transaction->where('bank_account_id', $account_id);
-		$transaction->orderBy('transaction_date', 'DESC');
+		$transaction->select('transaction.*, bank_account.date_opened, bank_account.date_closed');
+		$transaction->join('bank_account', 'transaction.bank_account_id = bank_account.id');
+		$transaction->where('transaction.is_deleted', 0);
+		$transaction->where("transaction.transaction_date < '" . $sd . "'", NULL, FALSE);
+		$transaction->where('transaction.bank_account_id', $account_id);
+		$transaction->orderBy('transaction.transaction_date', 'DESC');
 		$transaction->limit(1);
 		$transaction->row();
 		if ($transaction->numRows()) {

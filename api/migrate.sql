@@ -1,17 +1,17 @@
-ALTER TABLE `transaction` ADD `transaction_repeat_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `transaction_date`;
-ALTER TABLE `transaction` ADD `vendor_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `transaction_repeat_id`;
-ALTER TABLE `transaction` ADD INDEX(`vendor_id`);
-ALTER TABLE `transaction` CHANGE `bank_account_id` `bank_account_id` INT(11) UNSIGNED NULL;
+- ALTER TABLE `transaction` ADD `transaction_repeat_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `transaction_date`;
+- ALTER TABLE `transaction` ADD `vendor_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `transaction_repeat_id`;
+- ALTER TABLE `transaction` ADD INDEX(`vendor_id`);
+- ALTER TABLE `transaction` CHANGE `bank_account_id` `bank_account_id` INT(11) UNSIGNED NULL;
 
-ALTER TABLE `transaction_split` ADD `vendor_id` INT(11) UNSIGNED NOT NULL AFTER `id`;
+- ALTER TABLE `transaction_split` ADD `vendor_id` INT(11) UNSIGNED NOT NULL AFTER `id`;
 
-ALTER TABLE `user_session` ADD `roles` VARCHAR(100) NOT NULL AFTER `user_id`;
+- ALTER TABLE `user_session` ADD `roles` VARCHAR(100) NOT NULL AFTER `user_id`;
 
 UPDATE `transaction` SET transaction_repeat_id = 1 WHERE description LIKE '%NETFLIX.COM%' AND category_id = 9 AND TYPE = 'DEBIT';
 
-UPDATE `transaction` SET transaction_repeat_id = 2 WHERE description LIKE '%Cox Communications%' AND `date` <= '2016-03-31' AND category_id = 9 AND TYPE = 'DEBIT';
+UPDATE `transaction` SET transaction_repeat_id = 2 WHERE description LIKE '%Cox Communications%' AND `transaction_date` <= '2016-03-31' AND category_id = 9 AND TYPE = 'DEBIT';
 
-UPDATE `transaction` SET transaction_repeat_id = 18 WHERE description LIKE '%Cox Communications%' AND `date` > '2016-03-31' AND category_id = 9 AND TYPE = 'DEBIT';
+UPDATE `transaction` SET transaction_repeat_id = 18 WHERE description LIKE '%Cox Communications%' AND `transaction_date` > '2016-03-31' AND category_id = 9 AND TYPE = 'DEBIT';
 
 UPDATE `transaction` SET transaction_repeat_id = 4 WHERE description LIKE '%SOUTHERN CALIFORNIA EDISON%' AND category_id = 9 AND TYPE = 'DEBIT';
 

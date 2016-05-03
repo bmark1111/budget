@@ -43,25 +43,34 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		var now = new Date(new Date().setHours(0,0,0,0));
 		angular.forEach(accounts,
 			function(account) {
-				if (+ed <= +now) {
-					if (account.reconciled_date) {
-						var dt = account.balance_date.split('-');
-						var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
-						var dt = account.reconciled_date.split('-');
-						var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
-						if (+rd === +ed || +rd === +now || +rd >= +bd) {
-							// if everything has been reconciled up to the period ending date...
-							// ... OR reconciled date is today...
-							// ... OR reconciled date is >= balance date
-							account.reconciled = 2;
+				var dc = false;
+				if (account.date_closed) {
+					var dt = account.date_closed.split('-');
+					var dc = new Date(dt[0], --dt[1], dt[2], 0, 0, 0);
+				}
+				if (dc && +dc < +sd ) {
+					account.reconciled = 98;
+				} else {
+					if (+ed <= +now) {
+						if (account.reconciled_date) {
+							var dt = account.balance_date.split('-');
+							var bd = new Date(dt[0], --dt[1], dt[2]);				// balance date
+							var dt = account.reconciled_date.split('-');
+							var rd = new Date(dt[0], --dt[1], dt[2]);				// reconciled date
+							if (+rd === +ed || +rd === +now || +rd >= +bd) {
+								// if everything has been reconciled up to the period ending date...
+								// ... OR reconciled date is today...
+								// ... OR reconciled date is >= balance date
+								account.reconciled = 2;
+							} else {
+								account.reconciled = 1;
+							}
 						} else {
-							account.reconciled = 1;
+							account.reconciled = (account.balance) ? 1: 99;
 						}
 					} else {
-						account.reconciled = (account.balance) ? 1: 99;
+						account.reconciled = (+sd >= +now) ? 0: 3;
 					}
-				} else {
-					account.reconciled = (+sd >= +now) ? 0: 3;
 				}
 			});
 	};

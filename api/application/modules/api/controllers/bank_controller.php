@@ -105,7 +105,7 @@ class bank_controller Extends rest_controller
 			if (empty($account['is_deleted']) || $account['is_deleted'] != 1)
 			{
 				$this->form_validation->set_rules('accounts[' . $idx . '][name]', 'Name', 'required');
-				$this->form_validation->set_rules('accounts[' . $idx . '][balance]', 'Balance', 'required');
+//				$this->form_validation->set_rules('accounts[' . $idx . '][balance]', 'Balance', 'required');
 			}
 		}
 
