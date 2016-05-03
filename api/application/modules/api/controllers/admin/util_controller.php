@@ -34,7 +34,7 @@ class util_controller Extends EP_Controller {
 			$this->ajax->addError(new AjaxError("403 - Forbidden (admin/util/buildvendors)"));
 			$this->ajax->output();
 		}
-
+die('xxxxxxxxxxxxxxxx');
 		$transactions = new transaction();
 		$transactions->groupStart();
 		$transactions->orLike('description', 'online transfer ', 'right');
@@ -190,7 +190,7 @@ die('XXXXXXXXXXXXXX');
 				$tr = new transaction($last_transaction_id);
 				$tr->next_due_date = $last_next_due_date;
 //print $tr;
-				$tr->save();
+//				$tr->save();
 			}
 			$last_transaction_repeat_id = $transaction->tr_id;
 			$last_transaction_id = $transaction->id;
