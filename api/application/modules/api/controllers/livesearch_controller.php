@@ -26,7 +26,7 @@ class livesearch_controller Extends rest_controller {
 				$vendors = new vendor();
 				$vendors->like('name', $params['search'], 'both');
 				$vendors->whereNotDeleted();
-				$vendors->limit(10);
+				$vendors->limit(20);
 				$vendors->orderBy('name', 'asc');
 				$vendors->result();
 
