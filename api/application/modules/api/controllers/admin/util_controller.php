@@ -34,10 +34,11 @@ class util_controller Extends EP_Controller {
 			$this->ajax->addError(new AjaxError("403 - Forbidden (admin/util/buildvendors)"));
 			$this->ajax->output();
 		}
-die('xxxxxxxxxxxxxxxx');
+
 		$transactions = new transaction();
 		$transactions->groupStart();
 		$transactions->orLike('description', 'online transfer ', 'right');
+		$transactions->orLike('description', 'Transfer from ', 'right');
 		$transactions->orLike('description', 'interest payment', 'right');
 		$transactions->orLike('description', 'service fee');
 		$transactions->orLike('description', 'INSUFFICIENT FUNDS FEE', 'right');
