@@ -8,6 +8,10 @@
 		<form>
 			<div class="row">
 				<div class="col-md-2">
+					<label for="last_due_date">Show All Forecasts</label>
+					<input type="checkbox" class="form-control" name="last_due_date" ng-model="search.last_due_date" ng-change="refreshData()" />
+				</div>
+				<div class="col-md-2">
 					<label for="first_due_date">First Due Date</label>
 					<p class="input-group">
 						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="first_due_date" is-open="$parent.opened" ng-model="search.first_due_date" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true"  min-date="minDate" close-text="Close" ng-change="refreshData()" />
