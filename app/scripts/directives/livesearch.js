@@ -1,27 +1,25 @@
 app.directive("liveSearch", ['RestData2', function (RestData2) {
 	return {
 		restrict: 'A',
-		replace: true,
-		scope: {
-			liveSearchName: '=?',
-			liveSearchId: '=?',
-			livesearchResults: '=?',
-			livesearchModel: '=?',
-			livesearchTable: '=?',
-			livesearchIndex: '=?'
-		},
-		template:	'<div>' +
-						'<input type="text" name="name" class="form-control" ng-model="liveSearchName" />' +
-						'<div ng-show="livesearchResults" class="liveSearchResults">' +
-							'<div ng-repeat="result in livesearchResults">' +
-								'<div ng-mousedown="livesearchSelect(result)">' +
-									'<a href="">{{ result.display_name }}</a>' +
-								'</div>' +
+//		replace: false,
+//		scope: {
+//			liveSearchName: '=?',
+//			liveSearchId: '=?',
+//			livesearchResults: '=?',
+//			livesearchModel: '=?',
+//			livesearchTable: '=?',
+//			livesearchIndex: '=?'
+//		},
+		template:	'<input type="text" name="name" class="form-control" ng-model="liveSearchName" />' +
+					'<div ng-show="livesearchResults" class="liveSearchResults">' +
+						'<div ng-repeat="result in livesearchResults">' +
+							'<div ng-mousedown="livesearchSelect(result)">' +
+								'<a href="">{{ result.display_name }}</a>' +
 							'</div>' +
 						'</div>' +
 					'</div>',
-		link: function (scope, element, attrs, controller) {
-			attrs.$observe('display_name', function(value) {
+		link: function (scope, element, attrs) {
+			attrs.$observe('displayname', function(value) {
 				scope.liveSearchName = value;
 			});
 			scope.liveSearchModel = attrs.liveSearch;

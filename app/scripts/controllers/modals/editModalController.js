@@ -1,14 +1,16 @@
 'use strict';
 
-app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$modal', 'RestData2', 'params', 'Categories', 'BankAccounts', '$http',
+app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$modal', 'RestData2', 'params', 'Categories', 'BankAccounts',
 
-	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts, $http) {
+	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts) {
 
 		$scope.dataErrorMsg = [];
+
 		$scope.transaction = {
 				splits: {},
 				vendor: {}
 			};
+
 		$scope.title = params.title;
 
 		$scope.minDate = null;
@@ -30,7 +32,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 
 		$scope.$on('liveSearchBlur', function(event, result) {
 			if (!result.id && result.name) {
-				// nothing has been selected but a name has been entered, so lets see if an new payer/payee should be added
+				// nothing has been selected but a name has been entered, so lets see if a new payer/payee should be added
 				var modalInstance = $modal.open({
 					templateUrl: 'addVendorModal.html',
 					controller: 'addVendorModalController',

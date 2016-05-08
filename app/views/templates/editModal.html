@@ -26,7 +26,7 @@
 			<div class="col-md-3" ng-if="!is_split">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<label for="name">Payee/Payer</label>
-					<div live-search="vendor_id" display_name="{{ transaction.vendor.display_name }}"></div>
+					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
 					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 				</div>
 			</div>
@@ -110,7 +110,7 @@
 				</tr>
 				<tr ng-repeat="t in transaction.splits" ng-if="t.is_deleted != 1">
 					<td class="col-md-3" style="vertical-align:top;" ng-class="{'has-error': validation.splits.vendor_id[$index] || calc[$index] }">
-						<div live-search="vendor_id" table="splits" index="{{ $index }}" display_name="{{ t.vendor.display_name }}"></div>
+						<div live-search="vendor_id" table="splits" index="{{ $index }}" displayname="{{ t.vendor.display_name }}"></div>
 						<span class="help-block" ng-show="validation.splits.vendor_id[$index]">{{ validation.splits.vendor_id[$index] }}</span>
 						<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>
 					</td>
