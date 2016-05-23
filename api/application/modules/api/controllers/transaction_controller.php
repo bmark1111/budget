@@ -105,7 +105,8 @@ class transaction_controller Extends rest_controller {
 		$_POST = json_decode($input, TRUE);
 
 		// VALIDATION
-		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required');
+		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|interger');
+
 		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
 		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
@@ -128,8 +129,7 @@ class transaction_controller Extends rest_controller {
 		if ($this->form_validation->ajaxRun('') === FALSE) {
 			$this->ajax->output();
 		}
-//var_dump($this->nRoles);
-//die("nRoles");
+
 		$id = (!empty($_POST['id'])) ? $_POST['id']: FALSE;
 		$transaction = new transaction($id);
 		$bank_account_id	= (!empty($transaction->bank_account_id)) ? $transaction->bank_account_id: FALSE;
@@ -158,7 +158,6 @@ class transaction_controller Extends rest_controller {
 			foreach ($_POST['splits'] as $split) {
 				$transaction_split = new transaction_split($split['id']);
 				if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
-					$transaction_split->description		= $split['description'];
 					$transaction_split->amount			= $split['amount'];
 					$transaction_split->transaction_id	= $transaction->id;
 					$transaction_split->type			= $split['type'];

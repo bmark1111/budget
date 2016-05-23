@@ -5,28 +5,33 @@
 	<div class="modal-body">
 		<div class="row">
 			<div class="col-md-3">
-				<label>Bank Account:</label> {{ uploaded.bank_account.bank.name }} {{ uploaded.bank_account.name }}
+				<label>Bank Account:</label> {{ transaction.bank_account.bank.name }} {{ transaction.bank_account.name }}
 			</div>
 			<div class="col-md-3">
-				<label>Date:</label> {{ uploaded.transaction_date|date:'EEE MMM dd, yyyy' }}
+				<label>Date:</label> {{ transaction.transaction_date|date:'EEE MMM dd, yyyy' }}
 			</div>
 			<div class="col-md-6">
-				<label>Description:</label> {{ uploaded.description }}
+				<label>Description:</label> {{ transaction.description }}
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-sm-3">
-				<label>Type:</label> {{ uploaded.type }}
+			<div class="col-md-3">
+				<label>Type:</label> {{ transaction.type }}
 			</div>
-			<div class="col-sm-3" ng-if="uploaded.type == 'CHECK'">
-				<label>Check Num:</label> {{ uploaded.check_num }}
+			<div class="col-md-3" ng-if="transaction.type == 'CHECK'">
+				<label>Check Num:</label> {{ transaction.check_num }}
 			</div>
-			<div class="col-md-6">
-				<label>Amount:</label> {{ uploaded.amount|currency }}
-			</div>
-		</div>
-		<div class="row">
 			<div class="col-md-4">
+				<label>Amount:</label> {{ transaction.amount|currency }}
+			</div>
+			<div class="col-md-2 left">
+				<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="is_split = !is_split">
+					Split
+				</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4" ng-if="!is_split">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<div id="liveSearch">
 						<label for="name">Payee/Payer</label>{{ display_name }}
@@ -35,25 +40,26 @@
 					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 				</div>
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-4" ng-if="!is_split">
 				<label for="category">Category</label>
 				<div class="form-group" ng-class="{'has-error':validation.category_id}">
-					<select class="form-control" name="category" ng-model="uploaded.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
 					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
 				</div>
 			</div>
 			<div class="col-md-4">
 				<div class="form-group">
 					<label for="notes">Notes</label>
-					<input type="text" name="notes" class="form-control" ng-model="uploaded.notes" />
+					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
 				</div>
 			</div>
 		</div>
+		<div split-tran is-split="{{ is_split }}"></div>
 		<div class="table-responsive" ng-if="transactions[0]">
 			<div class="row">
 				<div class="col-sm-12">
 					<h3>Possible Duplicate Transaction</h3>
-					<span>Select Transaction to overwrite with uploaded transaction</span>
+					<span>Select Transaction to overwrite with transaction transaction</span>
 				</div>
 			</div>
 			<div class="row">
@@ -74,7 +80,7 @@
 							<tr ng-repeat="idx in transactions_seq" ng-click="setSelected(transactions[idx])" ng-class="{selected: transactions[idx].id === idSelectedTransaction}">
 								<td class="col-md-6" style="width:20%;">
 									<span class="pull-left">{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span> &nbsp;
-									<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
+									<span ng-if="transactions[idx].is_transaction == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
 									<img ng-if="transactions[idx].reconciled_date" ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> 
 								</td>
 								<td class="col-md-6" style="width:15%;">

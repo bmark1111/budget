@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('addVendorModalController', ['$scope', '$modalInstance', 'RestData2', 'params',
+app.controller('EditVendorModalController', ['$scope', '$modalInstance', 'RestData2', 'params',
 
 	function($scope, $modalInstance, RestData2, params) {
 
@@ -9,6 +9,33 @@ app.controller('addVendorModalController', ['$scope', '$modalInstance', 'RestDat
 //		$scope.title = params.title;
 		$scope.vendor = {
 			name: params.name
+		}
+
+		if (params.id > 0) {
+			$scope.dataErrorMsg = [];
+
+	//		ngProgress.start();
+
+			RestData2().editVendor({
+					id: params.id
+				},
+				function(response) {
+					if (!!response.success) {
+						if (response.data.result) {
+							$scope.vendor = response.data.result;
+						}
+					} else {
+						if (response.errors) {
+							angular.forEach(response.errors,
+								function(error) {
+									$scope.dataErrorMsg.push(error.error);
+								})
+						} else {
+							$scope.dataErrorMsg[0] = response;
+						}
+					}
+	//				ngProgress.complete();
+				});
 		}
 
 		// save vendor

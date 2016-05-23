@@ -34,8 +34,8 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 			if (!result.id && result.name) {
 				// nothing has been selected but a name has been entered, so lets see if a new payer/payee should be added
 				var modalInstance = $modal.open({
-					templateUrl: 'addVendorModal.html',
-					controller: 'addVendorModalController',
+					templateUrl: 'editVendorModal.html',
+					controller: 'EditVendorModalController',
 					windowClass: 'app-modal-window',
 					resolve: {
 						params: function() {
@@ -180,7 +180,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 											$scope.validation.bank_account_id = validation.errorMessage;
 											break;
 										case 'transaction_date':
-											$scope.validation.date = validation.errorMessage;
+											$scope.validation.transaction_date = validation.errorMessage;
 											break;
 										case 'description':
 											$scope.validation.description = validation.errorMessage;
@@ -234,19 +234,23 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		$scope.cancel = function () {
 			$modalInstance.dismiss('cancel');
 		};
-
+/*
 		// split transaction
 		$scope.split = function() {
-			if (Object.size($scope.transaction.splits) === 0 && $scope.transaction.amount > 0 && typeof($scope.transaction.type) !== 'undefined') {
-				var newItem = {
-					amount:			$scope.transaction.amount,
-					type:			$scope.transaction.type,
-					category_id:	'',
-					notes:			''
+			if (!$scope.is_split) {
+				if (Object.size($scope.transaction.splits) === 0 && $scope.transaction.amount > 0 && typeof($scope.transaction.type) !== 'undefined') {
+					var newItem = {
+						amount:			$scope.transaction.amount,
+						type:			$scope.transaction.type,
+						category_id:	'',
+						notes:			''
+					}
+					$scope.transaction.splits = {};
+					$scope.transaction.splits[0] = newItem;
+					$scope.is_split = true;
 				}
-				$scope.transaction.splits = {};
-				$scope.transaction.splits[0] = newItem;
-				$scope.is_split = true;
+			} else {
+				$scope.is_split = false;
 			}
 		};
 
@@ -330,5 +334,5 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 			}
 			return size;
 		};
-
+*/
 	}]);

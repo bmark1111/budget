@@ -18,27 +18,26 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 
 //		ngProgress.start();
 
-		RestData2().editBank(
-				{
-					id: params.id
-				},
-				function(response) {
-					if (!!response.success) {
-						if (response.data.result) {
-							$scope.bank = response.data.result;
-						}
-					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
+		RestData2().editBank({
+				id: params.id
+			},
+			function(response) {
+				if (!!response.success) {
+					if (response.data.result) {
+						$scope.bank = response.data.result;
 					}
-//					ngProgress.complete();
-				});
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
+					} else {
+						$scope.dataErrorMsg[0] = response;
+					}
+				}
+//				ngProgress.complete();
+			});
 	}
 
 	$scope.open1 = function($event, index) {

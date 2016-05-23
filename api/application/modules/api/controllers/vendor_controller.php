@@ -33,11 +33,8 @@ class vendor_controller Extends rest_controller {
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$vendors = new vendor();
-		if ($description) {
-			$vendors->like('description', $description);
-		}
 		if ($name) {
-			$vendors->where('name', $name);
+			$vendors->like('name', $name, 'both');
 		}
 		$vendors->select('SQL_CALC_FOUND_ROWS *', FALSE);
 		$vendors->whereNotDeleted();
@@ -169,10 +166,28 @@ class vendor_controller Extends rest_controller {
 			$this->ajax->addError(new AjaxError("Invalid vendor id - " . $id . " (vendor/delete)"));
 			$this->ajax->output();
 		}
-		
+
+		$transaction = new transaction();
+		$transaction->whereNotDeleted();
+		$transaction->where('vendor_id', $id);
+		$transaction->result();
+		if ($transaction->numRows()) {
+			$this->ajax->addError(new AjaxError("This vendor is in use and cannot be deleted"));
+			$this->ajax->output();
+		}
+
+		$transaction_split = new transaction_split();
+		$transaction_split->whereNotDeleted();
+		$transaction_split->where('vendor_id', $id);
+		$transaction_split->result();
+		if ($transaction_split->numRows()) {
+			$this->ajax->addError(new AjaxError("This vendor is in use and cannot be deleted"));
+			$this->ajax->output();
+		}
+
 		$vendor = new vendor($id);
 		if ($vendor->numRows()) {
-//			$vendor->delete();
+			$vendor->delete();
 		} else {
 			$this->ajax->addError(new AjaxError("Invalid vendor - (vendor/delete)"));
 		}

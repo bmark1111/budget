@@ -76,13 +76,15 @@
 			<div class="col-md-2">
 				<label for="amount">Amount</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
-					<input type="text" name="amount" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.amount" ng-blur="refreshSplits()" />
+					<!--<input type="text" name="amount" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.amount" ng-blur="refreshSplits()" />-->
+					<input type="text" name="amount" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.amount" ng-model-options="{updateOn: 'blur'}" />
 					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
 				</div>
 			</div>
 			<div class="col-md-1" style="padding-top:25px;">
 				<div class="form-group">
-					<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="split()">
+					<!--<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="split()">-->
+					<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="is_split = !is_split">
 						Split
 					</button>
 				</div>
@@ -98,7 +100,8 @@
 			<div>Next Due Date: {{ transaction.repeat.next_due_date|date:'EEE MMM dd, yyyy' }}.</div>
 			<div>Amount Due: {{ transaction.repeat.amount|currency }}.</div>
 		</div>
-		<div class="table-responsive" ng-if="transaction.splits[0]">
+		<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>
+<!--		<div class="table-responsive" ng-if="transaction.splits[0]">
 			<table style="width:100%;">
 				<tr>
 					<th><span class="pull-left">Payer/Payee</span></th>
@@ -141,7 +144,7 @@
 					</td>
 				</tr>
 			</table>
-		</div>
+		</div>-->
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-primary" ng-click="save()">Save</button>

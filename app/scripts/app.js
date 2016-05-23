@@ -135,6 +135,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+		.when('/vendors',
+		{
+			controller:		'VendorController',
+			templateUrl:	'app/views/vendor.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
 		.when('/categories',
 		{
 			controller:		'CategoryController',

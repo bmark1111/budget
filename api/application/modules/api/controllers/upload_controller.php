@@ -14,14 +14,12 @@ class upload_controller Extends rest_controller {
 	}
 
 	public function index() {
-//		$this->ajax->set_header("Forbidden", '403');
 		$this->ajax->addError(new AjaxError("403 - Forbidden (upload/index)"));
 		$this->ajax->output();
 	}
 
 	public function loadAll() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (upload/loadAll)"));
 			$this->ajax->output();
 		}
@@ -85,7 +83,6 @@ class upload_controller Extends rest_controller {
 
 	public function assign() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (upload/assign)"));
 			$this->ajax->output();
 		}
@@ -139,7 +136,6 @@ class upload_controller Extends rest_controller {
 
 	public function post() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (upload/post)"));
 			$this->ajax->output();
 		}
@@ -148,14 +144,26 @@ class upload_controller Extends rest_controller {
 		$_POST = json_decode($input, TRUE);
 
 		// VALIDATION
-		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
-		$this->form_validation->set_rules('description', 'Description', 'required');
-		$this->form_validation->set_rules('type', 'Type', 'required');
-		$this->form_validation->set_rules('vendor_id', 'Vendor', 'required|interger');
-		$this->form_validation->set_rules('category_id', 'Category', 'required|interger');
-		$this->form_validation->set_rules('amount', 'Amount', 'required');
 		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|interger');
+		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
+		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
+		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
+		$this->form_validation->set_rules('category_id', 'Category', 'callback_isValidCategory');
+		$this->form_validation->set_rules('vendor_id', 'Vendor', 'callback_isValidVendor');
+		$this->form_validation->set_rules('amount', 'Amount', 'callback_isValidAmount');
 		$this->form_validation->set_rules('id', 'Uploaded', 'required|interger');
+
+		// validate split data
+		if (!empty($_POST['splits'])) {
+			foreach ($_POST['splits'] as $idx => $split) {
+				if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
+					$this->form_validation->set_rules('splits[' . $idx . '][amount]', 'Split Amount', 'required');
+					$this->form_validation->set_rules('splits[' . $idx . '][type]', 'Split Type', 'required|alpha');
+					$this->form_validation->set_rules('splits[' . $idx . '][category_id]', 'Split Category', 'required|integer');
+					$this->form_validation->set_rules('splits[' . $idx . '][vendor_id]', 'Split Vendor', 'required|integer');
+				}
+			}
+		}
 
 		if ($this->form_validation->ajaxRun('') === FALSE) {
 			$this->ajax->output();
@@ -182,6 +190,23 @@ class upload_controller Extends rest_controller {
 			$transaction->is_uploaded		= 1;
 			$transaction->save();
 
+			if (!empty($_POST['splits'])) {
+				foreach ($_POST['splits'] as $split) {
+					$transaction_split = new transaction_split($split['id']);
+					if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
+						$transaction_split->amount			= $split['amount'];
+						$transaction_split->transaction_id	= $transaction->id;
+						$transaction_split->type			= $split['type'];
+						$transaction_split->category_id		= $split['category_id'];
+						$transaction_split->vendor_id		= $split['vendor_id'];
+						$transaction_split->notes			= $split['notes'];
+						$transaction_split->save();
+					} else {
+						$transaction_split->delete();
+					}
+				}
+			}
+
 			// resets account balances, 'resetBalances' method will determine the earlier
 			if ($transaction_date) {	// if we are overwriting a transaction then give this transaction date to resetBalances method
 				$this->resetBalances(array($transaction->bank_account_id => $transaction_date));			// adjust the account balance from the overwritten transaction forward
@@ -191,20 +216,109 @@ class upload_controller Extends rest_controller {
 			// check if this is a repeat transaction
 			$transaction_repeat = new transaction_repeat();
 			$transaction_repeat->whereNotDeleted();
-			$transaction_repeat->where('description', $_POST['description']);
+			$transaction_repeat->groupStart();
+			$transaction_repeat->orWhere('exact_match', 0);
+			$transaction_repeat->orWhere('amount', $_POST['amount']);
+			$transaction_repeat->groupEnd();
 			$transaction_repeat->where('type', $_POST['type']);
 			$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
+			$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
+			$transaction_repeat->where('first_due_date <= now()', NULL);
+			$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
+			$transaction_repeat->groupStart();
+			$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
+			$transaction_repeat->orWhere('last_due_date > ', $_POST['transaction_date'], FALSE);
+			$transaction_repeat->groupEnd();
 			$transaction_repeat->result();
 			if ($transaction_repeat->numRows()) {
 				// repeat transaction
-				print $transaction_repeat;
-				die;
+				if ($transaction_repeat->numRows() > 1) {
+					throw new Exception('More than 1 repeat transaction found');
+				} else {
+					// we found a repeat so update the next_due_date
+					isset($transaction_repeat[0]->repeats);
+					$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
+					$transaction_repeat[0]->save();
+				}
 			}
 		} else {
 			$this->ajax->addError(new AjaxError("403 - Invalid uploaded transaction (upload/post) - " . $_POST['id']));
 		}
 
 		$this->ajax->output();
+	}
+
+	/**
+	 * Checks if splits are entered, if not main category is a required field
+	 */
+	public function isValidCategory() {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+
+		// if no splits then category is required otherwise MUST be NULL (will be ignored in Save)
+		if (empty($_POST['splits']) && empty($_POST['category_id'])) {
+			$this->form_validation->set_message('isValidCategory', 'The Category Field is Required');
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * Checks if splits are entered, if not main vendor_id is a required field
+	 */
+	public function isValidVendor() {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+
+		// if no splits then vendor_id is required otherwise MUST be NULL (will be ignored in Save)
+		if (empty($_POST['splits']) && empty($_POST['vendor_id'])) {
+			$this->form_validation->set_message('isValidVendor', 'The Vendor Field is Required');
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/*
+	 * Checks if splits are entered, if not main amount is required
+	 *								if it is then checks that split amounts equal transaction amount
+	 */
+	public function isValidAmount() {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+
+		if (!empty($_POST['splits'])) {
+			$split_total = intval($_POST['amount'] * 100);
+			foreach ($_POST['splits'] as $split) {
+				if (empty($split['is_deleted']) || $split['is_deleted'] != '1') {
+					switch ($split['type']) {
+						case 'DEBIT':
+						case 'CHECK':
+							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK') {
+								$split_total -= intval($split['amount'] * 100);
+							} else {
+								$split_total += intval($split['amount'] * 100);
+							}
+							break;
+						case 'CREDIT':
+						case 'DSLIP':
+							if ($_POST['type'] == 'CREDIT' || $_POST['type'] == 'DSLIP') {
+								$split_total -= intval($split['amount'] * 100);
+							} else {
+								$split_total += intval($split['amount'] * 100);
+							}
+							break;
+					}
+				}
+			}
+			if ($split_total != 0) {
+				$this->form_validation->set_message('isValidAmount', 'The Split amounts do not match the transaction amount');
+				return FALSE;
+			}
+		} elseif (empty($_POST['amount']) || $_POST['amount'] == 0) {
+			$this->form_validation->set_message('isValidAmount', 'The Amount Field is Required');
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	public function delete() {
