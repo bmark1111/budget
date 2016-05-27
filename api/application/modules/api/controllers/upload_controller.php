@@ -74,7 +74,7 @@ class upload_controller Extends rest_controller {
 			$transactions->whereNotDeleted();
 			$transactions->where('status', 0);
 			$transactions->row();
-			$this->ajax->setData('pending_count', $transaction->count);
+			$this->ajax->setData('pending_count', $transactions->count);
 		} else {
 			$this->ajax->addError(new AjaxError("No uploads found"));
 		}
@@ -117,13 +117,19 @@ class upload_controller Extends rest_controller {
 			$ed = date('Y-m-d', strtotime($uploaded->transaction_date . " +7 DAYS"));
 			$transactions->where('transaction_date >= ', $sd);
 			$transactions->where('transaction_date <= ', $ed);
-			$transactions->where('ROUND(amount)', intval($uploaded->amount), FALSE);
+//			$transactions->where('ROUND(amount)', intval($uploaded->amount), FALSE);
+			$transactions->where('amount', $uploaded->amount);
 			$transactions->orderBy('transaction_date', 'DESC');
 			$transactions->result();
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
 				isset($transaction->bank_account->bank);
 				isset($transaction->vendor);
+				isset($transaction->splits);
+				foreach ($transaction->splits as $split) {
+					isset($split->vendor);
+					isset($split->category);
+				}
 			}
 
 			$this->ajax->setData('transactions', $transactions);
@@ -181,8 +187,10 @@ class upload_controller Extends rest_controller {
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->description		= $_POST['description'];
 			$transaction->type				= $_POST['type'];
-			$transaction->vendor_id			= $_POST['vendor_id'];
-			$transaction->category_id		= $_POST['category_id'];
+//			$transaction->vendor_id			= $_POST['vendor_id'];
+//			$transaction->category_id		= $_POST['category_id'];
+			$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+			$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 			$transaction->amount			= $_POST['amount'];
 			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
 			$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
@@ -199,7 +207,7 @@ class upload_controller Extends rest_controller {
 						$transaction_split->type			= $split['type'];
 						$transaction_split->category_id		= $split['category_id'];
 						$transaction_split->vendor_id		= $split['vendor_id'];
-						$transaction_split->notes			= $split['notes'];
+						$transaction_split->notes			= (!empty($split['notes'])) ? $split['notes']: NULL;
 						$transaction_split->save();
 					} else {
 						$transaction_split->delete();

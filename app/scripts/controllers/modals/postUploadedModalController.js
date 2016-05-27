@@ -136,7 +136,6 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 
 			$scope.validation = {};
 
-//			$scope.uploaded.transaction_id = $scope.idSelectedTransaction;
 			$scope.transaction.transaction_id = $scope.idSelectedTransaction;
 
 			RestData2().postUploadedTransaction($scope.transaction,
@@ -246,29 +245,29 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 					$scope.dataErrorMsg = ['This is a reconciled transaction, you may want to discard this new uploaded transaction'];
 					$scope.idSelectedTransaction = null;
 					$scope.post = 'Post New';
-//					$scope.uploaded.vendor_id = false;
-//					$scope.uploaded.category_id = false;
-//					$scope.uploaded.notes = '';
 					$scope.transaction.vendor_id = false;
 					$scope.transaction.category_id = false;
 					$scope.transaction.notes = '';
 				} else {
 					$scope.idSelectedTransaction = selectedTransaction.id;
 					$scope.post = 'Post New & Overwrite';
-					$( "#liveSearch" ).find('input').val(selectedTransaction.vendor.display_name);
-//					$scope.uploaded.vendor_id = selectedTransaction.vendor_id;
-//					$scope.uploaded.category_id = selectedTransaction.category_id;
-//					$scope.uploaded.notes = selectedTransaction.notes;
-					$scope.transaction.vendor_id = selectedTransaction.vendor_id;
-					$scope.transaction.category_id = selectedTransaction.category_id;
+					if (selectedTransaction.category_id && selectedTransaction.vendor_id) {
+						$( "#liveSearch" ).find('input').val(selectedTransaction.vendor.display_name);
+						$scope.is_split = false;
+						$scope.transaction.vendor_id = selectedTransaction.vendor_id;
+						$scope.transaction.category_id = selectedTransaction.category_id;
+					} else {
+						$scope.is_split = true;
+						$scope.transaction.vendor_id = false;
+						$scope.transaction.category_id = false;
+						$scope.transaction.splits = selectedTransaction.splits
+					}
 					$scope.transaction.notes = selectedTransaction.notes;
 				}
 			} else {
 				// deselect this transaction
 				$scope.idSelectedTransaction = null;
 				$scope.post = 'Post New';
-//				$scope.uploaded.category_id = false;
-//				$scope.uploaded.notes = '';
 				$scope.transaction.category_id = false;
 				$scope.transaction.notes = '';
 			}

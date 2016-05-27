@@ -149,7 +149,7 @@ class transaction_controller Extends rest_controller {
 			$transaction->bank_account_id	= $_POST['bank_account_id'];
 		}
 
-		$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: '';
+		$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 		$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 		$transaction->save();
@@ -163,7 +163,7 @@ class transaction_controller Extends rest_controller {
 					$transaction_split->type			= $split['type'];
 					$transaction_split->category_id		= $split['category_id'];
 					$transaction_split->vendor_id		= $split['vendor_id'];
-					$transaction_split->notes			= $split['notes'];
+					$transaction_split->notes			= (!empty($split['notes'])) ? $split['notes']: NULL;
 					$transaction_split->save();
 				} else {
 					$transaction_split->delete();

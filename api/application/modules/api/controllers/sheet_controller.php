@@ -83,23 +83,35 @@ class sheet_controller Extends rest_controller {
 				$sql[] = "ORDER BY YEAR(T.transaction_date), MONTH(T.transaction_date), DAYOFYEAR(T.transaction_date) ASC";
 				break;
 			case 'monthly':
-				$offset = date('n');			// get the current month
+//				$offset = date('n');			// get the current month
 				$start = new DateTime();
 				$end = new DateTime();
 				if ($interval == 0) {
-					$start_month = ($offset - ($this->budget_interval * ($this->sheet_views + 1)));				// go back 'sheet views'
-					$end_month = ($offset + ($this->budget_interval * ($this->sheet_views - 1)));				// go forward 'sheet views'
+//					$start_month = ($offset - ($this->budget_interval * ($this->sheet_views + 1)));				// go back 'sheet views'
+//					$end_month = ($offset + ($this->budget_interval * ($this->sheet_views - 1)));				// go forward 'sheet views'
+					$start_month = $this->budget_interval * ($this->sheet_views - 1);				// go back 'sheet views'
+					$end_month = $this->budget_interval * ($this->sheet_views + 1);					// go forward 'sheet views'
 				} else if ($interval < 0) {
-					$start_month = ($offset - ($this->budget_interval * ($this->sheet_views - $interval + 1)));	// - 'sheet_views' entries and adjust for interval
-					$end_month = ($offset - ($this->budget_interval * ($this->sheet_views - $interval)));		// + 'sheet_views' entries and adjust for interval
+//					$start_month = ($offset - ($this->budget_interval * ($this->sheet_views - $interval + 1)));	// - 'sheet_views' entries and adjust for interval
+//					$end_month = ($offset - ($this->budget_interval * ($this->sheet_views - $interval)));		// + 'sheet_views' entries and adjust for interval
+					$start_month = $this->budget_interval * ($this->sheet_views - $interval - 1);	// - 'sheet_views' entries and adjust for interval
+					$end_month = $this->budget_interval * ($this->sheet_views + $interval);			// + 'sheet_views' entries and adjust for interval
 				} else if ($interval > 0) {
-					$start_month = ($offset + ($this->budget_interval * ($this->sheet_views + $interval - 2)));	// go back 'sheet views' and adjust for interval
-					$end_month = ($offset + ($this->budget_interval * ($this->sheet_views + $interval - 1)));	// go forward 'sheet views' and adjust for interval
+//					$start_month = ($offset + ($this->budget_interval * ($this->sheet_views + $interval - 2)));	// go back 'sheet views' and adjust for interval
+//					$end_month = ($offset + ($this->budget_interval * ($this->sheet_views + $interval - 1)));	// go forward 'sheet views' and adjust for interval
+					$start_month = $this->budget_interval * ($this->sheet_views - $interval);	// go back 'sheet views' and adjust for interval
+					$end_month = $this->budget_interval * ($this->sheet_views + $interval + 1);		// go forward 'sheet views' and adjust for interval
 				}
+//echo "offset = $offset\n";
+//echo "budget_interval = ".$this->budget_interval."\n";
+//echo "sheet_views = ".$this->sheet_views."\n";
+//echo "start_month = $start_month\n";
+//echo "end_month = $end_month\n";
+//die;
 				if ($start_month > 0) {
-					$start->add(new DateInterval("P" . $start_month . "M"));
+					$start->sub(new DateInterval("P" . $start_month . "M"));
 				} else {
-					$start->sub(new DateInterval("P" . -$start_month . "M"));
+					$start->add(new DateInterval("P" . -$start_month . "M"));
 				}
 
 				if ($end_month > 0) {
@@ -107,10 +119,13 @@ class sheet_controller Extends rest_controller {
 				} else {
 					$end->sub(new DateInterval("P" . -$end_month . "M"));
 				}
-
+//				$start->sub(new DateInterval("P" . $start_month . "M"));
+//				$end->add(new DateInterval("P" . $end_month . "M"));
 				$sd = $start->format('Y-m-01');
 				$ed = $end->format('Y-m-01');
-
+//echo "sd = $sd\n";
+//echo "ed = $ed\n";
+//die;
 				$sql[] = "WHERE T.transaction_date >= '" . $sd . "' AND T.transaction_date < '" . $ed . "' AND T.is_deleted = 0";
 				$sql[] = "GROUP BY YEAR(T.transaction_date), MONTH(T.transaction_date)";
 				$sql[] = "ORDER BY YEAR(T.transaction_date), MONTH(T.transaction_date) ASC";
