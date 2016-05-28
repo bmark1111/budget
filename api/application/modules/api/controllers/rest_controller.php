@@ -522,9 +522,9 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 		$transaction->limit(1);
 		$transaction->row();
 		if ($transaction->numRows()) {
-			return array($transaction->transaction_date, $transaction->bank_account_balance, $transaction->reconciled_date);
+			return array($transaction->transaction_date, $transaction->bank_account_balance, $transaction->reconciled_date, $transaction->date_opened, $transaction->date_closed);
 		} else {
-			return array(NULL, 0, NULL);
+			return array(NULL, 0, NULL, NULL, NULL);
 		}
 	}
 }
