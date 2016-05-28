@@ -96,9 +96,9 @@ class sheet_controller Extends rest_controller {
 					$end_month = $this->budget_interval * ($this->sheet_views - $interval);			// + 'sheet_views' entries and adjust for interval
 					$end->add(new DateInterval("P" . $end_month . "M"));
 				} else if ($interval > 0) {
-					$start_month = $this->budget_interval * ($this->sheet_views + $interval);	// go back 'sheet views' and adjust for interval
+					$start_month = $this->budget_interval * ($this->sheet_views + $interval);		// go back 'sheet views' and adjust for interval
 					$start->add(new DateInterval("P" . $start_month . "M"));
-					$end_month = $this->budget_interval * ($this->sheet_views + $interval + 1);			// go forward 'sheet views' and adjust for interval
+					$end_month = $this->budget_interval * ($this->sheet_views + $interval + 1);		// go forward 'sheet views' and adjust for interval
 					$end->add(new DateInterval("P" . $end_month . "M"));
 				}
 				$sd = $start->format('Y-m-01');
