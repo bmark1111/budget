@@ -63,10 +63,15 @@ $route['data/transaction/delete']				= "api/transaction/delete";			// GET - dele
 $route['data/transaction/edit']					= "api/transaction/edit";			// GET - edit transaction
 $route['data/transaction/save']					= "api/transaction/save";			// POST - save transaction
 
-$route['data/vendor/get']						= "api/vendor/get";					// GET - get all vednors in list
+$route['data/vendor/get']						= "api/vendor/get";					// GET - get all vendors in list
 $route['data/vendor/delete']					= "api/vendor/delete";				// GET - delete vendor
 $route['data/vendor/edit']						= "api/vendor/edit";				// GET - edit vendor
 $route['data/vendor/save']						= "api/vendor/save";				// POST - save vendor
+
+$route['data/repeat/get']						= "api/repeat/get";					// GET - get all repeats in list
+$route['data/repeat/delete']					= "api/repeat/delete";				// GET - delete repeat
+$route['data/repeat/edit']						= "api/repeat/edit";				// GET - edit repeat
+$route['data/repeat/save']						= "api/repeat/save";				// POST - save repeat
 
 $route['data/forecast/loadAll']					= "api/forecast/loadAll";			// GET - load all forecasts in list
 $route['data/forecast/delete']					= "api/forecast/delete";			// GET - delete forecast

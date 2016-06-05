@@ -150,14 +150,14 @@ class upload_controller Extends rest_controller {
 		$_POST = json_decode($input, TRUE);
 
 		// VALIDATION
-		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|interger');
+		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|integer');
 		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
 		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
 		$this->form_validation->set_rules('category_id', 'Category', 'callback_isValidCategory');
 		$this->form_validation->set_rules('vendor_id', 'Vendor', 'callback_isValidVendor');
 		$this->form_validation->set_rules('amount', 'Amount', 'callback_isValidAmount');
-		$this->form_validation->set_rules('id', 'Uploaded', 'required|interger');
+		$this->form_validation->set_rules('id', 'Uploaded', 'required|integer');
 
 		// validate split data
 		if (!empty($_POST['splits'])) {
@@ -187,8 +187,6 @@ class upload_controller Extends rest_controller {
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->description		= $_POST['description'];
 			$transaction->type				= $_POST['type'];
-//			$transaction->vendor_id			= $_POST['vendor_id'];
-//			$transaction->category_id		= $_POST['category_id'];
 			$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 			$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 			$transaction->amount			= $_POST['amount'];
@@ -244,7 +242,7 @@ class upload_controller Extends rest_controller {
 					throw new Exception('More than 1 repeat transaction found');
 				} else {
 					// we found a repeat so update the next_due_date
-					isset($transaction_repeat[0]->repeats);
+//					isset($transaction_repeat[0]->repeats);
 					$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
 					$transaction_repeat[0]->save();
 				}

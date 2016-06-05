@@ -38,6 +38,11 @@ app.factory('RestData2', function ($resource, $localStorage, Config) {
 				editVendor:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'vendor', action: 'edit', param: null} },
 				saveVendor:					{ method: 'POST', headers: headers, params: {path: 'data', object: 'vendor', action: 'save', param: null} },
 
+				getAllRepeats:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'repeat', action: 'get', param: null} },
+				deleteRepeat:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'repeat', action: 'delete', param: null} },
+				editRepeat:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'repeat', action: 'edit', param: null} },
+				saveRepeat:					{ method: 'POST', headers: headers, params: {path: 'data', object: 'repeat', action: 'save', param: null} },
+
 				getAllForecasts:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'forecast', action: 'loadAll', param: null} },
 				deleteForecast:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'forecast', action: 'delete', param: null} },
 				editForecast:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'forecast', action: 'edit', param: null} },

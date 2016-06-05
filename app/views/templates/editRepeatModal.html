@@ -1,0 +1,173 @@
+<script type="text/ng-template" id="editRepeatModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Add a new Repeat</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group" ng-class="{ 'has-error': validation.description }">
+					<label for="description">Description</label>
+					<input type="text" name="description" class="form-control" ng-model="transaction.description" />
+					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="notes">Notes</label>
+					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2" ng-if="!is_split">
+				<label for="category">Category</label>
+				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
+					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label for="date">Bank Account</label>
+				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
+					<select class="form-control" name="bank_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
+					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
+				</div>
+			</div>
+			<div class="col-md-3" ng-if="!is_split">
+				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
+					<label for="name">Payee/Payer</label>
+					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
+					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<label for="next_due_date">Next Due Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.next_due_date }">
+					<p class="input-group">
+						<input type="text" name="next_due_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="transaction.next_due_date" is-open="opened.next_due_date" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="open($event, 'next_due_date')"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="validation.next_due_date">{{ validation.next_due_date }}</span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label for="first_due_date">First Due Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.first_due_date }">
+					<p class="input-group">
+						<input type="text" name="first_due_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="transaction.first_due_date" is-open="opened.first_due_date" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="open($event, 'first_due_date')"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="validation.first_due_date">{{ validation.first_due_date }}</span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label for="last_due_date">Last Due Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.last_due_date }">
+					<p class="input-group">
+						<input type="text" name="last_due_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="transaction.last_due_date" is-open="opened.last_due_date" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="open($event, 'last_due_date')"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="validation.last_due_date">{{ validation.last_due_date }}</span>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2">
+				<label for="type">Type</label>
+				<div class="form-group" ng-class="{'has-error': validation.type }">
+					<select class="form-control" name="type" ng-model="transaction.type">
+						<option>Select Type</option>
+						<option ng-selected="transaction.type == 'CHECK'" value="CHECK">Check</option>
+						<option ng-selected="transaction.type == 'DEBIT'" value="DEBIT">Debit</option>
+						<option ng-selected="transaction.type == 'CREDIT'" value="CREDIT">Credit</option>
+						<option ng-selected="transaction.type == 'DSLIP'" value="DSLIP">Deposit</option>
+					</select>
+					<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="every_unit">Every Unit</label>
+				<div class="form-group" ng-class="{'has-error': validation.every_unit }">
+					<select class="form-control" name="every_unit" ng-model="transaction.every_unit">
+						<option>Select Type</option>
+						<option ng-selected="transaction.every_unit == 'Day'" value="Day">Day</option>
+						<option ng-selected="transaction.every_unit == 'Week'" value="Week">Week</option>
+						<option ng-selected="transaction.every_unit == 'Month'" value="Month">Month</option>
+						<option ng-selected="transaction.every_unit == 'Year'" value="Year">Year</option>
+					</select>
+					<span class="help-block" ng-show="validation.every_unit">{{ validation.every_unit }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="every">Every</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.every }">
+					<input type="text" name="every" class="form-control" ng-model="transaction.every" />
+					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<label for="amount">Amount</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
+					<input type="text" name="amount" class="form-control" ng-model="transaction.amount"><!-- ng-model-options="{updateOn: 'blur'}" />-->
+					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<label>On</label>
+			</div>
+			<div class="col-md-12" ng-repeat="repeat in transaction.repeats">
+				<div class="form-group" ng-class="{ 'has-error': validation.repeats.every_day[$index] ||
+																validation.repeats.every_month[$index] ||
+																validation.repeats.every_date[$index] }">
+					<p class="input-group">
+						<!--<input type="text" ng-if="transaction.every_unit == 'Week'" type="text" ng-model="repeat.every_day" />-->
+						<select ng-if="transaction.every_unit == 'Week'" name="every_day" ng-model="repeat.every_day">
+							<option ng-selected="!repeat.every_day">Select Day</option>
+							<option ng-selected="repeat.every_day == '1'" value="1">Monday</option>
+							<option ng-selected="repeat.every_day == '2'" value="2">Tuesday</option>
+							<option ng-selected="repeat.every_day == '3'" value="3">Wednesday</option>
+							<option ng-selected="repeat.every_day == '4'" value="4">Thursday</option>
+							<option ng-selected="repeat.every_day == '5'" value="5">Friday</option>
+							<option ng-selected="repeat.every_day == '6'" value="6">Saturday</option>
+							<option ng-selected="repeat.every_day == '7'" value="7">Sunday</option>
+						</select>
+						<select ng-if="transaction.every_unit == 'Year'" name="every_month" ng-model="repeat.every_month">
+							<option ng-selected="!repeat.every_month">Select Month</option>
+							<option ng-selected="repeat.every_month == '1'" value="1">Januray</option>
+							<option ng-selected="repeat.every_month == '2'" value="2">February</option>
+							<option ng-selected="repeat.every_month == '3'" value="3">March</option>
+							<option ng-selected="repeat.every_month == '4'" value="4">April</option>
+							<option ng-selected="repeat.every_month == '5'" value="5">May</option>
+							<option ng-selected="repeat.every_month == '6'" value="6">June</option>
+							<option ng-selected="repeat.every_month == '7'" value="7">July</option>
+							<option ng-selected="repeat.every_month == '8'" value="8">August</option>
+							<option ng-selected="repeat.every_month == '9'" value="9">September</option>
+							<option ng-selected="repeat.every_month == '10'" value="10">October</option>
+							<option ng-selected="repeat.every_month == '11'" value="11">November</option>
+							<option ng-selected="repeat.every_month == '12'" value="12">December</option>
+						</select>
+						<input type="text" class="input-xs" ng-if="transaction.every_unit == 'Month' || transaction.every_unit == 'Year'" ng-model="repeat.every_date" />
+					</p>
+					<span class="help-block" ng-show="validation.repeats.every_day[$index]">{{ validation.repeats.every_day[$index] }}</span>
+					<span class="help-block" ng-show="validation.repeats.every_month[$index]">{{ validation.repeats.every_month[$index] }}</span>
+					<span class="help-block" ng-show="validation.repeats.every_date[$index]">{{ validation.repeats.every_date[$index] }}</span>
+				</div>
+			</div>
+		</div>
+		<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="save()">Save</button>
+		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	</div>
+</script>

@@ -143,6 +143,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+		.when('/repeats',
+		{
+			controller:		'RepeatController',
+			templateUrl:	'app/views/repeat.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
 		.when('/categories',
 		{
 			controller:		'CategoryController',

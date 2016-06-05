@@ -8,6 +8,11 @@ class transaction_repeat_split extends Nagilum {
 
 	public $table = 'transaction_repeat_split';
 	
+	public $hasOne = array(	//'transactions' => array('class' => 'transaction', 'joinField' => 'transaction_id'),
+							'category' => array('class' => 'category', 'joinField' => 'category_id'),
+							'vendor' => array('class' => 'vendor', 'joinField' => 'vendor_id')
+						);
+
 	public $autoPopulateHasOne = FALSE;
 	public $autoPopulateHasMany = FALSE;
 

@@ -105,7 +105,7 @@ class transaction_controller Extends rest_controller {
 		$_POST = json_decode($input, TRUE);
 
 		// VALIDATION
-		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|interger');
+		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|integer');
 
 		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
