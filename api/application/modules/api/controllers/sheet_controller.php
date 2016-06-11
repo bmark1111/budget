@@ -38,16 +38,22 @@ class sheet_controller Extends rest_controller {
 		$select = array();
 		$select[] = "T.transaction_date";
 		foreach ($categories as $category) {
-			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'CREDIT' THEN T.amount ELSE 0 END)" .
-						" + SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'DSLIP' THEN T.amount ELSE 0 END)" .
-						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CREDIT' THEN TS.amount ELSE 0 END)" .
-						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DSLIP' THEN TS.amount ELSE 0 END)" .
-						"AS total_" . $category->id . "_credit," .
-						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'CHECK' THEN T.amount ELSE 0 END)" .
-						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'DEBIT' THEN T.amount ELSE 0 END) " .
-						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CHECK' THEN TS.amount ELSE 0 END)" .
-						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DEBIT' THEN TS.amount ELSE 0 END) " .
-						"AS total_" . $category->id . "_debit";
+//			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'CREDIT' THEN T.amount ELSE 0 END)" .
+//						" + SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'DSLIP' THEN T.amount ELSE 0 END)" .
+//						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CREDIT' THEN TS.amount ELSE 0 END)" .
+//						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DSLIP' THEN TS.amount ELSE 0 END)" .
+//						" AS total_" . $category->id . "_credit," .
+//						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'CHECK' THEN T.amount ELSE 0 END)" .
+//						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'DEBIT' THEN T.amount ELSE 0 END) " .
+//						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CHECK' THEN TS.amount ELSE 0 END)" .
+//						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DEBIT' THEN TS.amount ELSE 0 END) " .
+//						" AS total_" . $category->id . "_debit";
+			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CREDIT' OR T.type = 'DSLIP') THEN T.amount ELSE 0 END)" .
+						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND (TS.type = 'CREDIT' OR TS.type = 'DSLIP') THEN TS.amount ELSE 0 END)" .
+						" AS total_" . $category->id . "_credit," .
+						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CHECK' OR T.type = 'DEBIT') THEN T.amount ELSE 0 END) " .
+						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND (TS.type = 'CHECK' OR TS.type = 'DEBIT') THEN TS.amount ELSE 0 END) " .
+						" AS total_" . $category->id . "_debit";
 		}
 
 		$sql = array();
@@ -115,7 +121,6 @@ class sheet_controller Extends rest_controller {
 
 		$transactions = new transaction();
 		$transactions->queryAll(implode(' ', $sql));
-
 		$running_total = $this->_getBalanceForward($sd);
 
 		// get the accounts

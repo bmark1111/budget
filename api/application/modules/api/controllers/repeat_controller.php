@@ -140,25 +140,26 @@ class repeat_controller Extends rest_controller {
 		$repeat->last_due_date		= (!empty($_POST['last_due_date'])) ? $_POST['last_due_date']: NULL;
 		$repeat->next_due_date		= $_POST['next_due_date'];
 		$repeat->type				= $_POST['type'];
+		$repeat->amount				= $_POST['amount'];
 		$repeat->every_unit			= $_POST['every_unit'];
 		$repeat->every				= $_POST['every'];
 		$repeat->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 		$repeat->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$repeat->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
-print $repeat;
-//		$repeat->save();
+//print $repeat;
+		$repeat->save();
 
-		foreach ($_POST['repeats'] as $repeat) {
-			$transaction_repeat_every = new transaction_repeat_every($repeat['id']);
+		foreach ($_POST['repeats'] as $repeat_every) {
+			$transaction_repeat_every = new transaction_repeat_every($repeat_every['id']);
 			if (empty($repeat['is_deleted']) || $repeat['is_deleted'] != 1) {
 				$transaction_repeat_every->transaction_repeat_id	= $repeat->id;
-				$transaction_repeat_every->every_day				= $repeat['every_day'];
-				$transaction_repeat_every->every_date				= $repeat['every_date'];
-				$transaction_repeat_every->every_month				= $repeat['every_month'];
-print $transaction_repeat_every;
-//				$transaction_repeat_every->save();
+				$transaction_repeat_every->every_day				= (!empty($repeat_every['every_day'])) ? $repeat_every['every_day']: NULL;
+				$transaction_repeat_every->every_date				= $repeat_every['every_date'];
+				$transaction_repeat_every->every_month				= $repeat_every['every_month'];
+//print $transaction_repeat_every;
+				$transaction_repeat_every->save();
 			} else {
-//				$transaction_repeat_every->delete();
+				$transaction_repeat_every->delete();
 			}
 		}
 
@@ -167,19 +168,19 @@ print $transaction_repeat_every;
 				$transaction_repeat_split = new transaction_repeat_split($split['id']);
 				if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
 					$transaction_repeat_split->amount					= $split['amount'];
-					$transaction_repeat_split->transaction_repeat_id	= $transaction_repeat->id;
+					$transaction_repeat_split->transaction_repeat_id	= $repeat->id;
 					$transaction_repeat_split->type						= $split['type'];
 					$transaction_repeat_split->category_id				= $split['category_id'];
 					$transaction_repeat_split->vendor_id				= $split['vendor_id'];
 					$transaction_repeat_split->notes					= (!empty($split['notes'])) ? $split['notes']: NULL;
-print $transaction_repeat_split;
-//					$transaction_repeat_split->save();
+//print $transaction_repeat_split;
+					$transaction_repeat_split->save();
 				} else {
-//					$transaction_repeat_split->delete();
+					$transaction_repeat_split->delete();
 				}
 			}
 		}
-die('xxxxxxxxxxxx');
+//die('xxxxxxxxxxxx');
 		$this->ajax->setdata('id', $repeat->id);
 		$this->ajax->output();
 	}
