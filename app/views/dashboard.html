@@ -2,10 +2,6 @@
 	<h1 class="page-header">Dashboard</h1>
 	<div ng-show="dashboard.error">{{ dashboard.error }}</div>
 	<div class="row">
-<!--		<div class="col-md-3">
-			<h3>Category Yotals YTD</h3>
-			<input type="text" ng-model="ytdYear" placeholder="Enter Year" ng-blur="getYTD()" />
-		</div>-->
 		<div class="col-md-3">
 			<div ng-show="dashboard.dataErrorMsg[0]">
 				<p ng-repeat="error in dashboard.dataErrorMsg"><span style="color:red;">{{ error }}</span></p>
@@ -50,10 +46,10 @@
 							</thead>
 							<tbody>
 								<tr ng-repeat="idx in dashboard.transactions_seq" ng-if="!dashboard.dataErrorMsgThese">
-									<td><span class="pull-left">{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span></td>
-									<td>{{ transactions[idx].description}}<span ng-if="transactions[idx].notes"> - <em>{{ transactions[idx].notes }}</em></span></td>
-									<td>{{ transactions[idx].type }}</td>
-									<td><span class="pull-right">{{ transactions[idx].amount|currency }}</span></td>
+									<td><span class="pull-left">{{ dashboard.transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span></td>
+									<td>{{ dashboard.transactions[idx].description}}<span ng-if="dashboard.transactions[idx].notes"> - <em>{{ dashboard.transactions[idx].notes }}</em></span></td>
+									<td>{{ dashboard.transactions[idx].type }}</td>
+									<td><span class="pull-right">{{ dashboard.transactions[idx].amount|currency }}</span></td>
 								</tr>
 								<tr ng-repeat="error in dashboard.dataErrorMsgThese" ng-if="dashboard.dataErrorMsgThese">
 									<td colspan="4">{{ error.error }}</td>
