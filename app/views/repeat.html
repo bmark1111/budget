@@ -27,7 +27,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Description</th>
+					<th>Vendor</th>
 					<th>Category</th>
 					<th>Account</th>
 					<th>First Due Date</th>
@@ -39,8 +39,9 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="idx in repeats_seq">
-					<td><span class="pull-left">{{repeats[idx].description}}</span></td>
-					<td><span class="pull-left">{{repeats[idx].vendor.name}}</span></td>
+					<td ng-if="repeats[idx].category.name"><span class="pull-left">{{repeats[idx].vendor.name}}</span></td>
+					<td ng-if="repeats[idx].category.name"><span class="pull-left">{{repeats[idx].category.name}}</span></td>
+					<td colspan="2" ng-if="!repeats[idx].category.name"><span class="pull-left">--Split--</span></td>
 					<td><span class="pull-left">{{repeats[idx].bank_account.name}}</span></td>
 					<td><span class="pull-left">{{repeats[idx].first_due_date}}</span></td>
 					<td><span class="pull-left">{{repeats[idx].next_due_date}}</span></td>
