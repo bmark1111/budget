@@ -26,6 +26,7 @@ class repeat_controller Extends rest_controller {
 
 		$params = $this->input->get();
 
+		$last_due_date		= $params['last_due_date'];
 		$name				= (!empty($params['name'])) ? $params['name']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
@@ -33,6 +34,9 @@ class repeat_controller Extends rest_controller {
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$repeats = new transaction_repeat();
+		if ($last_due_date == 'false') {
+			$repeats->where('last_due_date IS NULL', FALSE, FALSE);
+		}
 		$repeats->join('vendor', 'vendor.id = transaction_repeat.vendor_id', 'left');
 		if ($name) {
 			$repeats->like('vendor.name', $name, 'both');

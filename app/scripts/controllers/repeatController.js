@@ -14,6 +14,7 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.search = {
 		currentPage:	1,
+		last_due_date:	false,
 		name:			''
 	};
 
@@ -23,6 +24,7 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 //		ngProgress.start();
 
 		RestData2().getAllRepeats( {
+				'last_due_date':		$scope.search.last_due_date,
 				'name':					$scope.search.name,
 				'sort':					'next_due_date',
 				'sort_dir':				'ASC',
