@@ -31,24 +31,29 @@ class transaction_controller Extends rest_controller {
 		$date				= (!empty($params['date'])) ? $params['date']: FALSE;
 		$description		= (!empty($params['description'])) ? $params['description']: FALSE;
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
+		$vendor				= (!empty($params['vendor'])) ? $params['vendor']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
-		$sort				= (!empty($params['sort'])) ? $params['sort']: 'transaction_date';
+		$sort				= (!empty($params['sort'])) ? $params['sort']: 'transaction.transaction_date';
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$transactions = new transaction();
+		$transactions->select('SQL_CALC_FOUND_ROWS transaction.*', FALSE);
 		if ($date) {
 			$date = date('Y-m-d', strtotime($date));
 			$transactions->where('transaction.transaction_date', $date);
 		}
 		if ($description) {
-			$transactions->like('description', $description);
+			$transactions->like('transaction.description', $description);
 		}
 		if ($amount) {
-			$transactions->where('amount', $amount);
+			$transactions->where('transaction.amount', $amount);
 		}
-		$transactions->select('SQL_CALC_FOUND_ROWS *', FALSE);
-		$transactions->whereNotDeleted();
+		if ($vendor) {
+			$transactions->join('vendor', 'vendor.id = transaction.vendor_id');
+			$transactions->like('vendor.name', $vendor, 'both');
+		}
+		$transactions->where('transaction.is_deleted', 0);
 		$transactions->limit($pagination_amount, $pagination_start);
 		$transactions->orderBy($sort, $sort_dir);
 		$transactions->result();
