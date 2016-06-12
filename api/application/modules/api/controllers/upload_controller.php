@@ -233,7 +233,7 @@ class upload_controller Extends rest_controller {
 			$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
 			$transaction_repeat->groupStart();
 			$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
-			$transaction_repeat->orWhere('last_due_date > ', $_POST['transaction_date'], FALSE);
+			$transaction_repeat->orWhere('last_due_date <= ', $_POST['transaction_date'], FALSE);
 			$transaction_repeat->groupEnd();
 			$transaction_repeat->result();
 			if ($transaction_repeat->numRows()) {
