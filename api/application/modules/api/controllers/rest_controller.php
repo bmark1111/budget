@@ -77,17 +77,17 @@ class rest_controller Extends EP_Controller {
 		$transactions->select('transaction_repeat.*');
 		$transactions->groupStart();
 		$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
-		$transactions->orWhere('transaction_repeat.last_due_date <= ', $ed);
+		$transactions->orWhere('transaction_repeat.last_due_date < ', $ed);
 		$transactions->orWhere('transaction_repeat.last_due_date >= ', $sd);
 		$transactions->groupEnd();
 		$transactions->groupStart();
 		$transactions->orWhere('transaction_repeat.last_due_date IS NULL', NULL, FALSE);
 		$transactions->orWhere('transaction_repeat.last_due_date >= transaction_repeat.next_due_date', NULL, FALSE);
 		$transactions->groupEnd();
-		$transactions->where('transaction_repeat.first_due_date <= ', $ed);
+		$transactions->where('transaction_repeat.first_due_date < ', $ed);
 		$transactions->where('transaction_repeat.is_deleted', 0);
 		if ($all !== 0) {
-			$transactions->where('transaction_repeat.next_due_date <= ', $ed);
+			$transactions->where('transaction_repeat.next_due_date < ', $ed);
 		}
 		if (count($categories) == 1) {
 			$transactions->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
@@ -112,7 +112,7 @@ class rest_controller Extends EP_Controller {
 					$next_due_date = $transaction->first_due_date;
 				}
 				$every = 0;
-				while (strtotime($next_due_date) <= strtotime($ed)) {
+				while (strtotime($next_due_date) < strtotime($ed)) {
 					switch ($transaction->every_unit) {
 						case 'Day':
 							$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
@@ -245,10 +245,10 @@ class rest_controller Extends EP_Controller {
 		$forecast->whereNotDeleted();
 		$forecast->groupStart();
 		$forecast->orWhere('last_due_date IS NULL ', NULL);
-		$forecast->orWhere('last_due_date <= ', $ed);
+		$forecast->orWhere('last_due_date < ', $ed);
 		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
-		$forecast->where('first_due_date <= ', $ed);
+		$forecast->where('first_due_date < ', $ed);
 		if (count($categories) == 1) {
 			$forecast->where('category_id', $categories['id']);
 		}
