@@ -33,7 +33,7 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 			if (!result.id && result.name) {
 				// nothing has been selected but a name has been entered, so lets see if an new payer/payee should be added
 				var modalInstance = $modal.open({
-					templateUrl: 'editVendorModal.html',
+					templateUrl: 'app/views/templates/editVendorModal.html',
 					controller: 'EditVendorModalController',
 					windowClass: 'app-modal-window',
 					resolve: {
