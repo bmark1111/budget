@@ -5,6 +5,7 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts) {
 
 		$scope.dataErrorMsg = [];
+		$scope.isSaving = false;
 
 		$scope.title = params.title;
 		$scope.post = 'Post New';
@@ -133,6 +134,7 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 		// post uploaded uploaded
 		$scope.postUploaded = function () {
 			$scope.dataErrorMsg = [];
+			$scope.isSaving = true;
 
 			$scope.validation = {};
 
@@ -140,6 +142,7 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 
 			RestData2().postUploadedTransaction($scope.transaction,
 				function(response) {
+					$scope.isSaving = false;
 					if (!!response.success) {
 						$modalInstance.close();
 						// now update the global intervals data

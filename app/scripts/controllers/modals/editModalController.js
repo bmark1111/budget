@@ -17,6 +17,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		$scope.maxDate = null;
 		$scope.opened = false;
 		$scope.is_split = false;
+		$scope.isSaving = false;
 
 		//**********************//
 		// Live Search			//
@@ -34,7 +35,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 			if (!result.id && result.name) {
 				// nothing has been selected but a name has been entered, so lets see if a new payer/payee should be added
 				var modalInstance = $modal.open({
-					templateUrl: 'editVendorModal.html',
+					templateUrl: 'app/views/templates/editVendorModal.html',
 					controller: 'EditVendorModalController',
 					windowClass: 'app-modal-window',
 					resolve: {
@@ -155,6 +156,7 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 		// save edited transaction
 		$scope.save = function () {
 			$scope.dataErrorMsg = [];
+			$scope.isSaving = true;
 
 			$scope.validation = {};
 			if ($scope.transaction.transaction_date) {
@@ -162,177 +164,77 @@ app.controller('EditModalController', ['$q', '$scope', '$rootScope', '$modalInst
 				$scope.transaction.transaction_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
 			}
 			RestData2().saveTransaction($scope.transaction,
-					function(response) {
-						if (!!response.success) {
-							$modalInstance.close();
-							// now update the global intervals data
-							delete $rootScope.intervals;
-							delete $rootScope.periods;
-						} else if (response.validation) {
-							$scope.validation.splits = {};
-							angular.forEach(response.validation,
-								function(validation) {
-									switch (validation.fieldName) {
-										case 'vendor_id':
-											$scope.validation.vendor_id = validation.errorMessage;
-											break;
-										case 'bank_account_id':
-											$scope.validation.bank_account_id = validation.errorMessage;
-											break;
-										case 'transaction_date':
-											$scope.validation.transaction_date = validation.errorMessage;
-											break;
-										case 'description':
-											$scope.validation.description = validation.errorMessage;
-											break;
-										case 'category_id':
-											$scope.validation.category_id = validation.errorMessage;
-											break;
-										case 'type':
-											$scope.validation.type = validation.errorMessage;
-											break;
-										case 'amount':
-											$scope.validation.amount = validation.errorMessage;
-											break;
-										case 'splits':
-											$scope.validation.splits = validation.errorMessage;
-											break;
-										default:
-											if (validation.fieldName.substr(0,6) == 'splits') {
-												var fieldName = validation.fieldName;
-												var matches = fieldName.match(/\[(.*?)\]/g);
-												if (matches) {
-													for (var x = 0; x < matches.length; x++) {
-														matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
-													}
-													if (typeof $scope.validation.splits[matches[1]] == 'undefined') {
-														$scope.validation.splits[matches[1]] = Array();
-													}
-													$scope.validation.splits[matches[1]].push(validation.errorMessage);
-												} else {
-													$scope.validation[fieldName] = validation.errorMessage;
+				function(response) {
+					$scope.isSaving = false;
+					if (!!response.success) {
+						$modalInstance.close();
+						// now update the global intervals data
+						delete $rootScope.intervals;
+						delete $rootScope.periods;
+					} else if (response.validation) {
+						$scope.validation.splits = {};
+						angular.forEach(response.validation,
+							function(validation) {
+								switch (validation.fieldName) {
+									case 'vendor_id':
+										$scope.validation.vendor_id = validation.errorMessage;
+										break;
+									case 'bank_account_id':
+										$scope.validation.bank_account_id = validation.errorMessage;
+										break;
+									case 'transaction_date':
+										$scope.validation.transaction_date = validation.errorMessage;
+										break;
+									case 'description':
+										$scope.validation.description = validation.errorMessage;
+										break;
+									case 'category_id':
+										$scope.validation.category_id = validation.errorMessage;
+										break;
+									case 'type':
+										$scope.validation.type = validation.errorMessage;
+										break;
+									case 'amount':
+										$scope.validation.amount = validation.errorMessage;
+										break;
+									case 'splits':
+										$scope.validation.splits = validation.errorMessage;
+										break;
+									default:
+										if (validation.fieldName.substr(0,6) == 'splits') {
+											var fieldName = validation.fieldName;
+											var matches = fieldName.match(/\[(.*?)\]/g);
+											if (matches) {
+												for (var x = 0; x < matches.length; x++) {
+													matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
 												}
+												if (typeof $scope.validation.splits[matches[1]] == 'undefined') {
+													$scope.validation.splits[matches[1]] = Array();
+												}
+												$scope.validation.splits[matches[1]].push(validation.errorMessage);
+											} else {
+												$scope.validation[fieldName] = validation.errorMessage;
 											}
-											break;
-									}
-								});
+										}
+										break;
+								}
+							});
+					} else {
+						if (response.errors) {
+							angular.forEach(response.errors,
+								function(error) {
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							if (response.errors) {
-								angular.forEach(response.errors,
-									function(error) {
-										$scope.dataErrorMsg.push(error.error);
-									})
-							} else {
-								$scope.dataErrorMsg[0] = response;
-							}
+							$scope.dataErrorMsg[0] = response;
 						}
-	//					ngProgress.complete();
-					});
+					}
+//					ngProgress.complete();
+				});
 		};
 
 		// cancel transaction edit
 		$scope.cancel = function () {
 			$modalInstance.dismiss('cancel');
 		};
-/*
-		// split transaction
-		$scope.split = function() {
-			if (!$scope.is_split) {
-				if (Object.size($scope.transaction.splits) === 0 && $scope.transaction.amount > 0 && typeof($scope.transaction.type) !== 'undefined') {
-					var newItem = {
-						amount:			$scope.transaction.amount,
-						type:			$scope.transaction.type,
-						category_id:	'',
-						notes:			''
-					}
-					$scope.transaction.splits = {};
-					$scope.transaction.splits[0] = newItem;
-					$scope.is_split = true;
-				}
-			} else {
-				$scope.is_split = false;
-			}
-		};
-
-		$scope.refreshSplits = function() {
-			if (Object.size($scope.transaction.splits) > 0) {
-				var newItem = {
-					amount:			'',
-					type:			$scope.transaction.type,
-					category_id:	'',
-					notes:			''
-				}
-				// calculate total of all splits
-				var split_total = parseFloat(0);
-				angular.forEach($scope.transaction.splits,
-					function(split) {
-						if (split.is_deleted !== 1) {
-							switch (split.type) {
-								case 'DEBIT':
-								case 'CHECK':
-									split_total -= parseFloat(split.amount);
-									break;
-								case 'CREDIT':
-								case 'DSLIP':
-									split_total += parseFloat(split.amount);
-									break;
-							}
-						}
-					});
-
-				var new_amount_type = '';
-				var transaction_amount = 0;
-				$scope.calc = Array();
-				var yy = Object.keys($scope.transaction.splits).length
-				switch ($scope.transaction.type) {
-					case 'CREDIT':
-					case 'DSLIP':
-						transaction_amount = parseFloat($scope.transaction.amount);
-						split_total = parseFloat(split_total);
-						new_amount_type = 'DEBIT';
-						break;
-					case 'DEBIT':
-					case 'CHECK':
-						transaction_amount = parseFloat($scope.transaction.amount);
-						split_total = -parseFloat(split_total);
-						new_amount_type = 'CREDIT';
-					break;
-				}
-				if (transaction_amount != split_total.toFixed(2)) {
-					var new_amount = $scope.transaction.amount - split_total;
-					if (new_amount < 0) {
-						new_amount = -new_amount.toFixed(2);
-						newItem.type = new_amount_type;
-					}
-					newItem.amount = new_amount.toFixed(2);
-					$scope.transaction.splits[yy] = newItem;
-				}
-			}
-		};
-
-		$scope.deleteSplit = function(ele) {
-			$scope.transaction.splits[ele].is_deleted = 1;
-
-			// calculate split_total of all splits
-			var split_total = parseFloat(0);
-			angular.forEach($scope.transaction.splits,
-				function(split) {
-					if (split.is_deleted != 1) {
-						split_total += parseFloat(split.amount);
-					}
-				});
-			$scope.calc = Array();
-			if ($scope.transaction.amount != split_total.toFixed(2)) {
-				$scope.calc[ele-1] = 'Split amounts do not match Item amount';
-			}
-		};
-
-		Object.size = function(obj) {
-			var size = 0, key;
-			for (key in obj) {
-				if (obj.hasOwnProperty(key)) size++;
-			}
-			return size;
-		};
-*/
 	}]);

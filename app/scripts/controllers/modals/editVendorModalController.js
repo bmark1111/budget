@@ -5,8 +5,8 @@ app.controller('EditVendorModalController', ['$scope', '$modalInstance', 'RestDa
 	function($scope, $modalInstance, RestData2, params) {
 
 		$scope.dataErrorMsg = [];
+		$scope.isSaving = false;
 
-//		$scope.title = params.title;
 		$scope.vendor = {
 			name: params.name
 		}
@@ -41,10 +41,12 @@ app.controller('EditVendorModalController', ['$scope', '$modalInstance', 'RestDa
 		// save vendor
 		$scope.save = function () {
 			$scope.dataErrorMsg = [];
+			$scope.isSaving = true;
 
 			$scope.validation = {};
 			RestData2().saveVendor($scope.vendor,
 					function(response) {
+						$scope.isSaving = false;
 						if (!!response.success) {
 							$modalInstance.close(response);
 						} else if (response.validation) {

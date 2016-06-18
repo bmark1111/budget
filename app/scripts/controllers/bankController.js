@@ -76,7 +76,7 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 	$scope.addBank = function()
 	{
 		var modalInstance = $modal.open({
-			templateUrl: 'editBankModal.html',
+			templateUrl: 'app/views/templates/editBankModal.html',
 			controller: 'EditBankModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -101,7 +101,7 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 
 	$scope.editBank = function(bank_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editBankModal.html',
+			templateUrl: 'app/views/templates/editBankModal.html',
 			controller: 'EditBankModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -125,7 +125,7 @@ app.controller('BankController', function($scope, $modal, $timeout, RestData2)//
 
 	$scope.deleteBank = function (bank_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteBankModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteBankModalController',
 			size: 'sm',
 			resolve: {

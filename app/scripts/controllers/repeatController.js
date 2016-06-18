@@ -75,7 +75,7 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.addRepeat = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'editRepeatModal.html',
+			templateUrl: 'app/views/templates/editRepeatModal.html',
 			controller: 'EditRepeatModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -99,7 +99,7 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.editRepeat = function(repeat_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editRepeatModal.html',
+			templateUrl: 'app/views/templates/editRepeatModal.html',
 			controller: 'EditRepeatModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -123,7 +123,7 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.deleteRepeat = function (repeat_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteRepeatModalController',
 			size: 'sm',
 			resolve: {

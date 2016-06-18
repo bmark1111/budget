@@ -5,6 +5,7 @@ app.controller('EditForecastModalController', ['$q', '$scope', '$rootScope', '$m
 	$scope.dataErrorMsg = [];
 	$scope.forecast = {};
 	$scope.title = params.title;
+	$scope.isSaving = false;
 
 	var getForecast = function() {
 		var deferred = $q.defer();
@@ -80,11 +81,13 @@ app.controller('EditForecastModalController', ['$q', '$scope', '$rootScope', '$m
 	// save edited forecast
 	$scope.save = function () {
 		$scope.dataErrorMsg = [];
+		$scope.isSaving = true;
 
 		$scope.validation = {};
 
 		RestData2().saveForecast($scope.forecast,
 				function(response) {
+					$scope.isSaving = false;
 					if (!!response.success) {
 						$modalInstance.close();
 						// now update the global intervals data

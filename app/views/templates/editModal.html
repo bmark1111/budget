@@ -1,9 +1,9 @@
-<script type="text/ng-template" id="editModal.html">
-	<div class="modal-header">
-		<h3 class="modal-title">{{title}}</h3>
-	</div>
-	<div class="modal-body">
-		<div class="row">
+<div class="modal-header">
+	<h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
 			<div class="col-md-3">
 				<label for="date">Bank Account</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
@@ -11,7 +11,7 @@
 					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
 				</div>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-4">
 				<label for="transaction_date">Date</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.transaction_date }">
 					<p class="input-group">
@@ -23,38 +23,42 @@
 					<span class="help-block" ng-show="validation.transaction_date">{{ validation.transaction_date }}</span>
 				</div>
 			</div>
-			<div class="col-md-3" ng-if="!is_split">
+			<div class="col-md-5" ng-if="!is_split">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<label for="name">Payee/Payer</label>
 					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
 					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4">
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-5">
 				<div class="form-group" ng-class="{ 'has-error': validation.description }">
 					<label for="description">Description</label>
 					<input type="text" name="description" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.description" />
 					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
 				</div>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-5">
 				<div class="form-group">
 					<label for="notes">Notes</label>
 					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2" ng-if="!is_split">
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-3" ng-if="!is_split">
 				<label for="category">Category</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
 					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
 					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
 				</div>
 			</div>
-			<div class="col-sm-2">
+			<div class="col-md-2">
 				<label for="type">Type</label>
 				<div class="form-group" ng-class="{'has-error': validation.type }">
 					<select class="form-control" name="type" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.type">
@@ -67,7 +71,7 @@
 					<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
 				</div>
 			</div>
-			<div class="col-sm-2">
+			<div class="col-md-2">
 				<label for="check_num">Check Num</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.check_num }">
 					<input type="text" name="check_num" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.check_num" />
@@ -76,14 +80,12 @@
 			<div class="col-md-2">
 				<label for="amount">Amount</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
-					<!--<input type="text" name="amount" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.amount" ng-blur="refreshSplits()" />-->
 					<input type="text" name="amount" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.amount" ng-model-options="{updateOn: 'blur'}" />
 					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
 				</div>
 			</div>
 			<div class="col-md-1" style="padding-top:25px;">
 				<div class="form-group">
-					<!--<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="split()">-->
 					<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="is_split = !is_split">
 						Split
 					</button>
@@ -93,61 +95,17 @@
 				<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"> Uploaded</span><br />
 				<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> &nbsp; &nbsp; Reconciled</span>
 			</div>
-		</div>
-		<div class="table-responsive" ng-if="transaction.repeat">
-			<div>Repeat Every: {{ transaction.repeat.every }} x {{ transaction.repeat.every_unit }}.</div>
-			<div>First Due Date: {{ transaction.repeat.first_due_date|date:'EEE MMM dd, yyyy' }}.</div>
-			<div>Next Due Date: {{ transaction.repeat.next_due_date|date:'EEE MMM dd, yyyy' }}.</div>
-			<div>Amount Due: {{ transaction.repeat.amount|currency }}.</div>
-		</div>
-		<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>
-<!--		<div class="table-responsive" ng-if="transaction.splits[0]">
-			<table style="width:100%;">
-				<tr>
-					<th><span class="pull-left">Payer/Payee</span></th>
-					<th><span class="pull-left">Amount</span></th>
-					<th><span class="pull-left">Type</span></th>
-					<th><span class="pull-left">Category</span></th>
-					<th><span class="pull-left">Notes</span></th>
-					<th></th>
-				</tr>
-				<tr ng-repeat="t in transaction.splits" ng-if="t.is_deleted != 1">
-					<td class="col-md-3" style="vertical-align:top;" ng-class="{'has-error': validation.splits.vendor_id[$index] || calc[$index] }">
-						<div live-search="vendor_id" table="splits" index="{{ $index }}" displayname="{{ t.vendor.display_name }}"></div>
-						<span class="help-block" ng-show="validation.splits.vendor_id[$index]">{{ validation.splits.vendor_id[$index] }}</span>
-						<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>
-					</td>
-					<td class="col-md-1" style="vertical-align:top;" ng-class="{'has-error': validation.splits.amount[$index] || calc[$index] }">
-						<input type="text" class="form-control" ng-model="t.amount" ng-blur="refreshSplits()" />
-						<span class="help-block" ng-show="validation.splits.amount[$index]">{{ validation.splits.amount[$index] }}</span>
-						<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>
-					</td>
-					<td class="col-md-1" style="vertical-align:top;" ng-class="{'has-error': validation.splits.type[$index] || calc[$index] }">
-						<select class="form-control" name="type" ng-model="t.type" ng-blur="refreshSplits()">
-							<option>Select Type</option>
-							<option ng-selected="t.type == 'CHECK'" value="CHECK">Check</option>
-							<option ng-selected="t.type == 'DEBIT'" value="DEBIT">Debit</option>
-							<option ng-selected="t.type == 'CREDIT'" value="CREDIT">Credit</option>
-							<option ng-selected="t.type == 'DSLIP'" value="DSLIP">Deposit</option>
-						</select>
-						<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>
-					</td>
-					<td class="col-md-2" style="vertical-align:top;" ng-class="{'has-error': validation.splits.category_id[$index] }">
-						<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in categories"></select>
-						<span class="help-block" ng-show="validation.splits.category_id[$index]">{{ validation.splits.category_id[$index] }}</span>
-					</td>
-					<td class="col-md-3" style="vertical-align:top;">
-						<input type="text" class="form-control" ng-model="t.notes" />
-					</td>
-					<td class="col-md-1" style="vertical-align:top;">
-						<span class="glyphicon glyphicon-trash" ng-click="deleteSplit($index)" style="cursor:pointer;"></span>
-					</td>
-				</tr>
-			</table>
-		</div>-->
+		</fieldset>
 	</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="save()">Save</button>
-		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	<div class="table-responsive" ng-if="transaction.repeat">
+		<div>Repeat Every: {{ transaction.repeat.every }} x {{ transaction.repeat.every_unit }}.</div>
+		<div>First Due Date: {{ transaction.repeat.first_due_date|date:'EEE MMM dd, yyyy' }}.</div>
+		<div>Next Due Date: {{ transaction.repeat.next_due_date|date:'EEE MMM dd, yyyy' }}.</div>
+		<div>Amount Due: {{ transaction.repeat.amount|currency }}.</div>
 	</div>
-</script>
+	<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

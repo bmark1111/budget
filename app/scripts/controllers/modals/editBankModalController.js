@@ -10,6 +10,7 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 
 	$scope.opened1 = [];
 	$scope.opened2 = [];
+	$scope.isSaving = false;
 
 	$scope.title = params.title;
 
@@ -61,11 +62,13 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 	// save edited bank
 	$scope.save = function () {
 		$scope.dataErrorMsg = [];
+		$scope.isSaving = true;
 
 		$scope.validation = {};
 
 		RestData2().saveBank($scope.bank,
 				function(response) {
+					$scope.isSaving = false;
 					if (!!response.success) {
 						$modalInstance.close();
 						// now update the global bank account data

@@ -142,7 +142,7 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 
 	$scope.addForecast = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'editForecastModal.html',
+			templateUrl: 'app/views/templates/editForecastModal.html',
 			controller: 'EditForecastModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -167,7 +167,7 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 
 	$scope.editForecast = function(forecast_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editForecastModal.html',
+			templateUrl: 'app/views/templates/editForecastModal.html',
 			controller: 'EditForecastModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -192,7 +192,7 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 
 	$scope.deleteForecast = function (forecast_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteForecastModalController',
 			size: 'sm',
 			resolve: {

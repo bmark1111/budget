@@ -80,7 +80,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 	$scope.uploadTransactions = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'uploadModal.html',
+			templateUrl: 'app/views/templates/uploadModal.html',
 			controller: 'UploadModalController',
 			size: 'sm',
 			resolve: {
@@ -102,7 +102,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 	$scope.addTransaction = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'editModal.html',
+			templateUrl: 'app/views/templates/editModal.html',
 			controller: 'EditModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -126,7 +126,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 	$scope.editTransaction = function(transaction_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editModal.html',
+			templateUrl: 'app/views/templates/editModal.html',
 			controller: 'EditModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -150,7 +150,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 	$scope.deleteTransaction = function (transaction_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteModalController',
 			size: 'sm',
 			resolve: {

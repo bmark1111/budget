@@ -73,7 +73,7 @@ app.controller('VendorController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.addVendor = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'editVendorModal.html',
+			templateUrl: 'app/views/templates/editVendorModal.html',
 			controller: 'EditVendorModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -97,7 +97,7 @@ app.controller('VendorController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.editVendor = function(vendor_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editVendorModal.html',
+			templateUrl: 'app/views/templates/editVendorModal.html',
 			controller: 'EditVendorModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -121,7 +121,7 @@ app.controller('VendorController', function($scope, $modal, $timeout, RestData2)
 
 	$scope.deleteVendor = function (vendor_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteVendorModalController',
 			size: 'sm',
 			resolve: {

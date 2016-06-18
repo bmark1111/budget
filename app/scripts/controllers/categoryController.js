@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('CategoryController', function($scope, $modal, $timeout, RestData2)
-{
+app.controller('CategoryController', function($scope, $modal, $timeout, RestData2) {
+
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
 	$scope.recCount		= 0;
@@ -19,48 +19,41 @@ app.controller('CategoryController', function($scope, $modal, $timeout, RestData
 		amount:			''
 	};
 
-	var loadData = function()
-	{
+	var loadData = function() {
 		$scope.dataErrorMsg = [];
 
 //		ngProgress.start();
 
-		RestData2().getAllCategories(
-				{
-					'name':					$scope.search.name,
-					'sort':					'name',
-					'sort_dir':				'DESC',
-					'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
-					'pagination_amount':	$scope.itemsPerPage
-				},
-				function(response)
-				{
-					if (!!response.success)
-					{
-						$scope.categories = response.data.result;
-						$scope.categories_seq = Object.keys(response.data.result);
-						$scope.recCount = response.data.total_rows;
+		RestData2().getAllCategories({
+				'name':					$scope.search.name,
+				'sort':					'name',
+				'sort_dir':				'DESC',
+				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+				'pagination_amount':	$scope.itemsPerPage
+			},
+			function(response) {
+				if (!!response.success) {
+					$scope.categories = response.data.result;
+					$scope.categories_seq = Object.keys(response.data.result);
+					$scope.recCount = response.data.total_rows;
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
 					} else {
-						if (response.errors)
-						{
-							angular.forEach(response.errors,
-								function(error)
-								{
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
+						$scope.dataErrorMsg[0] = response;
 					}
-//					ngProgress.complete();
-				});
+				}
+//				ngProgress.complete();
+			});
 	}
 
 	loadData();
 
 	var timer = null;
-	$scope.refreshData = function()
-	{
+	$scope.refreshData = function() {
 		$scope.search.currentPage = 1;
 
 		if (timer) $timeout.cancel(timer);
@@ -68,24 +61,21 @@ app.controller('CategoryController', function($scope, $modal, $timeout, RestData
 		loadData();
 	};
 
-	$scope.pageChanged = function()
-	{
+	$scope.pageChanged = function() {
 		loadData();
 	};
 
 	// open date picker
-	$scope.open = function($event)
-	{
+	$scope.open = function($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
 
 		$scope.opened = true;
 	};
 
-	$scope.addCategory = function()
-	{
+	$scope.addCategory = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'editCategoryModal.html',
+			templateUrl: 'app/views/templates/editCategoryModal.html',
 			controller: 'EditCategoryModalController',
 			size: 'sm',
 			resolve: {
@@ -99,68 +89,58 @@ app.controller('CategoryController', function($scope, $modal, $timeout, RestData
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Add Category Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.editCategory = function(category_id)
-	{
+	$scope.editCategory = function(category_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editCategoryModal.html',
+			templateUrl: 'app/views/templates/editCategoryModal.html',
 			controller: 'EditCategoryModalController',
 			size: 'sm',
 //			windowClass: 'app-modal-window',
 			resolve: {
-				params: function()
-					{
-						return {
-							id: category_id,
-							title: 'Edit Category'
+				params: function() {
+							return {
+								id: category_id,
+								title: 'Edit Category'
+							}
 						}
-					}
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Edit Category Modal dismissed at: ' + new Date());
 		});
 	};
 
-	$scope.deleteCategory = function (category_id)
-	{
+	$scope.deleteCategory = function (category_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteCategoryModalController',
 			size: 'sm',
 			resolve: {
-				params: function()
-					{
-						return {
-							id: category_id,
-							title: 'Delete Category ?',
-							msg: 'Are you sure you want to delete this category. This action cannot be undone.'
+				params: function() {
+							return {
+								id: category_id,
+								title: 'Delete Category ?',
+								msg: 'Are you sure you want to delete this category. This action cannot be undone.'
+							}
 						}
-					}
 			}
 		});
 
-		modalInstance.result.then(function ()
-		{
+		modalInstance.result.then(function () {
 			loadData();
 		},
-		function ()
-		{
+		function () {
 			console.log('Delete Category Modal dismissed at: ' + new Date());
 		});
 	};

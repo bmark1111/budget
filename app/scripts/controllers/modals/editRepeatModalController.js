@@ -29,6 +29,7 @@ app.controller('EditRepeatModalController', ['$q', '$scope', '$rootScope', '$mod
 		$scope.minDate = null;
 		$scope.maxDate = null;
 		$scope.is_split = false;
+		$scope.isSaving = false;
 
 		//**********************//
 		// Live Search			//
@@ -176,6 +177,7 @@ app.controller('EditRepeatModalController', ['$q', '$scope', '$rootScope', '$mod
 		// save repeat
 		$scope.save = function () {
 			$scope.dataErrorMsg = [];
+			$scope.isSaving = true;
 
 			$scope.validation = {};
 			if ($scope.transaction.first_due_date) {
@@ -191,62 +193,63 @@ app.controller('EditRepeatModalController', ['$q', '$scope', '$rootScope', '$mod
 				$scope.transaction.next_due_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
 			}
 			RestData2().saveRepeat($scope.transaction,
-					function(response) {
-						if (!!response.success) {
-							$modalInstance.close(response);
-						} else if (response.validation) {
-							angular.forEach(response.validation,
-								function(validation) {
-									switch (validation.fieldName) {
-										case 'description':
-										case 'category_id':
-										case 'bank_account_id':
-										case 'vendor_id':
-										case 'first_due_date':
-										case 'last_due_date':
-										case 'next_due_date':
-										case 'type':
-										case 'every_unit':
-										case 'every':
-										case 'amount':
-											$scope.validation[validation.fieldName] = validation.errorMessage;
-											break;
-										default:
-											var validationType = validation.fieldName.split('[');
-											if (validationType[0] === 'splits' || validationType[0] === 'repeats') {
-												var fieldName = validation.fieldName;
-												var matches = fieldName.match(/\[(.*?)\]/g);
-												if (matches) {
-													for (var x = 0; x < matches.length; x++) {
-														matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
-													}
-													if (typeof $scope.validation[validationType[0]] === 'undefined') {
-														$scope.validation[validationType[0]] = Array();
-														$scope.validation[validationType[0]][matches[1]] = Array();
-													}
-													else if (typeof $scope.validation[validationType[0]][matches[1]] === 'undefined') {
-														$scope.validation[validationType[0]][matches[1]] = Array();
-													}
-													$scope.validation[validationType[0]][matches[1]].push(validation.errorMessage);
-												} else {
-													$scope.validation[fieldName] = validation.errorMessage;
+				function(response) {
+					$scope.isSaving = false;
+					if (!!response.success) {
+						$modalInstance.close(response);
+					} else if (response.validation) {
+						angular.forEach(response.validation,
+							function(validation) {
+								switch (validation.fieldName) {
+									case 'description':
+									case 'category_id':
+									case 'bank_account_id':
+									case 'vendor_id':
+									case 'first_due_date':
+									case 'last_due_date':
+									case 'next_due_date':
+									case 'type':
+									case 'every_unit':
+									case 'every':
+									case 'amount':
+										$scope.validation[validation.fieldName] = validation.errorMessage;
+										break;
+									default:
+										var validationType = validation.fieldName.split('[');
+										if (validationType[0] === 'splits' || validationType[0] === 'repeats') {
+											var fieldName = validation.fieldName;
+											var matches = fieldName.match(/\[(.*?)\]/g);
+											if (matches) {
+												for (var x = 0; x < matches.length; x++) {
+													matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
 												}
+												if (typeof $scope.validation[validationType[0]] === 'undefined') {
+													$scope.validation[validationType[0]] = Array();
+													$scope.validation[validationType[0]][matches[1]] = Array();
+												}
+												else if (typeof $scope.validation[validationType[0]][matches[1]] === 'undefined') {
+													$scope.validation[validationType[0]][matches[1]] = Array();
+												}
+												$scope.validation[validationType[0]][matches[1]].push(validation.errorMessage);
+											} else {
+												$scope.validation[fieldName] = validation.errorMessage;
 											}
-											break;
-									}
-								});
+										}
+										break;
+								}
+							});
+					} else {
+						if (response.errors) {
+							angular.forEach(response.errors,
+								function(error) {
+									$scope.dataErrorMsg.push(error.error);
+								})
 						} else {
-							if (response.errors) {
-								angular.forEach(response.errors,
-									function(error) {
-										$scope.dataErrorMsg.push(error.error);
-									})
-							} else {
-								$scope.dataErrorMsg[0] = response;
-							}
+							$scope.dataErrorMsg[0] = response;
 						}
-	//					ngProgress.complete();
-					});
+					}
+//					ngProgress.complete();
+				});
 		};
 
 		// cancel repeat edit

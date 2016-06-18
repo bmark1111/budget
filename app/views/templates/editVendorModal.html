@@ -1,9 +1,9 @@
-<script type="text/ng-template" id="editVendorModal.html">
-	<div class="modal-header">
-		<h3 class="modal-title">Do you want to add a new Payer/Payyee</h3>
-	</div>
-	<div class="modal-body">
-		<div class="row">
+<div class="modal-header">
+	<h3 class="modal-title">Do you want to add a new Payer/Payyee</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
 			<div class="col-md-3">
 				<div class="form-group" ng-class="{ 'has-error': validation.name }">
 					<label for="name">Payee/Payer Name</label>
@@ -23,8 +23,10 @@
 					<input type="text" name="notes" class="form-control" ng-model="vendor.notes" />
 				</div>
 			</div>
-		</div>
-		<div class="row">
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
 			<div class="col-md-3">
 				<label for="street">Street</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.street }">
@@ -46,8 +48,10 @@
 					<span class="help-block" ng-show="validation.state">{{ validation.state }}</span>
 				</div>
 			</div>
-		</div>
-		<div class="row">
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
 			<div class="col-sm-2">
 				<label for="phone_area_code">Area Code</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.phone_area_code }">
@@ -69,10 +73,10 @@
 					<span class="help-block" ng-show="validation.phone_number">{{ validation.phone_number }}</span>
 				</div>
 			</div>
-		</div>
+		</fieldset>
 	</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="save()">Save</button>
-		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-	</div>
-</script>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

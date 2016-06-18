@@ -2,48 +2,52 @@ app.directive("splitTran", function () {
 	return {
 		restrict: 'A',
 		replace: true,
-		template:	'<div class="row"><div class="col-md-12 table-responsive"><table style="width:100%;" ng-if="is_split">' +
-						'<tr>' +
-							'<th><span class="pull-left">Payer/Payee</span></th>' +
-							'<th><span class="pull-left">Amount</span></th>' +
-							'<th><span class="pull-left">Type</span></th>' +
-							'<th><span class="pull-left">Category</span></th>' +
-							'<th><span class="pull-left">Notes</span></th>' +
-							'<th></th>' +
-						'</tr>' +
-						'<tr ng-repeat="t in transaction.splits" ng-if="t.is_deleted != 1">' +
-							'<td class="col-md-3" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.vendor_id[$index] || calc[$index] }">' +
-								'<div live-search="vendor_id" table="splits" index="{{ $index }}" displayname="{{ t.vendor.display_name }}"></div>' +
-								'<span class="help-block" ng-show="validation.splits.vendor_id[$index]">{{ validation.splits.vendor_id[$index] }}</span>' +
-								'<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>' +
-							'</td>' +
-							'<td class="col-md-1" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.amount[$index] || calc[$index] }">' +
-								'<input type="text" class="form-control" ng-model="t.amount" ng-blur="refreshSplits()" />' +
-								'<span class="help-block" ng-show="validation.splits.amount[$index]">{{ validation.splits.amount[$index] }}</span>' +
-								'<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>' +
-							'</td>' +
-							'<td class="col-md-1" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.type[$index] || calc[$index] }">' +
-								'<select class="form-control" name="type" ng-model="t.type" ng-change="refreshSplits()">' +
-									'<option>Select Type</option>' +
-									'<option ng-selected="t.type == \'CHECK\'" value="CHECK">Check</option>' +
-									'<option ng-selected="t.type == \'DEBIT\'" value="DEBIT">Debit</option>' +
-									'<option ng-selected="t.type == \'CREDIT\'" value="CREDIT">Credit</option>' +
-									'<option ng-selected="t.type == \'DSLIP\'" value="DSLIP">Deposit</option>' +
-								'</select>' +
-								'<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>' +
-							'</td>' +
-							'<td class="col-md-2" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.category_id[$index] }">' +
-								'<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in $root.categories"></select>' +
-								'<span class="help-block" ng-show="validation.splits.category_id[$index]">{{ validation.splits.category_id[$index] }}</span>' +
-							'</td>' +
-							'<td class="col-md-3" style="vertical-align:top;">' +
-								'<input type="text" class="form-control" ng-model="t.notes" />' +
-							'</td>' +
-							'<td class="col-md-1" style="vertical-align:top;">' +
-								'<span class="glyphicon glyphicon-trash" ng-click="deleteSplit($index)" style="cursor:pointer;"></span>' +
-							'</td>' +
-						'</tr>' +
-					'</table></div></div>',
+		template:	'<div class="row">' +
+						'<div class="col-sm-12 table-responsive">' +
+							'<table style="width:100%;" ng-if="is_split">' +
+								'<tr>' +
+									'<th><span class="pull-left">Payer/Payee</span></th>' +
+									'<th><span class="pull-left">Amount</span></th>' +
+									'<th><span class="pull-left">Type</span></th>' +
+									'<th><span class="pull-left">Category</span></th>' +
+									'<th><span class="pull-left">Notes</span></th>' +
+									'<th></th>' +
+								'</tr>' +
+								'<tr ng-repeat="t in transaction.splits" ng-if="t.is_deleted != 1">' +
+									'<td class="col-sm-3" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.vendor_id[$index] || calc[$index] }">' +
+										'<div live-search="vendor_id" table="splits" index="{{ $index }}" displayname="{{ t.vendor.display_name }}"></div>' +
+										'<span class="help-block" ng-show="validation.splits.vendor_id[$index]">{{ validation.splits.vendor_id[$index] }}</span>' +
+										'<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>' +
+									'</td>' +
+									'<td class="col-sm-1" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.amount[$index] || calc[$index] }">' +
+										'<input type="text" class="form-control" ng-model="t.amount" ng-blur="refreshSplits()" />' +
+										'<span class="help-block" ng-show="validation.splits.amount[$index]">{{ validation.splits.amount[$index] }}</span>' +
+										'<span class="help-block" ng-show="calc[$index]">{{ calc[$index] }}</span>' +
+									'</td>' +
+									'<td class="col-sm-1" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.type[$index] || calc[$index] }">' +
+										'<select class="form-control" name="type" ng-model="t.type" ng-change="refreshSplits()">' +
+											'<option>Select Type</option>' +
+											'<option ng-selected="t.type == \'CHECK\'" value="CHECK">Check</option>' +
+											'<option ng-selected="t.type == \'DEBIT\'" value="DEBIT">Debit</option>' +
+											'<option ng-selected="t.type == \'CREDIT\'" value="CREDIT">Credit</option>' +
+											'<option ng-selected="t.type == \'DSLIP\'" value="DSLIP">Deposit</option>' +
+										'</select>' +
+										'<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>' +
+									'</td>' +
+									'<td class="col-sm-2" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.category_id[$index] }">' +
+										'<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in $root.categories"></select>' +
+										'<span class="help-block" ng-show="validation.splits.category_id[$index]">{{ validation.splits.category_id[$index] }}</span>' +
+									'</td>' +
+									'<td class="col-sm-3" style="vertical-align:top;">' +
+										'<input type="text" class="form-control" ng-model="t.notes" />' +
+									'</td>' +
+									'<td class="col-sm-1" style="vertical-align:top;">' +
+										'<span class="glyphicon glyphicon-trash" ng-click="deleteSplit($index)" style="cursor:pointer;"></span>' +
+									'</td>' +
+								'</tr>' +
+							'</table>' +
+						'</div>' +
+					'</div>',
 		link: function (scope, element, attrs) {
 			// split transaction
 			attrs.$observe('isSplit', function(is_split) {

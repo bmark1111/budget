@@ -31,28 +31,30 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-4" ng-if="!is_split">
-				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
-					<div id="liveSearch">
-						<label for="name">Payee/Payer</label>{{ display_name }}
-						<div live-search="vendor_id" display_name="{{ display_name }}"></div>
+			<fieldset ng-disabled="isSaving">
+				<div class="col-md-4" ng-if="!is_split">
+					<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
+						<div id="liveSearch">
+							<label for="name">Payee/Payer</label>{{ display_name }}
+							<div live-search="vendor_id" display_name="{{ display_name }}"></div>
+						</div>
+						<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 					</div>
-					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 				</div>
-			</div>
-			<div class="col-sm-4" ng-if="!is_split">
-				<label for="category">Category</label>
-				<div class="form-group" ng-class="{'has-error':validation.category_id}">
-					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
-					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
+				<div class="col-sm-4" ng-if="!is_split">
+					<label for="category">Category</label>
+					<div class="form-group" ng-class="{'has-error':validation.category_id}">
+						<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+						<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
+					</div>
 				</div>
-			</div>
-			<div class="col-md-4">
-				<div class="form-group">
-					<label for="notes">Notes</label>
-					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="notes">Notes</label>
+						<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
+					</div>
 				</div>
-			</div>
+			</fieldset>
 		</div>
 		<div split-tran is-split="{{ is_split }}"></div>
 		<div class="table-responsive" ng-if="transactions[0]">
@@ -126,8 +128,8 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="deleteUploaded()">Discard</button>
-		<button class="btn btn-primary" ng-click="postUploaded()">{{ post }}</button>
+		<button class="btn btn-primary" ng-click="deleteUploaded()" ng-disabled="isSaving">Discard</button>
+		<button class="btn btn-primary" ng-click="postUploaded()" ng-disabled="isSaving">{{ post }}</button>
 		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 	</div>
 </script>

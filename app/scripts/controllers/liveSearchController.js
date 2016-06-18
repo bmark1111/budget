@@ -3,7 +3,7 @@
 app.controller('LiveSearchController', ['$scope', 'RestData2',
 
 	function($scope, RestData2) {
-console.log('LiveSearchController')
+
 		var liveSearch_save = false;
 		$scope.livesearch_results = false;
 		$scope.liveSearchId = null;
@@ -52,7 +52,7 @@ console.log(err)
 		};
 
 		$scope.livesearchSelect = function(result) {
-console.log(result)
+
 			$scope.liveSearchId = result.id;
 			$scope.liveSearchName = result.name + ((result.street) ? ' ,' + result.street: '') + ((result.city) ? ' ' + result.city: '') + ((result.state) ? ' ' + result.state: '');
 			$scope.livesearch_results = false;

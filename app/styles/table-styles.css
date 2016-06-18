@@ -100,8 +100,8 @@ div.table-responsive .currentInterval {
 }
 
 .app-modal-window .modal-dialog {
-	width: 1100px;
-	z-index: 1000;
+	width: 1000px;
+	z-index: 1050;
 }
 
 span.overbudget {
