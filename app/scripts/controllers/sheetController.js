@@ -194,7 +194,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 								if (typeof(moved[moved.length-1].balances) !== 'undefined' && typeof(response.data.result[0].balances) !== 'undefined') {
 									var prev_account_balance = (typeof(moved[moved.length-1].balances[account.bank_account_id]) !== 'undefined') ? moved[moved.length-1].balances[account.bank_account_id]: 0;
 									var this_account_balance = (typeof(response.data.result[0].balances[account.bank_account_id]) !== 'undefined') ? response.data.result[0].balances[account.bank_account_id]: 0;
-									if (parseFloat(this_account_balance) > parseFloat(prev_account_balance)) {
+									if (parseFloat(this_account_balance) != parseFloat(prev_account_balance)) {
 										account.balance += (parseFloat(this_account_balance) - parseFloat(prev_account_balance));
 									}
 								}

@@ -58,16 +58,41 @@ class dashboard_controller Extends rest_controller {
 		$transactions->query(implode(' ', $sql));
 		$this->ajax->setData('result', $transactions);
 
-		// get the past forecast
-		$forecasted = $this->loadForecast($categories, $year . '-01-01', $year . '-12-31', 2);
-		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', $year . '-12-31');
+		// get any repeats for this interval
+		$repeats = $this->loadRepeats($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
+//print $repeats;die;
+		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
+//print_r($repeats);die;
 		$totals = array();
-		foreach ($forecast as $fc) {
-			foreach($fc['totals'] as $category_id => $category_total) {
-				if (!empty($totals[$category_id])) {
-					$totals[$category_id] += $category_total;
-				} else {
-					$totals[$category_id] = $category_total;
+		if (!empty($repeats)) {
+			foreach ($repeats as $rp) {
+				if (!empty($rp['totals'])) {
+					foreach($rp['totals'] as $category_id => $category_total) {
+						if (!empty($totals[$category_id])) {
+							$totals[$category_id] += $category_total;
+						} else {
+							$totals[$category_id] = $category_total;
+						}
+					}
+				}
+			}
+		}
+
+		// get the past forecast
+		$forecasted = $this->loadForecast($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
+		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
+//print_r($forecast);
+//die;
+		if (!empty($forecast)) {
+			foreach ($forecast as $fc) {
+				if (!empty($fc['totals'])) {
+					foreach($fc['totals'] as $category_id => $category_total) {
+						if (!empty($totals[$category_id])) {
+							$totals[$category_id] += $category_total;
+						} else {
+							$totals[$category_id] = $category_total;
+						}
+					}
 				}
 			}
 		}

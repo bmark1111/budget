@@ -35,7 +35,10 @@ class repeat_controller Extends rest_controller {
 
 		$repeats = new transaction_repeat();
 		if ($last_due_date == 'false') {
-			$repeats->where('last_due_date IS NULL', FALSE, FALSE);
+			$repeats->groupStart();
+			$repeats->orWhere('last_due_date IS NULL', FALSE, FALSE);
+			$repeats->orWhere('last_due_date >= now()', FALSE, FALSE);
+			$repeats->groupEnd();
 		}
 		$repeats->join('vendor', 'vendor.id = transaction_repeat.vendor_id', 'left');
 		if ($name) {

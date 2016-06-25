@@ -102,11 +102,14 @@ class rest_controller Extends EP_Controller {
 		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
+//echo $transactions->lastQuery();die;
+//print $transactions;die;
 		// now calculate all due dates for given period
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
 			foreach ($transaction->repeats as $repeat) {
-				if ($all !== 0) {
+//				if ($all !== 0) {
+				if ($all == 1) {
 					$next_due_date = $transaction->next_due_date;
 				} else {
 					$next_due_date = $transaction->first_due_date;
@@ -135,8 +138,17 @@ class rest_controller Extends EP_Controller {
 					}
 					$ndd = strtotime($next_due_date);
 					if ($ndd >= strtotime($sd) && $ndd <= strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
-						if ($all === 0 || $ndd >= strtotime($transaction->next_due_date)) {
-							$next_due_dates[] = $next_due_date;
+//						if ($all === 0 || $ndd >= strtotime($transaction->next_due_date)) {
+//						if ($all !== 1 || $ndd >= strtotime($transaction->next_due_date)) {
+//							$next_due_dates[] = $next_due_date;
+//						}
+						if (($all == 0)														// ...we want all repeats
+								||															//			or
+							($all == 1 && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
+//							($all == 1 && $ndd > time())									// ... we want future repeats
+								||															//			or
+							($all == 2 && $ndd <= time())) {								// ... we want past repeats
+							$next_due_dates[] = $next_due_date;								// ... then save this due date
 						}
 					}
 					$every = $transaction->every;
