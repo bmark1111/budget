@@ -62,7 +62,7 @@ class dashboard_controller Extends rest_controller {
 		$repeats = $this->loadRepeats($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
 //print $repeats;die;
 		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
-//print_r($repeats);die;
+//print_r($repeats);
 		$totals = array();
 		if (!empty($repeats)) {
 			foreach ($repeats as $rp) {
