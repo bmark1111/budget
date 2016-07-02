@@ -82,10 +82,11 @@ class repeat_controller Extends rest_controller {
 		isset($repeat->vendor);
 		isset($repeat->bank_account);
 		isset($repeat->repeats);
-//		isset($repeat->splits);
-		foreach ($repeat->splits as $split) {
-			isset($split->vendor);
-			isset($split->category);
+		if (!empty($repeat->splits)) {
+			foreach ($repeat->splits as $split) {
+				isset($split->vendor);
+				isset($split->category);
+			}
 		}
 
 		$this->ajax->setData('result', $repeat);
@@ -101,7 +102,7 @@ class repeat_controller Extends rest_controller {
 
 		$input = file_get_contents('php://input');
 		$_POST = json_decode($input, TRUE);
-//print_r($_POST);die;
+
 		// VALIDATION
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[100]');
 		$this->form_validation->set_rules('category_id', 'Category', 'integer|required|callback_isValidCategory');
@@ -153,7 +154,6 @@ class repeat_controller Extends rest_controller {
 		$repeat->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 		$repeat->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$repeat->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
-//print $repeat;
 		$repeat->save();
 
 		foreach ($_POST['repeats'] as $repeat_every) {
@@ -163,7 +163,6 @@ class repeat_controller Extends rest_controller {
 				$transaction_repeat_every->every_day				= (!empty($repeat_every['every_day'])) ? $repeat_every['every_day']: NULL;
 				$transaction_repeat_every->every_date				= $repeat_every['every_date'];
 				$transaction_repeat_every->every_month				= $repeat_every['every_month'];
-//print $transaction_repeat_every;
 				$transaction_repeat_every->save();
 			} else {
 				$transaction_repeat_every->delete();
@@ -180,14 +179,12 @@ class repeat_controller Extends rest_controller {
 					$transaction_repeat_split->category_id				= $split['category_id'];
 					$transaction_repeat_split->vendor_id				= $split['vendor_id'];
 					$transaction_repeat_split->notes					= (!empty($split['notes'])) ? $split['notes']: NULL;
-//print $transaction_repeat_split;
 					$transaction_repeat_split->save();
 				} else {
 					$transaction_repeat_split->delete();
 				}
 			}
 		}
-//die('xxxxxxxxxxxx');
 		$this->ajax->setdata('id', $repeat->id);
 		$this->ajax->output();
 	}

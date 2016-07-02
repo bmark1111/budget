@@ -117,7 +117,6 @@ class upload_controller Extends rest_controller {
 			$ed = date('Y-m-d', strtotime($uploaded->transaction_date . " +7 DAYS"));
 			$transactions->where('transaction_date >= ', $sd);
 			$transactions->where('transaction_date <= ', $ed);
-//			$transactions->where('ROUND(amount)', intval($uploaded->amount), FALSE);
 			$transactions->where('amount', $uploaded->amount);
 			$transactions->orderBy('transaction_date', 'DESC');
 			$transactions->result();
@@ -126,9 +125,11 @@ class upload_controller Extends rest_controller {
 				isset($transaction->bank_account->bank);
 				isset($transaction->vendor);
 				isset($transaction->splits);
-				foreach ($transaction->splits as $split) {
-					isset($split->vendor);
-					isset($split->category);
+				if (!empty($transaction->splits)) {
+					foreach ($transaction->splits as $split) {
+						isset($split->vendor);
+						isset($split->category);
+					}
 				}
 			}
 
@@ -233,19 +234,36 @@ class upload_controller Extends rest_controller {
 			$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
 			$transaction_repeat->groupStart();
 			$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
-			$transaction_repeat->orWhere('last_due_date <= ', $_POST['transaction_date'], FALSE);
+			$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
 			$transaction_repeat->groupEnd();
 			$transaction_repeat->result();
+$lq = $transaction_repeat->lastQuery();
 			if ($transaction_repeat->numRows()) {
 				// repeat transaction
 				if ($transaction_repeat->numRows() > 1) {
-					throw new Exception('More than 1 repeat transaction found');
+					log_message('error', 'More than one repeat transaction found');
+					throw new Exception('More than one repeat transaction found');
 				} else {
 					// we found a repeat so update the next_due_date
-//					isset($transaction_repeat[0]->repeats);
 					$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
+log_message('error', '===========================================FOUND A REPEAT');
+log_message('error', 'id = ' . $transaction_repeat[0]->id);
+log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
+log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
+log_message('error', 'transaction_date = ' . $transaction_repeat[0]->transaction_date);
+log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
+log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
+log_message('error', '===========================================================');
 					$transaction_repeat[0]->save();
 				}
+} else {
+log_message('error', '--------------------------------------DID NOT FIND A REPEAT');
+log_message('error', 'LAST QUERY = ' . $lq);
+log_message('error', 'bank_account_id = ' . $_POST['bank_account_id']);
+log_message('error', 'vendor_id = ' . $_POST['vendor_id']);
+log_message('error', 'transaction_date = ' . $_POST['transaction_date']);
+log_message('error', 'amount = ' . $_POST['amount']);
+log_message('error', '---------------------------------------------------------');
 			}
 		} else {
 			$this->ajax->addError(new AjaxError("403 - Invalid uploaded transaction (upload/post) - " . $_POST['id']));
