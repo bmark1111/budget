@@ -71,17 +71,17 @@
 							<th><span class="pull-left">Date</span></th>
 							<th><span class="pull-left">Bank</span></th>
 							<th><span class="pull-left">Type</span></th>
-							<th><span class="pull-left">Description</span></th>
-							<th><span class="pull-left">Amount</span></th>
 							<th><span class="pull-left">Category</span></th>
 							<th><span class="pull-left">Vendor</span></th>
+							<th><span class="pull-left">Amount</span></th>
+<!--							<th><span class="pull-left">Vendor</span></th>-->
 						</tr>
 					</thead>
 					<tbody ng-repeat="idx in transactions_seq">
 						<tr ng-click="setSelected(transactions[idx])" ng-class="{selected: transactions[idx].id === idSelectedTransaction}">
-							<td class="col-sm-2">
+							<td class="col-sm-3">
 								<span class="pull-left">{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span> &nbsp;
-								<span ng-if="transactions[idx].is_transaction == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
+								<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
 								<img ng-if="transactions[idx].reconciled_date" ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> 
 							</td>
 							<td class="col-sm-2">
@@ -90,22 +90,23 @@
 							<td class="col-sm-1">
 								<span class="pull-left">{{ transactions[idx].type }}</span>
 							</td>
-							<td class="col-sm-3" style="font-size: 10px;">
-								<span class="pull-left">{{ transactions[idx].description }}</span>
-								<span ng-if="transactions[idx].notes"> - <em>{{ transactions[idx].notes }}</em></span>
+							<td class="col-sm-1" ng-if="transactions[idx].category_id">
+								<span class="pull-left">{{ transactions[idx].category.name }}</span>
+							</td>
+							<td class="col-sm-4">
+								<span class="pull-left">{{ transactions[idx].vendor.name }}</span><br />
+<!--								<em>{{ transactions[idx].description }}</em><br />-->
+								<span ng-if="transactions[idx].notes"><em>{{ transactions[idx].notes }}</em></span>
+							</td>
+							<td class="col-sm-5" colspan="2" ng-if="!transactions[idx].category_id && !transactions[idx].vendor_id">
+								<span>--Split--</span>
 							</td>
 							<td class="col-sm-1">
 								<span class="pull-right">{{ transactions[idx].amount|currency }}</span>
 							</td>
-							<td class="col-sm-2" ng-if="transactions[idx].category_id">
-								<span class="pull-left">{{ transactions[idx].category.name }}</span>
-							</td>
-							<td class="col-sm-2" ng-if="transactions[idx].vendor_id">
+<!--							<td class="col-sm-2" ng-if="transactions[idx].vendor_id">
 								<span class="pull-left">{{ transactions[idx].vendor.name }}</span>
-							</td>
-							<td class="col-sm-4" colspan="2" ng-if="!transactions[idx].category_id && !transactions[idx].vendor_id">
-								<span>--Split--</span>
-							</td>
+							</td>-->
 						</tr>
 						<tr ng-repeat="split in transactions[idx].splits" style="font-size: 10px;" ng-class="{selected: transactions[idx].id === idSelectedTransaction}">
 							<td colspan="2"></td>

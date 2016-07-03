@@ -334,6 +334,7 @@ class budget_controller Extends rest_controller {
 					$data['transaction_date']	= $next_due_date;
 					$data['type']				= (!empty($rp->split_type)) ? $rp->split_type: $rp->type;
 					$data['description']		= (!empty($rp->split_description)) ? $rp->split_description: $rp->description;
+					$data['vendorName']			= (!empty($rp->split_vendorName)) ? $rp->split_vendorName: $rp->vendorName;
 					$data['is_repeat']			= 1;
 					$data['is_uploaded']		= 0;
 					$data['reconciled_date']	= NULL;
@@ -357,7 +358,7 @@ class budget_controller Extends rest_controller {
 					$data['id']					= $fc->id;
 					$data['transaction_date']	= $next_due_date;
 					$data['type']				= $fc->type;
-					$data['description']		= $fc->description;
+					$data['vendorName']			= $fc->description;
 					$data['is_forecast']		= 1;
 					$data['is_uploaded']		= 0;
 					$data['reconciled_date']	= NULL;
@@ -375,8 +376,9 @@ class budget_controller Extends rest_controller {
 		} else {
 			// get actual transactions
 			$transactions = new transaction();
-			$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.is_uploaded, T.reconciled_date, T.notes, T.amount, A.name AS accountName, B.name AS bankName
+			$sql = "(SELECT T.id, T.transaction_date, T.type, T.description, T.is_uploaded, T.reconciled_date, T.notes, T.amount, A.name AS accountName, B.name AS bankName, V1.name as vendorName
 					FROM transaction T
+					LEFT JOIN vendor V1 ON V1.id = T.vendor_id
 					LEFT JOIN category C1 ON C1.id = T.category_id
 					LEFT JOIN bank_account A ON A.id = T.bank_account_id
 					LEFT JOIN bank B ON B.id = A.bank_id
@@ -385,12 +387,13 @@ class budget_controller Extends rest_controller {
 							AND T.`transaction_date` >=  '" . $sd . "'
 							AND T.`transaction_date` <  '" . $ed . "')
 				UNION
-					(SELECT T.id, T.transaction_date, TS.type, T.description, T.is_uploaded, T.reconciled_date, TS.notes, TS.amount, A.name AS accountName, B.name AS bankName
+					(SELECT T.id, T.transaction_date, TS.type, T.description, T.is_uploaded, T.reconciled_date, TS.notes, TS.amount, A.name AS accountName, B.name AS bankName, V2.name as vendorName
 					FROM transaction T
 					LEFT JOIN bank_account A ON A.id = T.bank_account_id
 					LEFT JOIN bank B ON B.id = A.bank_id
 					LEFT JOIN transaction_split TS ON T.id = TS.transaction_id AND TS.is_deleted = 0
 					LEFT JOIN category C2 ON C2.id = TS.category_id
+					LEFT JOIN vendor V2 ON V2.id = TS.vendor_id
 					WHERE T.is_deleted = 0
 							AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
 							AND T.`transaction_date` >=  '" . $sd . "'

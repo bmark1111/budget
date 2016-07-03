@@ -38,7 +38,7 @@
 
 11) --DONE-- when tabbing forward and only forecast's are left displayed then include forecast in the balance forward if necessary
 
-12) __DONE__ in budget controller if forecast has expired no need to load it
+12) --DONE-- in budget controller if forecast has expired no need to load it
 
 13) Transfers between accounts should show and not effect the overall totals, they balance each other out
         right now they show zero in transfers on the budget.
@@ -51,16 +51,17 @@
 
 17) --DONE-- when displaying list of transaction from clicking on budget amount add bank account to display
 
-18) __DONE__ Uploaded transactions sometimes have wrong type
+18) --DONE-- Uploaded transactions sometimes have wrong type
 
 19) In bank display show opening balance from transaction table
 
-20) In dashboard include repeats
+20) --DONE-- In dashboard include repeats
 
-21) On repeat edit reload sheet & budget
+21) --DONE-- On repeat edit reload sheet & budget
 
-22) Remove description from vendors
+22) --DONE-- Remove description from vendors
 
 23) Finish tooltip in sheet & budget
 
+24) --DONE-- Add reconciled and uploaded flag to 'Possible Duplicates' in upload modal
 

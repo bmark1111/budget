@@ -77,7 +77,7 @@ class rest_controller Extends EP_Controller {
 		$transactions->select('transaction_repeat.*');
 		$transactions->groupStart();
 		$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
-		$transactions->orWhere('transaction_repeat.last_due_date < ', $ed);
+//		$transactions->orWhere('transaction_repeat.last_due_date < ', $ed);
 		$transactions->orWhere('transaction_repeat.last_due_date >= ', $sd);
 		$transactions->groupEnd();
 		$transactions->groupStart();
@@ -90,8 +90,11 @@ class rest_controller Extends EP_Controller {
 			$transactions->where('transaction_repeat.next_due_date < ', $ed);
 		}
 		if (count($categories) == 1) {
+			$transactions->join('vendor V1', 'V1.id = transaction_repeat.vendor_id', 'left');
+			$transactions->select('V1.name as vendorName');
 			$transactions->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
-			$transactions->select('transaction_repeat_split.amount as split_amount, transaction_repeat_split.category_id as split_category_id, transaction_repeat_split.type as split_type, transaction_repeat_split.description as split_description');
+			$transactions->join('vendor V2', 'V2.id = transaction_repeat_split.vendor_id', 'left');
+			$transactions->select('transaction_repeat_split.amount as split_amount, transaction_repeat_split.category_id as split_category_id, transaction_repeat_split.type as split_type, transaction_repeat_split.description as split_description, V2.name as split_vendorName');
 			$transactions->groupStart();
 			$transactions->orWhere('transaction_repeat.category_id', $categories['id']);
 			$transactions->orGroupStart();
@@ -102,9 +105,11 @@ class rest_controller Extends EP_Controller {
 		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
-//echo $transactions->lastQuery();die;
-//print $transactions;die;
-		// now calculate all due dates for given period
+//if (count($categories)==1) {
+//	echo $transactions->lastQuery();
+//	die;
+//}
+		// now calculate all repeat due dates for given period
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
 			foreach ($transaction->repeats as $repeat) {
@@ -257,7 +262,7 @@ class rest_controller Extends EP_Controller {
 		$forecast->whereNotDeleted();
 		$forecast->groupStart();
 		$forecast->orWhere('last_due_date IS NULL ', NULL);
-		$forecast->orWhere('last_due_date < ', $ed);
+//		$forecast->orWhere('last_due_date < ', $ed);
 		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
 		$forecast->where('first_due_date < ', $ed);

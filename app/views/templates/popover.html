@@ -7,7 +7,7 @@
 				<thead>
 					<tr>
 						<th>Date</th>
-						<th>Description</th>
+						<th>Vendor</th>
 						<th>Account</th>
 						<th>Type</th>
 						<th>Amount</th>
@@ -21,7 +21,13 @@
 							<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
 							<span ng-if="transactions[idx].reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
 						</td>
-						<td>{{ transactions[idx].description }}<span ng-if="transactions[idx].notes"> - <em>{{ transactions[idx].notes }}</em></span></td>
+						<td>
+							<!--{{ transactions[idx].description }}-->
+							{{ transactions[idx].vendorName }}
+							<span ng-if="transactions[idx].notes"><br />
+								<em>{{ transactions[idx].notes }}</em>
+							</span>
+						</td>
 						<td>{{ transactions[idx].bankName }} {{ transactions[idx].accountName }}</td>
 						<td>{{ transactions[idx].type }}</td>
 						<td><span class="pull-right">{{ transactions[idx].amount|currency }}</span></td>
