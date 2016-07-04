@@ -117,11 +117,18 @@
 					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
 				</div>
 			</div>
-			<div class="col-md-2">
+			<div class="col-sm-2">
 				<label for="amount">Amount</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
-					<input type="text" name="amount" class="form-control" ng-model="transaction.amount"><!-- ng-model-options="{updateOn: 'blur'}" />-->
+					<input type="text" name="amount" class="form-control" ng-model="transaction.amount">
 					<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="exact_match">Exact Match</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.exact_match }">
+					<input type="checkbox" name="exact_match" class="form-control" ng-model="transaction.exact_match" ng-checked="transaction.exact_match == 1">
+					<span class="help-block" ng-show="validation.exact_match">{{ validation.exact_match }}</span>
 				</div>
 			</div>
 		</fieldset>
@@ -136,7 +143,6 @@
 																validation.repeats.every_month[$index] ||
 																validation.repeats.every_date[$index] }">
 					<p class="input-group">
-						<!--<input type="text" ng-if="transaction.every_unit == 'Week'" type="text" ng-model="repeat.every_day" />-->
 						<select ng-if="transaction.every_unit == 'Week'" name="every_day" ng-model="repeat.every_day">
 							<option ng-selected="!repeat.every_day">Select Day</option>
 							<option ng-selected="repeat.every_day == '1'" value="1">Monday</option>

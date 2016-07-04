@@ -154,6 +154,7 @@ class repeat_controller Extends rest_controller {
 		$repeat->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 		$repeat->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$repeat->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
+		$repeat->exact_match		= (!empty($_POST['exact_match']) && $_POST['exact_match']) ? 1: 0;
 		$repeat->save();
 
 		foreach ($_POST['repeats'] as $repeat_every) {
