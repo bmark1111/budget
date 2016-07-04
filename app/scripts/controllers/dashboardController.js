@@ -75,7 +75,6 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 			function(response) {
 				if (!!response.success) {
 					self.transactions = response.data.result;
-console.log(self.transactions)
 					self.transactions_seq = Object.keys(response.data.result);
 				} else {
 					if (response.errors) {

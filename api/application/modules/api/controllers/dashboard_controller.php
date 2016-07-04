@@ -58,12 +58,10 @@ class dashboard_controller Extends rest_controller {
 		$transactions->query(implode(' ', $sql));
 		$this->ajax->setData('result', $transactions);
 
+		$totals = array();
 		// get any repeats for this interval
 		$repeats = $this->loadRepeats($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
-//print $repeats;die;
 		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
-//print_r($repeats);
-		$totals = array();
 		if (!empty($repeats)) {
 			foreach ($repeats as $rp) {
 				if (!empty($rp['totals'])) {
@@ -78,11 +76,9 @@ class dashboard_controller Extends rest_controller {
 			}
 		}
 
-		// get the past forecast
+		// get the past forecasts for this interval
 		$forecasted = $this->loadForecast($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
 		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
-//print_r($forecast);
-//die;
 		if (!empty($forecast)) {
 			foreach ($forecast as $fc) {
 				if (!empty($fc['totals'])) {
@@ -121,15 +117,17 @@ class dashboard_controller Extends rest_controller {
 		}
 
 		$transactions = new transaction();
-		$sql = "(SELECT T.transaction_date, T.type, T.description, T.notes, T.amount
+		$sql = "(SELECT T.transaction_date, T.type, T.description, T.notes, T.amount, V1.name AS vendorName
 				FROM transaction T
+				LEFT JOIN vendor V1 on V1.id = T.vendor_id
 				WHERE T.is_deleted = 0
 					AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
 					AND YEAR(T.`transaction_date`) = " . $year . ")
 			UNION
-				(SELECT T.transaction_date, T.type, T.description, TS.notes, TS.amount
+				(SELECT T.transaction_date, T.type, T.description, TS.notes, TS.amount, V2.name AS vendorName
 				FROM transaction T
 				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id
+				LEFT JOIN vendor V2 on V2.id = TS.vendor_id
 				WHERE T.is_deleted = 0
 					AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
 					AND YEAR(T.`transaction_date`) = " . $year . ")
