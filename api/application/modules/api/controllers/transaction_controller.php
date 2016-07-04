@@ -143,8 +143,7 @@ class transaction_controller Extends rest_controller {
 		$amount				= (!empty($transaction->amount)) ? $transaction->amount: FALSE;
 		$type				= (!empty($transaction->type)) ? $transaction->type: FALSE;
 
-//		if (in_array('admin', $this->nRoles, TRUE) || ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1)) {
-		if (in_array('admin', $this->nRoles)) {
+		if (in_array('admin', $this->nRoles) || ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1)) {
 			// can't edit these fields if uploaded or reconciled, only if admin (use with caution)
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->type				= $_POST['type'];
