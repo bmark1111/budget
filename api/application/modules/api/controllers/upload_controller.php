@@ -124,7 +124,6 @@ class upload_controller Extends rest_controller {
 				isset($transaction->category);
 				isset($transaction->bank_account->bank);
 				isset($transaction->vendor);
-//				isset($transaction->splits);
 				if (!empty($transaction->splits)) {
 					foreach ($transaction->splits as $split) {
 						isset($split->vendor);

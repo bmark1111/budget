@@ -87,9 +87,10 @@ class transaction_controller Extends rest_controller {
 		}
 
 		$transaction = new transaction($id);
-		isset($transaction->splits);
-		foreach ($transaction->splits as $split) {
-			isset($split->vendor);
+		if(!empty($transaction->splits)) {
+			foreach ($transaction->splits as $split) {
+				isset($split->vendor);
+			}
 		}
 		isset($transaction->repeat);
 		isset($transaction->vendor);
@@ -141,7 +142,9 @@ class transaction_controller Extends rest_controller {
 		$transaction_date	= (!empty($transaction->transaction_date)) ? $transaction->transaction_date: FALSE;
 		$amount				= (!empty($transaction->amount)) ? $transaction->amount: FALSE;
 		$type				= (!empty($transaction->type)) ? $transaction->type: FALSE;
-		if (in_array('Admin', $this->nRoles, TRUE) || ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1)) {
+
+//		if (in_array('admin', $this->nRoles, TRUE) || ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1)) {
+		if (in_array('admin', $this->nRoles)) {
 			// can't edit these fields if uploaded or reconciled, only if admin (use with caution)
 			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->type				= $_POST['type'];

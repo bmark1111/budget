@@ -26,7 +26,7 @@ class login_controller extends EP_Controller {
 		$data['error'] = '';
 		if (!empty($username) && !empty($password) && ($nUserId = $user->login($username, $password)) !== FALSE) {
 			$this->nUserId = $nUserId;
-			$this->nRoles = json_decode($user->roles);
+			$this->nRoles = json_decode($user->roles, TRUE);
 
 			$user->last_login		= date('Y-m-d H:i:s');
 			$user->last_session_id	= md5(uniqid(mt_rand(), TRUE));

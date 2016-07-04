@@ -141,7 +141,8 @@ class repeat_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$repeat = new transaction_repeat($_POST['id']);
+		$id = (!empty($_POST['id'])) ? $_POST['id']: NULL;
+		$repeat = new transaction_repeat($id);
 		$repeat->description		= $_POST['description'];
 		$repeat->bank_account_id	= $_POST['bank_account_id'];
 		$repeat->first_due_date		= $_POST['first_due_date'];
@@ -158,7 +159,8 @@ class repeat_controller Extends rest_controller {
 		$repeat->save();
 
 		foreach ($_POST['repeats'] as $repeat_every) {
-			$transaction_repeat_every = new transaction_repeat_every($repeat_every['id']);
+			$id = (!empty($repeat_every['id'])) ? $repeat_every['id']: NULL;
+			$transaction_repeat_every = new transaction_repeat_every($id);
 			if (empty($repeat['is_deleted']) || $repeat['is_deleted'] != 1) {
 				$transaction_repeat_every->transaction_repeat_id	= $repeat->id;
 				$transaction_repeat_every->every_day				= (!empty($repeat_every['every_day'])) ? $repeat_every['every_day']: NULL;
