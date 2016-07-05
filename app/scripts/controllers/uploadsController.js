@@ -80,7 +80,7 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 
 	$scope.postTransaction = function(transaction_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'postUploadedModal.html',
+			templateUrl: 'app/views/templates/postUploadedModal.html',
 			controller: 'PostUploadedModalController',
 			size: 'lg',
 			resolve: {
@@ -103,7 +103,7 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 
 	$scope.deleteTransaction = function (transaction_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteUploadedModalController',
 			size: 'sm',
 			resolve: {

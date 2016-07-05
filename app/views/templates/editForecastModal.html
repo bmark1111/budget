@@ -1,133 +1,131 @@
-<script type="text/ng-template" id="editForecastModal.html">
-	<div class="modal-header">
-		<h3 class="modal-title">{{title}}</h3>
-	</div>
-	<div class="modal-body">
-		<div class="row">
-			<div class="col-md-6" style="width:15%;">
-				<label for="date">Bank Account</label>
-				<div class="form-group" ng-class="{'has-error':validation.bank_account_id}">
-					<select class="form-control" name="bank_account_id" ng-model="forecast.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
-					<span class="help-block" ng-show="validation.bank_account_id">{{validation.bank_account_id}}</span>
-				</div>
-			</div>
-			<div class="col-md-6" style="width:22%;">
-				<label for="first_due_date">First Due Date</label>
-				<div class="form-group" ng-class="{'has-error':validation.first_due_date}">
-					<p class="input-group">
-						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="first_due_date" ng-model="forecast.first_due_date" is-open="opened1" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-						<span class="input-group-btn">
-							<button type="button" class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-						</span>
-					</p>
-					<span class="help-block" ng-show="validation.first_due_date">{{validation.first_due_date}}</span>
-				</div>
-			</div>
-			<div class="col-md-6" style="width:22%;">
-				<label for="last_due_date">Last Due Date</label>
-				<div class="form-group" ng-class="{'has-error':validation.last_due_date }">
-					<p class="input-group">
-						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="last_due_date" ng-model="forecast.last_due_date" is-open="opened2" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-						<span class="input-group-btn">
-							<button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-						</span>
-					</p>
-					<span class="help-block" ng-show="validation.last_due_date">{{validation.last_due_date}}</span>
-				</div>
-			</div>
-			<div class="col-md-2" style="width:41%;">
-				<div class="form-group" ng-class="{'has-error':validation.description}">
-					<label for="description">Description</label>
-					<input type="text" name="description" class="form-control" ng-model="forecast.description" />
-					<span class="help-block" ng-show="validation.description">{{validation.description}}</span>
-				</div>
+<div class="modal-header">
+	<h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-md-6" style="width:15%;">
+			<label for="date">Bank Account</label>
+			<div class="form-group" ng-class="{'has-error':validation.bank_account_id}">
+				<select class="form-control" name="bank_account_id" ng-model="forecast.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
+				<span class="help-block" ng-show="validation.bank_account_id">{{validation.bank_account_id}}</span>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm-2" style="width:24%;">
-				<label for="category">Category</label>
-				<div class="form-group" ng-class="{'has-error':validation.category_id}">
-					<select class="form-control" name="category" ng-model="forecast.category_id" ng-options="category.id as category.name for category in categories"></select>
-					<span class="help-block" ng-show="validation.category_id">{{validation.category_id}}</span>
-				</div>
-			</div>
-			<div class="col-sm-2" style="width:20%;">
-				<label for="type">Type</label>
-				<div class="form-group" ng-class="{'has-error':validation.type}">
-					<select class="form-control" name="type" ng-model="forecast.type">
-						<option>Select Type</option>
-						<option ng-selected="forecast.type == 'CHECK'" value="CHECK">Check</option>
-						<option ng-selected="forecast.type == 'DEBIT'" value="DEBIT">Debit</option>
-						<option ng-selected="forecast.type == 'CREDIT'" value="CREDIT">Credit</option>
-						<option ng-selected="forecast.type == 'DSLIP'" value="DSLIP">Deposit</option>
-					</select>
-					<span class="help-block" ng-show="validation.type">{{validation.type}}</span>
-				</div>
-			</div>
-			<div class="col-md-2" style="width:15%;">
-				<label for="amount">Amount</label>
-				<div class="form-group" ng-class="{'has-error':validation.amount }">
-					<input type="text" name="amount" class="form-control" ng-model="forecast.amount" />
-					<span class="help-block" ng-show="validation.amount">{{validation.amount}}</span>
-				</div>
-			</div>
-			<div class="col-md-2" style="width:41%;">
-				<div class="form-group">
-					<label for="notes">Notes</label>
-					<input type="text" name="notes" class="form-control" ng-model="forecast.notes" />
-				</div>
+		<div class="col-md-6" style="width:22%;">
+			<label for="first_due_date">First Due Date</label>
+			<div class="form-group" ng-class="{'has-error':validation.first_due_date}">
+				<p class="input-group">
+					<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="first_due_date" ng-model="forecast.first_due_date" is-open="opened1" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+				<span class="help-block" ng-show="validation.first_due_date">{{validation.first_due_date}}</span>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm-2">
-				<label for="every">Every</label>
-				<div class="form-group" ng-class="{'has-error':validation.every}">
-					<select class="form-control" name="every" ng-model="forecast.every">
-						<option>Select Type</option>
-						<option ng-selected="forecast.every == 1" value="1">1</option>
-						<option ng-selected="forecast.every == 2" value="2">2</option>
-						<option ng-selected="forecast.every == 3" value="3">3</option>
-						<option ng-selected="forecast.every == 4" value="4">4</option>
-						<option ng-selected="forecast.every == 5" value="5">5</option>
-						<option ng-selected="forecast.every == 6" value="6">6</option>
-						<option ng-selected="forecast.every == 7" value="7">7</option>
-						<option ng-selected="forecast.every == 8" value="8">8</option>
-						<option ng-selected="forecast.every == 9" value="9">9</option>
-					</select>
-					<span class="help-block" ng-show="validation.every">{{validation.every }}</span>
-				</div>
+		<div class="col-md-6" style="width:22%;">
+			<label for="last_due_date">Last Due Date</label>
+			<div class="form-group" ng-class="{'has-error':validation.last_due_date }">
+				<p class="input-group">
+					<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="last_due_date" ng-model="forecast.last_due_date" is-open="opened2" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+				<span class="help-block" ng-show="validation.last_due_date">{{validation.last_due_date}}</span>
 			</div>
-			<div class="col-sm-2" style="width:20%;">
-				<label for="type">Unit</label>
-				<div class="form-group" ng-class="{'has-error':validation.every_unit}">
-					<select class="form-control" name="every_unit" ng-model="forecast.every_unit">
-						<option>Select Type</option>
-						<option ng-selected="forecast.every_unit == 'Days'" value="Days">Day</option>
-						<option ng-selected="forecast.every_unit == 'Weeks'" value="Weeks">Week</option>
-						<option ng-selected="forecast.every_unit == 'Months'" value="Months">Month</option>
-						<option ng-selected="forecast.every_unit == 'Years'" value="Years">Year</option>
-					</select>
-					<span class="help-block" ng-show="validation.every_unit">{{validation.every_unit}}</span>
-				</div>
-			</div>
-			<div class="col-sm-2" style="width:20%;">
-				<label for="every_on">On Date</label>
-				<div class="form-group" ng-class="{'has-error':validation.every_on}">
-					<input type="text" name="every_on" ng-model="forecast.every_on" />
-					<span class="help-block" ng-show="validation.every_on">{{validation.every_on}}</span>
-				</div>
-			</div>
-			<div class="col-sm-2" style="width:20%;">
-				<label for="every_on_month">On Month</label>
-				<div class="form-group" ng-class="{'has-error':validation.every_on_month}">
-					<input type="text" name="every_on_month" ng-model="forecast.every_on_month" />
-					<span class="help-block" ng-show="validation.every_on_month">{{validation.every_on_month}}</span>
-				</div>
+		</div>
+		<div class="col-md-2" style="width:41%;">
+			<div class="form-group" ng-class="{'has-error':validation.description}">
+				<label for="description">Description</label>
+				<input type="text" name="description" class="form-control" ng-model="forecast.description" />
+				<span class="help-block" ng-show="validation.description">{{validation.description}}</span>
 			</div>
 		</div>
 	</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="save()">Save</button>
-		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	<div class="row">
+		<div class="col-sm-2" style="width:24%;">
+			<label for="category">Category</label>
+			<div class="form-group" ng-class="{'has-error':validation.category_id}">
+				<select class="form-control" name="category" ng-model="forecast.category_id" ng-options="category.id as category.name for category in categories"></select>
+				<span class="help-block" ng-show="validation.category_id">{{validation.category_id}}</span>
+			</div>
+		</div>
+		<div class="col-sm-2" style="width:20%;">
+			<label for="type">Type</label>
+			<div class="form-group" ng-class="{'has-error':validation.type}">
+				<select class="form-control" name="type" ng-model="forecast.type">
+					<option>Select Type</option>
+					<option ng-selected="forecast.type == 'CHECK'" value="CHECK">Check</option>
+					<option ng-selected="forecast.type == 'DEBIT'" value="DEBIT">Debit</option>
+					<option ng-selected="forecast.type == 'CREDIT'" value="CREDIT">Credit</option>
+					<option ng-selected="forecast.type == 'DSLIP'" value="DSLIP">Deposit</option>
+				</select>
+				<span class="help-block" ng-show="validation.type">{{validation.type}}</span>
+			</div>
+		</div>
+		<div class="col-md-2" style="width:15%;">
+			<label for="amount">Amount</label>
+			<div class="form-group" ng-class="{'has-error':validation.amount }">
+				<input type="text" name="amount" class="form-control" ng-model="forecast.amount" />
+				<span class="help-block" ng-show="validation.amount">{{validation.amount}}</span>
+			</div>
+		</div>
+		<div class="col-md-2" style="width:41%;">
+			<div class="form-group">
+				<label for="notes">Notes</label>
+				<input type="text" name="notes" class="form-control" ng-model="forecast.notes" />
+			</div>
+		</div>
 	</div>
-</script>
+	<div class="row">
+		<div class="col-sm-2">
+			<label for="every">Every</label>
+			<div class="form-group" ng-class="{'has-error':validation.every}">
+				<select class="form-control" name="every" ng-model="forecast.every">
+					<option>Select Type</option>
+					<option ng-selected="forecast.every == 1" value="1">1</option>
+					<option ng-selected="forecast.every == 2" value="2">2</option>
+					<option ng-selected="forecast.every == 3" value="3">3</option>
+					<option ng-selected="forecast.every == 4" value="4">4</option>
+					<option ng-selected="forecast.every == 5" value="5">5</option>
+					<option ng-selected="forecast.every == 6" value="6">6</option>
+					<option ng-selected="forecast.every == 7" value="7">7</option>
+					<option ng-selected="forecast.every == 8" value="8">8</option>
+					<option ng-selected="forecast.every == 9" value="9">9</option>
+				</select>
+				<span class="help-block" ng-show="validation.every">{{validation.every }}</span>
+			</div>
+		</div>
+		<div class="col-sm-2" style="width:20%;">
+			<label for="type">Unit</label>
+			<div class="form-group" ng-class="{'has-error':validation.every_unit}">
+				<select class="form-control" name="every_unit" ng-model="forecast.every_unit">
+					<option>Select Type</option>
+					<option ng-selected="forecast.every_unit == 'Days'" value="Days">Day</option>
+					<option ng-selected="forecast.every_unit == 'Weeks'" value="Weeks">Week</option>
+					<option ng-selected="forecast.every_unit == 'Months'" value="Months">Month</option>
+					<option ng-selected="forecast.every_unit == 'Years'" value="Years">Year</option>
+				</select>
+				<span class="help-block" ng-show="validation.every_unit">{{validation.every_unit}}</span>
+			</div>
+		</div>
+		<div class="col-sm-2" style="width:20%;">
+			<label for="every_on">On Date</label>
+			<div class="form-group" ng-class="{'has-error':validation.every_on}">
+				<input type="text" name="every_on" ng-model="forecast.every_on" />
+				<span class="help-block" ng-show="validation.every_on">{{validation.every_on}}</span>
+			</div>
+		</div>
+		<div class="col-sm-2" style="width:20%;">
+			<label for="every_on_month">On Month</label>
+			<div class="form-group" ng-class="{'has-error':validation.every_on_month}">
+				<input type="text" name="every_on_month" ng-model="forecast.every_on_month" />
+				<span class="help-block" ng-show="validation.every_on_month">{{validation.every_on_month}}</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="save()">Save</button>
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

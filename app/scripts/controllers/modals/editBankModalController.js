@@ -10,6 +10,7 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 
 	$scope.opened1 = [];
 	$scope.opened2 = [];
+	$scope.isSaving = false;
 
 	$scope.title = params.title;
 
@@ -18,27 +19,26 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 
 //		ngProgress.start();
 
-		RestData2().editBank(
-				{
-					id: params.id
-				},
-				function(response) {
-					if (!!response.success) {
-						if (response.data.result) {
-							$scope.bank = response.data.result;
-						}
-					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
+		RestData2().editBank({
+				id: params.id
+			},
+			function(response) {
+				if (!!response.success) {
+					if (response.data.result) {
+						$scope.bank = response.data.result;
 					}
-//					ngProgress.complete();
-				});
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
+					} else {
+						$scope.dataErrorMsg[0] = response;
+					}
+				}
+//				ngProgress.complete();
+			});
 	}
 
 	$scope.open1 = function($event, index) {
@@ -62,11 +62,13 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 	// save edited bank
 	$scope.save = function () {
 		$scope.dataErrorMsg = [];
+		$scope.isSaving = true;
 
 		$scope.validation = {};
 
 		RestData2().saveBank($scope.bank,
 				function(response) {
+					$scope.isSaving = false;
 					if (!!response.success) {
 						$modalInstance.close();
 						// now update the global bank account data

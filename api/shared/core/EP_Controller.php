@@ -21,19 +21,20 @@ class EP_Controller extends MX_Controller
 	private $sEnvironment = 'production'; // holds the environment variable, defaults to production in case we forget to set the variable
 	private $bDbLoaded = FALSE; // this is used to determine if the dbutil class has been loaded which we must connect to budget_master first for this to be true
 	private $aDbConfig = FALSE; // this holds the database config so that we can save some overhead when we need to switch databases
-	public $nAccount = NULL; // this is the current account that the REST is being run for
+	public	$nAccount = NULL; // this is the current account that the REST is being run for
 	private $sClientDb = NULL; // this is the current (or previously) connected client database
 	private $sPrefix = NULL; // used to store the database prefix if it exists
 
 	public  $nUserId = NULL; // used to store the session id for the user
+	public	$nRoles = array();
 	public  $sUserName = NULL; // used to store the username for the currently logged in user
 	public  $sFullUserName = NULL; // used to store the username for the currently logged in user
-	public  $nExpertId = NULL; // used to store the implementor associated with this account
-	public  $nStimulusExpertId = NULL; // used to store the implementor associated with this account
-	public $title = ''; // used to store the title for the header
+//	public  $nExpertId = NULL; // used to store the implementor associated with this account
+//	public  $nStimulusExpertId = NULL; // used to store the implementor associated with this account
+	public	$title = ''; // used to store the title for the header
 
 	public $aDBs = array(); // used to store the various databases connections that we load up when old connections die out??
-	public $current_migration_db = NULL; // this is used only for specific migration requirements don't try this at home unless you know what you're doing
+//	public $current_migration_db = NULL; // this is used only for specific migration requirements don't try this at home unless you know what you're doing
 
 	public static $isModuleExtendSession = FALSE;
 
@@ -58,17 +59,6 @@ class EP_Controller extends MX_Controller
 		} else {
 			throw new Exception('Invalid application requested');
 		}
-//		switch ($referer2[1]) {
-//			case 'budgettracker':
-//				define('APPLICATION', 'PUBLIC');
-//				break;
-//			case 'budget':
-//				define('APPLICATION', 'REST');
-//				break;
-//			default:
-//				throw new Exception('Invalid application requested');
-//				break;
-//		}
 
 		// if the server environment variable has been set use it to override the environment
 		if (isset($_SERVER['ENVIRONMENT'])) {
@@ -115,10 +105,8 @@ class EP_Controller extends MX_Controller
 					if (!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])
 							&&
 						!empty($_SERVER['HTTP_TOKENID']) && !empty($_SERVER['REMOTE_ADDR'])) {
-//							&&
-//						!empty($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] === 'http://budgettracker.loc/') {
 						// query the database for the correct user & user session information
-						$this->db->select('user_session.user_id, user_session.id as session_id, user_session.expire, user_session.account_id, account.db_suffix_name');
+						$this->db->select('user_session.user_id, user_session.roles, user_session.id as session_id, user_session.expire, user_session.account_id, account.db_suffix_name');
 						$this->db->from('user_session');
 						$this->db->join('account', 'account.id = user_session.account_id', 'left');
 						$this->db->where('user_session.id', $_SERVER['HTTP_TOKENID']);
@@ -154,6 +142,9 @@ class EP_Controller extends MX_Controller
 
 						// set the global logged in user
 						$this->nUserId = $uSession->user_id;
+
+						// set the global roles for this user
+						$this->nRoles = json_decode($uSession->roles, TRUE);
 
 						// switch to the right account
 						$this->switchDatabase('budgettr_'. $uSession->db_suffix_name);

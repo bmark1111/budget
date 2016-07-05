@@ -7,21 +7,19 @@ require_once ('rest_controller.php');
 
 class dashboard_controller Extends rest_controller {
 
-//	protected $debug = TRUE;
+	protected $debug = TRUE;
 
 	public function __construct() {
 		parent::__construct();
 	}
 
 	public function index() {
-//		$this->ajax->set_header("Forbidden", '403');
 		$this->ajax->addError(new AjaxError("403 - Forbidden (dashboard/index)"));
 		$this->ajax->output();
 	}
 
 	public function ytdTotals() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (dashboard/ytdTotals)"));
 			$this->ajax->output();
 		}
@@ -60,16 +58,37 @@ class dashboard_controller Extends rest_controller {
 		$transactions->query(implode(' ', $sql));
 		$this->ajax->setData('result', $transactions);
 
-		// get the past forecast
-		$forecasted = $this->loadForecast($categories, $year . '-01-01', $year . '-12-31', 2);
-		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', $year . '-12-31');
 		$totals = array();
-		foreach ($forecast as $fc) {
-			foreach($fc['totals'] as $category_id => $category_total) {
-				if (!empty($totals[$category_id])) {
-					$totals[$category_id] += $category_total;
-				} else {
-					$totals[$category_id] = $category_total;
+		// get any repeats for this interval
+		$repeats = $this->loadRepeats($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
+		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
+		if (!empty($repeats)) {
+			foreach ($repeats as $rp) {
+				if (!empty($rp['totals'])) {
+					foreach($rp['totals'] as $category_id => $category_total) {
+						if (!empty($totals[$category_id])) {
+							$totals[$category_id] += $category_total;
+						} else {
+							$totals[$category_id] = $category_total;
+						}
+					}
+				}
+			}
+		}
+
+		// get the past forecasts for this interval
+		$forecasted = $this->loadForecast($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
+		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
+		if (!empty($forecast)) {
+			foreach ($forecast as $fc) {
+				if (!empty($fc['totals'])) {
+					foreach($fc['totals'] as $category_id => $category_total) {
+						if (!empty($totals[$category_id])) {
+							$totals[$category_id] += $category_total;
+						} else {
+							$totals[$category_id] = $category_total;
+						}
+					}
 				}
 			}
 		}
@@ -81,7 +100,6 @@ class dashboard_controller Extends rest_controller {
 
 	public function these() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("Error: 403 Forbidden - (dashboard/these)"));
 			$this->ajax->output();
 		}
@@ -99,15 +117,17 @@ class dashboard_controller Extends rest_controller {
 		}
 
 		$transactions = new transaction();
-		$sql = "(SELECT T.transaction_date, T.type, T.description, T.notes, T.amount
+		$sql = "(SELECT T.transaction_date, T.type, T.description, T.notes, T.amount, V1.name AS vendorName
 				FROM transaction T
+				LEFT JOIN vendor V1 on V1.id = T.vendor_id
 				WHERE T.is_deleted = 0
 					AND T.category_id = " . $category_id . " AND T.category_id IS NOT NULL
 					AND YEAR(T.`transaction_date`) = " . $year . ")
 			UNION
-				(SELECT T.transaction_date, T.type, T.description, TS.notes, TS.amount
+				(SELECT T.transaction_date, T.type, T.description, TS.notes, TS.amount, V2.name AS vendorName
 				FROM transaction T
 				LEFT JOIN transaction_split TS ON T.id = TS.transaction_id
+				LEFT JOIN vendor V2 on V2.id = TS.vendor_id
 				WHERE T.is_deleted = 0
 					AND TS.category_id = " . $category_id . " AND T.category_id IS NULL
 					AND YEAR(T.`transaction_date`) = " . $year . ")

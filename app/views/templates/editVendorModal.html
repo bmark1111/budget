@@ -1,0 +1,82 @@
+<div class="modal-header">
+	<h3 class="modal-title">Do you want to add a new Payer/Payyee</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-3">
+				<div class="form-group" ng-class="{ 'has-error': validation.name }">
+					<label for="name">Payee/Payer Name</label>
+					<input type="text" name="name" class="form-control" ng-model="vendor.name" />
+					<span class="help-block" ng-show="validation.name">{{ validation.name }}</span>
+				</div>
+			</div>
+			<div class="col-md-5">
+				<div class="form-group">
+					<label for="description">Description</label>
+					<input type="text" name="description" class="form-control" ng-model="vendor.description" />
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="notes">Notes</label>
+					<input type="text" name="notes" class="form-control" ng-model="vendor.notes" />
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-3">
+				<label for="street">Street</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.street }">
+					<input type="text" name="street" class="form-control" ng-model="vendor.street" />
+					<span class="help-block" ng-show="validation.street">{{ validation.street }}</span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label for="city">City</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.city }">
+					<input type="text" name="city" class="form-control" ng-model="vendor.city" />
+					<span class="help-block" ng-show="validation.city">{{ validation.city }}</span>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<label for="state">State</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.state }">
+					<input type="text" name="state" class="form-control" ng-model="vendor.state" />
+					<span class="help-block" ng-show="validation.state">{{ validation.state }}</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-sm-2">
+				<label for="phone_area_code">Area Code</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.phone_area_code }">
+					<input type="text" max-length="3" name="phone_area_code" class="form-control" ng-model="vendor.phone_area_code" />
+					<span class="help-block" ng-show="validation.phone_area_code">{{ validation.phone_area_code }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="phone_prefix">Prefix</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.phone_prefix }">
+					<input type="text" max-length="3" name="phone_prefix" class="form-control" ng-model="vendor.phone_prefix" />
+					<span class="help-block" ng-show="validation.phone_prefix">{{ validation.phone_prefix }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="phone_number">Number</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.phone_number }">
+					<input type="text" max-length="4" name="phone_number" class="form-control" ng-model="vendor.phone_number" />
+					<span class="help-block" ng-show="validation.phone_number">{{ validation.phone_number }}</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

@@ -8,6 +8,7 @@ app.controller('EditCategoryModalController', function ($scope, $rootScope, $mod
 
 	$scope.opened1 = [];
 	$scope.opened2 = [];
+	$scope.isSaving = false;
 
 	$scope.title = params.title;
 
@@ -49,11 +50,13 @@ app.controller('EditCategoryModalController', function ($scope, $rootScope, $mod
 	// save edited Category
 	$scope.save = function () {
 		$scope.dataErrorMsg = [];
+		$scope.isSaving = true;
 
 		$scope.validation = {};
 
 		RestData2().saveCategory($scope.category,
 				function(response) {
+					$scope.isSaving = false;
 					if (!!response.success) {
 						$modalInstance.close();
 						// now update the global categories data

@@ -5,19 +5,17 @@
 
 require_once ('rest_controller.php');
 
-class forecast_controller Extends rest_controller
-{
+class forecast_controller Extends rest_controller {
+
 	protected $debug = TRUE;
 
 	public function index() {
-//		$this->ajax->set_header("Forbidden", '403');
 		$this->ajax->addError(new AjaxError("403 - Forbidden (forecast/index)"));
 		$this->ajax->output();
 	}
 
 	public function loadAll() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (forecast/loadAll)"));
 			$this->ajax->output();
 		}
@@ -27,6 +25,7 @@ class forecast_controller Extends rest_controller
 	}
 	
 	private function _loadAll($params) {
+		$last_due_date		= $params['last_due_date'];
 		$first_due_date		= (!empty($params['first_due_date'])) ? $params['first_due_date']: FALSE;
 		$description		= (!empty($params['description'])) ? $params['description']: FALSE;
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
@@ -36,6 +35,9 @@ class forecast_controller Extends rest_controller
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$forecasts = new forecast();
+		if ($last_due_date == 'false') {
+			$forecasts->where('last_due_date IS NULL', FALSE, FALSE);
+		}
 		if ($first_due_date) {
 			$first_due_date = date('Y-m-d', strtotime($first_due_date));
 			$forecasts->where('first_due_date', $first_due_date);

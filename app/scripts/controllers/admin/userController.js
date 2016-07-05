@@ -68,7 +68,7 @@ function userController($scope, $timeout, $modal, RestData2) {
 
 	$scope.addUser = function() {
 		var modalInstance = $modal.open({
-			templateUrl: 'editUserModal.html',
+			templateUrl: 'app/views/admin/templates/editUserModal.html',
 			controller: 'EditUserModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -92,7 +92,7 @@ function userController($scope, $timeout, $modal, RestData2) {
 
 	$scope.editUser = function(user_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'editUserModal.html',
+			templateUrl: 'app/views/admin/templates/editUserModal.html',
 			controller: 'EditUserModalController',
 //			size: 'lg',
 			windowClass: 'app-modal-window',
@@ -116,7 +116,7 @@ function userController($scope, $timeout, $modal, RestData2) {
 
 	$scope.deleteUser = function (user_id) {
 		var modalInstance = $modal.open({
-			templateUrl: 'deleteModal.html',
+			templateUrl: 'app/views/templates/deleteModal.html',
 			controller: 'DeleteUserModalController',
 			size: 'sm',
 			resolve: {

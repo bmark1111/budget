@@ -1,64 +1,74 @@
 <div class="container-fluid"><!-- viewport-width>-->
 	<h1 class="page-header">Dashboard</h1>
-	<div ng-if="error">{{error}}</div>
+	<div ng-show="dashboard.error">{{ dashboard.error }}</div>
 	<div class="row">
 		<div class="col-md-3">
-			<h3>Category Yotals YTD</h3>
-			<input type="text" ng-model="ytdYear" placeholder="Enter Year" ng-blur="getYTD()" />
-		</div>
-		<div class="col-md-3">
-			<div ng-if="dataErrorMsg[0]">
-				<p ng-repeat="error in dataErrorMsg"><span style="color:red;">{{error}}</span></p>
+			<div ng-show="dashboard.dataErrorMsg[0]">
+				<p ng-repeat="error in dashboard.dataErrorMsg"><span style="color:red;">{{ error }}</span></p>
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-6">
+	<tabset>
+		<tab heading="Category Yotals YTD">
 			<div class="row">
-				<div class="col-md-4"><b>Category</b></div>
-				<div class="col-md-2"><span class="pull-right"><b>Actual</b></span></div>
-				<div class="col-md-2"><span class="pull-right"><b>Forecast</b></span></div>
-				<div class="col-md-2"><span class="pull-right"><b>Difference</b></span></div>
-			</div>
-			<div ng-repeat="ytdTotal in ytdTotals">
-				<div class="row">
-					<div class="col-md-4">{{ytdTotal.name}}</div>
-					<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
-					<div class="col-md-2"><span class="pull-right forecast_amount">{{ytdTotal.forecast | currency}}</span></div>
-					<div class="col-md-2"><span class="pull-right" ng-class="{'overbudget':(ytdTotal.total - ytdTotal.forecast) < 0}"><b>{{ ytdTotal.total - ytdTotal.forecast | currency }}</b></span></div>
+				<div class="col-md-3">
+					<input type="text" ng-model="dashboard.ytdYear" placeholder="Enter Year" ng-blur="getYTD()" />
 				</div>
 			</div>
-		</div>
-		<div class="col-md-4" ng-show="transactions" style="overflow:scroll; height:500px;">
-			<h3>YTD Transactions for Category</h3>
-			<div class="table-responsive">
-				<table>
-					<thead>
-						<tr>
-							<th>Date</th>
-							<th>Description</th>
-							<th>Type</th>
-							<th>Amount</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="idx in transactions_seq" ng-if="!dataErrorMsgThese">
-							<td><span class="pull-left">{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</span></td>
-							<td>{{transactions[idx].description}}<span ng-if="transactions[idx].notes"> - <em>{{transactions[idx].notes}}</em></span></td>
-							<td>{{transactions[idx].type}}</td>
-							<td><span class="pull-right">{{transactions[idx].amount|currency}}</span></td>
-						</tr>
-						<tr ng-repeat="error in dataErrorMsgThese" ng-if="dataErrorMsgThese">
-							<td colspan="4">{{error.error}}</td>
-						</tr>
-					</tbody>
-				</table>
+			<div class="row">
+				<div class="col-md-5">
+					<div class="row">
+						<div class="col-md-4"><b>Category</b></div>
+						<div class="col-md-2"><span class="pull-right"><b>Actual</b></span></div>
+						<div class="col-md-3"><span class="pull-right"><b>Forecast</b></span></div>
+						<div class="col-md-3"><span class="pull-right"><b>Difference</b></span></div>
+					</div>
+					<div ng-repeat="ytdTotal in dashboard.ytdTotals">
+						<div class="row">
+							<div class="col-md-4">{{ytdTotal.name}}</div>
+							<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
+							<div class="col-md-3"><span class="pull-right forecast_amount">{{ytdTotal.forecast | currency}}</span></div>
+							<div class="col-md-3"><span class="pull-right" ng-class="{'overbudget':(ytdTotal.total - ytdTotal.forecast) < 0}"><b>{{ ytdTotal.total - ytdTotal.forecast | currency }}</b></span></div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-7" ng-show="dashboard.transactions" style="overflow:scroll; height:500px;">
+					<h4>YTD Transactions for Category</h4>
+					<div class="table-responsive">
+						<table>
+							<thead>
+								<tr>
+									<th>Date</th>
+									<th>Description</th>
+									<th>Type</th>
+									<th>Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="idx in dashboard.transactions_seq" ng-if="!dashboard.dataErrorMsgThese">
+									<td><span class="pull-left">{{ dashboard.transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span></td>
+									<td>
+										<a tooltip="{{ dashboard.transactions[idx].description }}">{{ dashboard.transactions[idx].vendorName}}</a><br />
+										<span ng-if="dashboard.transactions[idx].notes"> - <em>{{ dashboard.transactions[idx].notes }}</em></span>
+									</td>
+									<td>{{ dashboard.transactions[idx].type }}</td>
+									<td><span class="pull-right">{{ dashboard.transactions[idx].amount|currency }}</span></td>
+								</tr>
+								<tr ng-repeat="error in dashboard.dataErrorMsgThese" ng-if="dashboard.dataErrorMsgThese">
+									<td colspan="4">{{ error.error }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<h3>Upcoming forecast payments</h3>
-		</div>
-	</div>
+		</tab>
+		<tab heading="Upcoming forecast payments">
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Upcoming forecast payments</h3>
+				</div>
+			</div>
+		</tab>
+	</tabset>
 </div>

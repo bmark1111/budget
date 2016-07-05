@@ -41,8 +41,6 @@ class rest_controller Extends EP_Controller {
 				$this->ajax->output();
 		}
 
-//$this->_balanceUpdate();				// resets all bank balances
-//die('XXXXXXXXXXXXXXXXX');
 		$class = get_class($this);
 		if ($class !== 'upload_controller') {
 			if ($resetBalances = $this->appdata->get('resetBalances')) {	// get resets
@@ -51,40 +49,6 @@ class rest_controller Extends EP_Controller {
 					$this->_adjustAccountBalances($date, $account_id);
 				}
 				$this->appdata->remove('resetBalances');	// remove the reset balances from app data
-			}
-		}
-	}
-
-	private function _balanceUpdate() {
-		$bank_account_balances = array();
-		$bank_accounts = new bank_account();
-		$bank_accounts->result();
-		if ($bank_accounts->numRows()) {
-			foreach ($bank_accounts as $bank_account) {
-				$bank_account_balances[$bank_account->id] = 0;
-			}
-			$transactions = new transaction();
-			$transactions->whereNotDeleted();
-			$transactions->orderBy('transaction_date', 'ASC');
-			$transactions->orderBy('id', 'ASC');
-			$transactions->result();
-			if ($transactions->numRows()) {
-				foreach ($transactions as $transaction) {
-					$amount = 0;
-					switch ($transaction->type) {
-						case 'DEBIT':
-						case 'CHECK':
-							$amount -= $transaction->amount;
-							break;
-						case 'CREDIT':
-						case 'DSLIP':
-							$amount += $transaction->amount;
-							break;
-					}
-					$bank_account_balances[$transaction->bank_account_id] += $amount;
-					$transaction->bank_account_balance = $bank_account_balances[$transaction->bank_account_id];
-					$transaction->save();
-				}
 			}
 		}
 	}
@@ -104,6 +68,192 @@ class rest_controller Extends EP_Controller {
 	 * @param type $categories
 	 * @param type $sd
 	 * @param type $ed
+	 * @param type $all
+	 * @return transactions with next due dates
+	 * @throws Exception
+	 */
+	protected function loadRepeats($categories, $sd, $ed, $all = 0) {
+		$transactions = new transaction_repeat();
+		$transactions->select('transaction_repeat.*');
+		$transactions->groupStart();
+		$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
+//		$transactions->orWhere('transaction_repeat.last_due_date < ', $ed);
+		$transactions->orWhere('transaction_repeat.last_due_date >= ', $sd);
+		$transactions->groupEnd();
+		$transactions->groupStart();
+		$transactions->orWhere('transaction_repeat.last_due_date IS NULL', NULL, FALSE);
+		$transactions->orWhere('transaction_repeat.last_due_date >= transaction_repeat.next_due_date', NULL, FALSE);
+		$transactions->groupEnd();
+		$transactions->where('transaction_repeat.first_due_date < ', $ed);
+		$transactions->where('transaction_repeat.is_deleted', 0);
+		if ($all !== 0) {
+			$transactions->where('transaction_repeat.next_due_date < ', $ed);
+		}
+		if (count($categories) == 1) {
+			$transactions->join('vendor V1', 'V1.id = transaction_repeat.vendor_id', 'left');
+			$transactions->select('V1.name as vendorName');
+			$transactions->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
+			$transactions->join('vendor V2', 'V2.id = transaction_repeat_split.vendor_id', 'left');
+			$transactions->select('transaction_repeat_split.amount as split_amount, transaction_repeat_split.category_id as split_category_id, transaction_repeat_split.type as split_type, transaction_repeat_split.description as split_description, V2.name as split_vendorName');
+			$transactions->groupStart();
+			$transactions->orWhere('transaction_repeat.category_id', $categories['id']);
+			$transactions->orGroupStart();
+			$transactions->where('transaction_repeat.category_id IS NULL', NULL, FALSE);
+			$transactions->where('transaction_repeat_split.category_id', $categories['id']);
+			$transactions->groupEnd();
+			$transactions->groupEnd();
+		}
+		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
+		$transactions->result();
+//if (count($categories)==1) {
+//	echo $transactions->lastQuery();
+//	die;
+//}
+		// now calculate all repeat due dates for given period
+		foreach ($transactions as $transaction) {
+			$next_due_dates = array();
+			foreach ($transaction->repeats as $repeat) {
+//				if ($all !== 0) {
+				if ($all == 1) {
+					$next_due_date = $transaction->next_due_date;
+				} else {
+					$next_due_date = $transaction->first_due_date;
+				}
+				$every = 0;
+				while (strtotime($next_due_date) < strtotime($ed)) {
+					switch ($transaction->every_unit) {
+						case 'Day':
+							$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
+							break;
+						case 'Week':
+							$date = strtotime($next_due_date . ' +' . $every . ' week');
+							$dayofweek = date('w', $date);
+							$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($repeat->every_day - $dayofweek).' day'));
+							break;
+						case 'Month':
+							$next_due_date = date('Y-m-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' month'));
+							break;
+						case 'Year':
+							$next_due_date = date('Y-' . sprintf('%02d', $repeat->every_month) . '-' . $repeat->every_date, strtotime($next_due_date . ' +' . $every . ' year'));
+							break;
+						case 'Quarter':
+						default:
+							throw new Exception('Invalid transaction->repeat->every_unit');
+							break;
+					}
+					$ndd = strtotime($next_due_date);
+					if ($ndd >= strtotime($sd) && $ndd <= strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
+//						if ($all === 0 || $ndd >= strtotime($transaction->next_due_date)) {
+//						if ($all !== 1 || $ndd >= strtotime($transaction->next_due_date)) {
+//							$next_due_dates[] = $next_due_date;
+//						}
+						if (($all == 0)														// ...we want all repeats
+								||															//			or
+							($all == 1 && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
+//							($all == 1 && $ndd > time())									// ... we want future repeats
+								||															//			or
+							($all == 2 && $ndd <= time())) {								// ... we want past repeats
+							$next_due_dates[] = $next_due_date;								// ... then save this due date
+						}
+					}
+					$every = $transaction->every;
+				}
+			}
+			$transaction->next_due_dates = $next_due_dates;
+		}
+		return $transactions;
+	}
+	
+	protected function sumRepeats($transactions, $sd, $ed) {
+		// now sum the repeats for each of the requested intervals
+		$offset = 0;
+		$repeats = array();
+		while (strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit) < strtotime($ed)) {
+			$interval_beginning = strtotime($sd . ' +' . $offset . ' ' . $this->budget_interval_unit);
+			$interval_ending = date('Y-m-d', strtotime($sd . ' +' . ($offset + $this->budget_interval) . ' ' . $this->budget_interval_unit));
+			$interval_ending = strtotime($interval_ending . ' -1 Day');
+
+			$interval = array();
+			foreach ($transactions as $transaction) {
+				foreach($transaction->next_due_dates as $next_due_date) {
+					if (strtotime($next_due_date) >= $interval_beginning && strtotime($next_due_date) <= $interval_ending) {
+						$bb = $transaction->bank_account_id;
+						if (!$transaction->category_id) {
+							foreach ($transaction->splits as $split) {
+								$amount = NULL;
+								switch ($split->type) {
+									case 'DSLIP':
+									case 'CREDIT':
+										$amount = $split->amount;
+										break;
+									case 'DEBIT':
+									case 'CHECK':
+										$amount = -$split->amount;
+										break;
+								}
+								$cc = $split->category_id;
+								if (empty($interval['totals'][$cc])) {
+									$interval['totals'][$cc]		= $amount;			// set the category totals
+								} else {
+									$interval['totals'][$cc]		+= $amount;			// add the category totals
+								}
+								if (empty($interval['adjustments'][$bb])) {
+									$interval['adjustments'][$bb]	= $amount;			// set the bank account balance adjustments
+								} else {
+									$interval['adjustments'][$bb]	+= $amount;			// add the category totals
+								}
+								if (empty($interval['interval_total'])) {
+									$interval['interval_total']		= $amount;			// set the interval total
+								} else {
+									$interval['interval_total']		+= $amount;			// add the category totals
+								}
+							}
+						} else {
+							$amount = NULL;
+							switch ($transaction->type) {
+								case 'DSLIP':
+								case 'CREDIT':
+									$amount = $transaction->amount;
+									break;
+								case 'DEBIT':
+								case 'CHECK':
+									$amount = -$transaction->amount;
+									break;
+							}
+							$cc = $transaction->category_id;
+							if (empty($interval['totals'][$cc])) {
+								$interval['totals'][$cc]		= $amount;				// set the category totals
+							} else {
+								$interval['totals'][$cc]		+= $amount;				// add the category totals
+							}
+							if (empty($interval['adjustments'][$bb])) {
+								$interval['adjustments'][$bb]	= $amount;				// set the bank account balance adjustments
+							} else {
+								$interval['adjustments'][$bb]	+= $amount;				// add the category totals
+							}
+							if (empty($interval['interval_total'])) {
+								$interval['interval_total']		= $amount;				// set the interval total
+							} else {
+								$interval['interval_total']		+= $amount;				// add the category totals
+							}
+						}
+					}
+				}
+			}
+			$interval['interval_beginning']	= date('c', $interval_beginning);
+			$interval['interval_ending']	= date('c', strtotime(date('Y-m-d', $interval_ending) . ' 23:59:59'));
+			$repeats[] = $interval;
+
+			$offset += $this->budget_interval;
+		}
+		return $repeats;
+	}
+
+	/**
+	 * 
+	 * @param type $categories
+	 * @param type $sd
+	 * @param type $ed
 	 * @param type $all 0 = get all, 1 == single category
 	 * @return forecast
 	 */
@@ -112,16 +262,14 @@ class rest_controller Extends EP_Controller {
 		$forecast->whereNotDeleted();
 		$forecast->groupStart();
 		$forecast->orWhere('last_due_date IS NULL ', NULL);
-		$forecast->orWhere('last_due_date <= ', $ed);
+//		$forecast->orWhere('last_due_date < ', $ed);
 		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
-//		$forecast->where('first_due_date >= ', $sd);
-		$forecast->where('first_due_date <= ', $ed);
+		$forecast->where('first_due_date < ', $ed);
 		if (count($categories) == 1) {
 			$forecast->where('category_id', $categories['id']);
 		}
 		$forecast->result();
-//echo $forecast->lastQuery();die;
 		if ($forecast->numRows()) {
 			// set the next due date(s) for the forecasted expenses
 			foreach ($forecast as $fc) {
@@ -266,7 +414,6 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 	 */
 	public function reconcileTransactions() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (rest/reconcileTransactions)"));
 			$this->ajax->output();
 		}
@@ -368,16 +515,18 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 	 */
 	protected function getBankAccountBalance($sd, $account_id) {
 		$transaction = new transaction();
-		$transaction->whereNotDeleted();
-		$transaction->where("transaction_date < '" . $sd . "'", NULL, FALSE);
-		$transaction->where('bank_account_id', $account_id);
-		$transaction->orderBy('transaction_date', 'DESC');
+		$transaction->select('transaction.*, bank_account.date_opened, bank_account.date_closed');
+		$transaction->join('bank_account', 'transaction.bank_account_id = bank_account.id');
+		$transaction->where('transaction.is_deleted', 0);
+		$transaction->where("transaction.transaction_date < '" . $sd . "'", NULL, FALSE);
+		$transaction->where('transaction.bank_account_id', $account_id);
+		$transaction->orderBy('transaction.transaction_date', 'DESC');
 		$transaction->limit(1);
 		$transaction->row();
 		if ($transaction->numRows()) {
-			return array($transaction->transaction_date, $transaction->bank_account_balance, $transaction->reconciled_date);
+			return array($transaction->transaction_date, $transaction->bank_account_balance, $transaction->reconciled_date, $transaction->date_opened, $transaction->date_closed);
 		} else {
-			return array(NULL, 0, NULL);
+			return array(NULL, 0, NULL, NULL, NULL);
 		}
 	}
 }

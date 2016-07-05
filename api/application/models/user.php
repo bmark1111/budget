@@ -20,7 +20,6 @@ class user extends Nagilum {
 		parent::__construct($id);
 	}
 
-	//
 	public function setSession(&$user) {
 		$_SESSION['id']		= $user->id;
 		$_SESSION['uname']	= $user->login;
@@ -29,7 +28,6 @@ class user extends Nagilum {
 		return TRUE;
 	}
 
-	//
 	public function login($sName, $sPass) {
 		$password = md5($sPass . $this->CI->config->item('encryption_key'));
 		$this->select('user.id, user.login, user.firstname, user.lastname, user_role.roles');
@@ -40,7 +38,6 @@ class user extends Nagilum {
 		$user = $this->row();
 		if ($user->numRows() && $this->setSession($user)) {
 			return $user->id;
-//			return TRUE;
 		}
 		return FALSE;
 	}

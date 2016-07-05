@@ -2770,7 +2770,7 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param bool $no_case - for case insensitive searches
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	protected function buildLike($field, $match = '', $type = 'AND ', $side = 'both', $not = '', $no_case = FALSE)
+	protected function buildLike($field, $match = '', $type = 'AND ', $side = 'both', $not = '', $no_case = FALSE, $escape = TRUE)
 	{
 		if ( ! is_array($field))
 		{
@@ -2799,7 +2799,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 			}
 			$f = "$k $not LIKE";
 
-			$v = $this->escapeLikeStr($v);
+			if ($escape) {
+				$v = $this->escapeLikeStr($v);
+			}
 
 			if ($side == 'before')
 			{
@@ -2830,9 +2832,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function like($field, $match = '', $side = 'both')
+	public function like($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'AND ', $side);
+		return $this->buildLike($field, $match, 'AND ', $side, '', FALSE, $escape);
 	}
 
 	/**
@@ -2844,9 +2846,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function orLike($field, $match = '', $side = 'both')
+	public function orLike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'OR ', $side);
+		return $this->buildLike($field, $match, 'OR ', $side, '', FALSE, $escape);
 	}
 
 	/**
@@ -2858,9 +2860,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function notLike($field, $match = '', $side = 'both')
+	public function notLike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'AND ', $side, 'NOT');
+		return $this->buildLike($field, $match, 'AND ', $side, 'NOT', FALSE, $escape);
 	}
 
 	/**
@@ -2872,9 +2874,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function orNotLike($field, $match = '', $side = 'both')
+	public function orNotLike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'OR ', $side, 'NOT');
+		return $this->buildLike($field, $match, 'OR ', $side, 'NOT', FALSE, $escape);
 	}
 
 	/**
@@ -2886,9 +2888,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function iLike($field, $match = '', $side = 'both')
+	public function iLike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'AND ', $side, '', TRUE);
+		return $this->buildLike($field, $match, 'AND ', $side, '', TRUE, $escape);
 	}
 
 	/**
@@ -2900,9 +2902,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function orILike($field, $match = '', $side = 'both')
+	public function orILike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'OR ', $side, '', TRUE);
+		return $this->buildLike($field, $match, 'OR ', $side, '', TRUE, $escape);
 	}
 
 	/**
@@ -2914,9 +2916,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function notILike($field, $match = '', $side = 'both')
+	public function notILike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'AND ', $side, '', TRUE);
+		return $this->buildLike($field, $match, 'AND ', $side, '', TRUE, $escape);
 	}
 
 	/**
@@ -2928,9 +2930,9 @@ class Nagilum extends ArrayObject implements IteratorAggregate
 	 * @param string $side
 	 * @return Nagilum $this - the current object for method chaining
 	 */
-	public function orNotILike($field, $match = '', $side = 'both')
+	public function orNotILike($field, $match = '', $side = 'both', $escape = TRUE)
 	{
-		return $this->buildLike($field, $match, 'OR ', $side, 'NOT', TRUE);
+		return $this->buildLike($field, $match, 'OR ', $side, 'NOT', TRUE, $escape);
 	}
 
 	/**

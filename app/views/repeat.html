@@ -1,0 +1,72 @@
+<!--<ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
+<ng-include src="'app/views/templates/editRepeatModal.html'"></ng-include>-->
+
+<div class="container-fluid">
+	<h1 class="page-header">Repeats</h1>
+	<div ng-if="error">{{error}}</div>
+	<div class="form-wrap" ng-if="searchDisplay">
+		<form>
+			<div class="row">
+				<div class="col-md-2">
+					<label for="last_due_date">Show All Repeats</label>
+					<input type="checkbox" class="form-control" name="last_due_date" ng-model="search.last_due_date" ng-change="refreshData()" />
+				</div>
+				<div class="col-sm-2">
+					<div class="form-group">
+						<label for="name">Vendor Name</label>
+						<input type="text" class="form-control input-sm search" name="name" data-length="4" ng-model="search.name" ng-change="refreshData()" />
+					</div>
+				</div>
+				<div class="col-md-2" style="padding-top:20px;">
+					<div class="form-group">
+						<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addRepeat()">
+							Add Repeat
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
+		<table>
+			<thead>
+				<tr>
+					<th>Vendor</th>
+					<th>Category</th>
+					<th>Account</th>
+					<th>First Due Date</th>
+					<th>Next Due Date</th>
+					<th>Last Due Date</th>
+					<th>Amount</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="idx in repeats_seq">
+					<td ng-if="repeats[idx].category.name"><span class="pull-left">{{repeats[idx].vendor.name}}</span></td>
+					<td ng-if="repeats[idx].category.name"><span class="pull-left">{{repeats[idx].category.name}}</span></td>
+					<td colspan="2" ng-if="!repeats[idx].category.name"><span class="pull-left">--Split--</span></td>
+					<td><span class="pull-left">{{repeats[idx].bank_account.name}}</span></td>
+					<td><span class="pull-left">{{repeats[idx].first_due_date}}</span></td>
+					<td><span class="pull-left">{{repeats[idx].next_due_date}}</span></td>
+					<td><span class="pull-left">{{repeats[idx].last_due_date}}</span></td>
+					<td><span class="pull-left">{{repeats[idx].amount}}</span></td>
+					<td>
+						<span class="glyphicon glyphicon-pencil" ng-click="editRepeat(repeats[idx].id)" style="cursor:pointer;" title="Edit Repeat ?"></span>
+						<span class="glyphicon glyphicon-trash" ng-click="deleteRepeat(repeats[idx].id)" style="cursor:pointer;" title="Delete Reapeat ?"></span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div ng-if="recCount > itemsPerPage">
+			<div class="col-sm-12">
+				<pagination boundary-links="true" max-size="maxSize" total-items="recCount" items-per-page="itemsPerPage" ng-model="search.currentPage"
+					previous-text="&lsaquo;"  next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-change="pageChanged()"></pagination>
+				<span style="vertical-align:middle;padding-left:40px;">Total records: {{recCount | number}}</span>
+			</div>
+		</div>
+	</div>
+	<div ng-if="dataErrorMsg[0]">
+		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
+	</div>
+</div>

@@ -212,7 +212,7 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 	$scope.reconcile = function(account_name, account_id, balance, date, alt_date) {
 		var use_date = (alt_date) ? alt_date: date;
 		var modalInstance = $modal.open({
-			templateUrl: 'reconcileTransactionsModal.html',
+			templateUrl: 'app/views/templates/reconcileTransactionsModal.html',
 			controller: 'ReconcileTransactionsModalController',
 			size: 'md',
 			resolve: {

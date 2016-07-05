@@ -46,10 +46,14 @@ $route['register']								= "user/register";					// POST - register
 
 $route['data/logout']							= "user/logout";					// POST - logout
 
+$route['data/rest/reconcileTransactions']		= "api/rest/reconcileTransactions";	// POST - reconcile transactions
+
 $route['data/budget/load']						= "api/budget/load";				// GET - load dashboard transactions
 $route['data/budget/these']						= "api/budget/these";				// GET - load dashboard transactions for interval and category
 
 $route['data/sheet/load']						= "api/sheet/load";					// GET - load sheet transactions
+
+$route['data/livesearch']						= "api/livesearch";					// GET - do live search
 
 $route['data/dashboard/ytdTotals']				= "api/dashboard/ytdTotals";		// GET - load YTD Totals
 $route['data/dashboard/these']					= "api/dashboard/these";			// GET - load YTD Transactions for category
@@ -58,6 +62,16 @@ $route['data/transaction/loadAll']				= "api/transaction/loadAll";		// GET - loa
 $route['data/transaction/delete']				= "api/transaction/delete";			// GET - delete transaction
 $route['data/transaction/edit']					= "api/transaction/edit";			// GET - edit transaction
 $route['data/transaction/save']					= "api/transaction/save";			// POST - save transaction
+
+$route['data/vendor/get']						= "api/vendor/get";					// GET - get all vendors in list
+$route['data/vendor/delete']					= "api/vendor/delete";				// GET - delete vendor
+$route['data/vendor/edit']						= "api/vendor/edit";				// GET - edit vendor
+$route['data/vendor/save']						= "api/vendor/save";				// POST - save vendor
+
+$route['data/repeat/get']						= "api/repeat/get";					// GET - get all repeats in list
+$route['data/repeat/delete']					= "api/repeat/delete";				// GET - delete repeat
+$route['data/repeat/edit']						= "api/repeat/edit";				// GET - edit repeat
+$route['data/repeat/save']						= "api/repeat/save";				// POST - save repeat
 
 $route['data/forecast/loadAll']					= "api/forecast/loadAll";			// GET - load all forecasts in list
 $route['data/forecast/delete']					= "api/forecast/delete";			// GET - delete forecast
@@ -75,7 +89,6 @@ $route['data/bank/accounts']					= "api/bank/accounts";				// GET - get bank acc
 $route['data/bank/delete']						= "api/bank/delete";				// GET - delete bank
 $route['data/bank/edit']						= "api/bank/edit";					// GET - edit bank
 $route['data/bank/save']						= "api/bank/save";					// POST - save bank
-$route['data/rest/reconcileTransactions']		= "api/rest/reconcileTransactions";	// POST - reconcile transactions
 
 $route['data/category/load']					= "api/category/load";				// GET - get all categories
 $route['data/category/delete']					= "api/category/delete";			// GET - delete category
@@ -93,6 +106,8 @@ $route['data/user/load']						= "api/admin/user/load";			// GET - load all users
 $route['data/user/delete']						= "api/admin/user/delete";			// GET - delete user
 $route['data/user/edit']						= "api/admin/user/edit";			// GET - edit user
 $route['data/user/save']						= "api/admin/user/save";			// POST - save user
+
+$route['data/utility']							= "api/admin/util";					// GET - run utility
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

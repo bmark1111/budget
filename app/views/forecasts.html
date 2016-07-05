@@ -1,5 +1,5 @@
-<ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
-<ng-include src="'app/views/templates/editForecastModal.html'"></ng-include>
+<!--<ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
+<ng-include src="'app/views/templates/editForecastModal.html'"></ng-include>-->
 
 <div class="container-fluid">
 	<h1 class="page-header">Forecasts</h1>
@@ -7,6 +7,10 @@
 	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
 			<div class="row">
+				<div class="col-md-2">
+					<label for="last_due_date">Show All Forecasts</label>
+					<input type="checkbox" class="form-control" name="last_due_date" ng-model="search.last_due_date" ng-change="refreshData()" />
+				</div>
 				<div class="col-md-2">
 					<label for="first_due_date">First Due Date</label>
 					<p class="input-group">

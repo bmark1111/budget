@@ -8,6 +8,10 @@ class transaction_split extends Nagilum {
 
 	public $table = 'transaction_split';
 	
+	public $hasOne = array(	'category' => array('class' => 'category', 'joinField' => 'category_id'),
+							'vendor' => array('class' => 'vendor', 'joinField' => 'vendor_id')
+						);
+
 	public $autoPopulateHasOne = FALSE;
 	public $autoPopulateHasMany = FALSE;
 

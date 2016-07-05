@@ -1,55 +1,53 @@
-<script type="text/ng-template" id="editUserModal.html">
-	<div class="modal-header">
-		<h3 class="modal-title">{{title}}</h3>
-	</div>
-	<div class="modal-body">
-		<div class="row">
-			<div class="col-md-3">
-				<label for="firstname">First Name</label>
-				<div class="form-group" ng-class="{ 'has-error':validation.firstname }">
-					<input type="text" class="form-control" name="firstname" ng-model="user.firstname"/>
-					<span class="help-block" ng-show="validation.firstname">{{ validation.firstname }}</span>
-				</div>
-			</div>
-			<div class="col-md-3">
-				<label for="lastname">Last Name</label>
-				<div class="form-group" ng-class="{ 'has-error':validation.lastname }">
-					<input type="text" class="form-control" name="lastname" ng-model="user.lastname"/>
-					<span class="help-block" ng-show="validation.lastname">{{ validation.lastname }}</span>
-				</div>
-			</div>
-			<div class="col-md-3">
-				<label for="email">Email</label>
-				<div class="form-group" ng-class="{ 'has-error':validation.email }">
-					<input type="text" class="form-control" name="login" ng-model="user.email"/>
-					<span class="help-block" ng-show="validation.email">{{ validation.email }}</span>
-				</div>
+<div class="modal-header">
+	<h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-md-3">
+			<label for="firstname">First Name</label>
+			<div class="form-group" ng-class="{ 'has-error':validation.firstname }">
+				<input type="text" class="form-control" name="firstname" ng-model="user.firstname"/>
+				<span class="help-block" ng-show="validation.firstname">{{ validation.firstname }}</span>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-3">
-				<label for="login">Login</label>
-				<div class="form-group" ng-class="{ 'has-error':validation.login }">
-					<input type="text" class="form-control" name="login" ng-model="user.login"/>
-					<span class="help-block" ng-show="validation.login">{{ validation.login }}</span>
-				</div>
+		<div class="col-md-3">
+			<label for="lastname">Last Name</label>
+			<div class="form-group" ng-class="{ 'has-error':validation.lastname }">
+				<input type="text" class="form-control" name="lastname" ng-model="user.lastname"/>
+				<span class="help-block" ng-show="validation.lastname">{{ validation.lastname }}</span>
 			</div>
-			<div class="col-md-3" ng-if="user.id">
-				<label for="joindate">Join Date</label>
-				<div class="form-group">
-					<input type="text" class="form-control" name="joindate" ng-disabled="true" ng-model="user.joindate" />
-				</div>
-			</div>
-			<div class="col-md-3" ng-if="user.id">
-				<label for="active">Active</label>
-				<div class="form-group">
-					<input type="checkbox" name="active" ng-model="user.active" />
-				</div>
+		</div>
+		<div class="col-md-3">
+			<label for="email">Email</label>
+			<div class="form-group" ng-class="{ 'has-error':validation.email }">
+				<input type="text" class="form-control" name="login" ng-model="user.email"/>
+				<span class="help-block" ng-show="validation.email">{{ validation.email }}</span>
 			</div>
 		</div>
 	</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="save()">Save</button>
-		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	<div class="row">
+		<div class="col-md-3">
+			<label for="login">Login</label>
+			<div class="form-group" ng-class="{ 'has-error':validation.login }">
+				<input type="text" class="form-control" name="login" ng-model="user.login"/>
+				<span class="help-block" ng-show="validation.login">{{ validation.login }}</span>
+			</div>
+		</div>
+		<div class="col-md-3" ng-if="user.id">
+			<label for="joindate">Join Date</label>
+			<div class="form-group">
+				<input type="text" class="form-control" name="joindate" ng-disabled="true" ng-model="user.joindate" />
+			</div>
+		</div>
+		<div class="col-md-3" ng-if="user.id">
+			<label for="active">Active</label>
+			<div class="form-group">
+				<input type="checkbox" name="active" ng-model="user.active" />
+			</div>
+		</div>
 	</div>
-</script>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="save()">Save</button>
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
