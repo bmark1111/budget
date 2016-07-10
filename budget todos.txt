@@ -1,5 +1,5 @@
 1) Check all validation on server side save method.
-MASTER--------
+MASTER--------1234567890
 2a) Only allow adding of manual transactions after current last reconciled date
 2b) Cannot add manual transactions before bank account opened or after closed.
 
