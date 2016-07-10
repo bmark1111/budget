@@ -2,7 +2,7 @@
 MASTER--------
 2a) Only allow adding of manual transactions after current last reconciled date
 2b) Cannot add manual transactions before bank account opened or after closed.
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
 3) when saving a bank account:
 	a) validate opening balance, it could be zero
 	b) need to store the balance in the transaction table with 'is_uploaded' set
