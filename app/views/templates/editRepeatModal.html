@@ -20,9 +20,9 @@
 		</div>
 		<div class="row">
 			<div class="col-md-2" ng-if="!is_split">
-				<label for="category">Category</label>
+				<label for="category_id">Category</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
-					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<select class="form-control" name="category_id" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
 					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
 				</div>
 			</div>

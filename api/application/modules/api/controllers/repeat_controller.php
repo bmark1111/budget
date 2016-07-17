@@ -105,8 +105,8 @@ class repeat_controller Extends rest_controller {
 
 		// VALIDATION
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[100]');
-		$this->form_validation->set_rules('category_id', 'Category', 'integer|required|callback_isValidCategory');
-		$this->form_validation->set_rules('vendor_id', 'Vendor', 'integer|required|callback_isValidVendor');
+		$this->form_validation->set_rules('category_id', 'Category', 'integer|callback_isValidCategory');
+		$this->form_validation->set_rules('vendor_id', 'Vendor', 'integer|callback_isValidVendor');
 		$this->form_validation->set_rules('bank_account_id', 'Account', 'integer|required');
 		$this->form_validation->set_rules('first_due_date', 'First Due Date', 'required|callback_isValidDate');
 		$this->form_validation->set_rules('last_due_date', 'Last Due Date', 'callback_isValidDate');
@@ -238,17 +238,10 @@ class repeat_controller Extends rest_controller {
 	}
 
 	/**
-	 * Checks if splits are entered, if not main category is a required field
+	 * Checks for a valid date
 	 */
 	public function isValidDate() {
-		$input = file_get_contents('php://input');
-		$_POST = json_decode($input, TRUE);
-
-		// if no splits then category is required otherwise MUST be NULL (will be ignored in Save)
-		if (empty($_POST['splits']) && empty($_POST['category_id'])) {
-			$this->form_validation->set_message('isValidCategory', 'The Category Field is Required');
-			return FALSE;
-		}
+		// TODO
 		return TRUE;
 	}
 
