@@ -96,8 +96,9 @@ class upload_controller Extends rest_controller {
 		$uploaded = new transaction_upload($id);
 		if ($uploaded->numRows()) {
 			// find any current transactions that could mnatch this uploaded transaction
-			isset($uploaded->bank_account);
-			isset($uploaded->bank_account->bank);
+			if(isset($uploaded->bank_account)) {
+				isset($uploaded->bank_account->bank);
+			}
 
 			$this->ajax->setData('result', $uploaded);
 
@@ -122,7 +123,9 @@ class upload_controller Extends rest_controller {
 			$transactions->result();
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
-				isset($transaction->bank_account->bank);
+				if (isset($transaction->bank_account)) {
+					isset($transaction->bank_account->bank);
+				}
 				isset($transaction->vendor);
 				if (!empty($transaction->splits)) {
 					foreach ($transaction->splits as $split) {
