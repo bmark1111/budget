@@ -26,15 +26,16 @@ app.service('Config', function Config() {
 				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
 				upload_url:	'http://rest.budgettrackerpro.com/upload/'
 			}
-//		},
-//		test: {
-//			host: 'test.com',
-//			config: {
-//				/**
-//				 * Add any config properties you want in here for this environment
-//				 */
-//				apiroot: 'http://eventphoto.dev/app_dev.php'
-//			}
+		},
+		test: {
+			host: 'dev.budgettrackerpro.loc',
+			config: {
+				/**
+				 * Add any config properties you want in here for this environment
+				 */
+				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
+				upload_url:	'http://rest.budgettrackerpro.com/upload/'
+			}
 //		},
 //		jsfiddle: {
 //			host: 'jsfiddle.net',

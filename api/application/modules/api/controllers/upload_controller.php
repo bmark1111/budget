@@ -180,7 +180,7 @@ class upload_controller Extends rest_controller {
 
 		$uploaded = new transaction_upload($_POST['id']);
 		if ($uploaded->numRows()) {
-			$uploaded->status = (!empty($_POST['id'])) ? 1: 2;			// set uploaded transaction as added as new or overwrite for existing
+			$uploaded->status = (!empty($_POST['id'])) ? 1: 2;			// set uploaded transaction as added or overwrite for existing
 			$uploaded->save();
 
 			// now save the transaction, possibly overwriting an existing transaction
@@ -201,7 +201,7 @@ class upload_controller Extends rest_controller {
 
 			if (!empty($_POST['splits'])) {
 				foreach ($_POST['splits'] as $split) {
-					$transaction_split = new transaction_split($split['id']);
+					$transaction_split = new transaction_split();
 					if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
 						$transaction_split->amount			= $split['amount'];
 						$transaction_split->transaction_id	= $transaction->id;
@@ -222,25 +222,83 @@ class upload_controller Extends rest_controller {
 			}
 			$this->resetBalances(array($transaction->bank_account_id => $transaction->transaction_date));	// adjust the account balance from the new transaction forward
 
-			// check if this is a repeat transaction
-			$transaction_repeat = new transaction_repeat();
-			$transaction_repeat->whereNotDeleted();
-			$transaction_repeat->groupStart();
-			$transaction_repeat->orWhere('exact_match', 0);
-			$transaction_repeat->orWhere('amount', $_POST['amount']);
-			$transaction_repeat->groupEnd();
-			$transaction_repeat->where('type', $_POST['type']);
-			$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
-			$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
-			$transaction_repeat->where('first_due_date <= now()', NULL);
-			$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
-			$transaction_repeat->groupStart();
-			$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
-			$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
-			$transaction_repeat->groupEnd();
-			$transaction_repeat->result();
+			if (!empty($_POST['splits'])) {
+				$transaction_repeat_id = false;
+				$match = false;
+				// check if this is a repeat transaction - check split amounts and vendor/category
+				$transaction_repeat_split = new transaction_repeat_split();
+				$transaction_repeat_split->whereNotDeleted();
+				$transaction_repeat_split->orderBy('transaction_repeat_id');
+				$transaction_repeat_split->result();
+				if ($transaction_repeat_split->numRows()) {
+					foreach ($transaction_repeat_split as $tr_split) {
+						if ($transaction_repeat_id !== $tr_split->transaction_repeat_id) {
+							if ($match) {
+								// GOT A MATCH
+								break;
+							}
+							$transaction_repeat_id = $tr_split->transaction_repeat_id;
+							$match = true;	// assume a match until we find a non-match
+						}
+						$found = false;
+						foreach ($_POST['splits'] as $split) {
+							if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
+								if ($tr_split->category_id = $split['category_id']
+										&&
+									$tr_split->vendor_id = $split['vendor_id']
+										&&
+									($tr_split->exact_match = 0 || $tr_split->amount = $split['amount'])) {
+									$found = true;
+									break;	// one of the posted splits matches this transaction_repeat_split
+								}
+							}
+						}
+						if (!$found) {
+							$match = false;		// found a non-match
+						}
+					}
+				}
+				if (!$match) {
+					$transaction_repeat = false;
+$lq = 'DID NOT FIND A REPEAT';
+				} else {
+					// if we found a match
+					$transaction_repeat = new transaction_repeat();	//$transaction_repeat_split->transaction_repeat_id);
+					$transaction_repeat->whereNotDeleted();
+					$transaction_repeat->where('id', $transaction_repeat_id);
+					$transaction_repeat->where('type', $_POST['type']);
+					$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
+					$transaction_repeat->where('first_due_date <= now()', NULL);
+					$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
+					$transaction_repeat->groupStart();
+					$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
+					$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
+					$transaction_repeat->groupEnd();
+					$transaction_repeat->result();
 $lq = $transaction_repeat->lastQuery();
-			if ($transaction_repeat->numRows()) {
+				}
+			} else {
+				// check if this is a repeat transaction
+				$transaction_repeat = new transaction_repeat();
+				$transaction_repeat->whereNotDeleted();
+				$transaction_repeat->where('type', $_POST['type']);
+				$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
+				$transaction_repeat->where('first_due_date <= now()', NULL);
+				$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
+				$transaction_repeat->groupStart();
+				$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
+				$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
+				$transaction_repeat->groupEnd();
+				$transaction_repeat->where('category_id', $_POST['category_id']);
+				$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
+				$transaction_repeat->groupStart();
+				$transaction_repeat->orWhere('exact_match', 0);
+				$transaction_repeat->orWhere('amount', $_POST['amount']);
+				$transaction_repeat->groupEnd();
+				$transaction_repeat->result();
+$lq = $transaction_repeat->lastQuery();
+			}
+			if ($transaction_repeat && $transaction_repeat->numRows()) {
 				// repeat transaction
 				if ($transaction_repeat->numRows() > 1) {
 					log_message('error', 'More than one repeat transaction found');
@@ -252,17 +310,16 @@ log_message('error', '===========================================FOUND A REPEAT'
 log_message('error', 'id = ' . $transaction_repeat[0]->id);
 log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
 log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
-log_message('error', 'transaction_date = ' . $transaction_repeat[0]->transaction_date);
+log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
 log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
 log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
 log_message('error', '===========================================================');
 					$transaction_repeat[0]->save();
 				}
-} else {
+			} else {
 log_message('error', '--------------------------------------DID NOT FIND A REPEAT');
 log_message('error', 'LAST QUERY = ' . $lq);
 log_message('error', 'bank_account_id = ' . $_POST['bank_account_id']);
-log_message('error', 'vendor_id = ' . $_POST['vendor_id']);
 log_message('error', 'transaction_date = ' . $_POST['transaction_date']);
 log_message('error', 'amount = ' . $_POST['amount']);
 log_message('error', '---------------------------------------------------------');
