@@ -33,8 +33,8 @@ app.service('Config', function Config() {
 				/**
 				 * Add any config properties you want in here for this environment
 				 */
-				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
-				upload_url:	'http://rest.budgettrackerpro.com/upload/'
+				api_url: 'http://rest.budgettrackerpro.loc/:path/:object/:action/:param',
+				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
 			}
 //		},
 //		jsfiddle: {

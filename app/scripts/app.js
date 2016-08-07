@@ -82,7 +82,7 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		.when('/sheet',
 		{
 			controller:		'SheetController',
-			templateUrl:	'app/views/sheet.html',
+			templateUrl:	'app/views/sheet_new.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}

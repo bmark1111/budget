@@ -37,7 +37,21 @@ class vendor extends Nagilum {
 			$displayName[] = $this->state;
 		}
 		$this->display_name = implode(' ', $displayName);
-	}
+		
+		unset($this->street);
+		unset($this->city);
+		unset($this->state);
+		unset($this->phone_area_code);
+		unset($this->phone_prefix);
+		unset($this->phone_number);
+		unset($this->description);
+		unset($this->notes);
+		unset($this->is_deleted);
+		unset($this->created_by);
+		unset($this->created_at);
+		unset($this->updated_by);
+		unset($this->updated_at);
+  	}
 
 }
 //EOF

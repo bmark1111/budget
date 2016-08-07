@@ -68,7 +68,7 @@ class rest_controller Extends EP_Controller {
 	 * @param type $categories
 	 * @param type $sd
 	 * @param type $ed
-	 * @param type $all
+	 * @param type $all 0 = all
 	 * @return transactions with next due dates
 	 * @throws Exception
 	 */
@@ -77,8 +77,10 @@ class rest_controller Extends EP_Controller {
 		$transactions->select('transaction_repeat.*');
 		$transactions->groupStart();
 		$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
-//		$transactions->orWhere('transaction_repeat.last_due_date < ', $ed);
-		$transactions->orWhere('transaction_repeat.last_due_date >= ', $sd);
+		$transactions->orGroupStart();
+		$transactions->where('transaction_repeat.last_due_date >= ', $sd);
+		$transactions->where('transaction_repeat.last_due_date >= now()', NULL, FALSE);
+		$transactions->groupEnd();
 		$transactions->groupEnd();
 		$transactions->groupStart();
 		$transactions->orWhere('transaction_repeat.last_due_date IS NULL', NULL, FALSE);
@@ -254,7 +256,7 @@ class rest_controller Extends EP_Controller {
 	 * @param type $categories
 	 * @param type $sd
 	 * @param type $ed
-	 * @param type $all 0 = get all, 1 == single category
+	 * @param type $all 0 = get all, 1 = future, 2 = past
 	 * @return forecast
 	 */
 	protected function loadForecast($categories, $sd, $ed, $all = 0) {
@@ -430,7 +432,7 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 			$transaction = new transaction();
 			$transaction->queryAll($sql);
 		} else {
-			$this->ajax->addError(new AjaxError("Invalid reconcile transaction date (rest/reconcileTransactions)"));
+			$this->ajax->addError(new AjaxError("Invalid reconcile transaction date or account id (rest/reconcileTransactions)"));
 		}
 		$this->ajax->output();
 	}

@@ -1,7 +1,7 @@
 'use strict';
 
 app.controller('ReconcileTransactionsModalController',
-	function ($scope, $rootScope, $modalInstance, $filter, RestData2, params) {
+	function ($scope, $modalInstance, $filter, RestData2, params) {
 
 		$scope.dataErrorMsg	= [];
 		$scope.isSaving = false;
@@ -15,7 +15,7 @@ app.controller('ReconcileTransactionsModalController',
 
 	//		ngProgress.start();
 			RestData2().reconcileTransactions({
-					account_id:	params.account.bank_account_id,
+					account_id:	params.account.id,
 					date:		$filter('date')(params.date, "yyyy-MM-dd")
 				},
 				function(response) {
@@ -25,8 +25,6 @@ app.controller('ReconcileTransactionsModalController',
 						// now update the global intervals data
 						params.period.accounts[params.index].reconciled_date = $filter('date')(params.date, "yyyy-MM-dd");
 						params.period.accounts[params.index].reconciled = 2;
-	//					delete $rootScope.intervals;
-	//					delete $rootScope.periods;
 					} else {
 						if (response.errors) {
 							angular.forEach(response.errors,
@@ -37,7 +35,7 @@ app.controller('ReconcileTransactionsModalController',
 							$scope.dataErrorMsg[0] = response;
 						}
 					}
-	//					ngProgress.complete();
+//					ngProgress.complete();
 				});
 		};
 

@@ -39,8 +39,7 @@ class bank_controller Extends rest_controller
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$banks = new bank();
-		if ($name)
-		{
+		if ($name) {
 			$banks->like('name', $name);
 		}
 		$banks->select('SQL_CALC_FOUND_ROWS *', FALSE);
@@ -181,8 +180,8 @@ class bank_controller Extends rest_controller
 
 		$bank_accounts = new bank_account();
 		$bank_accounts->whereNotDeleted();
-		$bank_accounts->where('date_closed IS NULL', FALSE, FALSE);
-		$bank_accounts->orderBy('name', 'ASC');
+//		$bank_accounts->where('date_closed IS NULL', FALSE, FALSE);
+//		$bank_accounts->orderBy('name', 'ASC');
 		$bank_accounts->result();
 		foreach ($bank_accounts as $bank_account)
 		{

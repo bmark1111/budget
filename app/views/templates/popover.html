@@ -14,23 +14,22 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-if="!dataErrorMsgThese" ng-repeat="idx in transactions_seq" ng-class="{ 'forecast_amount':transactions[idx].is_forecast,
-																									'repeat_amount':transactions[idx].is_repeat }">
+					<tr ng-if="!dataErrorMsgThese" ng-repeat="transaction in transactions" ng-class="{ 'forecast_amount':transaction.transaction_type == 1,
+																										'repeat_amount':transaction.transaction_type == 2 }">
 						<td>
-							<span class="pull-left">{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span>&nbsp;
-							<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
-							<span ng-if="transactions[idx].reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
+							<span class="pull-left">{{ transaction.transaction_date|date:'EEE MMM dd, yyyy' }}</span>&nbsp;
+							<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
+							<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
 						</td>
 						<td>
-							<!--{{ transactions[idx].description }}-->
-							{{ transactions[idx].vendorName }}
-							<span ng-if="transactions[idx].notes"><br />
-								<em>{{ transactions[idx].notes }}</em>
+							{{ transaction.vendor.name }}
+							<span ng-if="transaction.notes"><br />
+								<em>{{ transaction.notes }}</em>
 							</span>
 						</td>
-						<td>{{ transactions[idx].bankName }} {{ transactions[idx].accountName }}</td>
-						<td>{{ transactions[idx].type }}</td>
-						<td><span class="pull-right">{{ transactions[idx].amount|currency }}</span></td>
+						<td>{{ transaction.bankName }} {{ transaction.accountName }}</td>
+						<td>{{ transaction.type }}</td>
+						<td><span class="pull-right">{{ transaction.amount|currency }}</span></td>
 					</tr>
 					<tr ng-if="dataErrorMsgThese" ng-repeat="error in dataErrorMsgThese">
 						<td colspan="4">{{ error.error }}</td>
