@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('EditBankModalController', function ($scope, $rootScope, $modalInstance, RestData2, params)
+app.controller('EditBankModalController', function ($scope, $rootScope, $modalInstance, RestData2, params, Periods)
 {
 	$scope.dataErrorMsg = [];
 
@@ -67,57 +67,58 @@ app.controller('EditBankModalController', function ($scope, $rootScope, $modalIn
 		$scope.validation = {};
 
 		RestData2().saveBank($scope.bank,
-				function(response) {
-					$scope.isSaving = false;
-					if (!!response.success) {
-						$modalInstance.close();
-						// now update the global bank account data
-						delete $rootScope.bank_accounts;
-						// now update the global intervals data
-						delete $rootScope.intervals;
-						delete $rootScope.periods;
-					} else if (response.validation) {
-						$scope.validation.accounts = {};
-						angular.forEach(response.validation,
-							function(validation) {
-								switch (validation.fieldName) {
-									case 'name':
-										$scope.validation.name = validation.errorMessage;
-										break;
-									case 'accounts':
-										$scope.validation.accounts = validation.errorMessage;
-										break;
-									default:
-										if (validation.fieldName.substr(0,8) == 'accounts') {
-											var fieldName = validation.fieldName;
-											var matches = fieldName.match(/\[(.*?)\]/g);
-											if (matches) {
-												for (var x = 0; x < matches.length; x++) {
-													matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
-												}
-												if (typeof $scope.validation.accounts[matches[1]] == 'undefined') {
-													$scope.validation.accounts[matches[1]] = Array();
-												}
-												$scope.validation.accounts[matches[1]].push(validation.errorMessage);
-											} else {
-												$scope.validation[fieldName] = validation.errorMessage;
+			function(response) {
+				$scope.isSaving = false;
+				if (!!response.success) {
+					$modalInstance.close();
+					// now update the global bank account data
+					delete $rootScope.bank_accounts;
+					// now update the global intervals data
+//					delete $rootScope.intervals;
+//					delete $rootScope.periods;
+					Periods.clear();
+				} else if (response.validation) {
+					$scope.validation.accounts = {};
+					angular.forEach(response.validation,
+						function(validation) {
+							switch (validation.fieldName) {
+								case 'name':
+									$scope.validation.name = validation.errorMessage;
+									break;
+								case 'accounts':
+									$scope.validation.accounts = validation.errorMessage;
+									break;
+								default:
+									if (validation.fieldName.substr(0,8) == 'accounts') {
+										var fieldName = validation.fieldName;
+										var matches = fieldName.match(/\[(.*?)\]/g);
+										if (matches) {
+											for (var x = 0; x < matches.length; x++) {
+												matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
 											}
+											if (typeof $scope.validation.accounts[matches[1]] == 'undefined') {
+												$scope.validation.accounts[matches[1]] = Array();
+											}
+											$scope.validation.accounts[matches[1]].push(validation.errorMessage);
+										} else {
+											$scope.validation[fieldName] = validation.errorMessage;
 										}
-										break;
-								}
-							});
+									}
+									break;
+							}
+						});
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								$scope.dataErrorMsg.push(error.error);
+							})
 					} else {
-						if (response.errors) {
-							angular.forEach(response.errors,
-								function(error) {
-									$scope.dataErrorMsg.push(error.error);
-								})
-						} else {
-							$scope.dataErrorMsg[0] = response;
-						}
+						$scope.dataErrorMsg[0] = response;
 					}
-//					ngProgress.complete();
-				});
+				}
+//				ngProgress.complete();
+			});
 	};
 
 	// cancel bank edit

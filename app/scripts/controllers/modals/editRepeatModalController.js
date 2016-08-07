@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('EditRepeatModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$modal', 'RestData2', 'params', 'Categories', 'BankAccounts',
+app.controller('EditRepeatModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$modal', 'RestData2', 'params', 'Categories', 'BankAccounts', 'Periods',
 
-	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts) {
+	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts, Periods) {
 
 		$scope.dataErrorMsg = [];
 
@@ -195,8 +195,9 @@ app.controller('EditRepeatModalController', ['$q', '$scope', '$rootScope', '$mod
 					if (!!response.success) {
 						$modalInstance.close(response);
 						// now update the global intervals data
-						delete $rootScope.intervals;
-						delete $rootScope.periods;
+//						delete $rootScope.intervals;
+//						delete $rootScope.periods;
+						Periods.clear();
 					} else if (response.validation) {
 						angular.forEach(response.validation,
 							function(validation) {

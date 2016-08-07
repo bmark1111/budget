@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$modal', 'RestData2', 'params', 'Categories', 'BankAccounts',
+app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$modalInstance', '$modal', 'RestData2', 'params', 'Categories', 'BankAccounts', 'Periods',
 	
-	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts) {
+	function($q, $scope, $rootScope, $modalInstance, $modal, RestData2, params, Categories, BankAccounts, Periods) {
 
 		$scope.dataErrorMsg = [];
 		$scope.isSaving = false;
@@ -146,8 +146,9 @@ app.controller('PostUploadedModalController', ['$q', '$scope', '$rootScope', '$m
 					if (!!response.success) {
 						$modalInstance.close();
 						// now update the global intervals data
-						delete $rootScope.intervals;
-						delete $rootScope.periods;
+//						delete $rootScope.intervals;
+//						delete $rootScope.periods;
+						Periods.clear();
 					} else if (response.validation) {
 						angular.forEach(response.validation,
 							function(validation) {
