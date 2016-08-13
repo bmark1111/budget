@@ -52,6 +52,7 @@ $route['data/budget/load']						= "api/budget/load";				// GET - load dashboard 
 $route['data/budget/these']						= "api/budget/these";				// GET - load dashboard transactions for interval and category
 
 $route['data/sheet/load']						= "api/sheet/load";					// GET - load sheet transactions
+$route['data/sheet/loadAll']					= "api/sheet/loadAll";				// GET - load all transactions for interval
 
 $route['data/livesearch']						= "api/livesearch";					// GET - do live search
 

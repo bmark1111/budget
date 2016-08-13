@@ -15,6 +15,7 @@ services.periods = function($q, RestData2, $rootScope, $localStorage) {
 };
 
 /**
+ * Holds transaction for the periods
  * @name data
  * @private
  * @type {Array}
@@ -22,8 +23,15 @@ services.periods = function($q, RestData2, $rootScope, $localStorage) {
 services.periods.prototype.data = [];
 
 /**
+ * @name periods
+ * @public
+ * @type {number}
+ */
+services.periods.prototype.periods = null;
+
+/**
  * @name period_start
- * @private
+ * @public
  * @type {number}
  */
 services.periods.prototype.period_start = null;
@@ -40,20 +48,23 @@ services.periods.prototype.getTransactions = function () {
 
 	if (this.data.length == 0) {
 		self.RestData2().getSheetTransactions({ interval: 0 }, function (response) {
-			self.data = response.data;
-			self.period_start = 0;
+			console.log("transactions got");
 			deferred.resolve(response);
 		},
 		function (error) {
+			console.log("failed to get transactions");
 			deferred.reject(error);
 		});
 	} else {
+		console.log("already loaded transactions");
 		deferred.resolve(true);
 	}
 	return deferred.promise;
 };
 
 /**
+ * gets a single period
+ * 
  * @name getPeriod
  * @public
  * @param {number} index
@@ -61,25 +72,146 @@ services.periods.prototype.getTransactions = function () {
  */
 services.periods.prototype.getPeriod = function (index) {
 
-	var idx = index + this.$rootScope.period_start;
-	return this.$rootScope.periods[idx];
+	var idx = index + this.period_start;
+//	var idx = index + this.$rootScope.period_start;
+	return this.periods[idx];
 };
+
+/**
+ * @name getDates
+ * @public
+ * @param {number} direction -1  = backward, 1= forward
+ * @returns {Object}
+ */
+services.periods.prototype.getNext = function (direction, callback) {
+
+	switch (direction) {
+		case -1:
+			if (this.period_start > 0) {
+				// move the start pointer
+				--this.period_start;
+				callback();
+			} else {
+				// add an array element at the beginning
+				this.loadNext(-1, 0, callback);
+			}
+			break;
+		case 1:
+			var last_interval = this.period_start + this.$localStorage.sheet_views;
+			++this.period_start;
+			if (typeof(this.periods[last_interval]) === 'undefined') {
+				this.loadNext(1, --last_interval, callback);
+			} else {
+				callback();
+			}
+			break;
+	}
+};
+
+/**
+ * @name loadNext
+ * @public
+ * @param {number} direction -1  = backward, 1= forward
+ * @returns {Object}
+ */
+services.periods.prototype.loadNext = function (direction, interval, callback) {
+
+	var self = this;
+
+	switch (this.$localStorage.budget_mode) {
+		case 'weekly':
+			//
+			break;
+		case 'bi-weekly':
+			//
+			break;
+		case 'semi-monthy':
+			//
+			break;
+		case 'monthly':
+			var sd = this.periods[interval].interval_beginning.split('T')[0].split('-');
+			var mnth = parseInt(sd[1], 10) + direction;
+			sd = new Date(sd[0], --mnth, sd[2], 0, 0, 0, 0);
+
+			var ed = this.periods[interval].interval_ending.split('T')[0].split('-');
+			var mnth = parseInt(ed[1], 10) + direction;
+			ed = new Date(ed[0], mnth, 0, 0, 0, 0, 0);
+			break;
+	}
+
+	this.RestData2().getSheetTransactions({
+			interval: direction,
+			start_date: sd,
+			end_date: ed
+		},
+		function(response) {
+			if (!!response.success) {
+				var moved = Array();
+				var output = {
+					'accounts':	JSON.parse(JSON.stringify(self.periods[0].accounts)),
+					'amounts': {},
+					'balance_forward': response.data.balance_forward,
+					'balances': {},
+					'interval_beginning': sd.toISOString(),
+					'interval_ending': ed.toISOString(),
+					'interval_total': 0,
+					'running_total': 0,
+					'totals': {},
+					'types': {},
+					'transactions': {}
+				};
+				// if moving backwards add period to start of array
+				if (direction == -1) {
+					angular.forEach(response.data.result, function(transaction, x) {
+						self.addTransactionToTotals(transaction, output);
+					});
+					moved.push(output)
+				}
+				// add the current periods
+				angular.forEach(self.periods, function(period) {
+					moved.push(period);
+				});
+
+				// if moving forward add interval to end of array
+				if (direction == 1) {
+					angular.forEach(response.data.result,  function(transaction, x) {
+						self.addTransactionToTotals(transaction, output);
+					});
+					moved.push(output);
+				}
+
+				self.periods = moved;
+				callback();
+			} else {
+				if (response.errors) {
+					angular.forEach(response.errors,
+						function(error) {
+							self.$scope.dataErrorMsg.push(error.error);
+						})
+				} else {
+					self.$scope.dataErrorMsg[0] = response;
+				}
+			}
+//			ngProgress.complete();
+		});
+}
 
 services.periods.prototype.clear = function () {
 
-//	delete $rootScope.periods;
 	this.data = [];
 };
 
 /**
  * @name buildPeriods
- * @public
  * @param {Object} data
+ * @public
  * @returns {undefined}
  */
-services.periods.prototype.buildPeriods = function() {
-console.log(this.data)
+services.periods.prototype.buildPeriods = function(data) {
+
 	var self = this;
+	
+	this.data = data;
 
 	var budget_interval;
 	var budget_interval_unit;
@@ -112,32 +244,20 @@ console.log(this.data)
 			break;
 		case 'monthly':
 			budget_interval_unit = 'Months';
+
 			var start = new Date();
 			start.setDate(1);
-			var end = new Date();
-			end.setDate(1);
-//			var start_month;
-//			var end_month;
-//			if (interval == 0) {
-				start.setMonth(start.getMonth() - (this.$localStorage.sheet_views/2) + 1);
-				start.setDate(1);
-				end.setMonth(end.getMonth() + (this.$localStorage.sheet_views/2) + 1);
-				end.setDate(0);
-//			} else if (interval < 0) {
-//				start_month = budget_interval * (this.$localStorage.sheet_views - interval - 1);		// - 'sheet_views' entries and adjust for interval
-//			//	$start->sub(new DateInterval("P" . $start_month . "M"));
-//				end_month = budget_interval * (this.$localStorage.sheet_views - interval);			// + 'sheet_views' entries and adjust for interval
-//			//	$end->add(new DateInterval("P" . $end_month . "M"));
-//			} else if (interval > 0) {
-//				start_month = budget_interval * (this.$localStorage.sheet_views + interval);			// go back 'sheet views' and adjust for interval
-//			//	$start->add(new DateInterval("P" . $start_month . "M"));
-//				end_month = budget_interval * (this.$localStorage.sheet_views + interval + 1);		// go forward 'sheet views' and adjust for interval
-//			//	$end->add(new DateInterval("P" . $end_month . "M"));
-//			}
+			start.setMonth(start.getMonth() - (this.$localStorage.sheet_views/2) + 1);
+			start.setDate(1);
 			start.setHours(0);
 			start.setMinutes(0);
 			start.setSeconds(0);
 			start.setMilliseconds(0);
+
+			var end = new Date();
+			end.setDate(1);
+			end.setMonth(end.getMonth() + (this.$localStorage.sheet_views/2) + 1);
+			end.setDate(0);
 			end.setHours(0);
 			end.setMinutes(0);
 			end.setSeconds(0);
@@ -148,8 +268,8 @@ console.log(this.data)
 //			$this->ajax->output();
 	}
 
-	self.$rootScope.periods = [];
-	self.$rootScope.period_start = 0;
+	self.periods = [];
+	self.period_start = 0;
 
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
@@ -199,25 +319,7 @@ console.log(this.data)
 			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 
 			while (transaction_date.getTime() < start.getTime()) {
-				if (this.data.result[idx].splits) {
-					// split transaction
-					angular.forEach(this.data.result[idx].splits, function(split, ii) {
-						self.addToTotals(split, output[o_idx]);
-					});
-				} else {
-					self.addToTotals(this.data.result[idx], output[o_idx]);
-				}
-
-				// save account balance
-				for(var x = 0; x < output[o_idx].accounts.length; x++) {
-					if (output[o_idx].accounts[x].bank_account_id == this.data.result[idx].bank_account_id) {
-						output[o_idx].accounts[x].balance			= this.data.result[idx].bank_account_balance;
-						output[o_idx].accounts[x].reconciled_date	= (this.data.result[idx].reconciled_date) ? this.data.result[idx].reconciled_date: null;
-						output[o_idx].accounts[x].balance_date		= this.data.result[idx].transaction_date;
-output[o_idx].accounts[x].transaction_id = this.data.result[idx].id
-						break;
-					}
-				};
+				this.addTransactionToTotals(this.data.result[idx], output[o_idx]);
 
 				idx++;
 				if (!this.data.result[idx]) {
@@ -246,8 +348,39 @@ output[o_idx].accounts[x].transaction_id = this.data.result[idx].id
 
 		o_idx++;
 	}
-	self.$rootScope.periods = output;
-//	return output;
+	self.periods = output;
+};
+
+/**
+ * @name addTransactionToTotals
+ * @private
+ * @param {Object} transaction
+ * @param {Object} output
+ * @returns {undefined}
+ */
+services.periods.prototype.addTransactionToTotals = function(transaction, output) {
+
+	var self = this;
+
+	if (transaction.splits) {
+		// split transaction
+		angular.forEach(transaction.splits, function(split, i) {
+			self.addToTotals(split, output);
+		});
+	} else {
+		this.addToTotals(transaction, output);
+	}
+
+	// save account balance
+	for(var x = 0; x < output.accounts.length; x++) {
+		if (output.accounts[x].bank_account_id == transaction.bank_account_id) {
+			output.accounts[x].balance			= transaction.bank_account_balance;
+			output.accounts[x].reconciled_date	= (transaction.reconciled_date) ? transaction.reconciled_date: null;
+			output.accounts[x].balance_date		= transaction.transaction_date;
+output.accounts[x].transaction_id = transaction.id
+			break;
+		}
+	};
 };
 
 /**
