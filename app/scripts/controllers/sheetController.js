@@ -72,8 +72,6 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 		Periods.getNext(direction, function() {
 			$scope.periods = Periods.periods;
 			$scope.period_start = Periods.period_start;
-console.log("period_start = "+$scope.period_start)
-console.log($scope.periods)
 		});
 	};
 

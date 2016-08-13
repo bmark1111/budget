@@ -148,7 +148,7 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 			if (!!response.success) {
 				var moved = Array();
 				var output = {
-					'accounts':	JSON.parse(JSON.stringify(self.periods[0].accounts)),
+					'accounts':	JSON.parse(JSON.stringify(self.periods[interval].accounts)),
 					'amounts': {},
 					'balance_forward': response.data.balance_forward,
 					'balances': {},
@@ -174,9 +174,16 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 
 				// if moving forward add interval to end of array
 				if (direction == 1) {
+					output.running_total = self.periods[interval].running_total;
 					angular.forEach(response.data.result,  function(transaction, x) {
 						self.addTransactionToTotals(transaction, output);
 					});
+					// get account balance from previous period
+					for(var x = 0; x < output.accounts.length; x++) {
+						if (output.accounts[x].balance_date) {
+							output.accounts[x].balance += self.periods[interval].accounts[x].balance;
+						}
+					};
 					moved.push(output);
 				}
 
@@ -326,6 +333,7 @@ services.periods.prototype.buildPeriods = function(data) {
 					break;
 				}
 
+				// get the next transaction date
 				var trd = this.data.result[idx].transaction_date.split('-');
 				transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 			}
@@ -375,9 +383,10 @@ services.periods.prototype.addTransactionToTotals = function(transaction, output
 	for(var x = 0; x < output.accounts.length; x++) {
 		if (output.accounts[x].bank_account_id == transaction.bank_account_id) {
 			output.accounts[x].balance			= transaction.bank_account_balance;
+			output.accounts[x].reconciled		= 0;
 			output.accounts[x].reconciled_date	= (transaction.reconciled_date) ? transaction.reconciled_date: null;
 			output.accounts[x].balance_date		= transaction.transaction_date;
-output.accounts[x].transaction_id = transaction.id
+output.accounts[x].transaction_id = transaction.id;		// TEMPORARY
 			break;
 		}
 	};
