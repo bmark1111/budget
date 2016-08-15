@@ -153,9 +153,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 				$scope.isSaving = false;
 				if (!!response.success) {
 					$modalInstance.close();
-					// now update the global intervals data
-//						delete $rootScope.intervals;
-//						delete $rootScope.periods;
+					// now update the periods data
 					Periods.clear();
 				} else if (response.validation) {
 					$scope.validation.splits = {};

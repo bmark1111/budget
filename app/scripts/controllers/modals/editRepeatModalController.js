@@ -179,9 +179,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 				$scope.isSaving = false;
 				if (!!response.success) {
 					$modalInstance.close(response);
-					// now update the global intervals data
-//						delete $rootScope.intervals;
-//						delete $rootScope.periods;
+					// now update the periods data
 					Periods.clear();
 				} else if (response.validation) {
 					angular.forEach(response.validation,

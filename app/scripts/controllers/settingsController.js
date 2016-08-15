@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SettingsController', function($scope, $rootScope, $localStorage, RestData2, Periods) {
+app.controller('SettingsController', function($scope, $localStorage, RestData2, Periods) {
 
 	var self = this;
 	
@@ -85,15 +85,11 @@ app.controller('SettingsController', function($scope, $rootScope, $localStorage,
 							switch (setting.type) {
 								case '0':
 									if(setting.value !== saved_values[index]) {
-//										delete $rootScope.intervals;
-//										delete $rootScope.periods;
 										Periods.clear();
 									}
 									break;
 								case '1':
 									if(setting.value.name !== saved_values[index]) {
-//										delete $rootScope.intervals;
-//										delete $rootScope.periods;
 										Periods.clear();
 										switch (setting.name) {
 											case 'budget_views':
@@ -110,8 +106,6 @@ app.controller('SettingsController', function($scope, $rootScope, $localStorage,
 									break;
 								case '2':
 									if(setting.value !== saved_values[index]) {
-//										delete $rootScope.intervals;
-//										delete $rootScope.periods;
 										Periods.clear();
 									}
 									break;

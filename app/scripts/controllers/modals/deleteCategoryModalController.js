@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteCategoryModalController', function ($scope, $rootScope, $modalInstance, RestData2, params, Periods) {
+app.controller('DeleteCategoryModalController', function ($scope, $modalInstance, RestData2, params, Periods, Categories) {
 
 	$scope.dataErrorMsg	= [];
 	$scope.title = params.title;
@@ -15,11 +15,9 @@ app.controller('DeleteCategoryModalController', function ($scope, $rootScope, $m
 			function(response) {
 				if (!!response.success) {
 					$modalInstance.close();
-					// now update the global categories data
-					delete $rootScope.categories;
+					// now update the categories data
+					Categories.data = [];
 					// now update the global intervals data
-//					delete $rootScope.intervals;
-//					delete $rootScope.periods;
 					Periods.clear();
 				} else {
 					if (response.errors) {

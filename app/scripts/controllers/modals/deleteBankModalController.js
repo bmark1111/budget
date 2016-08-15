@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteBankModalController', function ($scope, $rootScope, $modalInstance, RestData2, params, Periods) {
+app.controller('DeleteBankModalController', function ($scope, $modalInstance, RestData2, params, Periods, Accounts) {
 
 	$scope.dataErrorMsg	= [];
 	$scope.title = params.title;
@@ -15,11 +15,9 @@ app.controller('DeleteBankModalController', function ($scope, $rootScope, $modal
 			function(response) {
 				if (!!response.success) {
 					$modalInstance.close();
-					// now update the global bank account data
-					delete $rootScope.bank_accounts;
+					// now update the  account data
+					Accounts.data = [];
 					// now update the global intervals data
-//					delete $rootScope.intervals;
-//					delete $rootScope.periods;
 					Periods.clear();
 				} else {
 					if (response.errors) {

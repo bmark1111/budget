@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('BankController', function($scope, $modal, $timeout, RestData2)//, $rootScope, $localStorage, $location)
-{
+app.controller('BankController', function($scope, $modal, $timeout, RestData2) {
+
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
 	$scope.recCount		= 0;

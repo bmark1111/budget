@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ForecastController', function($scope, $rootScope, $modal, $timeout, RestData2, $filter) {
+app.controller('ForecastController', function($scope, $modal, $timeout, RestData2, $filter, Categories) {
 
 	$scope.totals = [];
 	$scope.rTotals = [];
@@ -39,7 +39,7 @@ app.controller('ForecastController', function($scope, $rootScope, $modal, $timeo
 					$scope.result = response.data.result;
 					$scope.result_seq = Object.keys(response.data.result);
 
-					$scope.categories = $rootScope.categories;
+					$scope.categories = Categories.data;
 
 					// now calulate totals
 					angular.forEach($scope.result,

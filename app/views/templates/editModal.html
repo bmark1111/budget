@@ -7,7 +7,7 @@
 			<div class="col-md-3">
 				<label for="date">Bank Account</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
-					<select class="form-control" name="bank_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in bank_accounts"></select>
+					<select class="form-control" name="bank_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in accounts"></select>
 					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
 				</div>
 			</div>

@@ -1,13 +1,11 @@
 'use strict';
 
-app.controller('SheetController', ['$q', '$scope', '$rootScope', '$modal', '$filter', 'Categories', 'Accounts', 'Periods',
+app.controller('SheetController', ['$q', '$scope', '$modal', '$filter', 'Categories', 'Accounts', 'Periods',
 
-function($q, $scope, $rootScope, $modal, $filter, Categories, Accounts, Periods) {
+function($q, $scope, $modal, $filter, Categories, Accounts, Periods) {
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
-
-//	var interval = 0;
 
 	var loadData = function() {
 		$q.all([
@@ -44,9 +42,9 @@ function($q, $scope, $rootScope, $modal, $filter, Categories, Accounts, Periods)
 
 		// get the account name
 		for(var x in $scope.transactions) {
-			for(var y = 0; y < $rootScope.bank_accounts.length; y++) {
-				if ($rootScope.bank_accounts[y].id == $scope.transactions[x].bank_account_id) {
-					$scope.transactions[x].bankName = $rootScope.bank_accounts[y].name;
+			for(var y = 0; y < $scope.accounts.length; y++) {
+				if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
+					$scope.transactions[x].bankName = $scope.accounts[y].name;
 				}
 			}
 		};

@@ -57,7 +57,7 @@
 								<span class="pull-right">{{ period.running_total|currency }}</span>
 							</td>
 						</tr>
-						<tr ng-repeat="account in bank_accounts track by $index">
+						<tr ng-repeat="account in accounts track by $index">
 							<td class="banks" nowrap>{{ account.name }}</td>
 							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{'currentInterval':period.current_interval}" style="padding:2px!important;">
 								<span ng-show="period.accounts[$parent.$index].reconciled == 0" class="pull-right forecast_amount">

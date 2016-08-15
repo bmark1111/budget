@@ -13,7 +13,7 @@ services.categories = function($q, RestData2) {
 /**
  * Holds category information
  * @name data
- * @private
+ * @public
  * @type {Array}
  */
 services.categories.prototype.data = [];
@@ -28,7 +28,7 @@ services.categories.prototype.get = function () {
 
 	var deferred = this.$q.defer();
 
-	if (typeof(this.categories) === 'undefined') {
+	if (this.data.length == 0) {
 		this.RestData2().getCategories(function (response) {
 			console.log("categories got");
 			self.data = [];

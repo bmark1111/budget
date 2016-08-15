@@ -13,7 +13,7 @@ services.accounts = function($q, RestData2) {
 /**
  * Holds account information
  * @name data
- * @private
+ * @public
  * @type {Array}
  */
 services.accounts.prototype.data = [];
@@ -24,11 +24,20 @@ services.accounts.prototype.data = [];
  */
 services.accounts.prototype.get = function () {
 
+	var self = this;
+
 	var deferred = this.$q.defer();
 
-	if (typeof(this.data) === 'undefined') {
+	if (this.data.length == 0) {
 		this.RestData2().getBankAccounts(function (response) {
 			console.log("accounts got");
+			self.data = [];
+			angular.forEach(response.data.bank_accounts, function(account) {
+				self.data.push({
+					'id': account.id,
+					'name': account.bank.name + ' ' + account.name
+				});
+			});
 			deferred.resolve(response);
 		},
 		function (error) {

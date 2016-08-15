@@ -4,18 +4,18 @@
  * @constructor
  * @returns {undefined}
  */
-services.periods = function($q, RestData2, $rootScope, $localStorage) {
+services.periods = function($q, RestData2, $localStorage, Accounts) {
 
 	this.$q = $q;
 	this.RestData2 = RestData2;
-	this.$rootScope = $rootScope;
 	this.$localStorage = $localStorage;
+	this.Accounts = Accounts;
 };
 
 /**
  * Holds transaction information
  * @name data
- * @private
+ * @public
  * @type {Array}
  */
 services.periods.prototype.data = [];
@@ -308,11 +308,11 @@ services.periods.prototype.buildPeriods = function(data) {
 			'types': {},
 			'transactions': {}								// individual transactions in this period
 		};
-		for(var x in self.$rootScope.bank_accounts) {
+		for(var x in self.Accounts.data) {
 			output[o_idx].accounts[x] = {
 				balance: null,
-				bank_account_id: self.$rootScope.bank_accounts[x].id,
-				name: self.$rootScope.bank_accounts[x].name,
+				bank_account_id: self.Accounts.data[x].id,
+				name: self.Accounts.data[x].name,
 				reconciled_date: null,
 				balance_date: null
 			};
@@ -504,4 +504,4 @@ services.periods.prototype.addToTotals = function(data, output) {
 	}
 };
 
-app.service('Periods',  [ "$q", "RestData2", '$rootScope', '$localStorage', services.periods]);
+app.service('Periods',  [ "$q", "RestData2", '$localStorage', 'Accounts', services.periods]);

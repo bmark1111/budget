@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteModalController', function ($scope, $rootScope, $modalInstance, RestData2, params, Periods) {
+app.controller('DeleteModalController', function ($scope, $modalInstance, RestData2, params, Periods) {
 
 	$scope.dataErrorMsg	= [];
 	$scope.title = params.title;
@@ -16,8 +16,6 @@ app.controller('DeleteModalController', function ($scope, $rootScope, $modalInst
 				if (!!response.success) {
 					$modalInstance.close();
 					// now update the global intervals data
-//					delete $rootScope.intervals;
-//					delete $rootScope.periods;
 					Periods.clear();
 				} else {
 					if (response.errors) {

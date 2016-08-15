@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DeleteUserModalController', function ($scope, $rootScope, $modalInstance, RestData2, params)
+app.controller('DeleteUserModalController', function ($scope, $modalInstance, RestData2, params)
 {
 	$scope.dataErrorMsg	= [];
 	$scope.title = params.title;

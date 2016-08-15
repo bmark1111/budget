@@ -95,7 +95,6 @@ function($q, $scope, RestData2, Categories) {
 				self.ytdTotals = [];
 				self.transactions = false;
 				self.transactions_seq = false;
-//				angular.forEach($rootScope.categories,
 				angular.forEach($scope.categories,
 					function(category, key) {
 						var category = {
