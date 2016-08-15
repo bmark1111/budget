@@ -17,6 +17,26 @@ app.service('Config', function Config() {
 				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
 			}
 		},
+		localwww: {
+			host: 'www.budgettrackerpro.loc',
+			config: {
+				/**
+				 * Add any config properties you want in here for this environment
+				 */
+				api_url: 'http://rest.budgettrackerpro.loc/:path/:object/:action/:param',
+				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
+			}
+		},
+		test: {
+			host: 'dev.budgettrackerpro.loc',
+			config: {
+				/**
+				 * Add any config properties you want in here for this environment
+				 */
+				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
+				upload_url:	'http://rest.budgettrackerpro.com/upload/'
+			}
+		},
 		production: {
 			host: 'budgettrackerpro.com',
 			config: {
@@ -27,42 +47,15 @@ app.service('Config', function Config() {
 				upload_url:	'http://rest.budgettrackerpro.com/upload/'
 			}
 		},
-		test: {
-			host: 'dev.budgettrackerpro.loc',
+		productionwww: {
+			host: 'www.budgettrackerpro.com',
 			config: {
 				/**
 				 * Add any config properties you want in here for this environment
 				 */
-				api_url: 'http://rest.budgettrackerpro.loc/:path/:object/:action/:param',
-				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
+				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
+				upload_url:	'http://rest.budgettrackerpro.com/upload/'
 			}
-//		},
-//		jsfiddle: {
-//			host: 'jsfiddle.net',
-//			config: {
-//				/**
-//				 * Add any config properties you want in here for this environment
-//				 */
-//				apiroot: 'HELLO!'   
-//			}
-//		},
-//		stage: {
-//			host: 'stage.com',
-//			config: {
-//				/**
-//				 * Add any config properties you want in here for this environment
-//				 */
-//				apiroot: 'http://eventphoto.dev/app_dev.php'
-//			}
-//		},
-//		prod: {
-//			host: 'production.com',
-//			config: {
-//				/**
-//				 * Add any config properties you want in here for this environment
-//				 */
-//				apiroot: 'http://eventphoto.dev/app_dev.php'
-//			}
 		}
 	},
 	_environment;
