@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('SheetController', ['$q', '$scope', '$rootScope', '$localStorage', '$modal', 'RestData2', '$filter', 'Categories', 'BankAccounts', 'Periods',
+app.controller('SheetController', ['$q', '$scope', '$rootScope', '$modal', '$filter', 'Categories', 'Accounts', 'Periods',
 
-function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Categories, BankAccounts, Periods) {
+function($q, $scope, $rootScope, $modal, $filter, Categories, Accounts, Periods) {
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
@@ -11,29 +11,14 @@ function($q, $scope, $rootScope, $localStorage, $modal, RestData2, $filter, Cate
 
 	var loadData = function() {
 		$q.all([
-			BankAccounts.get(),
+			Accounts.get(),
 			Categories.get(),
 			Periods.getTransactions()
 		]).then(function(response) {
-			// load the bank accounts
-			if (!!response[0].success) {
-				$rootScope.bank_accounts = [];
-				angular.forEach(response[0].data.bank_accounts,
-					function(bank_account) {
-						$rootScope.bank_accounts.push({
-							'id': bank_account.id,
-							'name': bank_account.bank.name + ' ' + bank_account.name
-						})
-					});
-			}
+			// load the accounts
+			$scope.accounts = Accounts.data;
 			// load the categories
-			if (!!response[1].success) {
-				$rootScope.categories = [];
-				angular.forEach(response[1].data.categories,
-					function(category) {
-						$rootScope.categories.push(category)
-					});
-			}
+			$scope.categories = Categories.data;
 			// load the transactions
 			if (!!response[2].success) {
 				Periods.buildPeriods(response[2].data);

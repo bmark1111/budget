@@ -1,3 +1,5 @@
+var services = {};
+
 var app = angular.module('budgetApp', ['ngCookies', 'ngRoute', 'ngResource', 'ngContextMenu', 'ui.bootstrap', 'ngStorage', 'nsPopover']);
 
 app.config(function($routeProvider, $httpProvider, USER_ROLES) {

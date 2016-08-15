@@ -1,15 +1,17 @@
 'use strict';
 
-app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2', 'Categories', function($q, $scope, $rootScope, RestData2, Categories) {
+app.controller('DashboardController', ['$q', '$scope', 'RestData2', 'Categories',
+
+function($q, $scope, RestData2, Categories) {
 
 	var self = this;
 
-	self.dataErrorMsg = [];
+	this.dataErrorMsg = [];
 	var now = new Date();
-	self.ytdYear = now.getFullYear();
-	self.ytdTotals = [];
-	self.transactions = false;
-	self.transactions_seq = false;
+	this.ytdYear = now.getFullYear();
+	this.ytdTotals = [];
+	this.transactions = false;
+	this.transactions_seq = false;
 
 	var getYTDTotals = function() {
 		var deferred = $q.defer();
@@ -30,29 +32,22 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 		getYTDTotals()
 	]).then(function(response) {
 		// load the categories
-		if (!!response[0].success) {
-			$rootScope.categories = [];
-			angular.forEach(response[0].data.categories,
-				function(category) {
-					$rootScope.categories.push(category)
-				});
-		}
+		$scope.categories = Categories.data;
 		// load the YTD Totals
 		if (!!response[1].success) {
 			self.dataErrorMsg = [];
 			self.ytdTotals = [];
 			self.transactions = false;
 			self.transactions_seq = false;
-			angular.forEach($rootScope.categories,
-				function(category, key) {
-					var category = {
-						id:			category.id,
-						name:		category.name,
-						total:		response[1].data.result['total_' + category.id],
-						forecast:	response[1].data.forecast[category.id]
-					};
-					self.ytdTotals.push(category);
-				});
+			angular.forEach($scope.categories,function(category, key) {
+				var category = {
+					id:			category.id,
+					name:		category.name,
+					total:		response[1].data.result['total_' + category.id],
+					forecast:	response[1].data.forecast[category.id]
+				};
+				self.ytdTotals.push(category);
+			});
 		} else {
 			if (response.errors) {
 				angular.forEach(response.errors,
@@ -100,7 +95,8 @@ app.controller('DashboardController', ['$q', '$scope', '$rootScope', 'RestData2'
 				self.ytdTotals = [];
 				self.transactions = false;
 				self.transactions_seq = false;
-				angular.forEach($rootScope.categories,
+//				angular.forEach($rootScope.categories,
+				angular.forEach($scope.categories,
 					function(category, key) {
 						var category = {
 							id:			category.id,

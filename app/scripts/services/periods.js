@@ -1,13 +1,11 @@
 'use strict'
 
-var services = {};
-
 /**
  * @constructor
  * @returns {undefined}
  */
 services.periods = function($q, RestData2, $rootScope, $localStorage) {
-	
+
 	this.$q = $q;
 	this.RestData2 = RestData2;
 	this.$rootScope = $rootScope;
@@ -15,7 +13,7 @@ services.periods = function($q, RestData2, $rootScope, $localStorage) {
 };
 
 /**
- * Holds transaction for the periods
+ * Holds transaction information
  * @name data
  * @private
  * @type {Array}
@@ -42,12 +40,10 @@ services.periods.prototype.period_start = null;
  */
 services.periods.prototype.getTransactions = function () {
 
-	var self = this;
-
-	var deferred = self.$q.defer();
+	var deferred = this.$q.defer();
 
 	if (this.data.length == 0) {
-		self.RestData2().getSheetTransactions({ interval: 0 }, function (response) {
+		this.RestData2().getSheetTransactions({ interval: 0 }, function (response) {
 			console.log("transactions got");
 			deferred.resolve(response);
 		},
@@ -73,7 +69,6 @@ services.periods.prototype.getTransactions = function () {
 services.periods.prototype.getPeriod = function (index) {
 
 	var idx = index + this.period_start;
-//	var idx = index + this.$rootScope.period_start;
 	return this.periods[idx];
 };
 
@@ -165,6 +160,7 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 					angular.forEach(response.data.result, function(transaction, x) {
 						self.addTransactionToTotals(transaction, output);
 					});
+					self._isReconciled(output.accounts, sd, ed);
 					moved.push(output)
 				}
 				// add the current periods
@@ -184,6 +180,7 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 							output.accounts[x].balance += self.periods[interval].accounts[x].balance;
 						}
 					};
+					self._isReconciled(output.accounts, sd, ed);
 					moved.push(output);
 				}
 
