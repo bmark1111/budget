@@ -97,16 +97,16 @@ class vendor_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$vendor = new vendor($_POST['id']);
+		$vendor = new vendor((!empty($_POST['id']) ? $_POST['id']: NULL));
 		$vendor->name				= $_POST['name'];
-		$vendor->description		= $_POST['description'];
-		$vendor->notes				= $_POST['notes'];
-		$vendor->street				= $_POST['street'];
-		$vendor->city				= $_POST['city'];
-		$vendor->state				= $_POST['state'];
-		$vendor->phone_area_code	= $_POST['phone_area_code'];
-		$vendor->phone_prefix		= $_POST['phone_prefix'];
-		$vendor->phone_number		= $_POST['phone_number'];
+		$vendor->description		= (!empty($_POST['description']) ? $_POST['description']: NULL);
+		$vendor->notes				= (!empty($_POST['notes']) ? $_POST['notes']: NULL);
+		$vendor->street				= (!empty($_POST['street']) ? $_POST['street']: NULL);
+		$vendor->city				= (!empty($_POST['city']) ? $_POST['city']: NULL);
+		$vendor->state				= (!empty($_POST['state']) ? $_POST['state']: NULL);
+		$vendor->phone_area_code	= (!empty($_POST['phone_area_code']) ? $_POST['phone_area_code']: NULL);
+		$vendor->phone_prefix		= (!empty($_POST['phone_prefix']) ? $_POST['phone_prefix']: NULL);
+		$vendor->phone_number		= (!empty($_POST['phone_number']) ? $_POST['phone_number']: NULL);
 		$vendor->save();
 
 		$this->ajax->setdata('id', $vendor->id);

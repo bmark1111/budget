@@ -369,8 +369,8 @@ $config['proxy_ips'] = '';
 |
 */
 
-$config['css_path'] = '/css/';
-$config['js_path'] = '/js/';
+//$config['css_path'] = '/css/';
+//$config['js_path'] = '/js/';
 
 /*
 |---------------------------------------------------------------------------
