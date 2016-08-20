@@ -401,8 +401,8 @@ class EP_Controller extends MX_Controller
 	 */
 	public function _output($output, $printMode = FALSE)
 	{
-		$this->css->printMode = $printMode;
-		$this->js->printMode = $printMode;
+//		$this->css->printMode = $printMode;
+//		$this->js->printMode = $printMode;
 
 //		$output = str_replace('{*JS*}', $this->js->output(), $output);
 //		$output = str_replace('{*CSS*}', $this->css->output(), $output);

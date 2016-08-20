@@ -34,6 +34,9 @@ services.periods.prototype.periods = null;
  */
 services.periods.prototype.period_start = null;
 
+services.periods.prototype.all = false;
+services.periods.prototype.bank_account_balance = Array();
+
 /**
  * @name getTransactions
  * @public
@@ -88,14 +91,14 @@ services.periods.prototype.getNext = function (direction, callback) {
 				callback();
 			} else {
 				// add an array element at the beginning
-				this.loadNext(-1, 0, callback);
+				this.loadNext(direction, 0, callback);
 			}
 			break;
 		case 1:
 			var last_interval = this.period_start + this.$localStorage.sheet_views;
 			++this.period_start;
 			if (typeof(this.periods[last_interval]) === 'undefined') {
-				this.loadNext(1, --last_interval, callback);
+				this.loadNext(direction, --last_interval, callback);
 			} else {
 				callback();
 			}
@@ -155,8 +158,11 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 					'types': {},
 					'transactions': {}
 				};
+					self.bank_account_balance = [];
+					self.all = false;
 				// if moving backwards add period to start of array
 				if (direction == -1) {
+					output.running_total = response.data.balance_forward;
 					angular.forEach(response.data.result, function(transaction, x) {
 						self.addTransactionToTotals(transaction, output);
 					});
@@ -278,6 +284,8 @@ services.periods.prototype.buildPeriods = function(data) {
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
 	var idx = 0;
+//	var all = false;
+//	var bank_account_balance = Array();
 	var transaction_date;
 	while (start.getTime() < end.getTime()) {
 		var interval_beginning = start.toISOString().split('T')[0] + 'T00:00:00';
@@ -319,19 +327,40 @@ services.periods.prototype.buildPeriods = function(data) {
 		}
 
 		if (this.data.result[idx]) {
-			var trd = this.data.result[idx].transaction_date.split('-');
+			var transaction = this.data.result[idx];
+			var trd = transaction.transaction_date.split('-');
 			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 
 			while (transaction_date.getTime() < start.getTime()) {
-				this.addTransactionToTotals(this.data.result[idx], output[o_idx]);
+//				// now set the account balances
+//				if (transaction.transaction_type !== 0 || all) {
+//					all = true;		// after the first balance adjustment then adjust all balances
+//					if (!bank_account_balance[transaction.bank_account_id]) {
+//						bank_account_balance[transaction.bank_account_id] = 0;
+//					}
+//					switch (transaction.type) {
+//						case 'DEBIT':
+//						case 'CHECK':
+//							transaction.bank_account_balance = parseFloat(bank_account_balance[transaction.bank_account_id]) - parseFloat(transaction.amount);
+//							break;
+//						case 'CREDIT':
+//						case 'DSLIP':
+//							transaction.bank_account_balance = parseFloat(bank_account_balance[transaction.bank_account_id]) + parseFloat(transaction.amount);
+//							break;
+//					}
+//				}
+//				bank_account_balance[transaction.bank_account_id] = transaction.bank_account_balance;
+
+				this.addTransactionToTotals(transaction, output[o_idx]);
 
 				idx++;
-				if (!this.data.result[idx]) {
+				transaction = this.data.result[idx];
+				if (!transaction) {
 					break;
 				}
 
 				// get the next transaction date
-				var trd = this.data.result[idx].transaction_date.split('-');
+				var trd = transaction.transaction_date.split('-');
 				transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 			}
 			running_total = output[o_idx].running_total;
@@ -366,6 +395,25 @@ services.periods.prototype.buildPeriods = function(data) {
 services.periods.prototype.addTransactionToTotals = function(transaction, output) {
 
 	var self = this;
+
+	// now set the account balance on this transaction
+	if (transaction.transaction_type !== 0 || this.all) {
+		this.all = true;		// after the first balance adjustment then adjust all balances
+		if (!this.bank_account_balance[transaction.bank_account_id]) {
+			this.bank_account_balance[transaction.bank_account_id] = 0;
+		}
+		switch (transaction.type) {
+			case 'DEBIT':
+			case 'CHECK':
+				transaction.bank_account_balance = parseFloat(this.bank_account_balance[transaction.bank_account_id]) - parseFloat(transaction.amount);
+				break;
+			case 'CREDIT':
+			case 'DSLIP':
+				transaction.bank_account_balance = parseFloat(this.bank_account_balance[transaction.bank_account_id]) + parseFloat(transaction.amount);
+				break;
+		}
+	}
+	this.bank_account_balance[transaction.bank_account_id] = transaction.bank_account_balance;
 
 	if (transaction.splits) {
 		// split transaction

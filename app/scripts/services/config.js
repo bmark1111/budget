@@ -20,9 +20,6 @@ app.service('Config', function Config() {
 		localwww: {
 			host: 'www.budgettrackerpro.loc',
 			config: {
-				/**
-				 * Add any config properties you want in here for this environment
-				 */
 				api_url: 'http://rest.budgettrackerpro.loc/:path/:object/:action/:param',
 				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
 			}
@@ -30,19 +27,13 @@ app.service('Config', function Config() {
 		test: {
 			host: 'dev.budgettrackerpro.loc',
 			config: {
-				/**
-				 * Add any config properties you want in here for this environment
-				 */
-				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
-				upload_url:	'http://rest.budgettrackerpro.com/upload/'
+				api_url: 'http://rest.budgettrackerpro.loc/:path/:object/:action/:param',
+				upload_url:	'http://rest.budgettrackerpro.loc/upload/'
 			}
 		},
 		production: {
 			host: 'budgettrackerpro.com',
 			config: {
-				/**
-				 * Add any config properties you want in here for this environment
-				 */
 				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
 				upload_url:	'http://rest.budgettrackerpro.com/upload/'
 			}
@@ -50,9 +41,6 @@ app.service('Config', function Config() {
 		productionwww: {
 			host: 'www.budgettrackerpro.com',
 			config: {
-				/**
-				 * Add any config properties you want in here for this environment
-				 */
 				api_url: 'http://rest.budgettrackerpro.com/:path/:object/:action/:param',
 				upload_url:	'http://rest.budgettrackerpro.com/upload/'
 			}
@@ -74,7 +62,6 @@ app.service('Config', function Config() {
 					return _environment;
 				}
 			}
-
 			return null;
 		},
 		get: function(property){

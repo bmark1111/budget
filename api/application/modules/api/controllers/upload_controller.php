@@ -287,7 +287,7 @@ $lq = $transaction_repeat->lastQuery();
 				$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
 				$transaction_repeat->groupStart();
 				$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
-				$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
+				$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date']);
 				$transaction_repeat->groupEnd();
 				$transaction_repeat->where('category_id', $_POST['category_id']);
 				$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
@@ -302,11 +302,21 @@ $lq = $transaction_repeat->lastQuery();
 				// repeat transaction
 				if ($transaction_repeat->numRows() > 1) {
 					log_message('error', 'More than one repeat transaction found');
+log_message('error', '++++++++++++++++++++++++++++++++++++++++++FOUND MORE THAN ONE REPEAT');
+log_message('error', 'LAST QUERY = ' . $lq);
+log_message('error', 'id = ' . $transaction_repeat[0]->id);
+log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
+log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
+log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
+log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
+log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
+log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
 					throw new Exception('More than one repeat transaction found');
 				} else {
 					// we found a repeat so update the next_due_date
 					$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
 log_message('error', '===========================================FOUND A REPEAT');
+log_message('error', 'LAST QUERY = ' . $lq);
 log_message('error', 'id = ' . $transaction_repeat[0]->id);
 log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
 log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);

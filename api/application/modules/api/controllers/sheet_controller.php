@@ -196,31 +196,31 @@ class sheet_controller Extends rest_controller {
 			});
 		}
 
-		// reset the account balances
-		$bank_account_balance = array();
-		$all = FALSE;
-		foreach ($transaction as &$tr) {
-			if ($tr['transaction_type'] !== 0 || $all) {
-				switch ($tr['type']) {
-					case 'DEBIT':
-					case 'CHECK':
-						if (empty($bank_account_balance[$tr['bank_account_id']])) {
-							$bank_account_balance[$tr['bank_account_id']] = 0;
-						}
-						$tr['bank_account_balance'] = $bank_account_balance[$tr['bank_account_id']] - $tr['amount'];
-						break;
-					case 'CREDIT':
-					case 'DSLIP':
-						if (empty($bank_account_balance[$tr['bank_account_id']])) {
-							$bank_account_balance[$tr['bank_account_id']] = 0;
-						}
-						$tr['bank_account_balance'] = $bank_account_balance[$tr['bank_account_id']] + $tr['amount'];
-						break;
-				}
-				$all = TRUE;		// after the first balance adjustment then adjust all balances
-			}
-			$bank_account_balance[$tr['bank_account_id']] = $tr['bank_account_balance'];
-		}
+//		// reset the account balances
+//		$bank_account_balance = array();
+//		$all = FALSE;
+//		foreach ($transaction as &$tr) {
+//			if ($tr['transaction_type'] !== 0 || $all) {
+//				switch ($tr['type']) {
+//					case 'DEBIT':
+//					case 'CHECK':
+//						if (empty($bank_account_balance[$tr['bank_account_id']])) {
+//							$bank_account_balance[$tr['bank_account_id']] = 0;
+//						}
+//						$tr['bank_account_balance'] = $bank_account_balance[$tr['bank_account_id']] - $tr['amount'];
+//						break;
+//					case 'CREDIT':
+//					case 'DSLIP':
+//						if (empty($bank_account_balance[$tr['bank_account_id']])) {
+//							$bank_account_balance[$tr['bank_account_id']] = 0;
+//						}
+//						$tr['bank_account_balance'] = $bank_account_balance[$tr['bank_account_id']] + $tr['amount'];
+//						break;
+//				}
+//				$all = TRUE;		// after the first balance adjustment then adjust all balances
+//			}
+//			$bank_account_balance[$tr['bank_account_id']] = $tr['bank_account_balance'];
+//		}
 		$this->ajax->setData('result', $transaction);
 
 		$this->ajax->output();
