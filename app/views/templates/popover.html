@@ -21,12 +21,7 @@
 							<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
 							<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
 						</td>
-						<td>
-							{{ transaction.vendor.name }}
-							<span ng-if="transaction.notes"><br />
-								<em>{{ transaction.notes }}</em>
-							</span>
-						</td>
+						<td ng-bind-html="transaction.label"></td>
 						<td>{{ transaction.bankName }} {{ transaction.accountName }}</td>
 						<td>{{ transaction.type }}</td>
 						<td><span class="pull-right">{{ transaction.amount|currency }}</span></td>

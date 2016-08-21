@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('SheetController', ['$q', '$scope', '$modal', '$filter', 'Categories', 'Accounts', 'Periods',
+app.controller('SheetController', ['$q', '$scope', '$sce', '$modal', '$filter', 'Categories', 'Accounts', 'Periods',
 
-function($q, $scope, $modal, $filter, Categories, Accounts, Periods) {
+function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
@@ -47,6 +47,21 @@ function($q, $scope, $modal, $filter, Categories, Accounts, Periods) {
 					$scope.transactions[x].bankName = $scope.accounts[y].name;
 				}
 			}
+			var label = '';
+			var vendor = '';
+			if ($scope.transactions[x].vendor) {
+				vendor = $scope.transactions[x].vendor.name;
+			}
+			if ($scope.transactions[x].description) {
+				label += '<em>' + $scope.transactions[x].description + '</em>';
+			}
+			if ($scope.transactions[x].notes) {
+				label += '<em>' + $scope.transactions[x].notes + '</em>';
+			}
+			if (vendor != '') {
+				label = '<br /><font size="1">' + label + '</font>';
+			}
+			$scope.transactions[x].label = $sce.trustAsHtml(vendor + label);
 		};
 	};
 

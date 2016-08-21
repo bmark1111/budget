@@ -34,7 +34,16 @@ services.periods.prototype.periods = null;
  */
 services.periods.prototype.period_start = null;
 
+/**
+ * 
+ * @type {boolean}
+ */
 services.periods.prototype.all = false;
+
+/**
+ * 
+ * @type {Array}
+ */
 services.periods.prototype.bank_account_balance = Array();
 
 /**
@@ -204,10 +213,14 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 			}
 //			ngProgress.complete();
 		});
-}
+};
 
 services.periods.prototype.clear = function () {
 
+	this.all = false;
+	this.bank_account_balance = Array();
+	this.periods = [];
+	this.period_start = 0;
 	this.data = [];
 };
 
@@ -258,7 +271,7 @@ services.periods.prototype.buildPeriods = function(data) {
 			var start = new Date();
 			start.setDate(1);
 			start.setMonth(start.getMonth() - (this.$localStorage.sheet_views/2) + 1);
-			start.setDate(1);
+//			start.setDate(1);
 			start.setHours(0);
 			start.setMinutes(0);
 			start.setSeconds(0);
