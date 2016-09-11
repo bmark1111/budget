@@ -197,7 +197,7 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 ///////////////////////////////
 });
 
-app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService) { //, AUTH_EVENTS)
+app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService, Periods) { //, AUTH_EVENTS)
 
 	$route.reload(); 
 
@@ -212,20 +212,24 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 			if (AuthService.isAuthorized(authorizedRoles)) {
 				if ($localStorage.authenticated) {
 					// load the upload counts
-//					if (typeof($rootScope.transaction_count) === 'undefined') {
+					if (typeof($rootScope.transaction_count) === 'undefined') {
 						$rootScope.transaction_count = '';
 						RestData2().getUploadCounts(
 							function(response) {
 								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
 							});
-//					}
+					}
+					// make sure the periods are built if necessary
+					Periods.getTransactions().then(function(response) {
+						if (!!response.success) {
+							Periods.buildPeriods(response.data);
+						}
+					});
 				} else {
 					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');
 					$rootScope.authenticated = false;
 					$localStorage.authenticated = false;
-//					$rootScope.nav_active = 'login';
-//					$location.path("/login");
 				}
 			} else {
 				// role not authorized

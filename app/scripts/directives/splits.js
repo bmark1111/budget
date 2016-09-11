@@ -35,7 +35,7 @@ app.directive("splitTran", function () {
 										'<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>' +
 									'</td>' +
 									'<td class="col-sm-2" style="vertical-align:top;" ng-class="{\'has-error\': validation.splits.category_id[$index] }">' +
-										'<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in $root.categories"></select>' +
+										'<select class="form-control" ng-model="t.category_id" ng-options="category.id as category.name for category in categories"></select>' +
 										'<span class="help-block" ng-show="validation.splits.category_id[$index]">{{ validation.splits.category_id[$index] }}</span>' +
 									'</td>' +
 									'<td class="col-sm-3" style="vertical-align:top;">' +

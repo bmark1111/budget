@@ -23,7 +23,7 @@
 					<span class="help-block" ng-show="validation.transaction_date">{{ validation.transaction_date }}</span>
 				</div>
 			</div>
-			<div class="col-md-5" ng-if="!is_split">
+			<div class="col-md-5" ng-show="!is_split">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<label for="name">Payee/Payer</label>
 					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
@@ -71,7 +71,7 @@
 					<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
 				</div>
 			</div>
-			<div class="col-md-2">
+			<div class="col-md-2" ng-show="transaction.type == 'CHECK'">
 				<label for="check_num">Check Num</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.check_num }">
 					<input type="text" name="check_num" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.check_num" />

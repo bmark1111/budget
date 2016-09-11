@@ -233,7 +233,9 @@ services.periods.prototype.clear = function () {
 services.periods.prototype.buildPeriods = function(data) {
 
 	var self = this;
-	
+
+	this.clear();
+
 	this.data = data;
 
 	var budget_interval;
@@ -291,8 +293,8 @@ services.periods.prototype.buildPeriods = function(data) {
 //			$this->ajax->output();
 	}
 
-	self.periods = [];
-	self.period_start = 0;
+//	self.periods = [];
+//	self.period_start = 0;
 
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;

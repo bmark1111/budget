@@ -1,8 +1,19 @@
 <ng-include src="'app/views/templates/popover.html'"></ng-include>
 
-<div class="container-fluid"><!-- viewport-width>-->
-	<h1 class="page-header">Budget</h1>
-	<div ng-if="error">{{error}}</div>
+<div class="container-fluid" style="line-height: 1.2"><!-- viewport-width>-->
+	<div class="row">
+		<div class="col-sm-2" style="border:1px solid black;">
+			<h1 class="page-header">Budget</h1>
+		</div>
+		<div class="col-sm-4" style="border:1px solid black;vertical-align: bottom !important;">
+			<span style="cursor:pointer;border:1px solid red;vertical-align: bottom !important;" ng-click="moveInterval(-1)"><<<</span>
+			<span style="cursor:pointer;border:1px solid red;vertical-align: bottom !important;" ng-click="moveInterval(1)">>>></span>
+		</div>
+		<div class="col-sm-6" style="border:1px solid black;">
+			<div ng-if="error">{{error}}</div>
+		</div>
+	</div>
+	
 	<div class="row">
 		<div class="col-md-12">
 			<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
@@ -87,12 +98,12 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
+<!--	<div class="row">
 		<div class="col-md-10">
 			<div class="pull-left pointer" ng-click="moveInterval(-1)"><<<</div>
 			<div class="pull-right pointer" ng-click="moveInterval(1)">>>></div>
 		</div>
-	</div>
+	</div>-->
 	<div ng-if="dataErrorMsg[0]">
 		<p class="text-muted" ng-repeat="error in dataErrorMsg">{{error}}</p>
 	</div>
