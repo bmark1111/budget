@@ -84,7 +84,7 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		.when('/sheet',
 		{
 			controller:		'SheetController',
-			templateUrl:	'app/views/sheet_new.html',
+			templateUrl:	'app/views/sheet.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
@@ -219,12 +219,12 @@ app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthSe
 								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
 							});
 					}
-					// make sure the periods are built if necessary
-					Periods.getTransactions().then(function(response) {
-						if (!!response.success) {
-							Periods.buildPeriods(response.data);
-						}
-					});
+//					// make sure the periods are built if necessary
+//					Periods.getTransactions().then(function(response) {
+//						if (!!response.success) {
+//							Periods.buildPeriods(response.data);
+//						}
+//					});
 				} else {
 					// user is not authenticated
 					console.log('USER NOT AUTHENTICATED');

@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('DashboardController', ['$q', '$scope', 'RestData2', 'Categories',
+app.controller('DashboardController', ['$q', '$scope', 'RestData2', 'Categories', 'Periods',
 
-function($q, $scope, RestData2, Categories) {
+function($q, $scope, RestData2, Categories, Periods) {
 
 	var self = this;
 
@@ -29,7 +29,8 @@ function($q, $scope, RestData2, Categories) {
 
 	$q.all([
 		Categories.get(),
-		getYTDTotals()
+		getYTDTotals(),
+		Periods.getTransactions()
 	]).then(function(response) {
 		// load the categories
 		$scope.categories = Categories.data;
@@ -48,6 +49,8 @@ function($q, $scope, RestData2, Categories) {
 				};
 				self.ytdTotals.push(category);
 			});
+		} else if (!!response[2].success) {
+			Periods.buildPeriods(response[2].data);
 		} else {
 			if (response.errors) {
 				angular.forEach(response.errors,

@@ -213,7 +213,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-//					ngProgress.complete();
+//				ngProgress.complete();
 			});
 	};
 

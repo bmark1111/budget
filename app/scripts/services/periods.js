@@ -14,47 +14,44 @@ services.periods = function($q, RestData2, $localStorage, Accounts) {
 
 /**
  * Holds transaction information
- * @name data
  * @public
  * @type {Array}
  */
 services.periods.prototype.data = [];
 
 /**
- * @name periods
  * @public
  * @type {number}
  */
 services.periods.prototype.periods = null;
 
 /**
- * @name period_start
  * @public
  * @type {number}
  */
 services.periods.prototype.period_start = null;
 
 /**
- * 
  * @type {boolean}
  */
 services.periods.prototype.all = false;
 
 /**
- * 
  * @type {Array}
  */
 services.periods.prototype.bank_account_balance = Array();
 
 /**
- * @name getTransactions
  * @public
  */
 services.periods.prototype.getTransactions = function () {
 
+	var self = this;
+
 	var deferred = this.$q.defer();
 
-	if (this.data.length == 0) {
+	if (this.data.length === 0) {
+		this.fetching = true;
 		this.RestData2().getSheetTransactions({ interval: 0 }, function (response) {
 			console.log("transactions got");
 			deferred.resolve(response);
@@ -163,6 +160,7 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 					'interval_ending': ed.toISOString(),
 					'interval_total': 0,
 					'running_total': 0,
+					'transfer_amount': 0,
 					'totals': {},
 					'types': {},
 					'transactions': {}
@@ -273,7 +271,6 @@ services.periods.prototype.buildPeriods = function(data) {
 			var start = new Date();
 			start.setDate(1);
 			start.setMonth(start.getMonth() - (this.$localStorage.sheet_views/2) + 1);
-//			start.setDate(1);
 			start.setHours(0);
 			start.setMinutes(0);
 			start.setSeconds(0);
@@ -293,14 +290,9 @@ services.periods.prototype.buildPeriods = function(data) {
 //			$this->ajax->output();
 	}
 
-//	self.periods = [];
-//	self.period_start = 0;
-
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
 	var idx = 0;
-//	var all = false;
-//	var bank_account_balance = Array();
 	var transaction_date;
 	while (start.getTime() < end.getTime()) {
 		var interval_beginning = start.toISOString().split('T')[0] + 'T00:00:00';
@@ -327,6 +319,7 @@ services.periods.prototype.buildPeriods = function(data) {
 			'interval_ending': interval_ending,
 			'interval_total': 0,
 			'running_total': running_total,
+			'transfer_amount': 0,
 			'totals': {},
 			'types': {},
 			'transactions': {}								// individual transactions in this period
@@ -347,25 +340,6 @@ services.periods.prototype.buildPeriods = function(data) {
 			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 
 			while (transaction_date.getTime() < start.getTime()) {
-//				// now set the account balances
-//				if (transaction.transaction_type !== 0 || all) {
-//					all = true;		// after the first balance adjustment then adjust all balances
-//					if (!bank_account_balance[transaction.bank_account_id]) {
-//						bank_account_balance[transaction.bank_account_id] = 0;
-//					}
-//					switch (transaction.type) {
-//						case 'DEBIT':
-//						case 'CHECK':
-//							transaction.bank_account_balance = parseFloat(bank_account_balance[transaction.bank_account_id]) - parseFloat(transaction.amount);
-//							break;
-//						case 'CREDIT':
-//						case 'DSLIP':
-//							transaction.bank_account_balance = parseFloat(bank_account_balance[transaction.bank_account_id]) + parseFloat(transaction.amount);
-//							break;
-//					}
-//				}
-//				bank_account_balance[transaction.bank_account_id] = transaction.bank_account_balance;
-
 				this.addTransactionToTotals(transaction, output[o_idx]);
 
 				idx++;
@@ -488,7 +462,7 @@ services.periods.prototype._isReconciled = function(accounts, sd, ed) {
 							account.reconciled = 1;
 						}
 					} else {
-						account.reconciled = (account.balance) ? 1: 99;
+						account.reconciled = (account.balance) ? 1: 0;//99;
 					}
 				} else {
 					account.reconciled = (+sd >= +now) ? 0: 3;
@@ -540,6 +514,10 @@ services.periods.prototype.addToTotals = function(data, output) {
 		output.transactions[category_id].push(data);
 	} else {
 		output.transactions[category_id] = Array(data);
+	}
+
+	if (category_id == 17 && data.type == 'CREDIT') {
+		output.transfer_amount += amount;
 	}
 
 	// Calculate running total

@@ -1,4 +1,4 @@
-<script type="text/ng-template" id="popover">
+<script type="text/ng-template" id="popover2">
 	<div class="triangle"></div>
 	<div>
 		<div>{{ title }}</div>
@@ -7,9 +7,8 @@
 				<thead>
 					<tr>
 						<th>Date</th>
-						<th>Vendor</th>
-						<th>Account</th>
-						<th>Type</th>
+						<th>From Account</th>
+						<th>To Account</th>
 						<th>Amount</th>
 					</tr>
 				</thead>
@@ -21,9 +20,8 @@
 							<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
 							<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
 						</td>
-						<td ng-bind-html="transaction.label"></td>
-						<td>{{ transaction.bankName }} {{ transaction.accountName }}</td>
-						<td>{{ transaction.type }}</td>
+						<td>{{ transaction.bankNameFrom }} {{ transaction.accountNameFrom }}</td>
+						<td>{{ transaction.bankNameTo }} {{ transaction.accountNameTo }}</td>
 						<td><span class="pull-right">{{ transaction.amount|currency }}</span></td>
 					</tr>
 					<tr ng-if="dataErrorMsgThese" ng-repeat="error in dataErrorMsgThese">
