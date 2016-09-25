@@ -32,6 +32,7 @@ function($q, $scope, $modalInstance, RestData2, params, Categories, Accounts, Pe
 	]).then(function(response) {
 		// load the accounts
 		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
 		// load the categories
 		$scope.categories = Categories.data;
 		// load the forecast

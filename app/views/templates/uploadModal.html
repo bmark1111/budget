@@ -17,7 +17,7 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="form-group" ng-class="{'has-error':validation.bank_account_id}">
-				<select class="form-control" name="bank_account_id" ng-model="bank_account_id" ng-options="account.id as account.name for account in accounts"></select>
+				<select class="form-control" name="bank_account_id" ng-model="bank_account_id" ng-options="account.id as account.name for account in active_accounts"></select>
 				<span class="help-block" ng-show="validation.bank_account_id">{{validation.bank_account_id}}</span>
 			</div>
 		</div>

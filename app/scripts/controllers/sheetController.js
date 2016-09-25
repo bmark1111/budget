@@ -18,6 +18,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 		]).then(function(response) {
 			// load the accounts
 			$scope.accounts = Accounts.data;
+			$scope.active_accounts = Accounts.active;
 			// load the categories
 			$scope.categories = Categories.data;
 			for(var y = 0; y < $scope.categories.length; y++) {

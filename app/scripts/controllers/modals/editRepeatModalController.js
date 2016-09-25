@@ -102,6 +102,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	]).then(function(response) {
 		// load the accounts
 		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
 		// load the categories
 		$scope.categories = Categories.data;
 		// load the repeat

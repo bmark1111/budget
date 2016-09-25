@@ -12,6 +12,7 @@ function ($q, $scope, $modalInstance, $localStorage, fileUpload, params, Account
 	]).then(function(response) {
 		// load the accounts
 		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
 	});
 
 	$scope.title = params.title;

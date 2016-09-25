@@ -18,10 +18,10 @@ app.factory('RestData2', function ($resource, $localStorage, Config) {
 				runUtility:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'utility', action: null, param: null} },
 
 			// user Functions
-				getTransactions:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'budget', action: 'load', param: null} },
-				getTheseTransactions:		{ method: 'GET', headers: headers, params: {path: 'data', object: 'budget', action: 'these', param: null} },
+//				getTransactions:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'budget', action: 'load', param: null} },
+//				getTheseTransactions:		{ method: 'GET', headers: headers, params: {path: 'data', object: 'budget', action: 'these', param: null} },
 
-				getSheet:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'sheet', action: 'load', param: null} },
+//				getSheet:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'sheet', action: 'load', param: null} },
 				getSheetTransactions:		{ method: 'GET', headers: headers, params: {path: 'data', object: 'sheet', action: 'loadAll', param: null} },
 
 				getYTDTotals:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'ytdTotals', param: null} },
