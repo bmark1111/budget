@@ -36,7 +36,10 @@ class forecast_controller Extends rest_controller {
 
 		$forecasts = new forecast();
 		if ($last_due_date == 'false') {
-			$forecasts->where('last_due_date IS NULL', FALSE, FALSE);
+			$forecasts->groupStart();
+			$forecasts->orWhere('last_due_date IS NULL', FALSE, FALSE);
+			$forecasts->orWhere('last_due_date >= now()', FALSE, FALSE);
+			$forecasts->groupEnd();
 		}
 		if ($first_due_date) {
 			$first_due_date = date('Y-m-d', strtotime($first_due_date));

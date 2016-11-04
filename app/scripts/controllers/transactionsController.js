@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('TransactionsController', function($scope, $rootScope, $modal, $timeout, RestData2) {
+app.controller('TransactionsController', function($q, $scope, $rootScope, $modal, $timeout, RestData2, Accounts) {
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
@@ -30,6 +30,7 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 				'vendor':				$scope.search.vendor,
 				'description':			$scope.search.description,
 				'amount':				$scope.search.amount,
+				'bank_account_id':		$scope.search.bank_account_id,
 				'sort':					'transaction_date',
 				'sort_dir':				'DESC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
@@ -50,12 +51,61 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-
 //				ngProgress.complete();
 			});
 	}
 
-	loadData();
+//	loadData();
+
+	var getTransactions = function() {
+		var deferred = $q.defer();
+		var result = RestData2().getAllTransactions({
+				'date':					$scope.search.date,
+				'vendor':				$scope.search.vendor,
+				'description':			$scope.search.description,
+				'amount':				$scope.search.amount,
+				'bank_account_id':		$scope.search.bank_account_id,
+				'sort':					'transaction_date',
+				'sort_dir':				'DESC',
+				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+				'pagination_amount':	$scope.itemsPerPage
+			},
+			function(response) {
+				deferred.resolve(result);
+			},
+			function(err) {
+				deferred.resolve(err);
+			});
+
+		return deferred.promise;
+	};
+
+	$q.all([
+		Accounts.get(),
+		getTransactions()
+	]).then(function(response) {
+		// load the accounts
+		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
+
+		// load the transaction
+		if (!!response[1].success) {
+			if (response[1].data.result) {
+				$scope.transactions = response[1].data.result;
+				$scope.transactions_seq = Object.keys(response[1].data.result);
+				$scope.recCount = response[1].data.total_rows;
+			}
+		} else {
+			if (response[1].errors) {
+				angular.forEach(response[1].errors,
+					function(error) {
+						$scope.dataErrorMsg.push(error.error);
+					})
+			} else {
+				$scope.dataErrorMsg[0] = response[1];
+			}
+		}
+	});
 
 	var timer = null;
 	$scope.refreshData = function() {
@@ -63,20 +113,19 @@ app.controller('TransactionsController', function($scope, $rootScope, $modal, $t
 
 		if (timer) $timeout.cancel(timer);
 		timer = $timeout(loadData, 1000);
-		loadData();
 	};
 
 	$scope.pageChanged = function() {
 		loadData();
 	};
 
-//	// open date picker
-//	$scope.open = function($event) {
-//		$event.preventDefault();
-//		$event.stopPropagation();
-//
-//		$scope.opened = true;
-//	};
+	// open date picker
+	$scope.open = function($event) {
+		$event.preventDefault();
+		$event.stopPropagation();
+
+		$scope.opened = true;
+	};
 
 	$scope.uploadTransactions = function() {
 		var modalInstance = $modal.open({

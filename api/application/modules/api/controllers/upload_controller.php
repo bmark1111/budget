@@ -64,7 +64,7 @@ class upload_controller Extends rest_controller {
 		if ($transactions->numRows()) {
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
-				isset($transaction->bank_account);
+				isset($transaction->bank_account->bank);
 			}
 			$this->ajax->setData('result', $transactions);
 
@@ -187,16 +187,17 @@ class upload_controller Extends rest_controller {
 			$transaction_id = (!empty($_POST['transaction_id'])) ? $_POST['transaction_id']: NULL;
 			$transaction = new transaction($transaction_id);
 			$transaction_date	= (!empty($transaction->transaction_date)) ? $transaction->transaction_date: FALSE;
-			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
-			$transaction->description		= $_POST['description'];
-			$transaction->type				= $_POST['type'];
-			$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
-			$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
-			$transaction->amount			= $_POST['amount'];
-			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
-			$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
-			$transaction->bank_account_id	= $_POST['bank_account_id'];
-			$transaction->is_uploaded		= 1;
+			$transaction->transaction_date		= date('Y-m-d', strtotime($_POST['transaction_date']));
+			$transaction->description			= $_POST['description'];
+			$transaction->type					= $_POST['type'];
+			$transaction->vendor_id				= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+			$transaction->category_id			= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
+			$transaction->amount				= $_POST['amount'];
+			$transaction->bank_account_balance	= $_POST['amount'];		// set default balance
+			$transaction->check_num				= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
+			$transaction->notes					= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
+			$transaction->bank_account_id		= $_POST['bank_account_id'];
+			$transaction->is_uploaded			= 1;
 			$transaction->save();
 
 			if (!empty($_POST['splits'])) {

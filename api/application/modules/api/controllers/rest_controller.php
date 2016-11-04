@@ -42,7 +42,8 @@ class rest_controller Extends EP_Controller {
 		}
 
 		$class = get_class($this);
-		if ($class !== 'upload_controller') {
+		if ($class !== 'upload_controller' && $class !== 'livesearch_controller') {
+//if ($class === 'sheet_controller') {
 			if ($resetBalances = $this->appdata->get('resetBalances')) {	// get resets
 				foreach($resetBalances as $account_id => $date) {
 					// for each reset adjust the account balance
@@ -107,10 +108,6 @@ class rest_controller Extends EP_Controller {
 		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
-//if (count($categories)==1) {
-//	echo $transactions->lastQuery();
-//	die;
-//}
 		// now calculate all repeat due dates for given period
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
@@ -447,8 +444,8 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 		$update = FALSE;
 		$resetBalances = $this->appdata->get('resetBalances');	// get existing resets
 		foreach ($resets as $account_id => $date) {
-			if (empty($resetBalances[$account_id]) || strtotime($date) < strtotime($resetBalances[$account_id]))
-			{	// found a lower date to reset to
+			if (empty($resetBalances[$account_id]) || strtotime($date) < strtotime($resetBalances[$account_id])) {
+				// found a lower date to reset to
 				$resetBalances[$account_id] = $date;
 				$update = TRUE;
 			}
@@ -467,7 +464,7 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 	 */
 	private function _adjustAccountBalances($transaction_date, $account_id) {
 		if ($this->_isValidDate($transaction_date)) {
-			// get the date from which to reset the bank account balance
+			// get the last transaction date from which to reset the bank account balance
 			$transaction = new transaction();
 			$transaction->select('MAX(transaction_date) AS date');
 			$transaction->whereNotDeleted();
@@ -476,35 +473,40 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 			$transaction->limit(1);
 			$transaction->row();
 			if (!empty($transaction->date)) {
-				// now get the transactions that need the balance to be reset
-				$transactions = new transaction();
-				$transactions->whereNotDeleted();
-				$transactions->where("transaction_date >= '" . $transaction->date . "'", NULL, FALSE);
-				$transactions->where("bank_account_id", $account_id);
-				$transactions->orderBy('transaction_date', 'ASC');
-				$transactions->orderBy('id', 'ASC');
-				$transactions->result();
-				if ($transactions->numRows()) {
-					$first = TRUE;
-					$bank_account_balances = array();
-					foreach ($transactions as $transaction) {
-						if (!$first || empty($transaction->bank_account_balance)) {
-							switch ($transaction->type) {
-								case 'DEBIT':
-								case 'CHECK':
-									$bank_account_balances[$transaction->bank_account_id] -= $transaction->amount;
-									break;
-								case 'CREDIT':
-								case 'DSLIP':
-									$bank_account_balances[$transaction->bank_account_id] += $transaction->amount;
-									break;
-							}
-							$transaction->bank_account_balance = $bank_account_balances[$transaction->bank_account_id];
-							$transaction->save();
-						} else {
-							$bank_account_balances[$transaction->bank_account_id] = $transaction->bank_account_balance;
-							$first = FALSE;
+				$transaction_date = $transaction->date;
+			}
+			// now get the transactions that need the balance to be reset
+			$transactions = new transaction();
+			$transactions->whereNotDeleted();
+			$transactions->where("transaction_date >= '" . $transaction_date . "'", NULL, FALSE);
+			$transactions->where("bank_account_id", $account_id);
+			$transactions->orderBy('transaction_date', 'ASC');
+			$transactions->orderBy('id', 'ASC');
+			$transactions->result();
+			if ($transactions->numRows()) {
+				$first = TRUE;
+				$bank_account_balances = array();
+				foreach ($transactions as $transaction) {
+					if (!$first) {// || empty($transaction->bank_account_balance)) {
+//						if (empty($transaction->bank_account_balance)) {
+//							$bank_account_balances[$transaction->bank_account_id] = 0;
+//							$first = FALSE;
+//						}
+						switch ($transaction->type) {
+							case 'DEBIT':
+							case 'CHECK':
+								$bank_account_balances[$transaction->bank_account_id] -= $transaction->amount;
+								break;
+							case 'CREDIT':
+							case 'DSLIP':
+								$bank_account_balances[$transaction->bank_account_id] += $transaction->amount;
+								break;
 						}
+						$transaction->bank_account_balance = $bank_account_balances[$transaction->bank_account_id];
+						$transaction->save();
+					} else {
+						$bank_account_balances[$transaction->bank_account_id] = $transaction->bank_account_balance;
+						$first = FALSE;
 					}
 				}
 			}

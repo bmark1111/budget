@@ -236,79 +236,74 @@ services.periods.prototype.buildPeriods = function(data) {
 
 	this.data = data;
 
-	var budget_interval;
-	var budget_interval_unit;
-
+	var budget_interval = 0;
 	switch (this.$localStorage.budget_mode) {
-		case 'weekly':
-			budget_interval = 7;
-			budget_interval_unit = 'Days';
-			break;
 		case 'bi-weekly':
-			budget_interval = 14;
-			budget_interval_unit = 'Days';
-//				$offset = $this->_getEndDay();
-//				if ($interval == 0) {
-//					$start_day = ($offset - (budget_interval * ($localStorage.sheet_views)));					// go back 'sheet views'
-//					$end_day = ($offset + (budget_interval * ($localStorage.sheet_views)));						// go forward 'sheet views'
-//				} else if ($interval < 0) {
-//					$start_day = ($offset - (budget_interval * ($localStorage.sheet_views - $interval)));		// - 'sheet_views' entries and adjust for interval
-//					$end_day = ($offset - (budget_interval * ($localStorage.sheet_views - $interval - 1)));		// + 'sheet_views' entries and adjust for interval
-//				} else if ($interval > 0) {
-//					$start_day = ($offset + (budget_interval * ($localStorage.sheet_views + $interval - 1)));	// - 'sheet_views' entries and adjust for interval
-//					$end_day = ($offset + (budget_interval * ($localStorage.sheet_views + $interval)));			// + 'sheet_views' entries and adjust for interval
-//				}
-//				$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
-//				$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
+			budget_interval = 7;
+		case 'weekly':
+			budget_interval += 7;
+			var budget_start_date = new Date(this.$localStorage.budget_start_date)
+			var day = 6 - budget_start_date.getDay();
+
+			var start = new Date();
+			start.setDate(start.getDate() + day - ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
+
+			var end = new Date();
+			end.setDate(end.getDate() + day + ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
 			break;
 		case 'semi-monthy':
 			budget_interval = 1;
-			budget_interval_unit = 'Months';
 			break;
 		case 'monthly':
-			budget_interval_unit = 'Months';
-
 			var start = new Date();
 			start.setDate(1);
 			start.setMonth(start.getMonth() - (this.$localStorage.sheet_views/2) + 1);
-			start.setHours(0);
-			start.setMinutes(0);
-			start.setSeconds(0);
-			start.setMilliseconds(0);
 
 			var end = new Date();
 			end.setDate(1);
 			end.setMonth(end.getMonth() + (this.$localStorage.sheet_views/2) + 1);
 			end.setDate(0);
-			end.setHours(0);
-			end.setMinutes(0);
-			end.setSeconds(0);
-			end.setMilliseconds(0);
 			break;
 		default:
-//			$this->ajax->addError(new AjaxError("Invalid budget_mode setting (sheet/loadAll)"));
-//			$this->ajax->output();
+			break;
 	}
+	start.setHours(0);
+	start.setMinutes(0);
+	start.setSeconds(0);
+	start.setMilliseconds(0);
 
+	end.setHours(0);
+	end.setMinutes(0);
+	end.setSeconds(0);
+	end.setMilliseconds(0);
+//console.log(start)
+//console.log(end)
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
 	var idx = 0;
-	var transaction_date;
+	var transaction_date,
+		interval_beginning,
+		interval_ending;
 	while (start.getTime() < end.getTime()) {
-		var interval_beginning = start.toISOString().split('T')[0] + 'T00:00:00';
+		interval_beginning = start.toISOString().split('T')[0] + 'T00:00:00';
 		switch (this.$localStorage.budget_mode) {
 			case 'weekly':
+				start.setDate(start.getDate() + 7);
+				interval_ending = new Date(start.getFullYear(), start.getMonth(), start.getDate() - 1, 0, 0, 0);
 				break;
 			case 'bi-weekly':
+				start.setDate(start.getDate() + 14);
+				interval_ending = new Date(start.getFullYear(), start.getMonth(), start.getDate() - 1, 0, 0, 0);
 				break
 			case 'semi-monthly':
 				break;
 			case 'monthly':
 				start.setMonth(start.getMonth() + 1);
+				interval_ending = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0);
+				interval_ending.setDate(0);		// set to last day of previous month
 				break;
 		}
-		var interval_ending = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0);
-		interval_ending.setDate(0);
+
 		interval_ending = interval_ending.toISOString().split('T')[0] + 'T23:59:59';
 		output[o_idx] = {
 			'accounts': [],
@@ -324,6 +319,8 @@ services.periods.prototype.buildPeriods = function(data) {
 			'types': {},
 			'transactions': {}								// individual transactions in this period
 		};
+
+		// build account data
 		for(var x in self.Accounts.data) {
 			output[o_idx].accounts[x] = {
 				balance: null,
@@ -338,7 +335,7 @@ services.periods.prototype.buildPeriods = function(data) {
 			var transaction = this.data.result[idx];
 			var trd = transaction.transaction_date.split('-');
 			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
-
+//console.log(start)
 			while (transaction_date.getTime() < start.getTime()) {
 				this.addTransactionToTotals(transaction, output[o_idx]);
 
@@ -365,6 +362,21 @@ services.periods.prototype.buildPeriods = function(data) {
 		if (now >= sd && now <= ed) {
 			output[o_idx].alt_ending = now;				// set alternative ending
 			output[o_idx].current_interval = true;		// mark the current period
+		}
+
+		for(var x = 0; x < output[o_idx].accounts.length; x++) {
+			if(!output[o_idx].accounts[x].balance) {
+				if (o_idx > 0) {
+					if (output[o_idx-1].accounts[x].balance) {
+//console.log(output[o_idx].accounts[x]);
+//console.log(output[o_idx-1].accounts[x]);
+						output[o_idx].accounts[x].balance			= output[o_idx-1].accounts[x].balance;
+						output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
+						output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;
+						output[o_idx].accounts[x].transaction_id	= output[o_idx-1].accounts[x].transaction_id;
+					}
+				}
+			}
 		}
 
 		this._isReconciled(output[o_idx].accounts, sd, ed);
@@ -516,7 +528,7 @@ services.periods.prototype.addToTotals = function(data, output) {
 		output.transactions[category_id] = Array(data);
 	}
 
-	if (category_id == 17 && data.type == 'CREDIT') {
+	if (category_id == 17 && data.type == 'DEBIT') {
 		output.transfer_amount += amount;
 	}
 

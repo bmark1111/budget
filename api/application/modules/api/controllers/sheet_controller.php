@@ -45,7 +45,7 @@ class sheet_controller Extends rest_controller {
 				$offset = $this->_getEndDay();
 				if ($interval == 0) {
 					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views)));					// go back 'sheet views'
-					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views)));						// go forward 'sheet views'
+					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views + 1)));					// go forward 'sheet views'
 				} else if ($interval < 0) {
 					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views - $interval)));		// - 'sheet_views' entries and adjust for interval
 					$end_day = ($offset - ($this->budget_interval * ($this->sheet_views - $interval - 1)));		// + 'sheet_views' entries and adjust for interval
@@ -55,6 +55,9 @@ class sheet_controller Extends rest_controller {
 				}
 				$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
 				$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
+//echo "sd = $sd\n";
+//echo "ed = $ed\n";
+//die;
 				break;
 			case 'semi-monthy':
 				break;
@@ -133,7 +136,7 @@ class sheet_controller Extends rest_controller {
 				isset($repeat->vendor);
 				foreach ($repeat->next_due_dates as $next_due_date) {
 					$tr = array(
-						'id'=> $repeat->id,	// TEMPORARY
+'id'=> $repeat->id,	// TEMPORARY
 								'bank_account_id'	=> $repeat->bank_account_id,
 								'description'		=> $repeat->description,
 								'notes'				=> $repeat->notes,
@@ -194,6 +197,8 @@ class sheet_controller Extends rest_controller {
 					return $a['id'] - $b['id'];
 				}
 			});
+		} else {
+			$transaction = $transaction->toArray();
 		}
 
 //		// reset the account balances
@@ -226,7 +231,7 @@ class sheet_controller Extends rest_controller {
 		$this->ajax->output();
 	}
 
-	public function load() {
+/*	public function load() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 //			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (sheet/load)"));
@@ -633,7 +638,7 @@ class sheet_controller Extends rest_controller {
 
 		$this->ajax->output();
 	}
-
+*/
 	private function _getBalanceForward($sd) {
 		// now calculate the balance brought forward
 		$balance = new transaction();

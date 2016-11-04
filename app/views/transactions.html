@@ -19,16 +19,22 @@
 						<input type="text" class="form-control input-sm search" name="vendor" data-length="4" ng-model="search.vendor" ng-change="refreshData()" />
 					</div>
 				</div>
-				<div class="col-sm-2">
+<!--				<div class="col-sm-2">
 					<div class="form-group">
 						<label for="description">Description</label>
 						<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
 					</div>
-				</div>
-				<div class="col-sm-1">
+				</div>-->
+				<div class="col-sm-2">
 					<div class="form-group">
 						<label for="amount">Amount</label>
 						<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="form-group">
+						<label for="account">Account</label>
+						<select class="form-control" name="bank_account_id" ng-model="search.bank_account_id" ng-options="account.id as account.name for account in active_accounts" ng-change="refreshData()"></select>
 					</div>
 				</div>
 				<div class="col-sm-2" style="padding-top:20px;">
@@ -53,12 +59,12 @@
 			<thead>
 				<tr>
 					<th>Date</th>
-					<th style="width:90px;">Check Num</th>
 					<th>Payer</th>
-					<th>Account</th>
+					<th>Category</th>
 					<th>Account</th>
 					<th>DEBIT</th>
 					<th>CREDIT</th>
+					<th>Balance</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -69,12 +75,6 @@
 						<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
 						<span ng-if="transactions[idx].reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
 					</td>
-					<td rowspan="2"><span class="pull-left">{{ transactions[idx].check_num }}</span></td>
-<!--					<td><span class="pull-left">{{ transactions[idx].vendor.name }}</span></td>
-					<td>
-						<span class="pull-left" ng-if="!transactions[idx].category_id">--Split--</span>
-						<span class="pull-left" ng-if="transactions[idx].category_id">{{ transactions[idx].category.name }}</span>
-					</td>-->
 					<td ng-if="transactions[idx].category_id"><span class="pull-left">{{ transactions[idx].vendor.display_name }}</span></td>
 					<td ng-if="transactions[idx].category_id">
 						<span class="pull-left">{{ transactions[idx].category.name }}</span>
@@ -82,9 +82,10 @@
 					<td ng-if="!transactions[idx].category_id" colspan="2">
 						<span class="pull-left">--Split--</span>
 					</td>
-					<td rowspan="2">{{transactions[idx].bank_account.name}}</td>
+					<td rowspan="2">{{ transactions[idx].bank_account.name }}</td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{ transactions[idx].amount|currency }}</span></td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{ transactions[idx].amount|currency }}</span></td>
+					<td rowspan="2"><span class="pull-right">{{ transactions[idx].bank_account_balance|currency }}</span></td>
 					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editTransaction(transactions[idx].id)" style="cursor:pointer;" title="Edit Transaction ?"></span>
 						<span class="glyphicon glyphicon-trash" ng-if="is_admin || (!transactions[idx].reconciled_date)" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>

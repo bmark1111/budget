@@ -58,7 +58,6 @@ app.controller('CategoryController', function($scope, $modal, $timeout, RestData
 
 		if (timer) $timeout.cancel(timer);
 		timer = $timeout(loadData, 1000);
-		loadData();
 	};
 
 	$scope.pageChanged = function() {

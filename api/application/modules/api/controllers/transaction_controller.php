@@ -32,6 +32,7 @@ class transaction_controller Extends rest_controller {
 		$description		= (!empty($params['description'])) ? $params['description']: FALSE;
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
 		$vendor				= (!empty($params['vendor'])) ? $params['vendor']: FALSE;
+		$bank_account_id	= (!empty($params['bank_account_id'])) ? $params['bank_account_id']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
 		$sort				= (!empty($params['sort'])) ? $params['sort']: 'transaction.transaction_date';
@@ -49,6 +50,9 @@ class transaction_controller Extends rest_controller {
 		if ($amount) {
 			$transactions->where('transaction.amount', $amount);
 		}
+		if ($bank_account_id) {
+			$transactions->where('transaction.bank_account_id', $bank_account_id);
+		}
 		if ($vendor) {
 			$transactions->join('vendor', 'vendor.id = transaction.vendor_id');
 			$transactions->like('vendor.name', $vendor, 'both');
@@ -56,6 +60,7 @@ class transaction_controller Extends rest_controller {
 		$transactions->where('transaction.is_deleted', 0);
 		$transactions->limit($pagination_amount, $pagination_start);
 		$transactions->orderBy($sort, $sort_dir);
+		$transactions->orderBy('transaction.id', 'DESC');
 		$transactions->result();
 
 		$this->ajax->setData('total_rows', $transactions->foundRows());
@@ -155,7 +160,9 @@ class transaction_controller Extends rest_controller {
 			// if transaction is not reconciled but uploaded allow account id to be changed
 			$transaction->bank_account_id	= $_POST['bank_account_id'];
 		}
-
+		if (empty($id)) {					// if this is a new transaction then .....
+			$transaction->bank_account_balance = $_POST['amount'];		// .... set default balance
+		}
 		$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 		$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present

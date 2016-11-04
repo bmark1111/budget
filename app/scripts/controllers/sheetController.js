@@ -24,7 +24,6 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 			for(var y = 0; y < $scope.categories.length; y++) {
 				$scope.showCategory[$scope.categories[y].id] = false;
 			}
-
 			// load the transactions
 			if (!!response[2].success) {
 				Periods.buildPeriods(response[2].data);
@@ -147,7 +146,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 		});
 
 		modalInstance.result.then(function () {
-			loadData();
+//			loadData();
 		},
 		function () {
 			console.log('Reconcile Modal dismissed at: ' + new Date());

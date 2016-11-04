@@ -107,6 +107,7 @@ app.controller('SettingsController', function($scope, $localStorage, RestData2, 
 								case '2':
 									if(setting.value !== saved_values[index]) {
 										Periods.clear();
+										$localStorage.budget_start_date	= setting.value;
 									}
 									break;
 							}

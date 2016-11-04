@@ -125,7 +125,6 @@ app.controller('ForecastController', function($scope, $modal, $timeout, RestData
 
 		if (timer) $timeout.cancel(timer);
 		timer = $timeout(loadAllForecasts, 1000);
-		loadAllForecasts();
 	};
 
 	$scope.pageChanged = function() {

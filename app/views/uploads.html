@@ -1,7 +1,3 @@
-<!--<ng-include src="'app/views/templates/postUploadedModal.html'"></ng-include>
-<ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
-<ng-include src="'app/views/templates/editVendorModal.html'"></ng-include>-->
-
 <div class="container-fluid">
 	<h1 class="page-header">Uploaded Transactions</h1>
 	<div ng-if="error">{{error}}</div>
@@ -48,7 +44,7 @@
 			<tbody>
 				<tr ng-repeat="idx in transactions_seq">
 					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
-					<td><span class="pull-left">{{transactions[idx].bank_account.name}}</span></td>
+					<td><span class="pull-left">{{transactions[idx].bank_account.bank.name}} {{transactions[idx].bank_account.name}}</span></td>
 					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
 					<td><span class="pull-right">{{transactions[idx].check_num}}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>

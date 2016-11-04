@@ -38,6 +38,7 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 					$localStorage.account_id		= false;
 					$localStorage.authorization		= false;
 					$localStorage.budget_views		= false;
+					$localStorage.budget_start_date	= false;
 					$localStorage.sheet_views		= false;
 					$localStorage.budget_mode		= false;
 					$location.path("/login");

@@ -58,7 +58,6 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 
 		if (timer) $timeout.cancel(timer);
 		timer = $timeout(loadData, 1000);
-		loadData();
 	};
 
 	$scope.pageChanged = function() {
