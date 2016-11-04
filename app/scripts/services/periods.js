@@ -124,10 +124,22 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 
 	switch (this.$localStorage.budget_mode) {
 		case 'weekly':
-			//
+			var sd = this.periods[interval].interval_beginning.split('T')[0].split('-');
+			sd = new Date(sd[0], --sd[1], sd[2], 0, 0, 0, 0);
+			sd.setDate(sd.getDate() + 7);
+
+			var ed = this.periods[interval].interval_ending.split('T')[0].split('-');
+			ed = new Date(ed[0], --ed[1], ed[2], 0, 0, 0, 0);
+			ed.setDate(ed.getDate() + 7);
 			break;
 		case 'bi-weekly':
-			//
+			var sd = this.periods[interval].interval_beginning.split('T')[0].split('-');
+			sd = new Date(sd[0], --sd[1], sd[2], 0, 0, 0, 0);
+			sd.setDate(sd.getDate() + 14);
+
+			var ed = this.periods[interval].interval_ending.split('T')[0].split('-');
+			ed = new Date(ed[0], --ed[1], ed[2], 0, 0, 0, 0);
+			ed.setDate(ed.getDate() + 14);
 			break;
 		case 'semi-monthy':
 			//
@@ -165,8 +177,8 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 					'types': {},
 					'transactions': {}
 				};
-					self.bank_account_balance = [];
-					self.all = false;
+				self.bank_account_balance = [];
+				self.all = false;
 				// if moving backwards add period to start of array
 				if (direction == -1) {
 					output.running_total = response.data.balance_forward;
@@ -183,11 +195,16 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 
 				// if moving forward add interval to end of array
 				if (direction == 1) {
+					for(var x = 0; x < output.accounts.length; x++) {
+						if (output.accounts[x].balance_date) {
+							output.accounts[x].balance = 0;		// init balance amount
+						}
+					};
 					output.running_total = self.periods[interval].running_total;
 					angular.forEach(response.data.result,  function(transaction, x) {
 						self.addTransactionToTotals(transaction, output);
 					});
-					// get account balance from previous period
+					// 
 					for(var x = 0; x < output.accounts.length; x++) {
 						if (output.accounts[x].balance_date) {
 							output.accounts[x].balance += self.periods[interval].accounts[x].balance;
@@ -242,14 +259,16 @@ services.periods.prototype.buildPeriods = function(data) {
 			budget_interval = 7;
 		case 'weekly':
 			budget_interval += 7;
-			var budget_start_date = new Date(this.$localStorage.budget_start_date)
-			var day = 6 - budget_start_date.getDay();
-
+			var budget_start_date = new Date(this.$localStorage.budget_start_date);
+			var d1 = budget_start_date.getDay();
 			var start = new Date();
-			start.setDate(start.getDate() + day - ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
+			var d2 = start.getDay();
+
+			var day = (d1 > d2) ? (d1-d2): (d2-d1);
+			start.setDate(start.getDate() - day - ((this.$localStorage.sheet_views/2) * budget_interval));
 
 			var end = new Date();
-			end.setDate(end.getDate() + day + ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
+			end.setDate(end.getDate() - day + ((this.$localStorage.sheet_views/2) * budget_interval) - 1);
 			break;
 		case 'semi-monthy':
 			budget_interval = 1;
@@ -276,8 +295,7 @@ services.periods.prototype.buildPeriods = function(data) {
 	end.setMinutes(0);
 	end.setSeconds(0);
 	end.setMilliseconds(0);
-//console.log(start)
-//console.log(end)
+
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
 	var idx = 0;
@@ -335,7 +353,6 @@ services.periods.prototype.buildPeriods = function(data) {
 			var transaction = this.data.result[idx];
 			var trd = transaction.transaction_date.split('-');
 			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
-//console.log(start)
 			while (transaction_date.getTime() < start.getTime()) {
 				this.addTransactionToTotals(transaction, output[o_idx]);
 
@@ -368,8 +385,6 @@ services.periods.prototype.buildPeriods = function(data) {
 			if(!output[o_idx].accounts[x].balance) {
 				if (o_idx > 0) {
 					if (output[o_idx-1].accounts[x].balance) {
-//console.log(output[o_idx].accounts[x]);
-//console.log(output[o_idx-1].accounts[x]);
 						output[o_idx].accounts[x].balance			= output[o_idx-1].accounts[x].balance;
 						output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
 						output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;

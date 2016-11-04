@@ -45,19 +45,22 @@ class sheet_controller Extends rest_controller {
 				$offset = $this->_getEndDay();
 				if ($interval == 0) {
 					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views)));					// go back 'sheet views'
-					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views + 1)));					// go forward 'sheet views'
-				} else if ($interval < 0) {
-					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views - $interval)));		// - 'sheet_views' entries and adjust for interval
-					$end_day = ($offset - ($this->budget_interval * ($this->sheet_views - $interval - 1)));		// + 'sheet_views' entries and adjust for interval
-				} else if ($interval > 0) {
-					$start_day = ($offset + ($this->budget_interval * ($this->sheet_views + $interval - 1)));	// - 'sheet_views' entries and adjust for interval
-					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views + $interval)));			// + 'sheet_views' entries and adjust for interval
+					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views)) - 1);					// go forward 'sheet views'
+					$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
+					$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
+				} else {
+					$start = new DateTime();
+					$start_date = explode('T', $start_date);
+					$start_date = explode('-', $start_date[0]);
+					$start->setdate($start_date[0], $start_date[1], $start_date[2]);
+
+					$end = new DateTime();
+					$end_date = explode('T', $end_date);
+					$end_date = explode('-', $end_date[0]);
+					$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
+					$sd = $start->format('Y-m-d');
+					$ed = $end->format('Y-m-d');
 				}
-				$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
-				$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
-//echo "sd = $sd\n";
-//echo "ed = $ed\n";
-//die;
 				break;
 			case 'semi-monthy':
 				break;
@@ -87,7 +90,8 @@ class sheet_controller Extends rest_controller {
 				$this->ajax->addError(new AjaxError("Invalid budget_mode setting (sheet/loadAll)"));
 				$this->ajax->output();
 		}
-
+$this->ajax->setData('sd', $sd);
+$this->ajax->setData('ed', $ed);
 		$balance_forward = 0;
 		$transaction = new transaction();
 		$transaction->select('transaction.id, transaction.transaction_date, transaction.category_id, transaction.vendor_id, transaction.bank_account_id, transaction.amount, transaction.type, transaction.description, transaction.notes, transaction.bank_account_balance, transaction.is_uploaded, transaction.reconciled_date, transaction.check_num');
@@ -97,6 +101,7 @@ class sheet_controller Extends rest_controller {
 		$transaction->orderBy('transaction.transaction_date', 'ASC', FALSE);
 		$transaction->orderBy('transaction.id', 'ASC');
 		$transaction->result();
+//$this->ajax->setData('last_query', $transaction->lastQuery());
 		if ($transaction->numRows()) {
 			$account_balance = array();
 			foreach ($transaction as $tr) {
