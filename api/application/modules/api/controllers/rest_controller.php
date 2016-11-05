@@ -141,7 +141,7 @@ class rest_controller Extends EP_Controller {
 							break;
 					}
 					$ndd = strtotime($next_due_date);
-					if ($ndd >= strtotime($sd) && $ndd <= strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
+					if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
 //						if ($all === 0 || $ndd >= strtotime($transaction->next_due_date)) {
 //						if ($all !== 1 || $ndd >= strtotime($transaction->next_due_date)) {
 //							$next_due_dates[] = $next_due_date;
