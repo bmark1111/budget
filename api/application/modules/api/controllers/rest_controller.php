@@ -43,7 +43,6 @@ class rest_controller Extends EP_Controller {
 
 		$class = get_class($this);
 		if ($class !== 'upload_controller' && $class !== 'livesearch_controller') {
-//if ($class === 'sheet_controller') {
 			if ($resetBalances = $this->appdata->get('resetBalances')) {	// get resets
 				foreach($resetBalances as $account_id => $date) {
 					// for each reset adjust the account balance
@@ -66,53 +65,45 @@ class rest_controller Extends EP_Controller {
 
 	/**
 	 * 
-	 * @param type $categories
 	 * @param type $sd
 	 * @param type $ed
 	 * @param type $all 0 = all
 	 * @return transactions with next due dates
 	 * @throws Exception
 	 */
-	protected function loadRepeats($categories, $sd, $ed, $all = 0) {
+	protected function loadRepeats($sd, $ed, $all = 0) {
 		$transactions = new transaction_repeat();
 		$transactions->select('transaction_repeat.*');
-		$transactions->groupStart();
-		$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
-		$transactions->orGroupStart();
-		$transactions->where('transaction_repeat.last_due_date >= ', $sd);
-		$transactions->where('transaction_repeat.last_due_date >= now()', NULL, FALSE);
-		$transactions->groupEnd();
-		$transactions->groupEnd();
+		if ($all == 1) {
+			$transactions->groupStart();
+			$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
+			$transactions->orGroupStart();
+			$transactions->where('transaction_repeat.last_due_date >= ', $sd);
+			$transactions->where('transaction_repeat.last_due_date >= now()', NULL, FALSE);
+			$transactions->groupEnd();
+			$transactions->groupEnd();
+			$transactions->where('transaction_repeat.next_due_date < ', $ed);
+		} else {
+			$transactions->groupStart();
+			$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
+			$transactions->orWhere('transaction_repeat.last_due_date >= ', $sd);
+			$transactions->groupEnd();
+		}
 		$transactions->groupStart();
 		$transactions->orWhere('transaction_repeat.last_due_date IS NULL', NULL, FALSE);
 		$transactions->orWhere('transaction_repeat.last_due_date >= transaction_repeat.next_due_date', NULL, FALSE);
 		$transactions->groupEnd();
 		$transactions->where('transaction_repeat.first_due_date < ', $ed);
 		$transactions->where('transaction_repeat.is_deleted', 0);
-		if ($all !== 0) {
-			$transactions->where('transaction_repeat.next_due_date < ', $ed);
-		}
-		if (count($categories) == 1) {
-			$transactions->join('vendor V1', 'V1.id = transaction_repeat.vendor_id', 'left');
-			$transactions->select('V1.name as vendorName');
-			$transactions->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
-			$transactions->join('vendor V2', 'V2.id = transaction_repeat_split.vendor_id', 'left');
-			$transactions->select('transaction_repeat_split.amount as split_amount, transaction_repeat_split.category_id as split_category_id, transaction_repeat_split.type as split_type, transaction_repeat_split.description as split_description, V2.name as split_vendorName');
-			$transactions->groupStart();
-			$transactions->orWhere('transaction_repeat.category_id', $categories['id']);
-			$transactions->orGroupStart();
-			$transactions->where('transaction_repeat.category_id IS NULL', NULL, FALSE);
-			$transactions->where('transaction_repeat_split.category_id', $categories['id']);
-			$transactions->groupEnd();
-			$transactions->groupEnd();
-		}
+//		if ($all !== 0) {
+//			$transactions->where('transaction_repeat.next_due_date < ', $ed);
+//		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
 		// now calculate all repeat due dates for given period
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
 			foreach ($transaction->repeats as $repeat) {
-//				if ($all !== 0) {
 				if ($all == 1) {
 					$next_due_date = $transaction->next_due_date;
 				} else {
@@ -142,14 +133,9 @@ class rest_controller Extends EP_Controller {
 					}
 					$ndd = strtotime($next_due_date);
 					if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
-//						if ($all === 0 || $ndd >= strtotime($transaction->next_due_date)) {
-//						if ($all !== 1 || $ndd >= strtotime($transaction->next_due_date)) {
-//							$next_due_dates[] = $next_due_date;
-//						}
 						if (($all == 0)														// ...we want all repeats
 								||															//			or
 							($all == 1 && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
-//							($all == 1 && $ndd > time())									// ... we want future repeats
 								||															//			or
 							($all == 2 && $ndd <= time())) {								// ... we want past repeats
 							$next_due_dates[] = $next_due_date;								// ... then save this due date
@@ -256,7 +242,7 @@ class rest_controller Extends EP_Controller {
 	 * @param type $all 0 = get all, 1 = future, 2 = past
 	 * @return forecast
 	 */
-	protected function loadForecast($categories, $sd, $ed, $all = 0) {
+	protected function loadForecast($sd, $ed, $all = 0) {
 		$forecast = new forecast();
 		$forecast->whereNotDeleted();
 		$forecast->groupStart();
@@ -265,9 +251,6 @@ class rest_controller Extends EP_Controller {
 		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
 		$forecast->where('first_due_date < ', $ed);
-		if (count($categories) == 1) {
-			$forecast->where('category_id', $categories['id']);
-		}
 		$forecast->result();
 		if ($forecast->numRows()) {
 			// set the next due date(s) for the forecasted expenses
@@ -488,10 +471,6 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 				$bank_account_balances = array();
 				foreach ($transactions as $transaction) {
 					if (!$first) {// || empty($transaction->bank_account_balance)) {
-//						if (empty($transaction->bank_account_balance)) {
-//							$bank_account_balances[$transaction->bank_account_id] = 0;
-//							$first = FALSE;
-//						}
 						switch ($transaction->type) {
 							case 'DEBIT':
 							case 'CHECK':

@@ -60,7 +60,7 @@ class dashboard_controller Extends rest_controller {
 
 		$totals = array();
 		// get any repeats for this interval
-		$repeats = $this->loadRepeats($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
+		$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', 2);
 		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
 		if (!empty($repeats)) {
 			foreach ($repeats as $rp) {
@@ -77,7 +77,7 @@ class dashboard_controller Extends rest_controller {
 		}
 
 		// get the past forecasts for this interval
-		$forecasted = $this->loadForecast($categories, $year . '-01-01', ($year+1) . '-01-01', 2);
+		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', 2);
 		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
 		if (!empty($forecast)) {
 			foreach ($forecast as $fc) {
