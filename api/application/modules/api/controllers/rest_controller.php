@@ -100,6 +100,7 @@ class rest_controller Extends EP_Controller {
 //		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
+		$now = strtotime(date('m/d/Y'));
 		// now calculate all repeat due dates for given period
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
@@ -124,7 +125,7 @@ class rest_controller Extends EP_Controller {
 							$next_due_date = date('Y-m-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' month'));
 							break;
 						case 'Year':
-							$next_due_date = date('Y-' . sprintf('%02d', $repeat->every_month) . '-' . $repeat->every_date, strtotime($next_due_date . ' +' . $every . ' year'));
+							$next_due_date = date('Y-' . sprintf('%02d', $repeat->every_month) . '-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' year'));
 							break;
 						case 'Quarter':
 						default:
@@ -135,9 +136,10 @@ class rest_controller Extends EP_Controller {
 					if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
 						if (($all == 0)														// ...we want all repeats
 								||															//			or
-							($all == 1 && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
+//							($all == 1 && $ndd >= $now)// && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
+							($all == 1 && $ndd >= $now)										// ... we want future repeats
 								||															//			or
-							($all == 2 && $ndd <= time())) {								// ... we want past repeats
+							($all == 2 && $ndd < $now)) {									// ... we want past repeats
 							$next_due_dates[] = $next_due_date;								// ... then save this due date
 						}
 					}
@@ -253,6 +255,7 @@ class rest_controller Extends EP_Controller {
 		$forecast->where('first_due_date < ', $ed);
 		$forecast->result();
 		if ($forecast->numRows()) {
+			$now = strtotime(date('m/d/Y'));
 			// set the next due date(s) for the forecasted expenses
 			foreach ($forecast as $fc) {
 				isset($fc->bank_account->bank);
@@ -281,9 +284,9 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 						$this->_dateDiff($dd[$x], strtotime($sd)) >= 0) {						// and due_date >= start date and ...
 						if (($all == 0)															// ...we want all forecasts
 								||																//			or
-							($all == 1 && $dd[$x] > time())										// ... we want future forecasts
+							($all == 1 && $dd[$x] >= $now)										// ... we want future forecasts
 								||																//			or
-							($all == 2 && $dd[$x] <= time())) {									// ... we want past forecasts
+							($all == 2 && $dd[$x] < $now)) {									// ... we want past forecasts
 							$next_due_dates[] = date('Y-m-d', $dd[$x]);							// ... then save this due date
 						}
 					}
