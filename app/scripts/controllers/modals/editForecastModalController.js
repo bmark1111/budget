@@ -66,13 +66,34 @@ function($q, $scope, $modalInstance, RestData2, params, Categories, Accounts, Pe
 		$scope.opened2 = true;
 	};
 
+	/**
+	 * @name _addZero
+	 * @desc local function to add leading zeros to time parameters
+	 * @type {Function}
+	 * @param {hours | minutes}
+	 * @return {string} hours or minutes woth leading zeros
+	 */
+	var _addZero = function(i) {
+		if (i < 10) {
+			i = "0" + i;
+		}
+		return i;
+	}
+
 	// save edited forecast
 	$scope.save = function () {
 		$scope.dataErrorMsg = [];
 		$scope.isSaving = true;
 
 		$scope.validation = {};
-
+		if ($scope.forecast.first_due_date) {
+			var dt = new Date($scope.forecast.first_due_date);
+			$scope.forecast.first_due_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
+		}
+		if ($scope.forecast.last_due_date) {
+			var dt = new Date($scope.forecast.last_due_date);
+			$scope.forecast.last_due_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
+		}
 		RestData2().saveForecast($scope.forecast,
 			function(response) {
 				$scope.isSaving = false;

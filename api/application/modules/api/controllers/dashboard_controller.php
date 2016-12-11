@@ -31,6 +31,7 @@ class dashboard_controller Extends rest_controller {
 		}
 		$categories = new category();
 		$categories->whereNotDeleted();
+		$categories->whereNotIn('id', Array(17,22));	// Do not load Transfer and Opening Balance
 		$categories->orderBy('order');
 		$categories->result();
 
@@ -52,7 +53,7 @@ class dashboard_controller Extends rest_controller {
 		$sql[] = implode(',', $select);
 		$sql[] = "FROM transaction T";
 		$sql[] = "LEFT JOIN transaction_split TS ON TS.transaction_id = T.id AND TS.is_deleted = 0";
-		$sql[] = "WHERE YEAR(transaction_date) = '" . $year . "' AND T.is_deleted = 0";
+		$sql[] = "WHERE YEAR(T.transaction_date) = '" . $year . "' AND T.transaction_date <= now() AND T.is_deleted = 0";
 
 		$transactions = new transaction();
 		$transactions->query(implode(' ', $sql));

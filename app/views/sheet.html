@@ -70,9 +70,8 @@
 							</td>
 						</tr>
 						<tr>
-							<th class="transfer_amount" nowrap>Transfers</th>
+							<th class="transfer_amount" nowrap>Transfers/Payments</th>
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;" class="transfer_amount">
-								<!--<span class="pull-right">{{ period.transfer_amount|currency }}</span>-->
 								<div class="pull-right">
 									<span ng-if="period.transfer_amount > 0">
 										<a tooltip="Account Transfers"

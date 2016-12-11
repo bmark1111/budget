@@ -98,7 +98,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 
 	var findCreditTrans = function(transaction, transactions) {
 		for(var x in transactions) {
-			if (transactions[x].type === 'CREDIT' && transactions[x].amount === transaction.amount) {
+			if (transactions[x].type === 'CREDIT' && transactions[x].amount === transaction.amount && transactions[x].vendor_id == transaction.vendor.id) {
 				for(var y = 0; y < $scope.accounts.length; y++) {
 					if ($scope.accounts[y].id == transactions[x].bank_account_id) {
 						return { 'name': $scope.accounts[y].name,
@@ -107,7 +107,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 				}
 			}
 		}
-		return { 'name': 'No CREDIT Found',
+		return { 'name': '--NO CREDIT FOUND--',
 				'accountName': '' };
 	}
 

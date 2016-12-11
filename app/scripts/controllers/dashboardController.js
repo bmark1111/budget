@@ -41,13 +41,15 @@ function($q, $scope, RestData2, Categories, Periods) {
 			self.transactions = false;
 			self.transactions_seq = false;
 			angular.forEach($scope.categories,function(category, key) {
-				var category = {
-					id:			category.id,
-					name:		category.name,
-					total:		response[1].data.result['total_' + category.id],
-					forecast:	response[1].data.forecast[category.id]
-				};
-				self.ytdTotals.push(category);
+				if (category.id != 17 && category.id != 22) {	// Do not load Transfer and Opening Balance
+					var category = {
+						id:			category.id,
+						name:		category.name,
+						total:		response[1].data.result['total_' + category.id],
+						forecast:	response[1].data.forecast[category.id]
+					};
+					self.ytdTotals.push(category);
+				}
 			});
 		} else if (!!response[2].success) {
 			Periods.buildPeriods(response[2].data);

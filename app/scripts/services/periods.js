@@ -207,7 +207,7 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 					// 
 					for(var x = 0; x < output.accounts.length; x++) {
 						if (output.accounts[x].balance_date) {
-							output.accounts[x].balance += self.periods[interval].accounts[x].balance;
+							output.accounts[x].balance += parseFloat(self.periods[interval].accounts[x].balance);
 						}
 					};
 					self._isReconciled(output.accounts, sd, ed);
@@ -382,14 +382,12 @@ services.periods.prototype.buildPeriods = function(data) {
 		}
 
 		for(var x = 0; x < output[o_idx].accounts.length; x++) {
-			if(!output[o_idx].accounts[x].balance) {
-				if (o_idx > 0) {
-					if (output[o_idx-1].accounts[x].balance) {
-						output[o_idx].accounts[x].balance			= output[o_idx-1].accounts[x].balance;
-						output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
-						output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;
-						output[o_idx].accounts[x].transaction_id	= output[o_idx-1].accounts[x].transaction_id;
-					}
+			if(output[o_idx].accounts[x].balance === null && o_idx > 0) {
+				if (output[o_idx-1].accounts[x].balance !== null) {
+					output[o_idx].accounts[x].balance			= output[o_idx-1].accounts[x].balance;
+					output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
+					output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;
+					output[o_idx].accounts[x].transaction_id	= output[o_idx-1].accounts[x].transaction_id;
 				}
 			}
 		}
@@ -544,7 +542,7 @@ services.periods.prototype.addToTotals = function(data, output) {
 	}
 
 	if (category_id == 17 && data.type == 'DEBIT') {
-		output.transfer_amount += amount;
+		output.transfer_amount += parseFloat(amount);
 	}
 
 	// Calculate running total
