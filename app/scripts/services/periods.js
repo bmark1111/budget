@@ -301,9 +301,12 @@ services.periods.prototype.buildPeriods = function(data) {
 	var idx = 0;
 	var transaction_date,
 		interval_beginning,
-		interval_ending;
+		interval_ending,
+		intervalBegin;
 	while (start.getTime() < end.getTime()) {
 		interval_beginning = start.toISOString().split('T')[0] + 'T00:00:00';
+		intervalBegin = new Date(start);
+
 		switch (this.$localStorage.budget_mode) {
 			case 'weekly':
 				start.setDate(start.getDate() + 7);
@@ -338,37 +341,6 @@ services.periods.prototype.buildPeriods = function(data) {
 			'transactions': {}								// individual transactions in this period
 		};
 
-		// build account data
-		for(var x in self.Accounts.data) {
-			output[o_idx].accounts[x] = {
-				balance: null,
-				bank_account_id: self.Accounts.data[x].id,
-				name: self.Accounts.data[x].name,
-				reconciled_date: null,
-				balance_date: null
-			};
-		}
-
-		if (this.data.result[idx]) {
-			var transaction = this.data.result[idx];
-			var trd = transaction.transaction_date.split('-');
-			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
-			while (transaction_date.getTime() < start.getTime()) {
-				this.addTransactionToTotals(transaction, output[o_idx]);
-
-				idx++;
-				transaction = this.data.result[idx];
-				if (!transaction) {
-					break;
-				}
-
-				// get the next transaction date
-				var trd = transaction.transaction_date.split('-');
-				transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
-			}
-			running_total = output[o_idx].running_total;
-		}
-
 		var dt = output[o_idx].interval_beginning.split('T');
 		var dt = dt[0].split('-');
 		var sd = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
@@ -379,7 +351,56 @@ services.periods.prototype.buildPeriods = function(data) {
 		if (now >= sd && now <= ed) {
 			output[o_idx].alt_ending = now;				// set alternative ending
 			output[o_idx].current_interval = true;		// mark the current period
+			var currentPeriodStartDate = sd;
 		}
+
+		// build account data
+		for(var x in self.Accounts.data) {
+			output[o_idx].accounts[x] = {
+				balance: null,
+				bank_account_id: self.Accounts.data[x].id,
+				name: self.Accounts.data[x].name,
+				date_closed: self.Accounts.data[x].date_closed,
+				reconciled_date: null,
+				balance_date: null
+			};
+		}
+
+		if (this.data.result[idx]) {
+			var transaction = this.data.result[idx];
+			var trd = transaction.transaction_date.split('-');
+			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
+			while (transaction_date.getTime() < start.getTime()) {
+				if (transaction.transaction_type !== 2 || transaction_date > currentPeriodStartDate) {
+					this.addTransactionToTotals(transaction, output[o_idx]);
+				}
+
+				// move to next transaction
+				idx++;
+				transaction = this.data.result[idx];
+				if (!transaction) {
+					break;
+				}
+
+				// get the next transaction date
+				var trd = transaction.transaction_date.split('-');
+				transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
+			}
+			// end of transactions for current period
+			running_total = output[o_idx].running_total;
+		}
+
+//		var dt = output[o_idx].interval_beginning.split('T');
+//		var dt = dt[0].split('-');
+//		var sd = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
+//		var dt = output[o_idx].interval_ending.split('T');
+//		var dt = dt[0].split('-');
+//		var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59, 0);
+//		var now = new Date();
+//		if (now >= sd && now <= ed) {
+//			output[o_idx].alt_ending = now;				// set alternative ending
+//			output[o_idx].current_interval = true;		// mark the current period
+//		}
 
 		for(var x = 0; x < output[o_idx].accounts.length; x++) {
 			if(output[o_idx].accounts[x].balance === null && o_idx > 0) {
@@ -387,6 +408,7 @@ services.periods.prototype.buildPeriods = function(data) {
 					output[o_idx].accounts[x].balance			= output[o_idx-1].accounts[x].balance;
 					output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
 					output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;
+					output[o_idx].accounts[x].date_closed		= output[o_idx-1].accounts[x].date_closed;
 					output[o_idx].accounts[x].transaction_id	= output[o_idx-1].accounts[x].transaction_id;
 				}
 			}
@@ -397,6 +419,17 @@ services.periods.prototype.buildPeriods = function(data) {
 		o_idx++;
 	}
 	self.periods = output;
+};
+
+/**
+ * @name checkRepeatTransaction
+ * @private
+ * @param {Object} transaction
+ * @param {Object} output
+ * @returns {undefined}
+ */
+services.periods.prototype.checkRepeatTransaction = function(transaction, output) {
+
 };
 
 /**

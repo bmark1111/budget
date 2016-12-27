@@ -47,7 +47,7 @@
 					<td><span class="pull-left">{{transactions[idx].bank_account.bank.name}} {{transactions[idx].bank_account.name}}</span></td>
 					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
 					<td><span class="pull-right">{{transactions[idx].check_num}}</span></td>
-					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{transactions[idx].amount|currency}}</span></td>
+					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT' || transactions[idx].type == 'SALE'">{{transactions[idx].amount|currency}}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-ok" ng-if="transactions[idx].status == 0" ng-click="postTransaction(transactions[idx].id)" style="cursor:pointer;"></span>

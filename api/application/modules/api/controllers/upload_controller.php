@@ -111,7 +111,8 @@ class upload_controller Extends rest_controller {
 					break;
 				case 'DEBIT':
 				case 'CHECK':
-					$transactions->whereIn('type', array('DEBIT', 'CHECK'));
+				case 'SALE':
+					$transactions->whereIn('type', array('DEBIT', 'CHECK', 'SALE'));
 					break;
 			}
 			$sd = date('Y-m-d', strtotime($uploaded->transaction_date . " -7 DAYS"));
@@ -387,7 +388,8 @@ log_message('error', '---------------------------------------------------------'
 					switch ($split['type']) {
 						case 'DEBIT':
 						case 'CHECK':
-							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK') {
+						case 'SALE':
+							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK' || $_POST['type'] == 'SALE') {
 								$split_total -= intval($split['amount'] * 100);
 							} else {
 								$split_total += intval($split['amount'] * 100);

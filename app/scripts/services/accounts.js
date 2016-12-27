@@ -55,12 +55,14 @@ services.accounts.prototype.get = function () {
 				if (diff >= 0) {
 					self.active.push({
 						'id': account.id,
-						'name': account.bank.name + ' ' + account.name
+						'name': account.bank.name + ' ' + account.name,
+						'date_closed': account.date_closed
 					});
 				}
 				self.data.push({
 					'id': account.id,
-					'name': account.bank.name + ' ' + account.name
+					'name': account.bank.name + ' ' + account.name,
+					'date_closed': account.date_closed
 				});
 			});
 			deferred.resolve(response);

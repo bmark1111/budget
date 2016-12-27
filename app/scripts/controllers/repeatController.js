@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('RepeatController', function($scope, $modal, $timeout, RestData2) {
+app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestData2, Accounts) {
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
@@ -34,6 +34,14 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 			function(response) {
 				if (!!response.success) {
 					$scope.repeats = response.data.result;
+					for(var x in $scope.repeats) {
+						for(var y = 0; y < $scope.accounts.length; y++) {
+							if ($scope.accounts[y].id == $scope.repeats[x].bank_account_id) {
+								$scope.repeats[x].bankName = $scope.accounts[y].name;
+								break;
+							}
+						}
+					}
 					$scope.repeats_seq = Object.keys(response.data.result);
 					$scope.recCount = response.data.total_rows;
 				} else {
@@ -49,8 +57,60 @@ app.controller('RepeatController', function($scope, $modal, $timeout, RestData2)
 //				ngProgress.complete();
 			});
 	}
+	var getRepeats = function() {
+		var deferred = $q.defer();
+		var result = RestData2().getAllRepeats({
+				'last_due_date':		$scope.search.last_due_date,
+				'name':					$scope.search.name,
+				'sort':					'next_due_date',
+				'sort_dir':				'ASC',
+				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+				'pagination_amount':	$scope.itemsPerPage
+			},
+			function(response) {
+				deferred.resolve(result);
+			},
+			function(err) {
+				deferred.resolve(err);
+			});
 
-	loadData();
+		return deferred.promise;
+	};
+
+//	loadData();
+	$q.all([
+		Accounts.get(),
+		getRepeats()
+	]).then(function(response) {
+		// load the accounts
+		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
+
+		// load the transaction
+		if (!!response[1].success) {
+			if (response[1].data.result) {
+				$scope.repeats = response[1].data.result;
+				for(var x in $scope.repeats) {
+					for(var y = 0; y < $scope.accounts.length; y++) {
+						if ($scope.accounts[y].id == $scope.repeats[x].bank_account_id) {
+							$scope.repeats[x].bankName = $scope.accounts[y].name;
+							break;
+						}
+					}
+				}
+				$scope.repeats_seq = Object.keys(response[1].data.result);
+			}
+		} else {
+			if (response[1].errors) {
+				angular.forEach(response[1].errors,
+					function(error) {
+						$scope.dataErrorMsg.push(error.error);
+					})
+			} else {
+				$scope.dataErrorMsg[0] = response[1];
+			}
+		}
+	});
 
 	var timer = null;
 	$scope.refreshData = function() {

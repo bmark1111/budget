@@ -112,6 +112,7 @@ $this->ajax->setData('ed', $ed);
 					switch ($tr->type) {
 						case 'DEBIT':
 						case 'CHECK':
+						case 'SALE':
 							$balance_forward += ($tr->bank_account_balance + $tr->amount);
 							break;
 						case 'CREDIT':
@@ -127,6 +128,9 @@ $this->ajax->setData('ed', $ed);
 
 		$transactions = array();
 		$repeats = $this->loadRepeats($sd, $ed, 1);
+//echo $sd."\n";
+//echo $ed."\n";
+//print $repeats;die;
 		if ($repeats->numRows()) {
 			foreach ($repeats as $repeat) {
 				isset($repeat->vendor);

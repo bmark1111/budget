@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ForecastController', function($scope, $modal, $timeout, RestData2, $filter, Categories) {
+app.controller('ForecastController', function($q, $scope, $modal, $timeout, RestData2, $filter, Categories, Accounts) {
 
 	$scope.totals = [];
 	$scope.rTotals = [];
@@ -28,56 +28,56 @@ app.controller('ForecastController', function($scope, $modal, $timeout, RestData
 
 	var interval = 0;
 
-	var loadForecast = function() {
-		$scope.dataErrorMsg = [];
-
-		RestData2().getForecast({
-				interval: interval
-			},
-			function(response) {
-				if (!!response.success) {
-					$scope.result = response.data.result;
-					$scope.result_seq = Object.keys(response.data.result);
-
-					$scope.categories = Categories.data;
-
-					// now calulate totals
-					angular.forEach($scope.result,
-						function(total, key) {
-							$scope.balance_forward[key] = ''
-							$scope.totals[key] = parseFloat(0);
-							angular.forEach(total.totals,
-								function(value) {
-									$scope.totals[key] += parseFloat(value);
-								});
-						});
-
-					// now set the balance forward
-					$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
-
-					// now calculate running totals
-					angular.forEach($scope.totals,
-						function(total, key) {
-							if (key == 0) {
-								$scope.rTotals[key] = parseFloat(response.data.balance_forward) + total;
-							} else {
-								var x = key - 1;
-								$scope.rTotals[key] = $scope.rTotals[x] + total;
-							}
-						});
-				} else {
-					if (response.errors) {
-						angular.forEach(response.errors,
-							function(error) {
-								$scope.dataErrorMsg.push(error.error);
-							})
-					} else {
-						$scope.dataErrorMsg[0] = response;
-					}
-				}
-//				ngProgress.complete();
-			});
-	};
+//	var loadForecast = function() {
+//		$scope.dataErrorMsg = [];
+//
+//		RestData2().getForecast({
+//				interval: interval
+//			},
+//			function(response) {
+//				if (!!response.success) {
+//					$scope.result = response.data.result;
+//					$scope.result_seq = Object.keys(response.data.result);
+//
+//					$scope.categories = Categories.data;
+//
+//					// now calulate totals
+//					angular.forEach($scope.result,
+//						function(total, key) {
+//							$scope.balance_forward[key] = ''
+//							$scope.totals[key] = parseFloat(0);
+//							angular.forEach(total.totals,
+//								function(value) {
+//									$scope.totals[key] += parseFloat(value);
+//								});
+//						});
+//
+//					// now set the balance forward
+//					$scope.balance_forward[0] = $filter('currency')(response.data.balance_forward, "$", 2);
+//
+//					// now calculate running totals
+//					angular.forEach($scope.totals,
+//						function(total, key) {
+//							if (key == 0) {
+//								$scope.rTotals[key] = parseFloat(response.data.balance_forward) + total;
+//							} else {
+//								var x = key - 1;
+//								$scope.rTotals[key] = $scope.rTotals[x] + total;
+//							}
+//						});
+//				} else {
+//					if (response.errors) {
+//						angular.forEach(response.errors,
+//							function(error) {
+//								$scope.dataErrorMsg.push(error.error);
+//							})
+//					} else {
+//						$scope.dataErrorMsg[0] = response;
+//					}
+//				}
+////				ngProgress.complete();
+//			});
+//	};
 
 	var loadAllForecasts = function() {
 		$scope.dataErrorMsg = [];
@@ -95,6 +95,14 @@ app.controller('ForecastController', function($scope, $modal, $timeout, RestData
 			function(response) {
 				if (!!response.success) {
 					$scope.forecasts = response.data.result;
+					for(var x in $scope.forecasts) {
+						for(var y = 0; y < $scope.accounts.length; y++) {
+							if ($scope.accounts[y].id == $scope.forecasts[x].bank_account_id) {
+								$scope.forecasts[x].bankName = $scope.accounts[y].name;
+								break;
+							}
+						}
+					}
 					$scope.forecasts_seq = Object.keys(response.data.result);
 					$scope.recCount = response.data.total_rows;
 				} else {
@@ -111,13 +119,70 @@ app.controller('ForecastController', function($scope, $modal, $timeout, RestData
 			});
 	};
 
-	loadAllForecasts();
+//	loadAllForecasts();
 
-	$scope.moveInterval = function(direction) {
-		interval = interval + direction;
+	var getForecasts = function() {
+		var deferred = $q.defer();
+		var result = RestData2().getAllForecasts({
+				'last_due_date':		$scope.search.last_due_date,
+				'first_due_date':		$scope.search.first_due_date,
+				'description':			$scope.search.description,
+				'amount':				$scope.search.amount,
+				'sort':					'first_due_date',
+				'sort_dir':				'DESC',
+				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+				'pagination_amount':	$scope.itemsPerPage
+			},
+			function(response) {
+				deferred.resolve(result);
+			},
+			function(err) {
+				deferred.resolve(err);
+			});
 
-		loadForecast();
+		return deferred.promise;
 	};
+
+//	loadData();
+	$q.all([
+		Accounts.get(),
+		getForecasts()
+	]).then(function(response) {
+		// load the accounts
+		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
+
+		// load the transaction
+		if (!!response[1].success) {
+			if (response[1].data.result) {
+				$scope.forecasts = response[1].data.result;
+				for(var x in $scope.forecasts) {
+					for(var y = 0; y < $scope.accounts.length; y++) {
+						if ($scope.accounts[y].id == $scope.forecasts[x].bank_account_id) {
+							$scope.forecasts[x].bankName = $scope.accounts[y].name;
+							break;
+						}
+					}
+				}
+				$scope.forecasts_seq = Object.keys(response[1].data.result);
+			}
+		} else {
+			if (response[1].errors) {
+				angular.forEach(response[1].errors,
+					function(error) {
+						$scope.dataErrorMsg.push(error.error);
+					})
+			} else {
+				$scope.dataErrorMsg[0] = response[1];
+			}
+		}
+	});
+
+//	$scope.moveInterval = function(direction) {
+//		interval = interval + direction;
+//
+//		loadForecast();
+//	};
 
 	var timer = null;
 	$scope.refreshData = function() {

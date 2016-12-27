@@ -142,6 +142,7 @@ class util_controller Extends EP_Controller {
 					switch ($transaction->type) {
 						case 'DEBIT':
 						case 'CHECK':
+						case 'SALE':
 							$amount -= $transaction->amount;
 							break;
 						case 'CREDIT':

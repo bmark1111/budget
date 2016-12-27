@@ -39,6 +39,14 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 			function(response) {
 				if (!!response.success) {
 					$scope.transactions = response.data.result;
+					for(var x in $scope.transactions) {
+						for(var y = 0; y < $scope.accounts.length; y++) {
+							if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
+								$scope.transactions[x].bankName = $scope.accounts[y].name;
+								break;
+							}
+						}
+					}
 					$scope.transactions_seq = Object.keys(response.data.result);
 					$scope.recCount = response.data.total_rows;
 				} else {
@@ -92,6 +100,14 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 		if (!!response[1].success) {
 			if (response[1].data.result) {
 				$scope.transactions = response[1].data.result;
+				for(var x in $scope.transactions) {
+					for(var y = 0; y < $scope.accounts.length; y++) {
+						if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
+							$scope.transactions[x].bankName = $scope.accounts[y].name;
+							break;
+						}
+					}
+				}
 				$scope.transactions_seq = Object.keys(response[1].data.result);
 				$scope.recCount = response[1].data.total_rows;
 			}

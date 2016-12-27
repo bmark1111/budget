@@ -257,7 +257,8 @@ class transaction_controller Extends rest_controller {
 					switch ($split['type']) {
 						case 'DEBIT':
 						case 'CHECK':
-							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK') {
+						case 'SALE':
+							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK' || $_POST['type'] == 'SALE') {
 								$split_total -= intval($split['amount'] * 100);
 							} else {
 								$split_total += intval($split['amount'] * 100);

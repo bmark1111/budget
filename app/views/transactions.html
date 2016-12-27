@@ -82,8 +82,8 @@
 					<td ng-if="!transactions[idx].category_id" colspan="2">
 						<span class="pull-left">--Split--</span>
 					</td>
-					<td rowspan="2">{{ transactions[idx].bank_account.name }}</td>
-					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT'">{{ transactions[idx].amount|currency }}</span></td>
+					<td rowspan="2">{{ transactions[idx].bankName }}</td><!-- {{ transactions[idx].bank_account.name }}</td>-->
+					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT' || transactions[idx].type == 'SALE'">{{ transactions[idx].amount|currency }}</span></td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{ transactions[idx].amount|currency }}</span></td>
 					<td rowspan="2"><span class="pull-right">{{ transactions[idx].bank_account_balance|currency }}</span></td>
 					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">

@@ -45,7 +45,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 		var end_date = $filter('date')(period.interval_ending, "EEE MMM dd, yyyy");
 		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
 
-		if (category_id == 17) {
+		if (category_id == 17) {		// Transfer
 			$scope.transactions = [];
 			var transactions = period.transactions[category_id];
 			var xx = 0;

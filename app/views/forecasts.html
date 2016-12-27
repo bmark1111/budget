@@ -61,15 +61,15 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="idx in forecasts_seq">
-					<td>{{forecasts[idx].first_due_date|date:'EEE MMM dd, yyyy'}}</td>
-					<td>{{forecasts[idx].last_due_date|date:'EEE MMM dd, yyyy'}}</td>
-					<td><span class="pull-left">{{forecasts[idx].description}}</span></td>
-					<td>{{forecasts[idx].bank_account.name}}</td>
-					<td>{{forecasts[idx].category.name}}</td>
-					<td>{{forecasts[idx].every}}</td>
-					<td>{{forecasts[idx].every_unit}}</td>
-					<td>{{forecasts[idx].every_on}}</td>
-					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CHECK' || forecasts[idx].type == 'DEBIT'">{{forecasts[idx].amount|currency}}</span></td>
+					<td>{{ forecasts[idx].first_due_date|date:'EEE MMM dd, yyyy' }}</td>
+					<td>{{ forecasts[idx].last_due_date|date:'EEE MMM dd, yyyy' }}</td>
+					<td><span class="pull-left">{{ forecasts[idx].description }}</span></td>
+					<td>{{ forecasts[idx].bankName }}</td><!-- {{forecasts[idx].bank_account.name}}</td>-->
+					<td>{{ forecasts[idx].category.name }}</td>
+					<td>{{ forecasts[idx].every }}</td>
+					<td>{{ forecasts[idx].every_unit }}</td>
+					<td>{{ forecasts[idx].every_on }}</td>
+					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CHECK' || forecasts[idx].type == 'DEBIT' || forecasts[idx].type == 'SALE'">{{forecasts[idx].amount|currency}}</span></td>
 					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CREDIT' || forecasts[idx].type == 'DSLIP'">{{forecasts[idx].amount|currency}}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editForecast(forecasts[idx].id)" style="cursor:pointer;"></span>
