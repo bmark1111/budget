@@ -58,8 +58,8 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 							$scope.transactions[xx].accountNameFrom = $scope.accounts[y].accountName;
 						}
 					}
-					// find corresponding credit transaction
-					var toTrans = findCreditTrans(transactions[x], transactions);
+					// find corresponding credit transaction in transfer
+					var toTrans = findCreditTransInTransfer(transactions[x], transactions);
 					$scope.transactions[xx].bankNameTo = toTrans.name;
 					$scope.transactions[xx].accountNameTo = toTrans.accountName;
 					xx++;
@@ -96,7 +96,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 		}
 	};
 
-	var findCreditTrans = function(transaction, transactions) {
+	var findCreditTransInTransfer = function(transaction, transactions) {
 		for(var x in transactions) {
 			if (transactions[x].type === 'CREDIT' && transactions[x].amount === transaction.amount && transactions[x].vendor_id == transaction.vendor.id) {
 				for(var y = 0; y < $scope.accounts.length; y++) {

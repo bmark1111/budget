@@ -3,27 +3,30 @@
 </div>
 <div class="modal-body">
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<label>Bank Account:</label> {{ transaction.bank_account.bank.name }} {{ transaction.bank_account.name }}
 		</div>
-		<div class="col-md-3">
-			<label>Date:</label> {{ transaction.transaction_date|date:'EEE MMM dd, yyyy' }}
-		</div>
-		<div class="col-md-6">
+		<div class="col-md-8">
 			<label>Description:</label> {{ transaction.description }}
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-3">
+			<label>Date:</label> {{ transaction.transaction_date|date:'EEE MMM dd, yyyy' }}
+		</div>
+		<div class="col-md-2">
 			<label>Type:</label> {{ transaction.type }}
 		</div>
-		<div class="col-md-3" ng-if="transaction.type == 'CHECK'">
+		<div class="col-md-2" ng-if="transaction.type == 'CHECK'">
 			<label>Check Num:</label> {{ transaction.check_num }}
 		</div>
 		<div class="col-md-4">
 			<label>Amount:</label> {{ transaction.amount|currency }}
+			<div ng-class="{ 'has-error': validation.amount }">
+				<span class="help-block" ng-show="validation.amount">{{ validation.amount }}</span>
+			</div>
 		</div>
-		<div class="col-md-2 left">
+		<div class="col-md-1 left">
 			<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="is_split = !is_split">
 				Split
 			</button>
@@ -74,7 +77,6 @@
 							<th><span class="pull-left">Category</span></th>
 							<th><span class="pull-left">Vendor</span></th>
 							<th><span class="pull-left">Amount</span></th>
-<!--							<th><span class="pull-left">Vendor</span></th>-->
 						</tr>
 					</thead>
 					<tbody ng-repeat="idx in transactions_seq">
@@ -104,9 +106,6 @@
 							<td class="col-sm-1">
 								<span class="pull-right">{{ transactions[idx].amount|currency }}</span>
 							</td>
-<!--							<td class="col-sm-2" ng-if="transactions[idx].vendor_id">
-								<span class="pull-left">{{ transactions[idx].vendor.name }}</span>
-							</td>-->
 						</tr>
 						<tr ng-repeat="split in transactions[idx].splits" style="font-size: 10px;" ng-class="{selected: transactions[idx].id === idSelectedTransaction}">
 							<td colspan="2"></td>

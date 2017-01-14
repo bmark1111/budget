@@ -4,7 +4,11 @@
 	<div class="form-wrap" ng-if="!dataErrorMsg[0] && !error">
 		<form>
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-sm-1">
+					<label for="status">All</label>
+					<input type="checkbox" class="form-control" name="status" ng-model="search.status" ng-change="refreshData()" />
+				</div>
+				<div class="col-sm-2">
 					<label for="date">Date</label>
 					<p class="input-group">
 						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="date" ng-model="search.date" is-open="opened" min-date="minDate" max-date="" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="refreshData()" />
@@ -14,16 +18,18 @@
 					</p>
 				</div>
 				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="description">Description</label>
-						<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
-					</div>
+					<label for="description">Description</label>
+					<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
 				</div>
 				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="amount">Amount</label>
-						<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
-					</div>
+					<label for="account">Account</label>
+					<select class="form-control" name="bank_account_id" ng-model="search.bank_account_id" ng-options="account.id as account.name for account in active_accounts" ng-change="refreshData()">
+						<option value="">Select Account</option>
+					</select>
+				</div>
+				<div class="col-sm-2">
+					<label for="amount">Amount</label>
+					<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
 				</div>
 			</div>
 		</form>
@@ -42,17 +48,20 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="idx in transactions_seq">
-					<td>{{transactions[idx].transaction_date|date:'EEE MMM dd, yyyy'}}</td>
-					<td><span class="pull-left">{{transactions[idx].bank_account.bank.name}} {{transactions[idx].bank_account.name}}</span></td>
-					<td><span class="pull-left">{{transactions[idx].description}}</span></td>
-					<td><span class="pull-right">{{transactions[idx].check_num}}</span></td>
-					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT' || transactions[idx].type == 'SALE'">{{transactions[idx].amount|currency}}</span></td>
-					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{transactions[idx].amount|currency}}</span></td>
+				<tr ng-show="transactions_seq.length > 0" ng-repeat="idx in transactions_seq">
+					<td>{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</td>
+					<td><span class="pull-left">{{ transactions[idx].bankName }}</span></td>
+					<td><span class="pull-left">{{ transactions[idx].description }}</span></td>
+					<td><span class="pull-right">{{ transactions[idx].check_num }}</span></td>
+					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT' || transactions[idx].type == 'SALE'">{{ transactions[idx].amount|currency }}</span></td>
+					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP' || transactions[idx].type == 'RETURN' || transactions[idx].type == 'PAYMENT'">{{ transactions[idx].amount|currency }}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-ok" ng-if="transactions[idx].status == 0" ng-click="postTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 						<span class="glyphicon glyphicon-trash" ng-if="transactions[idx].status == 0" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;"></span>
 					</td>
+				</tr>
+				<tr ng-show="transactions_seq.length == 0">
+					<td colspan="7">No uploads found</td>
 				</tr>
 			</tbody>
 		</table>

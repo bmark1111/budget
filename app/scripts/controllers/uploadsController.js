@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('UploadsController', function($scope, $rootScope, $modal, $timeout, RestData2) {
+app.controller('UploadsController', function($q, $scope, $rootScope, $modal, $timeout, RestData2, Accounts) {
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
@@ -11,10 +11,12 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 	$scope.dataErrorMsg	= [];
 
 	$scope.search = {
-		currentPage:	1,
-		date:			'',
-		description:	'',
-		amount:			''
+		currentPage:		1,
+		status:				false,
+		date:				'',
+		description:		'',
+		bank_account_id:	'',
+		amount:				''
 	};
 
 	var loadData = function() {
@@ -23,8 +25,10 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 //		ngProgress.start();
 
 		RestData2().getAllUploads({
+				'status':				$scope.search.status,
 				'date':					$scope.search.date,
 				'description':			$scope.search.description,
+				'bank_account_id':		$scope.search.bank_account_id,
 				'amount':				$scope.search.amount,
 				'sort':					'transaction_date',
 				'sort_dir':				'DESC',
@@ -34,9 +38,16 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 			function(response) {
 				if (!!response.success) {
 					$scope.transactions = response.data.result;
+					for(var x in $scope.transactions) {
+						for(var y = 0; y < $scope.accounts.length; y++) {
+							if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
+								$scope.transactions[x].bankName = $scope.accounts[y].name;
+								break;
+							}
+						}
+					}
 					$scope.transactions_seq = Object.keys(response.data.result);
 					$scope.recCount = response.data.total_rows;
-
 					$rootScope.transaction_count = (parseInt(response.data.pending_count) > 0) ? parseInt(response.data.pending_count): '';
 				} else {
 					$rootScope.transaction_count = '';
@@ -53,7 +64,62 @@ app.controller('UploadsController', function($scope, $rootScope, $modal, $timeou
 			});
 	}
 
-	loadData();
+	var getUploads = function() {
+		var deferred = $q.defer();
+		var result = RestData2().getAllUploads({
+				'status':				$scope.search.status,
+				'date':					$scope.search.date,
+				'description':			$scope.search.description,
+				'bank_account_id':		$scope.search.bank_account_id,
+				'amount':				$scope.search.amount,
+				'sort':					'transaction_date',
+				'sort_dir':				'DESC',
+				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
+				'pagination_amount':	$scope.itemsPerPage
+			},
+			function(response) {
+				deferred.resolve(result);
+			},
+			function(err) {
+				deferred.resolve(err);
+			});
+
+		return deferred.promise;
+	};
+
+	$q.all([
+		Accounts.get(),
+		getUploads()
+	]).then(function(response) {
+		// load the accounts
+		$scope.accounts = Accounts.data;
+		$scope.active_accounts = Accounts.active;
+
+		// load the transaction
+		if (!!response[1].success) {
+			if (response[1].data.result) {
+				$scope.transactions = response[1].data.result;
+				for(var x in $scope.transactions) {
+					for(var y = 0; y < $scope.accounts.length; y++) {
+						if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
+							$scope.transactions[x].bankName = $scope.accounts[y].name;
+							break;
+						}
+					}
+				}
+				$scope.transactions_seq = Object.keys(response[1].data.result);
+			}
+		} else {
+			if (response[1].errors) {
+				angular.forEach(response[1].errors,
+					function(error) {
+						$scope.dataErrorMsg.push(error.error);
+					})
+			} else {
+				$scope.dataErrorMsg[0] = response[1];
+			}
+		}
+	});
 
 	var timer = null;
 	$scope.refreshData = function()

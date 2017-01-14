@@ -31,7 +31,7 @@ class dashboard_controller Extends rest_controller {
 		}
 		$categories = new category();
 		$categories->whereNotDeleted();
-		$categories->whereNotIn('id', Array(17,22));	// Do not load Transfer and Opening Balance
+		$categories->whereNotIn('id', Array(17,22));	// Do not load 'Transfer' and 'Opening Balance' categories
 		$categories->orderBy('order');
 		$categories->result();
 
@@ -46,9 +46,9 @@ class dashboard_controller Extends rest_controller {
 //						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CHECK' THEN TS.amount ELSE 0 END)" .
 //						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DEBIT' THEN TS.amount ELSE 0 END) " .
 //						"AS total_" . $category->id;
-			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CREDIT' OR T.type = 'DSLIP') THEN T.amount ELSE 0 END)" .
+			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CREDIT' OR T.type = 'DSLIP' OR T.type = 'RETURN' OR T.type = 'PAYMENT') THEN T.amount ELSE 0 END)" .
 						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CHECK' OR T.type = 'DEBIT' OR T.type = 'SALE') THEN T.amount ELSE 0 END)" .
-						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND (TS.type = 'CREDIT' OR TS.type = 'DSLIP') THEN TS.amount ELSE 0 END)" .
+						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND (TS.type = 'CREDIT' OR TS.type = 'DSLIP' OR TS.type = 'RETURN' OR TS.type = 'PAYMENT') THEN TS.amount ELSE 0 END)" .
 						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND (TS.type = 'CHECK' OR TS.type = 'DEBIT' OR TS.type = 'SALE') THEN TS.amount ELSE 0 END) " .
 						"AS total_" . $category->id;
 		}
@@ -58,7 +58,10 @@ class dashboard_controller Extends rest_controller {
 		$sql[] = implode(',', $select);
 		$sql[] = "FROM transaction T";
 		$sql[] = "LEFT JOIN transaction_split TS ON TS.transaction_id = T.id AND TS.is_deleted = 0";
-		$sql[] = "WHERE YEAR(T.transaction_date) = '" . $year . "' AND T.transaction_date <= now() AND T.is_deleted = 0";
+		$sql[] = "WHERE YEAR(T.transaction_date) = '" . $year . "' AND T.is_deleted = 0";
+		if ($year <= date('Y')) {
+			$sql[] = " AND T.transaction_date <= now()";
+		}
 
 		$transactions = new transaction();
 		$transactions->query(implode(' ', $sql));
@@ -66,7 +69,7 @@ class dashboard_controller Extends rest_controller {
 
 		$totals = array();
 		// get any repeats for this interval
-		$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', 2);
+		$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
 		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
 		if (!empty($repeats)) {
 			foreach ($repeats as $rp) {
@@ -81,9 +84,10 @@ class dashboard_controller Extends rest_controller {
 				}
 			}
 		}
-
+//print_r($repeats);
+//die;
 		// get the past forecasts for this interval
-		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', 2);
+		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
 		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
 		if (!empty($forecast)) {
 			foreach ($forecast as $fc) {
@@ -100,7 +104,7 @@ class dashboard_controller Extends rest_controller {
 		}
 		$this->ajax->setData('forecast', $totals);
 
-		$this->ajax->setData('year', date('Y'));
+		$this->ajax->setData('year', $year);//date('Y'));
 		$this->ajax->output();
 	}
 

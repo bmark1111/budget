@@ -14,14 +14,12 @@ class transaction_controller Extends rest_controller {
 	}
 
 	public function index() {
-//		$this->ajax->set_header("Forbidden", '403');
 		$this->ajax->addError(new AjaxError("403 - Forbidden (transaction/index)"));
 		$this->ajax->output();
 	}
 
 	public function loadAll() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (transaction/loadAll)"));
 			$this->ajax->output();
 		}
@@ -33,6 +31,7 @@ class transaction_controller Extends rest_controller {
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
 		$vendor				= (!empty($params['vendor'])) ? $params['vendor']: FALSE;
 		$bank_account_id	= (!empty($params['bank_account_id'])) ? $params['bank_account_id']: FALSE;
+		$category_id		= (!empty($params['category_id'])) ? $params['category_id']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
 		$sort				= (!empty($params['sort'])) ? $params['sort']: 'transaction.transaction_date';
@@ -53,6 +52,9 @@ class transaction_controller Extends rest_controller {
 		if ($bank_account_id) {
 			$transactions->where('transaction.bank_account_id', $bank_account_id);
 		}
+		if ($category_id) {
+			$transactions->where('transaction.category_id', $category_id);
+		}
 		if ($vendor) {
 			$transactions->join('vendor', 'vendor.id = transaction.vendor_id');
 			$transactions->like('vendor.name', $vendor, 'both');
@@ -65,22 +67,21 @@ class transaction_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
-		if ($transactions->numRows()) {
+//		if ($transactions->numRows()) {
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
 				isset($transaction->bank_account);
 				isset($transaction->vendor);
 			}
 			$this->ajax->setData('result', $transactions);
-		} else {
-			$this->ajax->addError(new AjaxError("No transactions found"));
-		}
+//		} else {
+//			$this->ajax->addError(new AjaxError("No transactions found"));
+//		}
 		$this->ajax->output();
 	}
 
 	public function edit() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (transaction/edit)"));
 			$this->ajax->output();
 		}
@@ -107,7 +108,6 @@ class transaction_controller Extends rest_controller {
 
 	public function save() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (transaction/save)"));
 			$this->ajax->output();
 		}
@@ -249,9 +249,10 @@ class transaction_controller Extends rest_controller {
 	public function isValidAmount() {
 		$input = file_get_contents('php://input');
 		$_POST = json_decode($input, TRUE);
-
+// TODO: for bcmul use either floatval or strval method -> intval( floatval( strval( $n * 100 )  ) / 100 );
 		if (!empty($_POST['splits'])) {
-			$split_total = intval($_POST['amount'] * 100);
+//			$split_total = intval(bcmul($_POST['amount'] * 100));
+			$split_total = intval(strval($_POST['amount'] * 100));
 			foreach ($_POST['splits'] as $split) {
 				if (empty($split['is_deleted']) || $split['is_deleted'] != '1') {
 					switch ($split['type']) {
@@ -259,17 +260,19 @@ class transaction_controller Extends rest_controller {
 						case 'CHECK':
 						case 'SALE':
 							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK' || $_POST['type'] == 'SALE') {
-								$split_total -= intval($split['amount'] * 100);
+								$split_total -= intval(strval($split['amount'] * 100));
 							} else {
-								$split_total += intval($split['amount'] * 100);
+								$split_total += intval(strval($split['amount'] * 100));
 							}
 							break;
 						case 'CREDIT':
 						case 'DSLIP':
-							if ($_POST['type'] == 'CREDIT' || $_POST['type'] == 'DSLIP') {
-								$split_total -= intval($split['amount'] * 100);
+						case 'RETURN':
+						case 'PAYMENT':
+							if ($_POST['type'] == 'CREDIT' || $_POST['type'] == 'DSLIP' OR $_POST['type'] == 'RETURN' || $_POST['type'] == 'PAYMENT') {
+								$split_total -= intval(strval($split['amount'] * 100));
 							} else {
-								$split_total += intval($split['amount'] * 100);
+								$split_total += intval(strval($split['amount'] * 100));
 							}
 							break;
 					}

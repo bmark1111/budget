@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('TransactionsController', function($q, $scope, $rootScope, $modal, $timeout, RestData2, Accounts) {
+app.controller('TransactionsController', function($q, $scope, $rootScope, $modal, $timeout, RestData2, Accounts, Categories) {
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
@@ -13,11 +13,13 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 //	$scope.opened = false;
 
 	$scope.search = {
-		currentPage:	1,
-		date:			'',
-		vendor:			'',
-		description:	'',
-		amount:			''
+		currentPage:		1,
+		date:				'',
+		vendor:				'',
+		description:		'',
+		amount:				'',
+		bank_account_id:	'',
+		category_id:		''
 	};
 
 	var loadData = function() {
@@ -31,6 +33,7 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 				'description':			$scope.search.description,
 				'amount':				$scope.search.amount,
 				'bank_account_id':		$scope.search.bank_account_id,
+				'category_id':			$scope.search.category_id,
 				'sort':					'transaction_date',
 				'sort_dir':				'DESC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
@@ -73,6 +76,7 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 				'description':			$scope.search.description,
 				'amount':				$scope.search.amount,
 				'bank_account_id':		$scope.search.bank_account_id,
+				'category_id':			$scope.search.category_id,
 				'sort':					'transaction_date',
 				'sort_dir':				'DESC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
@@ -90,16 +94,19 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 
 	$q.all([
 		Accounts.get(),
+		Categories.get(),
 		getTransactions()
 	]).then(function(response) {
 		// load the accounts
 		$scope.accounts = Accounts.data;
 		$scope.active_accounts = Accounts.active;
+		// load the categories
+		$scope.categories = Categories.data;
 
 		// load the transaction
-		if (!!response[1].success) {
-			if (response[1].data.result) {
-				$scope.transactions = response[1].data.result;
+		if (!!response[2].success) {
+			if (response[2].data.result) {
+				$scope.transactions = response[2].data.result;
 				for(var x in $scope.transactions) {
 					for(var y = 0; y < $scope.accounts.length; y++) {
 						if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
@@ -108,17 +115,17 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 						}
 					}
 				}
-				$scope.transactions_seq = Object.keys(response[1].data.result);
-				$scope.recCount = response[1].data.total_rows;
+				$scope.transactions_seq = Object.keys(response[2].data.result);
+				$scope.recCount = response[2].data.total_rows;
 			}
 		} else {
-			if (response[1].errors) {
-				angular.forEach(response[1].errors,
+			if (response[2].errors) {
+				angular.forEach(response[2].errors,
 					function(error) {
 						$scope.dataErrorMsg.push(error.error);
 					})
 			} else {
-				$scope.dataErrorMsg[0] = response[1];
+				$scope.dataErrorMsg[0] = response[2];
 			}
 		}
 	});

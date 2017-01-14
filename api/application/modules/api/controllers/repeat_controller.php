@@ -28,6 +28,9 @@ class repeat_controller Extends rest_controller {
 
 		$last_due_date		= $params['last_due_date'];
 		$name				= (!empty($params['name'])) ? $params['name']: FALSE;
+		$bank_account_id	= (!empty($params['bank_account_id'])) ? $params['bank_account_id']: FALSE;
+		$category_id		= (!empty($params['category_id'])) ? $params['category_id']: FALSE;
+		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
 		$sort				= (!empty($params['sort'])) ? $params['sort']: 'next_due_date';
@@ -44,6 +47,15 @@ class repeat_controller Extends rest_controller {
 		if ($name) {
 			$repeats->like('vendor.name', $name, 'both');
 		}
+		if ($bank_account_id) {
+			$repeats->where('transaction_repeat.bank_account_id', $bank_account_id);
+		}
+		if ($category_id) {
+			$repeats->where('transaction_repeat.category_id', $category_id);
+		}
+		if ($amount) {
+			$repeats->where('transaction_repeat.amount', $amount);
+		}
 		$repeats->select('SQL_CALC_FOUND_ROWS transaction_repeat.*', FALSE);
 		$repeats->where('transaction_repeat.is_deleted', 0);
 		$repeats->limit($pagination_amount, $pagination_start);
@@ -52,16 +64,16 @@ class repeat_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $repeats->foundRows());
 
-		if ($repeats->numRows()) {
+//		if ($repeats->numRows()) {
 			foreach ($repeats as $repeat) {
 				isset($repeat->category);
 				isset($repeat->vendor);
 				isset($repeat->bank_account);
 			}
 			$this->ajax->setData('result', $repeats);
-		} else {
-			$this->ajax->addError(new AjaxError("No repeats found"));
-		}
+//		} else {
+//			$this->ajax->addError(new AjaxError("No repeats found"));
+//		}
 		$this->ajax->output();
 	}
 

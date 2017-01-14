@@ -94,6 +94,8 @@
 						<option ng-selected="transaction.type == 'SALE'" value="SALE">Sale</option>
 						<option ng-selected="transaction.type == 'CREDIT'" value="CREDIT">Credit</option>
 						<option ng-selected="transaction.type == 'DSLIP'" value="DSLIP">Deposit</option>
+						<option ng-selected="transaction.type == 'RETURN'" value="RETURN">Return</option>
+						<option ng-selected="transaction.type == 'PAYMENT'" value="PAYMENT">Payment</option>
 					</select>
 					<span class="help-block" ng-show="validation.type">{{ validation.type }}</span>
 				</div>

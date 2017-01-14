@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestData2, Accounts) {
+app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestData2, Accounts, Categories) {
 
 	$scope.itemsPerPage	= 20;
 	$scope.maxSize		= 10;
@@ -13,9 +13,12 @@ app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestDa
 	$scope.opened = false;
 
 	$scope.search = {
-		currentPage:	1,
-		last_due_date:	false,
-		name:			''
+		currentPage:		1,
+		last_due_date:		false,
+		name:				'',
+		bank_account_id:	'',
+		category_id:		'',
+		amount:				''
 	};
 
 	var loadData = function() {
@@ -26,6 +29,9 @@ app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestDa
 		RestData2().getAllRepeats( {
 				'last_due_date':		$scope.search.last_due_date,
 				'name':					$scope.search.name,
+				'bank_account_id':		$scope.search.bank_account_id,
+				'category_id':			$scope.search.category_id,
+				'amount':				$scope.search.amount,
 				'sort':					'next_due_date',
 				'sort_dir':				'ASC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
@@ -62,6 +68,9 @@ app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestDa
 		var result = RestData2().getAllRepeats({
 				'last_due_date':		$scope.search.last_due_date,
 				'name':					$scope.search.name,
+				'bank_account_id':		$scope.search.bank_account_id,
+				'category_id':			$scope.search.category_id,
+				'amount':				$scope.search.amount,
 				'sort':					'next_due_date',
 				'sort_dir':				'ASC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
@@ -77,19 +86,21 @@ app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestDa
 		return deferred.promise;
 	};
 
-//	loadData();
 	$q.all([
 		Accounts.get(),
+		Categories.get(),
 		getRepeats()
 	]).then(function(response) {
 		// load the accounts
 		$scope.accounts = Accounts.data;
 		$scope.active_accounts = Accounts.active;
+		// load the categories
+		$scope.categories = Categories.data;
 
 		// load the transaction
-		if (!!response[1].success) {
-			if (response[1].data.result) {
-				$scope.repeats = response[1].data.result;
+		if (!!response[2].success) {
+			if (response[2].data.result) {
+				$scope.repeats = response[2].data.result;
 				for(var x in $scope.repeats) {
 					for(var y = 0; y < $scope.accounts.length; y++) {
 						if ($scope.accounts[y].id == $scope.repeats[x].bank_account_id) {
@@ -98,16 +109,16 @@ app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestDa
 						}
 					}
 				}
-				$scope.repeats_seq = Object.keys(response[1].data.result);
+				$scope.repeats_seq = Object.keys(response[2].data.result);
 			}
 		} else {
-			if (response[1].errors) {
-				angular.forEach(response[1].errors,
+			if (response[2].errors) {
+				angular.forEach(response[2].errors,
 					function(error) {
 						$scope.dataErrorMsg.push(error.error);
 					})
 			} else {
-				$scope.dataErrorMsg[0] = response[1];
+				$scope.dataErrorMsg[0] = response[2];
 			}
 		}
 	});

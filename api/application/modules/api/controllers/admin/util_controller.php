@@ -145,6 +145,8 @@ class util_controller Extends EP_Controller {
 						case 'SALE':
 							$amount -= $transaction->amount;
 							break;
+						case 'RETURN':
+						case 'PAYMENT':
 						case 'CREDIT':
 						case 'DSLIP':
 							$amount += $transaction->amount;

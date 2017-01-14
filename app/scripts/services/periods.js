@@ -452,10 +452,13 @@ services.periods.prototype.addTransactionToTotals = function(transaction, output
 		switch (transaction.type) {
 			case 'DEBIT':
 			case 'CHECK':
+			case 'SALE':
 				transaction.bank_account_balance = parseFloat(this.bank_account_balance[transaction.bank_account_id]) - parseFloat(transaction.amount);
 				break;
 			case 'CREDIT':
 			case 'DSLIP':
+			case 'RETURN':
+			case 'PAYMENT':
 				transaction.bank_account_balance = parseFloat(this.bank_account_balance[transaction.bank_account_id]) + parseFloat(transaction.amount);
 				break;
 		}
@@ -582,6 +585,8 @@ services.periods.prototype.addToTotals = function(data, output) {
 	switch (data.type) {
 		case 'CREDIT':
 		case 'DSLIP':
+		case 'RETURN':
+		case 'PAYMENT':
 			output.interval_total += amount;
 			output.running_total += amount;
 			if (output.totals[category_id]) {
@@ -592,6 +597,7 @@ services.periods.prototype.addToTotals = function(data, output) {
 			break;
 		case 'DEBIT':
 		case 'CHECK':
+		case 'SALE':
 			output.interval_total -= amount;
 			output.running_total -= amount;
 			if (output.totals[category_id]) {

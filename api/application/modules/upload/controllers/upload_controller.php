@@ -57,19 +57,22 @@ if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 									$transaction->type = (floatval($params[$map->offset]) < 0) ? 'CREDIT': 'DEBIT';
 									$transaction[$map->field] = (floatval($params[$map->offset]) < 0) ? -floatval($params[$map->offset]): floatval($params[$map->offset]);
 									break;
-								case 'DEBIT':
-									if (strlen($params[$map->offset]) > 0) {
-										$transaction->type = 'DEBIT';
-										$transaction[$map->field] = floatval($params[$map->offset]);
-									}
-									break;
+//								case 'DEBIT':
+//									if (strlen($params[$map->offset]) > 0) {
+//										$transaction->type = 'DEBIT';
+//										$transaction[$map->field] = floatval($params[$map->offset]);
+//									}
+//									break;
 								case 'SALE':
 									$transaction->type = (floatval($params[$map->offset]) < 0) ? 'SALE': 'PAYMENT';
 									$transaction[$map->field] = (floatval($params[$map->offset]) < 0) ? -floatval($params[$map->offset]): floatval($params[$map->offset]);
 									break;
+								case 'DEBIT':
 								case 'CREDIT':
+								case 'RETURN':
+								case 'PAYMENT':
 									if (strlen($params[$map->offset]) > 0) {
-										$transaction->type = 'CREDIT';
+										$transaction->type = $map->type;//'CREDIT';
 										$transaction[$map->field] = floatval($params[$map->offset]);
 									}
 									break;

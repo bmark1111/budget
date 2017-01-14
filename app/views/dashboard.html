@@ -1,4 +1,4 @@
-<div class="container-fluid"><!-- viewport-width>-->
+<div class="container-fluid">
 	<h1 class="page-header">Dashboard</h1>
 	<div ng-show="dashboard.error">{{ dashboard.error }}</div>
 	<div class="row">
@@ -12,7 +12,7 @@
 		<tab heading="Category Yotals YTD">
 			<div class="row">
 				<div class="col-md-3">
-					<input type="text" ng-model="dashboard.ytdYear" placeholder="Enter Year" ng-blur="getYTD()" />
+					<select ng-options="year as year for year in dashboard.ytdYear" ng-model="dashboard.selectedYear" ng-change="getYTD()"></Select>
 				</div>
 			</div>
 			<div class="row">
@@ -23,11 +23,11 @@
 						<div class="col-md-3"><span class="pull-right"><b>Forecast</b></span></div>
 						<div class="col-md-3"><span class="pull-right"><b>Difference</b></span></div>
 					</div>
-					<div ng-repeat="ytdTotal in dashboard.ytdTotals">
+					<div ng-repeat="ytdTotal in dashboard.ytdTotals[dashboard.selectedIndex]">
 						<div class="row">
-							<div class="col-md-4">{{ytdTotal.name}}</div>
-							<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id)"><span class="pull-right">{{ytdTotal.total | currency}}</span></div>
-							<div class="col-md-3"><span class="pull-right forecast_amount">{{ytdTotal.forecast | currency}}</span></div>
+							<div class="col-md-4">{{ ytdTotal.name }}</div>
+							<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id, ytdTotal.year)"><span class="pull-right">{{ ytdTotal.total | currency }}</span></div>
+							<div class="col-md-3"><span class="pull-right forecast_amount">{{ ytdTotal.forecast | currency }}</span></div>
 							<div class="col-md-3"><span class="pull-right" ng-class="{'overbudget':(ytdTotal.total - ytdTotal.forecast) < 0}"><b>{{ ytdTotal.total - ytdTotal.forecast | currency }}</b></span></div>
 						</div>
 					</div>
@@ -63,11 +63,43 @@
 				</div>
 			</div>
 		</tab>
+		<tab heading="Year to Year Comparison">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="row">
+						<div class="col-md-4"><b>Category</b></div>
+						<div class="col-md-2" ng-repeat="year in dashboard.ytdYear track by $index">
+							<span class="pull-right"><b>{{ year }}</b></span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="row" ng-repeat="category in dashboard.ytdTotals[0]">
+								<div class="col-md-12">{{ category.name }}</div>
+							</div>
+						</div>
+						<div class="col-md-2" ng-repeat="ytdTotals in dashboard.ytdTotals track by $index">
+							<div class="row" ng-repeat="ytdTotal in ytdTotals">
+								<div class="col-md-12" ng-if="!ytdTotal.future"><span class="pull-right">&nbsp;{{ ytdTotal.total | currency }}</span></div>
+								<div class="col-md-12" ng-if="ytdTotal.future"><span class="pull-right forecast_amount"">&nbsp;{{ (ytdTotal.total + ytdTotal.forecast) | currency  }}</span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</tab>
 		<tab heading="Upcoming forecast payments">
 			<div class="row">
-				<div class="col-md-12">
-					<h3>Upcoming forecast payments</h3>
-				</div>
+				<div class="col-md-2"><span class="pull-left"><b>Date</b></span></div>
+				<div class="col-md-3"><span class="pull-left"><b>Description</b></span></div>
+				<div class="col-md-2"><span class="pull-right"><b>Debit</b></span></div>
+				<div class="col-md-2"><span class="pull-right"><b>Credit</b></span></div>
+			</div>
+			<div class="row" ng-repeat="idx in dashboard.repeats_seq">
+				<div class="col-md-2">{{ dashboard.repeats[idx].next_due_date|date:'EEE MMM dd, yyyy' }}</div>
+				<div class="col-md-3">{{ dashboard.repeats[idx].description }}</div>
+				<div class="col-md-2"><span ng-if="dashboard.repeats[idx].type == 'CHECK' || dashboard.repeats[idx].type == 'DEBIT' || dashboard.repeats[idx].type == 'SALE'" class="pull-right">{{ dashboard.repeats[idx].amount|currency }}</span></div>
+				<div class="col-md-2"><span ng-if="dashboard.repeats[idx].type == 'CREDIT' || dashboard.repeats[idx].type == 'DSLIP' || dashboard.repeats[idx].type == 'RETURN' || dashboard.repeats[idx].type == 'PAYMENT'" class="pull-right">{{ dashboard.repeats[idx].amount|currency }}</span></div>
 			</div>
 		</tab>
 	</tabset>

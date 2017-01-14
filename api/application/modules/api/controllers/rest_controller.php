@@ -178,6 +178,8 @@ class rest_controller Extends EP_Controller {
 								switch ($split->type) {
 									case 'DSLIP':
 									case 'CREDIT':
+									case 'RETURN':
+									case 'PAYMENT':
 										$amount = $split->amount;
 										break;
 									case 'DEBIT':
@@ -208,6 +210,8 @@ class rest_controller Extends EP_Controller {
 							switch ($transaction->type) {
 								case 'DSLIP':
 								case 'CREDIT':
+								case 'RETURN':
+								case 'PAYMENT':
 									$amount = $transaction->amount;
 									break;
 								case 'DEBIT':
@@ -363,6 +367,8 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 								switch ($fc->type) {
 									case 'DSLIP':
 									case 'CREDIT':
+									case 'RETURN':
+									case 'PAYMENT':
 										$data['totals'][$category->id] += $fc->amount;
 										// update the bank totals here and return as part of $data
 										if (empty($data['adjustments'][$category->id][$fc->bank_account_id])) {
@@ -492,6 +498,8 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 								break;
 							case 'CREDIT':
 							case 'DSLIP':
+							case 'RETURN':
+							case 'PAYMENT':
 								$bank_account_balances[$transaction->bank_account_id] += $transaction->amount;
 								break;
 						}

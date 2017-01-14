@@ -117,6 +117,8 @@ $this->ajax->setData('ed', $ed);
 							break;
 						case 'CREDIT':
 						case 'DSLIP':
+						case 'RETURN':
+						case 'PAYMENT':
 							$balance_forward += ($tr->bank_account_balance - $tr->amount);
 							break;
 					}

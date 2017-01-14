@@ -28,6 +28,8 @@ class forecast_controller Extends rest_controller {
 		$last_due_date		= $params['last_due_date'];
 		$first_due_date		= (!empty($params['first_due_date'])) ? $params['first_due_date']: FALSE;
 		$description		= (!empty($params['description'])) ? $params['description']: FALSE;
+		$bank_account_id	= (!empty($params['bank_account_id'])) ? $params['bank_account_id']: FALSE;
+		$category_id		= (!empty($params['category_id'])) ? $params['category_id']: FALSE;
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
@@ -37,19 +39,25 @@ class forecast_controller Extends rest_controller {
 		$forecasts = new forecast();
 		if ($last_due_date == 'false') {
 			$forecasts->groupStart();
-			$forecasts->orWhere('last_due_date IS NULL', FALSE, FALSE);
-			$forecasts->orWhere('last_due_date >= now()', FALSE, FALSE);
+			$forecasts->orWhere('forecast.last_due_date IS NULL', FALSE, FALSE);
+			$forecasts->orWhere('forecast.last_due_date >= now()', FALSE, FALSE);
 			$forecasts->groupEnd();
 		}
 		if ($first_due_date) {
 			$first_due_date = date('Y-m-d', strtotime($first_due_date));
-			$forecasts->where('first_due_date', $first_due_date);
+			$forecasts->where('forecast.first_due_date', $first_due_date);
 		}
 		if ($description) {
 			$forecasts->like('description', $description);
 		}
+		if ($bank_account_id) {
+			$forecasts->where('forecast.bank_account_id', $bank_account_id);
+		}
+		if ($category_id) {
+			$forecasts->where('forecast.category_id', $category_id);
+		}
 		if ($amount) {
-			$forecasts->where('amount', $amount);
+			$forecasts->where('forecast.amount', $amount);
 		}
 		$forecasts->select('SQL_CALC_FOUND_ROWS *', FALSE);
 		$forecasts->whereNotDeleted();
@@ -59,15 +67,15 @@ class forecast_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $forecasts->foundRows());
 
-		if ($forecasts->numRows()) {
+//		if ($forecasts->numRows()) {
 			foreach ($forecasts as $forecast) {
 				isset($forecast->category);
 				isset($forecast->bank_account);
 			}
 			$this->ajax->setData('result', $forecasts);
-		} else {
-			$this->ajax->addError(new AjaxError("No forecasts found"));
-		}
+//		} else {
+//			$this->ajax->addError(new AjaxError("No forecasts found"));
+//		}
 		$this->ajax->output();
 	}
 

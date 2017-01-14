@@ -28,8 +28,11 @@ app.directive("splitTran", function () {
 										'<option>Select Type</option>' +
 										'<option ng-selected="t.type == \'CHECK\'" value="CHECK">Check</option>' +
 										'<option ng-selected="t.type == \'DEBIT\'" value="DEBIT">Debit</option>' +
+										'<option ng-selected="t.type == \'SALE\'" value="SALE">Sale</option>' +
 										'<option ng-selected="t.type == \'CREDIT\'" value="CREDIT">Credit</option>' +
 										'<option ng-selected="t.type == \'DSLIP\'" value="DSLIP">Deposit</option>' +
+										'<option ng-selected="t.type == \'RETURN\'" value="RETURN">Return</option>' +
+										'<option ng-selected="t.type == \'PAYMENT\'" value="PAYMENT">Payment</option>' +
 									'</select>' +
 									'<span class="help-block" ng-show="validation.splits.type[$index]">{{ validation.splits.type[$index] }}</span>' +
 								'</td>' +
@@ -132,10 +135,13 @@ app.directive("splitTran", function () {
 								switch (split.type) {
 									case 'DEBIT':
 									case 'CHECK':
+									case 'SALE':
 										split_total -= parseFloat(split.amount);
 										break;
 									case 'CREDIT':
 									case 'DSLIP':
+									case 'RETURN':
+									case 'PAYMENT':
 										split_total += parseFloat(split.amount);
 										break;
 								}
@@ -149,15 +155,18 @@ app.directive("splitTran", function () {
 					switch (scope.transaction.type) {
 						case 'CREDIT':
 						case 'DSLIP':
+						case 'RETURN':
+						case 'PAYMENT':
 							transaction_amount = parseFloat(scope.transaction.amount);
 							split_total = parseFloat(split_total);
-							new_amount_type = 'DEBIT';
+							new_amount_type = scope.transaction.type;//'DEBIT';
 							break;
 						case 'DEBIT':
 						case 'CHECK':
+						case 'SALE':
 							transaction_amount = parseFloat(scope.transaction.amount);
 							split_total = -parseFloat(split_total);
-							new_amount_type = 'CREDIT';
+							new_amount_type = scope.transaction.type;//'CREDIT';
 						break;
 					}
 					if (transaction_amount != split_total.toFixed(2)) {

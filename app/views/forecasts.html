@@ -1,17 +1,14 @@
-<!--<ng-include src="'app/views/templates/deleteModal.html'"></ng-include>
-<ng-include src="'app/views/templates/editForecastModal.html'"></ng-include>-->
-
 <div class="container-fluid">
 	<h1 class="page-header">Forecasts</h1>
 	<div ng-if="error">{{error}}</div>
 	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
 			<div class="row">
-				<div class="col-md-2">
-					<label for="last_due_date">Show All Forecasts</label>
+				<div class="col-sm-1">
+					<label for="last_due_date">All</label>
 					<input type="checkbox" class="form-control" name="last_due_date" ng-model="search.last_due_date" ng-change="refreshData()" />
 				</div>
-				<div class="col-md-2">
+				<div class="col-sm-2">
 					<label for="first_due_date">First Due Date</label>
 					<p class="input-group">
 						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="first_due_date" is-open="$parent.opened" ng-model="search.first_due_date" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true"  min-date="minDate" close-text="Close" ng-change="refreshData()" />
@@ -21,23 +18,27 @@
 					</p>
 				</div>
 				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="description">Description</label>
-						<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
-					</div>
+					<label for="description">Description</label>
+					<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
 				</div>
 				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="amount">Amount</label>
-						<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
-					</div>
+					<label for="category">Category</label>
+					<select class="form-control" name="category" ng-model="search.category_id" ng-options="category.id as category.name for category in categories" ng-change="refreshData()">
+						<option value="">Select Category</option>
+					</select>
 				</div>
-				<div class="col-md-2" style="padding-top:20px;">
-					<div class="form-group">
-						<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addForecast()">
-							Add Forecast
-						</button>
-					</div>
+				<div class="col-sm-2">
+					<label for="account">Account</label>
+					<select class="form-control" name="bank_account_id" ng-model="search.bank_account_id" ng-options="account.id as account.name for account in active_accounts" ng-change="refreshData()">
+						<option value="">Select Account</option>
+					</select>
+				</div>
+				<div class="col-sm-1">
+					<label for="amount">Amount</label>
+					<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
+				</div>
+				<div class="col-sm-1" style="padding-top:20px;">
+					<button type="button" class="btn-sm btn-primary" ng-model="singleModel" ng-click="addForecast()">New</button>
 				</div>
 			</div>
 		</form>
@@ -60,21 +61,24 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="idx in forecasts_seq">
+				<tr ng-show="forecasts_seq.length > 0" ng-repeat="idx in forecasts_seq">
 					<td>{{ forecasts[idx].first_due_date|date:'EEE MMM dd, yyyy' }}</td>
 					<td>{{ forecasts[idx].last_due_date|date:'EEE MMM dd, yyyy' }}</td>
 					<td><span class="pull-left">{{ forecasts[idx].description }}</span></td>
-					<td>{{ forecasts[idx].bankName }}</td><!-- {{forecasts[idx].bank_account.name}}</td>-->
+					<td>{{ forecasts[idx].bankName }}</td>
 					<td>{{ forecasts[idx].category.name }}</td>
 					<td>{{ forecasts[idx].every }}</td>
 					<td>{{ forecasts[idx].every_unit }}</td>
 					<td>{{ forecasts[idx].every_on }}</td>
 					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CHECK' || forecasts[idx].type == 'DEBIT' || forecasts[idx].type == 'SALE'">{{forecasts[idx].amount|currency}}</span></td>
-					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CREDIT' || forecasts[idx].type == 'DSLIP'">{{forecasts[idx].amount|currency}}</span></td>
+					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CREDIT' || forecasts[idx].type == 'DSLIP' || forecasts[idx].type == 'RETURN' || forecasts[idx].type == 'PAYMENT'">{{forecasts[idx].amount|currency}}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editForecast(forecasts[idx].id)" style="cursor:pointer;"></span>
 						<span class="glyphicon glyphicon-trash" ng-click="deleteForecast(forecasts[idx].id)" style="cursor:pointer;"></span>
 					</td>
+				</tr>
+				<tr ng-show="forecasts_seq.length == 0">
+					<td colspan="7">No forecasts found</td>
 				</tr>
 			</tbody>
 		</table>

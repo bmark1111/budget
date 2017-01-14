@@ -29,9 +29,10 @@ class upload_controller Extends rest_controller {
 	}
 	
 	private function _loadAll($params) {
-		$status				= (!empty($params['status'])) ? $params['status']: FALSE;
+		$status				= $params['status'];
 		$date				= (!empty($params['date'])) ? date('Y-m-d', strtotime($params['date'])): FALSE;
 		$description		= (!empty($params['description'])) ? $params['description']: FALSE;
+		$bank_account_id	= (!empty($params['bank_account_id'])) ? $params['bank_account_id']: FALSE;
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
@@ -41,15 +42,17 @@ class upload_controller Extends rest_controller {
 		$transactions = new transaction_upload();
 		$transactions->select('SQL_CALC_FOUND_ROWS *', FALSE);
 		$transactions->whereNotDeleted();
-		if ($status) {
-			$status -= 1;
-			$transactions->where('status', $status);
+		if ($status == 'false') {
+			$transactions->where('status', 0);
 		}
 		if ($date) {
 			$transactions->where('transaction_date', $date);
 		}
 		if ($description) {
 			$transactions->like('description', $description);
+		}
+		if ($bank_account_id) {
+			$transactions->where('bank_account_id', $bank_account_id);
 		}
 		if ($amount) {
 			$transactions->where('amount', $amount);
@@ -61,7 +64,7 @@ class upload_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
-		if ($transactions->numRows()) {
+//		if ($transactions->numRows()) {
 			foreach ($transactions as $transaction) {
 				isset($transaction->category);
 				isset($transaction->bank_account->bank);
@@ -75,9 +78,9 @@ class upload_controller Extends rest_controller {
 			$transactions->where('status', 0);
 			$transactions->row();
 			$this->ajax->setData('pending_count', $transactions->count);
-		} else {
-			$this->ajax->addError(new AjaxError("No uploads found"));
-		}
+//		} else {
+//			$this->ajax->addError(new AjaxError("No uploads found"));
+//		}
 		$this->ajax->output();
 	}
 
@@ -107,7 +110,9 @@ class upload_controller Extends rest_controller {
 			switch($uploaded->type) {
 				case 'CREDIT':
 				case 'DSLIP':
-					$transactions->whereIn('type', array('DSLIP', 'CREDIT'));
+				case 'RETURN':
+				case 'PAYMENT':
+					$transactions->whereIn('type', array('DSLIP', 'CREDIT', 'RETURN', 'PAYMENT'));
 					break;
 				case 'DEBIT':
 				case 'CHECK':
@@ -382,7 +387,8 @@ log_message('error', '---------------------------------------------------------'
 		$_POST = json_decode($input, TRUE);
 
 		if (!empty($_POST['splits'])) {
-			$split_total = intval($_POST['amount'] * 100);
+// TODO: for bcmul use either floatval or strval method -> intval( floatval( strval( $n * 100 )  ) / 100 );
+			$split_total = intval(strval($_POST['amount'] * 100));
 			foreach ($_POST['splits'] as $split) {
 				if (empty($split['is_deleted']) || $split['is_deleted'] != '1') {
 					switch ($split['type']) {
@@ -390,17 +396,19 @@ log_message('error', '---------------------------------------------------------'
 						case 'CHECK':
 						case 'SALE':
 							if ($_POST['type'] == 'DEBIT' || $_POST['type'] == 'CHECK' || $_POST['type'] == 'SALE') {
-								$split_total -= intval($split['amount'] * 100);
+								$split_total -= intval(strval($split['amount'] * 100));
 							} else {
-								$split_total += intval($split['amount'] * 100);
+								$split_total += intval(strval($split['amount'] * 100));
 							}
 							break;
 						case 'CREDIT':
 						case 'DSLIP':
-							if ($_POST['type'] == 'CREDIT' || $_POST['type'] == 'DSLIP') {
-								$split_total -= intval($split['amount'] * 100);
+						case 'RETURN':
+						case 'PAYMENT':
+							if ($_POST['type'] == 'CREDIT' || $_POST['type'] == 'DSLIP' OR $_POST['type'] == 'RETURN' || $_POST['type'] == 'PAYMENT') {
+								$split_total -= intval(strval($split['amount'] * 100));
 							} else {
-								$split_total += intval($split['amount'] * 100);
+								$split_total += intval(strval($split['amount'] * 100));
 							}
 							break;
 					}

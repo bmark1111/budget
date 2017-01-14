@@ -14,42 +14,30 @@
 					</p>
 				</div>
 				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="vendor">Vendor</label>
-						<input type="text" class="form-control input-sm search" name="vendor" data-length="4" ng-model="search.vendor" ng-change="refreshData()" />
-					</div>
-				</div>
-<!--				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="description">Description</label>
-						<input type="text" class="form-control input-sm search" name="description" data-length="4" ng-model="search.description" ng-change="refreshData()" />
-					</div>
-				</div>-->
-				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="amount">Amount</label>
-						<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
-					</div>
+					<label for="vendor">Vendor</label>
+					<input type="text" class="form-control input-sm search" name="vendor" data-length="4" ng-model="search.vendor" ng-change="refreshData()" />
 				</div>
 				<div class="col-sm-2">
-					<div class="form-group">
-						<label for="account">Account</label>
-						<select class="form-control" name="bank_account_id" ng-model="search.bank_account_id" ng-options="account.id as account.name for account in active_accounts" ng-change="refreshData()"></select>
-					</div>
+					<label for="category">Category</label>
+					<select class="form-control" name="category" ng-model="search.category_id" ng-options="category.id as category.name for category in categories" ng-change="refreshData()">
+						<option value="">Select Category</option>
+					</select>
 				</div>
-				<div class="col-sm-2" style="padding-top:20px;">
-					<div class="form-group">
-						<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="addTransaction()">
-							Add Transaction
-						</button>
-					</div>
+				<div class="col-sm-2">
+					<label for="account">Account</label>
+					<select class="form-control" name="bank_account_id" ng-model="search.bank_account_id" ng-options="account.id as account.name for account in active_accounts" ng-change="refreshData()">
+						<option value="">Select Account</option>
+					</select>
 				</div>
-				<div class="col-sm-2" style="padding-top:20px;">
-					<div class="form-group">
-						<button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="uploadTransactions()">
-							Upload Transactions
-						</button>
-					</div>
+				<div class="col-sm-1">
+					<label for="amount">Amount</label>
+					<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
+				</div>
+				<div class="col-sm-1" style="padding-top:25px;">
+					<button type="button" class="btn-sm btn-primary" ng-model="singleModel" ng-click="addTransaction()">New</button>
+				</div>
+				<div class="col-sm-1" style="padding-top:25px;">
+					<button type="button" class="btn-sm btn-primary" ng-model="singleModel" ng-click="uploadTransactions()">Upload</button>
 				</div>
 			</div>
 		</form>
@@ -69,7 +57,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat-start="idx in transactions_seq">
+				<tr ng-show="transactions_seq.length > 0" ng-repeat-start="idx in transactions_seq">
 					<td rowspan="2">
 						{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}
 						<span ng-if="transactions[idx].is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
@@ -82,20 +70,23 @@
 					<td ng-if="!transactions[idx].category_id" colspan="2">
 						<span class="pull-left">--Split--</span>
 					</td>
-					<td rowspan="2">{{ transactions[idx].bankName }}</td><!-- {{ transactions[idx].bank_account.name }}</td>-->
+					<td rowspan="2">{{ transactions[idx].bankName }}</td>
 					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT' || transactions[idx].type == 'SALE'">{{ transactions[idx].amount|currency }}</span></td>
-					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP'">{{ transactions[idx].amount|currency }}</span></td>
+					<td rowspan="2"><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP' || transactions[idx].type == 'RETURN' || transactions[idx].type == 'PAYMENT'">{{ transactions[idx].amount|currency }}</span></td>
 					<td rowspan="2"><span class="pull-right">{{ transactions[idx].bank_account_balance|currency }}</span></td>
 					<td rowspan="2" class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editTransaction(transactions[idx].id)" style="cursor:pointer;" title="Edit Transaction ?"></span>
 						<span class="glyphicon glyphicon-trash" ng-if="is_admin || (!transactions[idx].reconciled_date)" ng-click="deleteTransaction(transactions[idx].id)" style="cursor:pointer;" title="Delete Transaction ?"></span>
 					</td>
 				</tr>
-				<tr ng-repeat-end="">
+				<tr ng-show="transactions_seq.length > 0" ng-repeat-end="">
 					<td colspan="2" style="font-size: 10px;">
 						<span class="pull-left">{{ transactions[idx].description }}</span>
 						<span ng-if="transactions[idx].notes"> - <em>{{ transactions[idx].notes }}</em></span>
 					</td>
+				</tr>
+				<tr ng-show="transactions_seq.length == 0">
+					<td colspan="7">No transactions found</td>
 				</tr>
 			</tbody>
 		</table>
