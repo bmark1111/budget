@@ -98,7 +98,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 
 	var findCreditTransInTransfer = function(transaction, transactions) {
 		for(var x in transactions) {
-			if (transactions[x].type === 'CREDIT' && transactions[x].amount === transaction.amount && transactions[x].vendor_id == transaction.vendor.id) {
+			if ((transactions[x].type === 'CREDIT' || transactions[x].type === 'PAYMENT') && transactions[x].amount === transaction.amount && transactions[x].vendor_id == transaction.vendor.id) {
 				for(var y = 0; y < $scope.accounts.length; y++) {
 					if ($scope.accounts[y].id == transactions[x].bank_account_id) {
 						return { 'name': $scope.accounts[y].name,

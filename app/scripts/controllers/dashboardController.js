@@ -11,8 +11,9 @@ function($q, $scope, RestData2, Categories, Periods) {
 	this.ytdTotals = [];
 	this.transactions = false;
 	this.transactions_seq = false;
-	this.repeats = false;
-	this.repeats_seq = false;
+	this.repeats = [];
+//	this.repeats_seq = false;
+	this.now = new Date();
 
 	var getYTDTotals = function(year) {
 		var deferred = $q.defer();
@@ -63,9 +64,18 @@ function($q, $scope, RestData2, Categories, Periods) {
 		}
 		// load repeats
 		if (response[2].success) {
-			self.repeats = response[2].data.result;
-			self.repeats_seq = Object.keys(response[2].data.result);
-console.log(self.repeats)
+			var repeats = response[2].data.result;
+			var repeats_seq = Object.keys(response[2].data.result);
+			var due = [];
+			self.repeats = [];
+			for (var x = 0; x < repeats_seq.length; x++) {
+				var idx = repeats_seq[x];
+				if (!due[repeats[idx].category_id] || due[repeats[idx].category_id] != repeats[idx].vendor_id) {
+					due[repeats[idx].category_id] = repeats[idx].vendor_id
+					repeats[idx].dueDate = new Date(repeats[idx].next_due_date + 'T00:00:00.000Z');
+					self.repeats.push(repeats[idx]);
+				}
+			}
 		}
 		// load yearly totals
 		var now = new Date();
@@ -81,7 +91,7 @@ console.log(self.repeats)
 
 					self.ytdTotals[ytdIndex] = [];
 					angular.forEach(self.categories,function(category, key) {
-						if (category.id != 17 && category.id != 22) {	// Do not load Transfer and Opening Balance
+						if (category.id != 17 && category.id != 22) {	// Do not show Transfer's and Opening Balance's
 							self.ytdTotals[ytdIndex].push({id:			category.id,
 															name:		category.name,
 															total:		Number(response.data.result['total_' + category.id]),

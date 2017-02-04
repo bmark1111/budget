@@ -149,3 +149,7 @@ table.dashboard tbody a {
 	z-index:1051 !important;
 }
 
+div.overdue {
+	color:red;
+	font-weight:bold;
+}

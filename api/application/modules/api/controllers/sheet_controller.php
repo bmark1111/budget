@@ -62,9 +62,9 @@ class sheet_controller Extends rest_controller {
 				if ($interval == 0) {
 					$start->modify('first day of this month');
 					$end->modify('first day of this month');
-					$start_month = $this->budget_interval * ($this->sheet_views - 1);				// go back 'sheet views'
+					$start_month = $this->budget_interval * ($this->sheet_views);// - 1);				// go back 'sheet views'
 					$start->sub(new DateInterval("P" . $start_month . "M"));
-					$end_month = $this->budget_interval * ($this->sheet_views + 1);					// go forward 'sheet views'
+					$end_month = $this->budget_interval * ($this->sheet_views);// + 1);					// go forward 'sheet views'
 					$end->add(new DateInterval("P" . $end_month . "M"));
 				} else {
 					$start_date = explode('T', $start_date);

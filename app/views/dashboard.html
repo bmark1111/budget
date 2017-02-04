@@ -92,14 +92,14 @@
 			<div class="row">
 				<div class="col-md-2"><span class="pull-left"><b>Date</b></span></div>
 				<div class="col-md-3"><span class="pull-left"><b>Description</b></span></div>
-				<div class="col-md-2"><span class="pull-right"><b>Debit</b></span></div>
-				<div class="col-md-2"><span class="pull-right"><b>Credit</b></span></div>
+				<div class="col-md-1"><span class="pull-right"><b>Debit</b></span></div>
+				<div class="col-md-1"><span class="pull-right"><b>Credit</b></span></div>
 			</div>
-			<div class="row" ng-repeat="idx in dashboard.repeats_seq">
-				<div class="col-md-2">{{ dashboard.repeats[idx].next_due_date|date:'EEE MMM dd, yyyy' }}</div>
-				<div class="col-md-3">{{ dashboard.repeats[idx].description }}</div>
-				<div class="col-md-2"><span ng-if="dashboard.repeats[idx].type == 'CHECK' || dashboard.repeats[idx].type == 'DEBIT' || dashboard.repeats[idx].type == 'SALE'" class="pull-right">{{ dashboard.repeats[idx].amount|currency }}</span></div>
-				<div class="col-md-2"><span ng-if="dashboard.repeats[idx].type == 'CREDIT' || dashboard.repeats[idx].type == 'DSLIP' || dashboard.repeats[idx].type == 'RETURN' || dashboard.repeats[idx].type == 'PAYMENT'" class="pull-right">{{ dashboard.repeats[idx].amount|currency }}</span></div>
+			<div class="row" ng-repeat="repeat in dashboard.repeats" ng-class="{'overdue': repeat.dueDate <= dashboard.now}">
+				<div class="col-md-2">{{ repeat.next_due_date|date:'EEEE MMM dd, yyyy' }}</div>
+				<div class="col-md-3">{{ repeat.description }}</div>
+				<div class="col-md-1"><span ng-if="repeat.type == 'CHECK' || repeat.type == 'DEBIT' || repeat.type == 'SALE'" class="pull-right">{{ repeat.amount|currency }}</span></div>
+				<div class="col-md-1"><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></div>
 			</div>
 		</tab>
 	</tabset>
