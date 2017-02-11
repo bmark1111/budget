@@ -39,6 +39,13 @@ function($q, $scope, $modalInstance, RestData2, params, Categories, Accounts, Pe
 		if (!!response[2].success) {
 			if (response[2].data.result) {
 				$scope.forecast = response[2].data.result;
+
+				var dt = $scope.forecast.first_due_date.split('-');
+				$scope.forecast.first_due_date = new Date(dt[0], --dt[1], dt[2]);
+				if ($scope.forecast.last_due_date) {
+					dt = $scope.forecast.last_due_date.split('-');
+					$scope.forecast.last_due_date = new Date(dt[0], --dt[1], dt[2]);
+				}
 			}
 //		} else {
 //			if (response[2].errors) {

@@ -46,13 +46,56 @@ services.periods.prototype.bank_account_balance = Array();
  */
 services.periods.prototype.getTransactions = function () {
 
-	var self = this;
-
 	var deferred = this.$q.defer();
 
 	if (this.data.length === 0) {
+		var budget_interval = 0;
+		switch (this.$localStorage.budget_mode) {
+			case 'bi-weekly':
+				budget_interval = 7;
+			case 'weekly':
+				budget_interval += 7;
+				var budget_start_date = new Date(this.$localStorage.budget_start_date);
+				var d1 = budget_start_date.getDay();
+				var sd = new Date();
+				var d2 = sd.getDay();
+
+				var day = (d1 > d2) ? (d1-d2): (d2-d1);
+				sd.setDate(sd.getDate() + day - ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
+
+				var ed = new Date();
+				ed.setDate(ed.getDate() + day + ((this.$localStorage.sheet_views/2) * budget_interval));
+				break;
+			case 'semi-monthy':
+				budget_interval = 1;
+				//
+				break;
+			case 'monthly':
+				var sd = new Date();
+				var ed = new Date();
+
+				sd.setMonth(sd.getMonth() - (this.$localStorage.sheet_views/2) + 1);
+				sd.setDate(1);
+
+				ed.setMonth(ed.getMonth() + (this.$localStorage.sheet_views/2) + 1);
+				ed.setDate(0);
+				break;
+		}
+		sd.setHours(0);
+		sd.setMinutes(0);
+		sd.setSeconds(0);
+		sd.setMilliseconds(0);
+		ed.setHours(0);
+		ed.setMinutes(0);
+		ed.setSeconds(0);
+		ed.setMilliseconds(0);
+
 		this.fetching = true;
-		this.RestData2().getSheetTransactions({ interval: 0 }, function (response) {
+		this.RestData2().getSheetTransactions({
+			interval:	0,
+			start_date:	sd,
+			end_date:	ed
+		}, function (response) {
 			console.log("transactions got");
 			deferred.resolve(response);
 		},
@@ -265,10 +308,10 @@ services.periods.prototype.buildPeriods = function(data) {
 			var d2 = start.getDay();
 
 			var day = (d1 > d2) ? (d1-d2): (d2-d1);
-			start.setDate(start.getDate() - day - ((this.$localStorage.sheet_views/2) * budget_interval));
+			start.setDate(start.getDate() + day - ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
 
 			var end = new Date();
-			end.setDate(end.getDate() - day + ((this.$localStorage.sheet_views/2) * budget_interval) - 1);
+			end.setDate(end.getDate() + day + ((this.$localStorage.sheet_views/2) * budget_interval));
 			break;
 		case 'semi-monthy':
 			budget_interval = 1;
@@ -295,7 +338,7 @@ services.periods.prototype.buildPeriods = function(data) {
 	end.setMinutes(0);
 	end.setSeconds(0);
 	end.setMilliseconds(0);
-
+console.log(start,end)
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
 	var idx = 0;

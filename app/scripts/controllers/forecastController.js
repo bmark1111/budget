@@ -28,7 +28,7 @@ app.controller('ForecastController', function($q, $scope, $modal, $timeout, Rest
 		amount:				''
 	};
 
-	var interval = 0;
+//	var interval = 0;
 
 	var loadAllForecasts = function() {
 		$scope.dataErrorMsg = [];

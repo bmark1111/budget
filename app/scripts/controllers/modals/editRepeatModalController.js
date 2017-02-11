@@ -109,6 +109,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 		if (!!response[2].success) {
 			if (response[2].data.result) {
 				$scope.transaction = response[2].data.result;
+
 				var dt = $scope.transaction.first_due_date.split('-');
 				$scope.transaction.first_due_date = new Date(dt[0], --dt[1], dt[2]);
 				if ($scope.transaction.last_due_date) {
@@ -117,6 +118,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 				}
 				dt = $scope.transaction.next_due_date.split('-');
 				$scope.transaction.next_due_date = new Date(dt[0], --dt[1], dt[2]);
+
 				if ($scope.transaction.splits) {
 					$scope.is_split = true;
 				}

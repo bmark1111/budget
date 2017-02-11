@@ -35,12 +35,12 @@ class sheet_controller Extends rest_controller {
 			case 'weekly':
 			case 'bi-weekly':
 				$offset = $this->_getEndDay();
-				if ($interval == 0) {
-					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views)));					// go back 'sheet views'
-					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views)) - 1);					// go forward 'sheet views'
-					$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
-					$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
-				} else {
+//				if ($interval == 0) {
+//					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views)));					// go back 'sheet views'
+//					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views)) - 1);					// go forward 'sheet views'
+//					$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
+//					$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
+//				} else {
 					$start = new DateTime();
 					$start_date = explode('T', $start_date);
 					$start_date = explode('-', $start_date[0]);
@@ -52,29 +52,32 @@ class sheet_controller Extends rest_controller {
 					$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
 					$sd = $start->format('Y-m-d');
 					$ed = $end->format('Y-m-d');
-				}
+//				}
 				break;
 			case 'semi-monthy':
 				break;
 			case 'monthly':
+$xx =  time();
+$this->ajax->setData('xx', $xx);
+
 				$start = new DateTime();
-				$end = new DateTime();
-				if ($interval == 0) {
-					$start->modify('first day of this month');
-					$end->modify('first day of this month');
-					$start_month = $this->budget_interval * ($this->sheet_views);// - 1);				// go back 'sheet views'
-					$start->sub(new DateInterval("P" . $start_month . "M"));
-					$end_month = $this->budget_interval * ($this->sheet_views);// + 1);					// go forward 'sheet views'
-					$end->add(new DateInterval("P" . $end_month . "M"));
-				} else {
+//				if ($interval == 0) {
+//					$start->modify('first day of this month');
+//					$end->modify('first day of this month');
+//					$start_month = $this->budget_interval * ($this->sheet_views - 1);				// go back 'sheet views'
+//					$start->sub(new DateInterval("P" . $start_month . "M"));
+//					$end_month = $this->budget_interval * ($this->sheet_views + 1);					// go forward 'sheet views'
+//					$end->add(new DateInterval("P" . $end_month . "M"));
+//				} else {
 					$start_date = explode('T', $start_date);
 					$start_date = explode('-', $start_date[0]);
 					$start->setdate($start_date[0], $start_date[1], $start_date[2]);
 
+				$end = new DateTime();
 					$end_date = explode('T', $end_date);
 					$end_date = explode('-', $end_date[0]);
 					$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
-				}
+//				}
 				$sd = $start->format('Y-m-01');
 				$ed = $end->format('Y-m-01');
 				break;
@@ -210,7 +213,7 @@ $this->ajax->setData('ed', $ed);
 	private function _getEndDay() {
 		$xx =  time();
 		$yy = intval(strtotime($this->budget_start_date));
-		$xx = ($xx - $yy) / (24 * 60 * 60);
+		$xx = ($xx - $yy) / (24 * 60 * 60);				// set number of days
 		$xx = intval($xx / $this->budget_interval);
 		return ($xx * $this->budget_interval);
 	}
