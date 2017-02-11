@@ -31,62 +31,20 @@ class sheet_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		switch ($this->budget_mode) {
-			case 'weekly':
-			case 'bi-weekly':
-				$offset = $this->_getEndDay();
-//				if ($interval == 0) {
-//					$start_day = ($offset - ($this->budget_interval * ($this->sheet_views)));					// go back 'sheet views'
-//					$end_day = ($offset + ($this->budget_interval * ($this->sheet_views)) - 1);					// go forward 'sheet views'
-//					$sd = date('Y-m-d', strtotime($this->budget_start_date . " +" . $start_day . " Days"));
-//					$ed = date('Y-m-d', strtotime($this->budget_start_date . " +" . $end_day . " Days"));
-//				} else {
-					$start = new DateTime();
-					$start_date = explode('T', $start_date);
-					$start_date = explode('-', $start_date[0]);
-					$start->setdate($start_date[0], $start_date[1], $start_date[2]);
+		$start = new DateTime();
+		$start_date = explode('T', $start_date);
+		$start_date = explode('-', $start_date[0]);
+		$start->setdate($start_date[0], $start_date[1], $start_date[2]);
 
-					$end = new DateTime();
-					$end_date = explode('T', $end_date);
-					$end_date = explode('-', $end_date[0]);
-					$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
-					$sd = $start->format('Y-m-d');
-					$ed = $end->format('Y-m-d');
-//				}
-				break;
-			case 'semi-monthy':
-				break;
-			case 'monthly':
-$xx =  time();
-$this->ajax->setData('xx', $xx);
-
-				$start = new DateTime();
-//				if ($interval == 0) {
-//					$start->modify('first day of this month');
-//					$end->modify('first day of this month');
-//					$start_month = $this->budget_interval * ($this->sheet_views - 1);				// go back 'sheet views'
-//					$start->sub(new DateInterval("P" . $start_month . "M"));
-//					$end_month = $this->budget_interval * ($this->sheet_views + 1);					// go forward 'sheet views'
-//					$end->add(new DateInterval("P" . $end_month . "M"));
-//				} else {
-					$start_date = explode('T', $start_date);
-					$start_date = explode('-', $start_date[0]);
-					$start->setdate($start_date[0], $start_date[1], $start_date[2]);
-
-				$end = new DateTime();
-					$end_date = explode('T', $end_date);
-					$end_date = explode('-', $end_date[0]);
-					$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
-//				}
-				$sd = $start->format('Y-m-01');
-				$ed = $end->format('Y-m-01');
-				break;
-			default:
-				$this->ajax->addError(new AjaxError("Invalid budget_mode setting (sheet/loadAll)"));
-				$this->ajax->output();
-		}
+		$end = new DateTime();
+		$end_date = explode('T', $end_date);
+		$end_date = explode('-', $end_date[0]);
+		$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
+		$sd = $start->format('Y-m-01');
+		$ed = $end->format('Y-m-01');
 $this->ajax->setData('sd', $sd);
 $this->ajax->setData('ed', $ed);
+
 		$balance_forward = 0;
 		$transaction = new transaction();
 		$transaction->select('transaction.id, transaction.transaction_date, transaction.category_id, transaction.vendor_id, transaction.bank_account_id, transaction.amount, transaction.type, transaction.description, transaction.notes, transaction.bank_account_balance, transaction.is_uploaded, transaction.reconciled_date, transaction.check_num');
@@ -133,9 +91,6 @@ $this->ajax->setData('ed', $ed);
 
 		$transactions = array();
 		$repeats = $this->loadRepeats($sd, $ed, 1);
-//echo $sd."\n";
-//echo $ed."\n";
-//print $repeats;die;
 		if ($repeats->numRows()) {
 			foreach ($repeats as $repeat) {
 				isset($repeat->vendor);
@@ -208,14 +163,6 @@ $this->ajax->setData('ed', $ed);
 		$this->ajax->setData('result', $transaction);
 
 		$this->ajax->output();
-	}
-
-	private function _getEndDay() {
-		$xx =  time();
-		$yy = intval(strtotime($this->budget_start_date));
-		$xx = ($xx - $yy) / (24 * 60 * 60);				// set number of days
-		$xx = intval($xx / $this->budget_interval);
-		return ($xx * $this->budget_interval);
 	}
 
 }

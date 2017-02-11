@@ -95,9 +95,6 @@ class rest_controller Extends EP_Controller {
 		$transactions->groupEnd();
 		$transactions->where('transaction_repeat.first_due_date < ', $ed);
 		$transactions->where('transaction_repeat.is_deleted', 0);
-//		if ($all !== 0) {
-//			$transactions->where('transaction_repeat.next_due_date < ', $ed);
-//		}
 		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
 		$transactions->result();
 		$now = strtotime(date('m/d/Y'));
@@ -105,11 +102,7 @@ class rest_controller Extends EP_Controller {
 		foreach ($transactions as $transaction) {
 			$next_due_dates = array();
 			foreach ($transaction->repeats as $repeat) {
-//				if ($all == 1) {
-//					$next_due_date = $transaction->next_due_date;
-//				} else {
-					$next_due_date = $transaction->first_due_date;
-//				}
+				$next_due_date = $transaction->first_due_date;
 				$every = 0;
 				while (strtotime($next_due_date) < strtotime($ed)) {
 					switch ($transaction->every_unit) {
@@ -137,16 +130,8 @@ class rest_controller Extends EP_Controller {
 						if (($all == 0)														// ...we want all repeats
 								||															//			or
 							($all == 1 && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
-//							($all == 1)// && $ndd >= $now)									// ... we want future repeats
-//							($all == 1 && $ndd >= strtotime('2016-12-31'))					// ... we want future repeats in next period
 								||															//			or
 							($all == 2 && $ndd <= $now)) {									// ... we want past repeats
-//if ($transaction->id == 31) {
-//	print $transaction;
-//	echo "\n$ndd\n";
-//	echo "\n" . date('Y-m-d H:i:s',$ndd) . "\n";
-//	die;
-//}
 							$next_due_dates[] = $next_due_date;								// ... then save this due date
 						}
 					}
