@@ -12,7 +12,8 @@ function($q, $scope, RestData2, Categories, Periods) {
 	this.transactions = false;
 	this.transactions_seq = false;
 	this.repeats = [];
-//	this.repeats_seq = false;
+	this.balances = false;
+	this.balances_seq = false;
 	this.now = new Date();
 
 	var getYTDTotals = function(year) {
@@ -51,10 +52,23 @@ function($q, $scope, RestData2, Categories, Periods) {
 		return deferred.promise;
 	};
 
+	var getBankBalances = function() {
+		var deferred = $q.defer();
+		var result = RestData2().getBankBalances(
+			function(response) {
+				deferred.resolve(result);
+			},
+			function(err) {
+				deferred.resolve(err);
+			});
+		return deferred.promise;
+	};
+
 	$q.all([
 		Categories.get(),
 		Periods.getTransactions(),
-		getRepeats()
+		getRepeats(),
+		getBankBalances()
 	]).then(function(response) {
 		// load the categories
 		self.categories = Categories.data;
@@ -76,6 +90,11 @@ function($q, $scope, RestData2, Categories, Periods) {
 					self.repeats.push(repeats[idx]);
 				}
 			}
+		}
+		// load bank balances
+		if (response[3].success) {
+			self.balances = response[3].data.result;
+			self.balances_seq = Object.keys(response[3].data.result);
 		}
 		// load yearly totals
 		var now = new Date();

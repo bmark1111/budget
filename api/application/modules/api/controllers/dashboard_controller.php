@@ -37,15 +37,6 @@ class dashboard_controller Extends rest_controller {
 
 		$select = array();
 		foreach ($categories as $category) {
-//			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'CREDIT' THEN T.amount ELSE 0 END)" .
-//						" + SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'DSLIP' THEN T.amount ELSE 0 END)" .
-//						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'CHECK' THEN T.amount ELSE 0 END)" .
-//						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND T.type = 'DEBIT' THEN T.amount ELSE 0 END) " .
-//						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CREDIT' THEN TS.amount ELSE 0 END)" .
-//						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DSLIP' THEN TS.amount ELSE 0 END)" .
-//						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'CHECK' THEN TS.amount ELSE 0 END)" .
-//						" - SUM(CASE WHEN TS.category_id = " . $category->id . " AND TS.type = 'DEBIT' THEN TS.amount ELSE 0 END) " .
-//						"AS total_" . $category->id;
 			$select[] = "SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CREDIT' OR T.type = 'DSLIP' OR T.type = 'RETURN' OR T.type = 'PAYMENT') THEN T.amount ELSE 0 END)" .
 						" - SUM(CASE WHEN T.category_id = " . $category->id . " AND (T.type = 'CHECK' OR T.type = 'DEBIT' OR T.type = 'SALE') THEN T.amount ELSE 0 END)" .
 						" + SUM(CASE WHEN TS.category_id = " . $category->id . " AND (TS.type = 'CREDIT' OR TS.type = 'DSLIP' OR TS.type = 'RETURN' OR TS.type = 'PAYMENT') THEN TS.amount ELSE 0 END)" .
@@ -84,8 +75,7 @@ class dashboard_controller Extends rest_controller {
 				}
 			}
 		}
-//print_r($repeats);
-//die;
+
 		// get the past forecasts for this interval
 		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
 		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
@@ -154,6 +144,28 @@ class dashboard_controller Extends rest_controller {
 		$this->ajax->output();
 	}
 
+	public function getBankBalances() {
+		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+			$this->ajax->addError(new AjaxError("Error: 403 Forbidden - (dashboard/getBankBalances)"));
+			$this->ajax->output();
+		}
+
+		$transactions = new transaction();
+		$sql = "SELECT		a.id, a.bank_account_id, a.transaction_date, a.bank_account_balance,
+							CONCAT(bank.name, ' ', bank_account.name) AS account_name, bank_account.date_opened, bank_account.date_closed
+				FROM		transaction a
+				JOIN		bank_account ON bank_account.id = a.bank_account_id
+				JOIN		bank ON bank.id = bank_account.bank_id
+				WHERE		a.is_uploaded = 1 AND a.is_deleted = 0 AND a.transaction_date = (
+								SELECT MAX( b.transaction_date )
+								FROM transaction b
+								WHERE b.is_uploaded = 1 AND b.is_deleted = 0 AND a.bank_account_id = b.bank_account_id
+							 )
+				GROUP BY	a.bank_account_id";
+		$transactions->queryAll($sql);
+		$this->ajax->setData('result', $transactions);
+		$this->ajax->output();
+	}
 }
 
 // EOF

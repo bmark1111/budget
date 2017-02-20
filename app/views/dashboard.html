@@ -102,5 +102,21 @@
 				<div class="col-md-1"><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></div>
 			</div>
 		</tab>
+		<tab heading="Account Balances">
+			<div class="well" style="width:50%">
+				<table id="newtable" class="table table-bordered table-striped">
+					<tr class="row" style="table-row">
+						<th><span class="pull-left">Account</span></th>
+						<th><span class="pull-left">Date</span></th>
+						<th><span class="pull-right">Balance</span></th>
+					</tr>
+					<tr class="row" ng-repeat="balance in dashboard.balances">
+						<td>{{ balance.account_name }}</td>
+						<td>{{ balance.transaction_date|date:'EEEE MMM dd, yyyy' }}</td>
+						<td><span class="pull-right">{{ balance.bank_account_balance|currency }}</span></td>
+					</tr>
+				</table>
+			</div>
+		</tab>
 	</tabset>
 </div>

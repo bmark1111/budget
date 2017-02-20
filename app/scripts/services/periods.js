@@ -338,7 +338,7 @@ services.periods.prototype.buildPeriods = function(data) {
 	end.setMinutes(0);
 	end.setSeconds(0);
 	end.setMilliseconds(0);
-console.log(start,end)
+
 	var output = [], o_idx = 0;
 	var running_total = this.data.balance_forward;
 	var idx = 0;
