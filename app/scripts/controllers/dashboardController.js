@@ -111,13 +111,14 @@ function($q, $scope, RestData2, Categories, Periods) {
 					self.ytdTotals[ytdIndex] = [];
 					angular.forEach(self.categories,function(category, key) {
 						if (category.id != 17 && category.id != 22) {	// Do not show Transfer's and Opening Balance's
-							self.ytdTotals[ytdIndex].push({id:			category.id,
-															name:		category.name,
-															total:		Number(response.data.result['total_' + category.id]),
-															forecast:	Number(response.data.forecast[category.id]),
-															future:		(response.data.year > now.getFullYear()) ? true: false,
-															year:		self.ytdYear[ytdIndex]
-														});
+//							self.ytdTotals[ytdIndex].push({ id:			category.id,
+							self.ytdTotals[ytdIndex][category.id] = {	id:			category.id,
+																		name:		category.name,
+																		total:		Number(response.data.result['total_' + category.id]),
+																		forecast:	Number(response.data.forecast[category.id]),
+																		future:		(response.data.year > now.getFullYear()) ? true: false,
+																		year:		self.ytdYear[ytdIndex]
+																	};
 						}
 					});
 				}
@@ -129,7 +130,7 @@ function($q, $scope, RestData2, Categories, Periods) {
 		self.dataErrorMsg = [];
 
 		RestData2().getYTDTransactions({
-				year:			year,	//self.ytdYear,
+				year:			year,
 				category_id:	category_id
 			},
 			function(response) {

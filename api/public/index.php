@@ -48,6 +48,8 @@ header('Access-Control-Allow-Credentials: true');
 
 header('X-Powered-By: Budget 1.0', TRUE);
 
+date_default_timezone_set('America/Los_Angeles');
+
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT

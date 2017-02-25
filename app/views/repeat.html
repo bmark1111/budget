@@ -34,7 +34,7 @@
 			</div>
 		</form>
 	</div>
-	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
+	<div class="table-responsive table-lg" ng-if="!dataErrorMsg[0] && !error">
 		<table>
 			<thead>
 				<tr>
@@ -54,10 +54,10 @@
 					<td ng-if="repeats[idx].category.name"><span class="pull-left">{{repeats[idx].category.name}}</span></td>
 					<td colspan="2" ng-if="!repeats[idx].category.name"><span class="pull-left">--Split--</span></td>
 					<td><span class="pull-left">{{ repeats[idx].bankName }}</td>
-					<td><span class="pull-left">{{ repeats[idx].first_due_date }}</span></td>
-					<td><span class="pull-left">{{ repeats[idx].next_due_date }}</span></td>
-					<td><span class="pull-left">{{ repeats[idx].last_due_date }}</span></td>
-					<td><span class="pull-left">{{ repeats[idx].amount }}</span></td>
+					<td><span class="pull-left">{{ repeats[idx].first_due_date|date:'EEE MMM dd, yyyy' }}</span></td>
+					<td><span class="pull-left">{{ repeats[idx].next_due_date|date:'EEE MMM dd, yyyy' }}</span></td>
+					<td><span class="pull-left">{{ repeats[idx].last_due_date|date:'EEE MMM dd, yyyy' }}</span></td>
+					<td><span class="pull-right">{{ repeats[idx].amount|currency }}</span></td>
 					<td>
 						<span class="glyphicon glyphicon-pencil" ng-click="editRepeat(repeats[idx].id)" style="cursor:pointer;" title="Edit Repeat ?"></span>
 						<span class="glyphicon glyphicon-trash" ng-click="deleteRepeat(repeats[idx].id)" style="cursor:pointer;" title="Delete Reapeat ?"></span>

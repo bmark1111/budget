@@ -36,6 +36,7 @@ class repeat_controller Extends rest_controller {
 		$sort				= (!empty($params['sort'])) ? $params['sort']: 'next_due_date';
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
+		$join = false;
 		$repeats = new transaction_repeat();
 		if ($last_due_date == 'false') {
 			$repeats->groupStart();
@@ -43,18 +44,40 @@ class repeat_controller Extends rest_controller {
 			$repeats->orWhere('last_due_date >= now()', FALSE, FALSE);
 			$repeats->groupEnd();
 		}
-		$repeats->join('vendor', 'vendor.id = transaction_repeat.vendor_id', 'left');
 		if ($name) {
-			$repeats->like('vendor.name', $name, 'both');
+			$repeats->join('vendor V1', 'V1.id = transaction_repeat.vendor_id', 'left');
+			if (!$join) {
+				$repeats->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
+				$repeats->join('vendor V2', 'V2.id = transaction_repeat_split.vendor_id', 'left');
+				$join = true;
+			}
+			$repeats->groupStart();
+			$repeats->orLike('V1.name', $name, 'both');
+			$repeats->orLike('V2.name', $name, 'both');
+			$repeats->groupEnd();
 		}
 		if ($bank_account_id) {
 			$repeats->where('transaction_repeat.bank_account_id', $bank_account_id);
 		}
-		if ($category_id) {
-			$repeats->where('transaction_repeat.category_id', $category_id);
-		}
 		if ($amount) {
-			$repeats->where('transaction_repeat.amount', $amount);
+			if (!$join) {
+				$repeats->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
+				$join = true;
+			}
+			$repeats->groupStart();
+			$repeats->orWhere('transaction_repeat.amount', $amount);
+			$repeats->orWhere('transaction_repeat_split.amount', $amount);
+			$repeats->groupEnd();
+		}
+		if ($category_id) {
+			if (!$join) {
+				$repeats->join('transaction_repeat_split', 'transaction_repeat.id = transaction_repeat_split.transaction_repeat_id', 'left');
+				$join = true;
+			}
+			$repeats->groupStart();
+			$repeats->orWhere('transaction_repeat.category_id', $category_id);
+			$repeats->orWhere('transaction_repeat_split.category_id', $category_id);
+			$repeats->groupEnd();
 		}
 		$repeats->select('SQL_CALC_FOUND_ROWS transaction_repeat.*', FALSE);
 		$repeats->where('transaction_repeat.is_deleted', 0);
@@ -64,16 +87,12 @@ class repeat_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $repeats->foundRows());
 
-//		if ($repeats->numRows()) {
-			foreach ($repeats as $repeat) {
-				isset($repeat->category);
-				isset($repeat->vendor);
-				isset($repeat->bank_account);
-			}
-			$this->ajax->setData('result', $repeats);
-//		} else {
-//			$this->ajax->addError(new AjaxError("No repeats found"));
-//		}
+		foreach ($repeats as $repeat) {
+			isset($repeat->category);
+			isset($repeat->vendor);
+			isset($repeat->bank_account);
+		}
+		$this->ajax->setData('result', $repeats);
 		$this->ajax->output();
 	}
 

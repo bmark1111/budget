@@ -37,6 +37,7 @@ class transaction_controller Extends rest_controller {
 		$sort				= (!empty($params['sort'])) ? $params['sort']: 'transaction.transaction_date';
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
+		$join = false;
 		$transactions = new transaction();
 		$transactions->select('SQL_CALC_FOUND_ROWS transaction.*', FALSE);
 		if ($date) {
@@ -47,17 +48,39 @@ class transaction_controller Extends rest_controller {
 			$transactions->like('transaction.description', $description);
 		}
 		if ($amount) {
-			$transactions->where('transaction.amount', $amount);
+			if (!$join) {
+				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
+				$join = true;
+			}
+			$transactions->groupStart();
+			$transactions->orWhere('transaction.amount', $amount);
+			$transactions->orWhere('transaction_split.amount', $amount);
+			$transactions->groupEnd();
 		}
 		if ($bank_account_id) {
 			$transactions->where('transaction.bank_account_id', $bank_account_id);
 		}
 		if ($category_id) {
-			$transactions->where('transaction.category_id', $category_id);
+			if (!$join) {
+				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
+				$join = true;
+			}
+			$transactions->groupStart();
+			$transactions->orWhere('transaction.category_id', $category_id);
+			$transactions->orWhere('transaction_split.category_id', $category_id);
+			$transactions->groupEnd();
 		}
 		if ($vendor) {
-			$transactions->join('vendor', 'vendor.id = transaction.vendor_id');
-			$transactions->like('vendor.name', $vendor, 'both');
+			$transactions->join('vendor V1', 'V1.id = transaction.vendor_id', 'left');
+			if (!$join) {
+				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
+				$transactions->join('vendor V2', 'V2.id = transaction_split.vendor_id', 'left');
+				$join = true;
+			}
+			$transactions->groupStart();
+			$transactions->orLike('V1.name', $vendor, 'both');
+			$transactions->orLike('V2.name', $vendor, 'both');
+			$transactions->groupEnd();
 		}
 		$transactions->where('transaction.is_deleted', 0);
 		$transactions->limit($pagination_amount, $pagination_start);
@@ -67,16 +90,12 @@ class transaction_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
-//		if ($transactions->numRows()) {
-			foreach ($transactions as $transaction) {
-				isset($transaction->category);
-				isset($transaction->bank_account);
-				isset($transaction->vendor);
-			}
-			$this->ajax->setData('result', $transactions);
-//		} else {
-//			$this->ajax->addError(new AjaxError("No transactions found"));
-//		}
+		foreach ($transactions as $transaction) {
+			isset($transaction->category);
+			isset($transaction->bank_account);
+			isset($transaction->vendor);
+		}
+		$this->ajax->setData('result', $transactions);
 		$this->ajax->output();
 	}
 

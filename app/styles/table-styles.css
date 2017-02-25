@@ -24,8 +24,12 @@ p {
 div.table-responsive table {
 	border-collapse:collapse;
 	margin-bottom:15px;
+	/*width:90%;*/
+}
+	
+div.table-lg table {
 	width:90%;
-	}
+}
 	
 /*caption {
 	text-align:left;
@@ -149,7 +153,7 @@ table.dashboard tbody a {
 	z-index:1051 !important;
 }
 
-div.overdue {
+tr.overdue {
 	color:red;
 	font-weight:bold;
 }

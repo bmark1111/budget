@@ -252,6 +252,8 @@ class rest_controller Extends EP_Controller {
 		$forecast->groupEnd();
 		$forecast->where('first_due_date < ', $ed);
 		$forecast->result();
+//print $forecast;
+//die;
 		if ($forecast->numRows()) {
 			$now = strtotime(date('m/d/Y'));
 			// set the next due date(s) for the forecasted expenses

@@ -17,13 +17,38 @@
 			</div>
 			<div class="row">
 				<div class="col-md-5">
+					<div class="table-responsive well">
+						<table class="table table-bordered table-striped">
+							<tr>
+								<th class="col-md-4"><b>Category</b></th>
+								<th class="col-md-2"><span class="pull-right"><b>Actual</b></span></th>
+								<th class="col-md-3"><span class="pull-right"><b>Forecast</b></span></th>
+								<th class="col-md-3"><span class="pull-right"><b>Difference</b></span></th>
+							</tr>
+							<tr ng-repeat="category in dashboard.categories track by $index" ng-if="category.id != 17 && category.id != 22">
+								<td class="col-md-4">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].name }}</td>
+								<td class="col-md-2" ng-click="getYTDTransactions(category.id, dashboard.ytdTotals[dashboard.selectedIndex][category.id].year)">
+									<span class="pull-right">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].total | currency }}</span>
+								</td>
+								<td class="col-md-3"><span class="pull-right forecast_amount">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</span></td>
+								<td class="col-md-3">
+									<span class="pull-right" ng-class="{'overbudget':(dashboard.ytdTotals[dashboard.selectedIndex][category.id].total - dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast) < 0}">
+										<b>{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].total - dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</b>
+									</span>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+<!--			<div class="row">
+				<div class="col-md-5">
 					<div class="row">
 						<div class="col-md-4"><b>Category</b></div>
 						<div class="col-md-2"><span class="pull-right"><b>Actual</b></span></div>
 						<div class="col-md-3"><span class="pull-right"><b>Forecast</b></span></div>
 						<div class="col-md-3"><span class="pull-right"><b>Difference</b></span></div>
 					</div>
-					<div ng-repeat="ytdTotal in dashboard.ytdTotals[dashboard.selectedIndex]">
+					<div ng-repeat="ytdTotal in dashboard.ytdTotals[dashboard.selectedIndex] track by $index">
 						<div class="row">
 							<div class="col-md-4">{{ ytdTotal.name }}</div>
 							<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id, ytdTotal.year)"><span class="pull-right">{{ ytdTotal.total | currency }}</span></div>
@@ -31,11 +56,11 @@
 							<div class="col-md-3"><span class="pull-right" ng-class="{'overbudget':(ytdTotal.total - ytdTotal.forecast) < 0}"><b>{{ ytdTotal.total - ytdTotal.forecast | currency }}</b></span></div>
 						</div>
 					</div>
-				</div>
+				</div>-->
 				<div class="col-md-7" ng-show="dashboard.transactions" style="overflow:scroll; height:500px;">
 					<h4>YTD Transactions for Category</h4>
-					<div class="table-responsive">
-						<table>
+					<div class="table-responsive well">
+						<table class="table table-bordered table-striped">
 							<thead>
 								<tr>
 									<th>Date</th>
@@ -66,7 +91,27 @@
 		<tab heading="Year to Year Comparison">
 			<div class="row">
 				<div class="col-md-6">
-					<div class="row">
+					<div class="table-responsive well">
+						<table class="table table-bordered table-striped">
+							<tr>
+								<th>Category</th>
+								<th ng-repeat="year in dashboard.ytdYear track by $index">
+									<span class="pull-right">{{ year }}</span>
+								</th>
+							</tr>
+							<tr ng-repeat="category in dashboard.categories track by $index" ng-if="category.id != 17 && category.id != 22">
+								<td>{{ category.name }}</td>
+								<td ng-repeat="year in dashboard.ytdYear track by $index">
+									<span ng-if="!dashboard.ytdTotals[$index][category.id].future" class="pull-right">
+										&nbsp;{{ dashboard.ytdTotals[$index][category.id].total | currency }}
+									</span>
+									<span ng-if="dashboard.ytdTotals[$index][category.id].future" class="pull-right forecast_amount"">
+										&nbsp;{{ (dashboard.ytdTotals[$index][category.id].total + dashboard.ytdTotals[$index][category.id].forecast) | currency  }}
+									</span>
+								</td>
+							</tr>
+						</table>
+<!--					<div class="row">
 						<div class="col-md-4"><b>Category</b></div>
 						<div class="col-md-2" ng-repeat="year in dashboard.ytdYear track by $index">
 							<span class="pull-right"><b>{{ year }}</b></span>
@@ -83,13 +128,28 @@
 								<div class="col-md-12" ng-if="!ytdTotal.future"><span class="pull-right">&nbsp;{{ ytdTotal.total | currency }}</span></div>
 								<div class="col-md-12" ng-if="ytdTotal.future"><span class="pull-right forecast_amount"">&nbsp;{{ (ytdTotal.total + ytdTotal.forecast) | currency  }}</span></div>
 							</div>
-						</div>
+						</div>-->
 					</div>
 				</div>
 			</div>
 		</tab>
 		<tab heading="Upcoming forecast payments">
-			<div class="row">
+			<div class="table-responsive well" style="width:60%">
+				<table class="table table-bordered table-striped">
+					<tr>
+						<th><span class="pull-left">Date</span></th>
+						<th><span class="pull-left">Description</span></th>
+						<th><span class="pull-right">Debit</span></th>
+						<th><span class="pull-right">Credit</span></th>
+					</tr>
+					<tr ng-repeat="repeat in dashboard.repeats" ng-class="{'overdue': repeat.dueDate <= dashboard.now}">
+						<td>{{ repeat.next_due_date|date:'EEEE MMM dd, yyyy' }}</td>
+						<td>{{ repeat.description }}</td>
+						<td><span ng-if="repeat.type == 'CHECK' || repeat.type == 'DEBIT' || repeat.type == 'SALE'" class="pull-right">{{ repeat.amount|currency }}</span></td>
+						<td><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></td>
+					</tr>
+				</table>
+<!--			<div class="row">
 				<div class="col-md-2"><span class="pull-left"><b>Date</b></span></div>
 				<div class="col-md-3"><span class="pull-left"><b>Description</b></span></div>
 				<div class="col-md-1"><span class="pull-right"><b>Debit</b></span></div>
@@ -99,18 +159,18 @@
 				<div class="col-md-2">{{ repeat.next_due_date|date:'EEEE MMM dd, yyyy' }}</div>
 				<div class="col-md-3">{{ repeat.description }}</div>
 				<div class="col-md-1"><span ng-if="repeat.type == 'CHECK' || repeat.type == 'DEBIT' || repeat.type == 'SALE'" class="pull-right">{{ repeat.amount|currency }}</span></div>
-				<div class="col-md-1"><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></div>
+				<div class="col-md-1"><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></div>-->
 			</div>
 		</tab>
 		<tab heading="Account Balances">
-			<div class="well" style="width:50%">
-				<table id="newtable" class="table table-bordered table-striped">
-					<tr class="row" style="table-row">
+			<div class="table-responsive well" style="width:50%">
+				<table class="table table-bordered table-striped">
+					<tr>
 						<th><span class="pull-left">Account</span></th>
 						<th><span class="pull-left">Date</span></th>
 						<th><span class="pull-right">Balance</span></th>
 					</tr>
-					<tr class="row" ng-repeat="balance in dashboard.balances">
+					<tr ng-repeat="balance in dashboard.balances">
 						<td>{{ balance.account_name }}</td>
 						<td>{{ balance.transaction_date|date:'EEEE MMM dd, yyyy' }}</td>
 						<td><span class="pull-right">{{ balance.bank_account_balance|currency }}</span></td>

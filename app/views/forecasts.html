@@ -43,7 +43,7 @@
 			</div>
 		</form>
 	</div>
-	<div class="table-responsive" ng-if="!dataErrorMsg[0] && !error">
+	<div class="table-responsive table-lg" ng-if="!dataErrorMsg[0] && !error">
 		<table>
 			<thead>
 				<tr>
@@ -70,8 +70,8 @@
 					<td>{{ forecasts[idx].every }}</td>
 					<td>{{ forecasts[idx].every_unit }}</td>
 					<td>{{ forecasts[idx].every_on }}</td>
-					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CHECK' || forecasts[idx].type == 'DEBIT' || forecasts[idx].type == 'SALE'">{{forecasts[idx].amount|currency}}</span></td>
-					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CREDIT' || forecasts[idx].type == 'DSLIP' || forecasts[idx].type == 'RETURN' || forecasts[idx].type == 'PAYMENT'">{{forecasts[idx].amount|currency}}</span></td>
+					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CHECK' || forecasts[idx].type == 'DEBIT' || forecasts[idx].type == 'SALE'">{{ forecasts[idx].amount|currency }}</span></td>
+					<td><span class="pull-right" ng-if="forecasts[idx].type == 'CREDIT' || forecasts[idx].type == 'DSLIP' || forecasts[idx].type == 'RETURN' || forecasts[idx].type == 'PAYMENT'">{{ forecasts[idx].amount|currency }}</span></td>
 					<td class="not-clickable-cell" ng-click="$event.stopPropagation()">
 						<span class="glyphicon glyphicon-pencil" ng-click="editForecast(forecasts[idx].id)" style="cursor:pointer;"></span>
 						<span class="glyphicon glyphicon-trash" ng-click="deleteForecast(forecasts[idx].id)" style="cursor:pointer;"></span>
