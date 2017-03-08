@@ -44,7 +44,7 @@ class bank_controller Extends rest_controller {
 		$banks->orderBy($sort, $sort_dir);
 		$banks->result();
 		if ($banks->numRows()) {
-			isset($bank_account->bank);
+//			isset($bank_account->bank);
 
 			$this->ajax->setData('result', $banks);
 		} else {
@@ -66,17 +66,20 @@ class bank_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$bank = new bank($id);
-		isset($bank->accounts);
+		$banks = new bank($id);
+		if ($banks->accounts) {
+			foreach ($banks->accounts as $account){
+				isset($account->balance);
+			}
+		}
 		
-		$this->ajax->setData('result', $bank);
+		$this->ajax->setData('result', $banks);
 
 		$this->ajax->output();
 	}
 
 	public function save() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (bank/save)"));
 			$this->ajax->output();
 		}
@@ -92,7 +95,7 @@ class bank_controller Extends rest_controller {
 			if (empty($account['is_deleted']) || $account['is_deleted'] != 1) {
 				$this->form_validation->set_rules('accounts[' . $idx . '][name]', 'Name', 'required');
 				$this->form_validation->set_rules('accounts[' . $idx . '][date_opened]', 'Date Opened', 'required');
-//				$this->form_validation->set_rules('accounts[' . $idx . '][balance]', 'Balance', 'required');
+				$this->form_validation->set_rules('accounts[' . $idx . '][balance]', 'Balance', 'numeric|xss_clean');
 			}
 		}
 
@@ -105,15 +108,37 @@ class bank_controller Extends rest_controller {
 		$bank->save();
 
 		foreach ($_POST['accounts'] as $account) {
-			$bank_account = new bank_account($account['id']);
 			if (empty($account['is_deleted']) || $account['is_deleted'] != 1) {
+				$account_id = (!empty($account['id'])) ? $account['id']: null;
+				$bank_account = new bank_account($account_id);
 				$bank_account->bank_id		= $bank->id;
 				$bank_account->name			= $account['name'];
-				$bank_account->date_opened	= $account['date_opened'];
-				$bank_account->date_closed	= $account['date_closed'];
-//				$bank_account->balance		= $account['balance'];
+				$bank_account->date_opened	= date('Y-m-d', strtotime($account['date_opened']));
+				$bank_account->date_closed	= (!empty($account['date_closed'])) ? date('Y-m-d', strtotime($account['date_closed'])): null;
 				$bank_account->save();
+
+				$balance_transaction_id = (!empty($account['balance_transaction_id'])) ? $account['balance_transaction_id']: null;
+				$transaction = new transaction($balance_transaction_id);
+				$transaction->bank_account_id = $bank_account->id;
+				if (empty($account['balance']['id'])) {
+					// if creating balance transaction then set transaction date
+					$transaction->transaction_date = date('Y-m-d');
+				}
+				$transaction->amount				= (!empty($account['balance']['amount'])) ? $account['balance']['amount']: 0;
+				$transaction->bank_account_balance	= $transaction->amount;
+				$transaction->type					= ($account['balance']['amount'] > 0) ? 'CREDIT': 'DEBIT';
+				$transaction->description			= 'Opening Balance for ' . $account['name'] . ' account';
+				$transaction->vendor_id				= 1;	// TODO: when adding a bank add it to vendor file, keep vendor id in bank record
+				$transaction->category_id			= 22;
+				$transaction->save();
+
+				$bank_account = new bank_account($bank_account->id);
+				$bank_account->balance_transaction_id = $transaction->id;
+				$bank_account->save();
+
+				$this->resetBalances(array($bank_account->id => $transaction->transaction_date));	// adjust the account balance from this transaction forward
 			} else {
+				$bank_account = new bank_account($account['id']);
 				$bank_account->delete();
 			}
 		}

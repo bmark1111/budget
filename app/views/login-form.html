@@ -1,13 +1,12 @@
 <div class="container-fluid">
 	<h1 class="page-header">Login</h1>
-	<div ng-if="error">{{error}}</div>
 
 	<form role="form" ng-submit="login()">
 		<div class="row">
 			<div class="col-md-2">
 				<label for="account">Account:</label>
 				<div class="form-group">
-					<input type="text" class="form-control" name="account" ng-model="credentials.account" autocomplete="off" />
+					<input type="text" class="form-control" name="account" ng-model="credentials.account" autocomplete="off" ng-change="errorMsg = null" />
 				</div>
 			</div>
 		</div>
@@ -15,7 +14,7 @@
 			<div class="col-md-2">
 				<label for="username">Username:</label>
 				<div class="form-group">
-					<input type="text" class="form-control" name="username" ng-model="credentials.username" />
+					<input type="text" class="form-control" name="username" ng-model="credentials.username" ng-change="errorMsg = null" />
 				</div>
 			</div>
 		</div>
@@ -23,14 +22,15 @@
 			<div class="col-md-2">
 				<label for="password">Password:</label>
 				<div class="form-group">
-					<input type="password" class="form-control" name="password" ng-model="credentials.password" />
+					<input type="password" class="form-control" name="password" ng-model="credentials.password" ng-change="errorMsg = null" />
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-2">
-				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="submit" class="btn btn-primary" ng-click="errorMsg = null">Submit</button>
 			</div>
+			<div class="col-md-8 pull-left" ng-if="error" style="color:red"><b>{{ errorMsg }}</b></div>
 		</div>
 	</form>
 </div>

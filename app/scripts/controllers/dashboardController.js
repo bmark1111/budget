@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('DashboardController', ['$q', '$scope', 'RestData2', 'Categories', 'Periods',
+app.controller('DashboardController', ['$q', '$scope', '$localStorage', 'RestData2', 'Categories', 'Periods',
 
-function($q, $scope, RestData2, Categories, Periods) {
+function($q, $scope, $localStorage, RestData2, Categories, Periods) {
 
 	var self = this;
 
@@ -96,12 +96,17 @@ function($q, $scope, RestData2, Categories, Periods) {
 			self.balances = response[3].data.result;
 			self.balances_seq = Object.keys(response[3].data.result);
 		}
+
+		//get start year of Budget
+		var sd = new Date($localStorage.budget_start_date);
+		var start_year = sd.getFullYear();
+
 		// load yearly totals
 		var now = new Date();
-		for(var year = 2015; year <= (now.getFullYear()+1); year++) {
+		for(var year = start_year; year <= (now.getFullYear()+1); year++) {
 			getYTDTotals(year).then(function(response) {
 				if (!!response.success) {
-					var ytdIndex = response.data.year - 2015;
+					var ytdIndex = response.data.year - start_year;
 					self.ytdYear[ytdIndex] = response.data.year;
 					if (response.data.year == now.getFullYear()) {
 						self.selectedYear = response.data.year;

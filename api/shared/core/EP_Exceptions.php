@@ -215,18 +215,17 @@ if (ENVIRONMENT == 'production')
 		$date = new DateTime();
 		$data['created_at'] = $date->format('Y-m-d H:i:s');
 
-		if($ctrl)
-		{
-			//$ctrl->db->insert('ep_master.ci_error_log', $data);
-			//$data['insert_id'] = $ctrl->db->insert_id();
+		if($ctrl) {
+			$ctrl->db->insert('budgettr_master.ci_error_log', $data);
+			$data['insert_id'] = $ctrl->db->insert_id();
 		}
 
 		//
 		if(APPLICATION == 'REST' || APPLICATION == 'CLI')
 		{
 			$subject = ENVIRONMENT . ' Error Notification';
-			$from = 'automated@proovebio.com';
-			$to = 'devlogs@proovebio.com';
+			$from = 'automated@budgettrackerpro.com';
+			$to = 'error@budgettrackerpro.com';
 
 			$date = new DateTime();
 
@@ -235,13 +234,13 @@ if (ENVIRONMENT == 'production')
 			$message .= 'Error Date: ' . $date->format('Y-m-d H:i:s') . "\n";
 //			$message .= 'Domain: ' . base_url() . "\n";//$this->aErrInfo['uri'] . "\n";
 			$message .= 'Environment: ' . ENVIRONMENT . "\n\n";
-			$message .= 'https://admin.proovebio.com/ci_errors/view/';// . $this->aErrInfo['insert_id'];
+			$message .= 'https://admin.budgettrackerpro.com/ci_errors/view/';// . $this->aErrInfo['insert_id'];
 
 			if($ctrl)
 			{
 				$ctrl->load->library('email');
 
-				$ctrl->email->from($from, 'Proove Bio Error');
+				$ctrl->email->from($from, 'BudgetTrackerPro Error');
 				$ctrl->email->to($to);
 
 				$ctrl->email->subject($subject);

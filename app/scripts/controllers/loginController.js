@@ -5,6 +5,7 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 	$rootScope.nav_active = 'login';
 
 	$scope.error = false;
+	$scope.errorMsg = null;
 
 	$scope.credentials = {};
 
@@ -42,6 +43,7 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 
 					$location.path("/login");
 					$scope.error = true;
+					$scope.errorMsg = data.errors[0].error;
 				}
 		//		callback && callback();
 //			})

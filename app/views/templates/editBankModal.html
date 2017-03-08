@@ -22,7 +22,7 @@
 		<table style="width:75%;">
 			<tr>
 				<th><span class="pull-left">Name</span></th>
-				<!--<th><span class="pull-left">Starting Balance</span></th>-->
+				<th><span class="pull-left">Balance</span></th>
 				<th>Date Opened</th>
 				<th>Date Closed</th>
 				<!--<th></th>-->
@@ -32,10 +32,10 @@
 					<input type="text" class="form-control" ng-model="account.name" />
 					<span class="help-block" ng-show="validation.accounts.name[$index]">{{validation.accounts.name[$index]}}</span>
 				</td>
-<!--				<td class="col-md-2" style="width:16%;vertical-align:top;" ng-class="{'has-error':validation.accounts.balance[$index]}">
-					<input type="text" class="form-control" ng-model="account.balance" />
+				<td class="col-md-2" style="width:16%;vertical-align:top;" ng-class="{'has-error':validation.accounts.balance[$index]}">
+					<input type="text" class="form-control" ng-model="account.balance.amount" />
 					<span class="help-block" ng-show="validation.accounts.balance[$index]">{{validation.accounts.balance[$index]}}</span>
-				</td>-->
+				</td>
 				<td class="col-md-2" style="width:27%;vertical-align:top;" ng-class="{'has-error':validation.accounts.date_opened[$index]}">
 					<div class="form-group">
 						<p class="input-group">
@@ -69,6 +69,6 @@
 	</div>
 </div>
 <div class="modal-footer ng-scope">
-	<button class="btn btn-primary" ng-click="save()">Save</button>
+	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>
 	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>

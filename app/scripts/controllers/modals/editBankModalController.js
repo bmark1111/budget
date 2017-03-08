@@ -26,6 +26,7 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 				if (!!response.success) {
 					if (response.data.result) {
 						$scope.bank = response.data.result;
+console.log('xxxxxxx',$scope.bank)
 					}
 				} else {
 					if (response.errors) {
@@ -126,13 +127,22 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 
 	// add account to Bank
 	$scope.addAccount = function() {
-		var idx = Object.size($scope.bank.accounts);
 
-		$scope.bank.accounts[idx] = {
-				bank_id:	$scope.bank.id,
-				name:		"",
-				balance:	"0.00"
-			};
+		if ($scope.bank.accounts) {
+			var idx = Object.size($scope.bank.accounts);
+
+			$scope.bank.accounts[idx] = {
+					bank_id:	$scope.bank.id,
+					name:		"",
+					balance:	{ amount: 0 }
+				};
+		} else {
+			$scope.bank.accounts = [{
+					bank_id:	$scope.bank.id,
+					name:		"",
+					balance:	{ amount: 0 }
+				}];
+		}
 	};
 
 	$scope.deleteAccount = function(ele) {

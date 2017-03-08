@@ -40,8 +40,8 @@ class sheet_controller Extends rest_controller {
 		$end_date = explode('T', $end_date);
 		$end_date = explode('-', $end_date[0]);
 		$end->setdate($end_date[0], $end_date[1], ++$end_date[2]);
-		$sd = $start->format('Y-m-01');
-		$ed = $end->format('Y-m-01');
+		$sd = $start->format('Y-m-d');
+		$ed = $end->format('Y-m-d');
 $this->ajax->setData('sd', $sd);
 $this->ajax->setData('ed', $ed);
 
