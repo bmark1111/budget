@@ -26,7 +26,6 @@ app.controller('EditBankModalController', function ($scope, $modalInstance, Rest
 				if (!!response.success) {
 					if (response.data.result) {
 						$scope.bank = response.data.result;
-console.log('xxxxxxx',$scope.bank)
 					}
 				} else {
 					if (response.errors) {

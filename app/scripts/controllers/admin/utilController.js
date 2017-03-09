@@ -11,7 +11,6 @@ function userController($scope, RestData2) {
 
 	$scope.runUtility = function(type) {
 //		ngProgress.start();
-console.log('runUtiltity = '+type)
 		RestData2().runUtility({
 				type:	type,
 			},

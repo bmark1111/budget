@@ -36,7 +36,6 @@ function editUserModalController($q, $scope, $filter, $modalInstance, RestData2,
 				$scope.user.joindate = $filter('toISOString')($scope.user.joindate);
 				$scope.user.joindate = $filter('date')($scope.user.joindate, 'EEE MMM dd, yyyy');
 				$scope.user.active = ($scope.user.active === "1") ? true: false;
-console.log(response[0].data.sessions)
 			}
 //		} else {
 //			if (response[2].errors) {

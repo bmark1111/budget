@@ -97,14 +97,8 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 	};
 
 	var findCreditTransInTransfer = function(transaction, transactions) {
-console.log('============================',transaction, transactions)
 		for(var x in transactions) {
-console.log('type',transactions[x].type === 'CREDIT')
-console.log('amount',transactions[x].amount === transaction.amount)
-console.log('vendor',transaction.vendor)
-//console.log('vendor=',transactions[x].vendor_id == transaction.vendor.id,transactions[x].vendor.id, transaction.vendor);
 			if ((transactions[x].type === 'CREDIT' || transactions[x].type === 'PAYMENT') && transactions[x].amount === transaction.amount && transactions[x].transaction_type == transaction.transaction_type && (!transaction.vendor || transactions[x].vendor.id == transaction.vendor.id)) {
-console.log('000000')
 				for(var y = 0; y < $scope.accounts.length; y++) {
 					if ($scope.accounts[y].id == transactions[x].bank_account_id) {
 						return { 'name': $scope.accounts[y].name,
