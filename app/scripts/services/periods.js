@@ -433,18 +433,6 @@ services.periods.prototype.buildPeriods = function(data) {
 			running_total = output[o_idx].running_total;
 		}
 
-//		var dt = output[o_idx].interval_beginning.split('T');
-//		var dt = dt[0].split('-');
-//		var sd = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
-//		var dt = output[o_idx].interval_ending.split('T');
-//		var dt = dt[0].split('-');
-//		var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59, 0);
-//		var now = new Date();
-//		if (now >= sd && now <= ed) {
-//			output[o_idx].alt_ending = now;				// set alternative ending
-//			output[o_idx].current_interval = true;		// mark the current period
-//		}
-
 		for(var x = 0; x < output[o_idx].accounts.length; x++) {
 			if(output[o_idx].accounts[x].balance === null && o_idx > 0) {
 				if (output[o_idx-1].accounts[x].balance !== null) {
@@ -463,17 +451,17 @@ services.periods.prototype.buildPeriods = function(data) {
 	}
 	self.periods = output;
 };
-
-/**
- * @name checkRepeatTransaction
- * @private
- * @param {Object} transaction
- * @param {Object} output
- * @returns {undefined}
- */
-services.periods.prototype.checkRepeatTransaction = function(transaction, output) {
-
-};
+//
+///**
+// * @name checkRepeatTransaction
+// * @private
+// * @param {Object} transaction
+// * @param {Object} output
+// * @returns {undefined}
+// */
+//services.periods.prototype.checkRepeatTransaction = function(transaction, output) {
+//
+//};
 
 /**
  * @name addTransactionToTotals

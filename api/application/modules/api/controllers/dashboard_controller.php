@@ -162,12 +162,15 @@ class dashboard_controller Extends rest_controller {
 							AND a.transaction_date = (
 								SELECT MAX( b.transaction_date )
 								FROM transaction b
-								WHERE (b.is_uploaded = 1 || b.category_id = 22) AND b.is_deleted = 0 AND a.bank_account_id = b.bank_account_id
+								WHERE (b.is_uploaded = 1 || b.category_id = 22) AND b.is_deleted = 0
+								AND a.bank_account_id = b.bank_account_id
 							 )
 							AND a.id = (
 								SELECT MAX( c.id )
 								FROM transaction c
-								WHERE (c.is_uploaded = 1 || c.category_id = 22) AND c.is_deleted = 0 AND a.bank_account_id = c.bank_account_id
+								WHERE (c.is_uploaded = 1 || c.category_id = 22) AND c.is_deleted = 0
+								AND a.bank_account_id = c.bank_account_id
+								AND a.transaction_date = c.transaction_date
 							 )
 				GROUP BY	a.bank_account_id";
 		$transactions->queryAll($sql);
@@ -177,3 +180,21 @@ class dashboard_controller Extends rest_controller {
 }
 
 // EOF
+
+//SELECT		a.id, a.bank_account_id, a.transaction_date, a.bank_account_balance,
+//			CONCAT(bank.name, ' ', bank_account.name) AS account_name, bank_account.date_opened, bank_account.date_closed
+//FROM		transaction a
+//JOIN		bank_account ON bank_account.id = a.bank_account_id
+//JOIN		bank ON bank.id = bank_account.bank_id
+//WHERE		(a.is_uploaded = 1 || a.category_id = 22) AND a.is_deleted = 0
+//			AND a.transaction_date = (
+//				SELECT MAX( b.transaction_date )
+//				FROM transaction b
+//				WHERE (b.is_uploaded = 1 || b.category_id = 22) AND b.is_deleted = 0 AND a.bank_account_id = b.bank_account_id
+//			 )
+//			AND a.id = (
+//				SELECT MAX( c.id )
+//				FROM transaction c
+//				WHERE (c.is_uploaded = 1 || c.category_id = 22) AND c.is_deleted = 0 AND a.bank_account_id = c.bank_account_id
+//			 )
+//GROUP BY	a.bank_account_id

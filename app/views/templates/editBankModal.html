@@ -7,7 +7,7 @@
 			<label for="name">Bank Name</label>
 			<div class="form-group" ng-class="{'has-error':validation.name}">
 				<input type="text" name="name" ng-model="bank.name" />
-				<span class="help-block" ng-show="validation.name">{{validation.name}}</span>
+				<span class="help-block" ng-show="validation.name">{{ validation.name}}</span>
 			</div>
 		</div>
 		<div class="col-md-2" style="padding-top:25px;">
@@ -30,11 +30,11 @@
 			<tr ng-repeat="account in bank.accounts" ng-if="account.is_deleted != 1">
 				<td class="col-sm-2" style="width:30%;vertical-align:top;" ng-class="{'has-error':validation.accounts.name[$index]}">
 					<input type="text" class="form-control" ng-model="account.name" />
-					<span class="help-block" ng-show="validation.accounts.name[$index]">{{validation.accounts.name[$index]}}</span>
+					<span class="help-block" ng-show="validation.accounts.name[$index]">{{ validation.accounts.name[$index] }}</span>
 				</td>
 				<td class="col-md-2" style="width:16%;vertical-align:top;" ng-class="{'has-error':validation.accounts.balance[$index]}">
-					<input type="text" class="form-control" ng-model="account.balance.amount" />
-					<span class="help-block" ng-show="validation.accounts.balance[$index]">{{validation.accounts.balance[$index]}}</span>
+					<input type="text" class="form-control" ng-model="account.balance.bank_account_balance" />
+					<span class="help-block" ng-show="validation.accounts.balance[$index]">{{ validation.accounts.balance[$index] }}</span>
 				</td>
 				<td class="col-md-2" style="width:27%;vertical-align:top;" ng-class="{'has-error':validation.accounts.date_opened[$index]}">
 					<div class="form-group">
@@ -44,7 +44,7 @@
 								<button type="button" class="btn btn-default" ng-click="open2($event, $index)"><i class="glyphicon glyphicon-calendar"></i></button>
 							</span>
 						</p>
-						<span class="help-block" ng-show="validation.accounts.date_opened[$index]">{{validation.accounts.date_opened[$index]}}</span>
+						<span class="help-block" ng-show="validation.accounts.date_opened[$index]">{{ validation.accounts.date_opened[$index] }}</span>
 					</div>
 				</td>
 				<td class="col-md-2" style="width:27%;vertical-align:top;" ng-class="{'has-error':validation.accounts.date_closed[$index]}">
@@ -55,7 +55,7 @@
 								<button type="button" class="btn btn-default" ng-click="open1($event, $index)"><i class="glyphicon glyphicon-calendar"></i></button>
 							</span>
 						</p>
-						<span class="help-block" ng-show="validation.accounts.date_closed[$index]">{{validation.accounts.date_closed[$index]}}</span>
+						<span class="help-block" ng-show="validation.accounts.date_closed[$index]">{{ validation.accounts.date_closed[$index] }}</span>
 					</div>
 				</td>
 <!--					<td class="col-md-2" style="width:10%;vertical-align:top;">

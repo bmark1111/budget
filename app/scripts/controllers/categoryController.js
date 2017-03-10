@@ -26,8 +26,8 @@ app.controller('CategoryController', function($scope, $modal, $timeout, RestData
 
 		RestData2().getAllCategories({
 				'name':					$scope.search.name,
-				'sort':					'name',
-				'sort_dir':				'DESC',
+				'sort':					'order',
+				'sort_dir':				'ASC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
 				'pagination_amount':	$scope.itemsPerPage
 			},

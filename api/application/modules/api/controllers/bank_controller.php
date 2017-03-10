@@ -95,7 +95,7 @@ class bank_controller Extends rest_controller {
 			if (empty($account['is_deleted']) || $account['is_deleted'] != 1) {
 				$this->form_validation->set_rules('accounts[' . $idx . '][name]', 'Name', 'required');
 				$this->form_validation->set_rules('accounts[' . $idx . '][date_opened]', 'Date Opened', 'required');
-				$this->form_validation->set_rules('accounts[' . $idx . '][balance]', 'Balance', 'numeric|xss_clean');
+//				$this->form_validation->set_rules('accounts[' . $idx . '][balance]', 'Balance', 'numeric|xss_clean');
 			}
 		}
 
@@ -124,9 +124,22 @@ class bank_controller Extends rest_controller {
 					// if creating balance transaction then set transaction date
 					$transaction->transaction_date = date('Y-m-d');
 				}
-				$transaction->amount				= (!empty($account['balance']['amount'])) ? $account['balance']['amount']: 0;
-				$transaction->bank_account_balance	= $transaction->amount;
-				$transaction->type					= ($account['balance']['amount'] > 0) ? 'CREDIT': 'DEBIT';
+//				$transaction->type					= (floatVal($account['balance']['amount']) > 0) ? 'CREDIT': 'DEBIT';
+//				$transaction->amount				= (!empty($account['balance']['amount'])) ? floatVal($account['balance']['amount']): 0;
+//				$transaction->bank_account_balance	= (!empty($account['balance']['amount'])) ? floatVal($account['balance']['amount']): 0;//$transaction->amount;
+				if (empty($account['balance']['bank_account_balance'])) {
+					$transaction->type					= 'DEBIT';
+					$transaction->amount				= 0;
+					$transaction->bank_account_balance	= 0;
+				} else if (floatVal($account['balance']['bank_account_balance']) > 0) {
+					$transaction->type					= 'CREDIT';
+					$transaction->bank_account_balance	= floatVal($account['balance']['bank_account_balance']);
+					$transaction->amount				= $transaction->bank_account_balance;
+				} else {
+					$transaction->type					= 'DEBIT';
+					$transaction->bank_account_balance	= floatVal($account['balance']['bank_account_balance']);
+					$transaction->amount				= floatVal(-$account['balance']['bank_account_balance']);
+				}
 				$transaction->description			= 'Opening Balance for ' . $account['name'] . ' account';
 				$transaction->vendor_id				= 1;	// TODO: when adding a bank add it to vendor file, keep vendor id in bank record
 				$transaction->category_id			= 22;

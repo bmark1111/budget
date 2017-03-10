@@ -59,7 +59,7 @@ class upload_controller Extends rest_controller {
 		}
 		$transactions->limit($pagination_amount, $pagination_start);
 		$transactions->orderBy($sort, $sort_dir);
-		$transactions->orderBy('id', 'DESC');
+		$transactions->orderBy('id', $sort_dir);
 		$transactions->result();
 
 		$this->ajax->setData('total_rows', $transactions->foundRows());

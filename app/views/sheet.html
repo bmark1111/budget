@@ -42,7 +42,7 @@
 										<a ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
 														'actual_and_forecast_amount':period.types[category.id] == 3,
 														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
-											tooltip="Iudico aperiam scripserit"
+											
 											ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
 											ns-popover-placement="right"
 											ns-popover-template="popover"
@@ -100,7 +100,7 @@
 									</span>
 								</button>
 								<span ng-show="period.accounts[$parent.$index].reconciled == 2" class="pull-right"
-												title="{{ account.name }} is reconciled up to {{ account.reconciled_date|date:'EEE MMM dd, yyyy'}}">
+												title="{{ account.name }} is reconciled">
 									<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" />
 									{{ period.accounts[$parent.$index].balance|currency }}
 								</span>

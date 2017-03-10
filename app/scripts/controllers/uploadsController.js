@@ -31,7 +31,7 @@ app.controller('UploadsController', function($q, $scope, $rootScope, $modal, $ti
 				'bank_account_id':		$scope.search.bank_account_id,
 				'amount':				$scope.search.amount,
 				'sort':					'transaction_date',
-				'sort_dir':				'DESC',
+				'sort_dir':				'ASC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
 				'pagination_amount':	$scope.itemsPerPage
 			},
@@ -73,7 +73,7 @@ app.controller('UploadsController', function($q, $scope, $rootScope, $modal, $ti
 				'bank_account_id':		$scope.search.bank_account_id,
 				'amount':				$scope.search.amount,
 				'sort':					'transaction_date',
-				'sort_dir':				'DESC',
+				'sort_dir':				'ASC',
 				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
 				'pagination_amount':	$scope.itemsPerPage
 			},

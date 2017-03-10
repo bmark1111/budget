@@ -15,7 +15,6 @@ class category_controller Extends rest_controller {
 
 	public function index() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/index)"));
 			$this->ajax->output();
 		}
@@ -32,7 +31,6 @@ class category_controller Extends rest_controller {
 
 	public function load() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/load)"));
 			$this->ajax->output();
 		}
@@ -42,7 +40,7 @@ class category_controller Extends rest_controller {
 		$name				= (!empty($params['name'])) ? $params['name']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
 		$pagination_start	= (!empty($params['pagination_start'])) ? $params['pagination_start']: 0;
-		$sort				= (!empty($params['sort'])) ? $params['sort']: 'name';
+		$sort				= (!empty($params['sort'])) ? $params['sort']: 'order';
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$categories = new category();
@@ -54,17 +52,16 @@ class category_controller Extends rest_controller {
 		$categories->limit($pagination_amount, $pagination_start);
 		$categories->orderBy($sort, $sort_dir);
 		$categories->result();
-		if ($categories->numRows()) {
+//		if ($categories->numRows()) {
 			$this->ajax->setData('result', $categories);
-		} else {
-			$this->ajax->addError(new AjaxError("No categories found"));
-		}
+//		} else {
+//			$this->ajax->addError(new AjaxError("No categories found"));
+//		}
 		$this->ajax->output();
 	}
 
 	public function edit() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/edit)"));
 			$this->ajax->output();
 		}
