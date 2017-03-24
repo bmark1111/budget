@@ -169,20 +169,20 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 		case 'weekly':
 			var sd = this.periods[interval].interval_beginning.split('T')[0].split('-');
 			sd = new Date(sd[0], --sd[1], sd[2], 0, 0, 0, 0);
-			sd.setDate(sd.getDate() + 7);
+			sd.setDate(sd.getDate() + (7 * direction));
 
 			var ed = this.periods[interval].interval_ending.split('T')[0].split('-');
 			ed = new Date(ed[0], --ed[1], ed[2], 0, 0, 0, 0);
-			ed.setDate(ed.getDate() + 7);
+			ed.setDate(ed.getDate() + (7 * direction));
 			break;
 		case 'bi-weekly':
 			var sd = this.periods[interval].interval_beginning.split('T')[0].split('-');
 			sd = new Date(sd[0], --sd[1], sd[2], 0, 0, 0, 0);
-			sd.setDate(sd.getDate() + 14);
+			sd.setDate(sd.getDate() + (14 * direction));
 
 			var ed = this.periods[interval].interval_ending.split('T')[0].split('-');
 			ed = new Date(ed[0], --ed[1], ed[2], 0, 0, 0, 0);
-			ed.setDate(ed.getDate() + 14);
+			ed.setDate(ed.getDate() + (14 * direction));
 			break;
 		case 'semi-monthy':
 			//
@@ -414,9 +414,9 @@ services.periods.prototype.buildPeriods = function(data) {
 			var trd = transaction.transaction_date.split('-');
 			transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 			while (transaction_date.getTime() < start.getTime()) {
-				if (transaction.transaction_type !== 2 || transaction_date > currentPeriodStartDate) {
+//				if (transaction.transaction_type !== 2 || transaction_date > currentPeriodStartDate) {
 					this.addTransactionToTotals(transaction, output[o_idx]);
-				}
+//				}
 
 				// move to next transaction
 				idx++;
@@ -451,7 +451,7 @@ services.periods.prototype.buildPeriods = function(data) {
 	}
 	self.periods = output;
 };
-//
+
 ///**
 // * @name checkRepeatTransaction
 // * @private

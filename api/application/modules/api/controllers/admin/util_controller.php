@@ -31,7 +31,36 @@ class util_controller Extends EP_Controller {
 
 	private function _assignVendors() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-			$this->ajax->addError(new AjaxError("403 - Forbidden (admin/util/buildvendors)"));
+			$this->ajax->addError(new AjaxError("403 - Forbidden (admin/util/assignVendors)"));
+			$this->ajax->output();
+		}
+		$transactions = new transaction();
+		$transactions->whereNotDeleted();
+		$transactions->result();
+		foreach ($transactions as $transaction) {
+			if (strlen($transaction->description) > 10) {
+				$strLen = strlen($transaction->description) - 5;
+				$transaction_upload = new transaction_upload();
+				$transaction_upload->whereNotDeleted();
+				$transaction_upload->where('vendor_id IS NULL', null, false);
+				$transaction_upload->like('description', substr($transaction->description,0,$strLen), 'after');
+				$transaction_upload->result();
+echo $transaction_upload->lastQuery();
+print $transaction_upload;
+die;
+				if ($transaction_upload->numRows()) {
+					foreach ($transaction_upload as $upload) {
+						$upload->vendor_id = $transaction->id;
+						$upload->save();
+					}
+				}
+			}
+		}
+	}
+
+	private function xx_assignVendors() {
+		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+			$this->ajax->addError(new AjaxError("403 - Forbidden (admin/util/assignVendors)"));
 			$this->ajax->output();
 		}
 

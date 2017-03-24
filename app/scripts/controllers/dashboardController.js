@@ -1,10 +1,12 @@
 'use strict';
 
-app.controller('DashboardController', ['$q', '$scope', '$localStorage', 'RestData2', 'Categories', 'Periods',
+app.controller('DashboardController', ['$q', '$scope', '$localStorage', 'RestData2', 'Categories', 'Periods', 'Accounts',
 
-function($q, $scope, $localStorage, RestData2, Categories, Periods) {
+function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 
 	var self = this;
+	
+//	this.Accounts = Accounts;
 
 	this.dataErrorMsg = [];
 	this.ytdYear = [];
@@ -68,7 +70,8 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods) {
 		Categories.get(),
 		Periods.getTransactions(),
 		getRepeats(),
-		getBankBalances()
+		getBankBalances(),
+		Accounts.get()
 	]).then(function(response) {
 		// load the categories
 		self.categories = Categories.data;

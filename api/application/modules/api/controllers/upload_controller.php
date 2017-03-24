@@ -64,23 +64,20 @@ class upload_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
-//		if ($transactions->numRows()) {
-			foreach ($transactions as $transaction) {
-				isset($transaction->category);
-				isset($transaction->bank_account->bank);
-			}
-			$this->ajax->setData('result', $transactions);
+		foreach ($transactions as $transaction) {
+			isset($transaction->category);
+			isset($transaction->bank_account->bank);
+		}
+		$this->ajax->setData('result', $transactions);
 
-			// now set the pending count
-			$transactions = new transaction_upload();
-			$transactions->select('count(*) as count');
-			$transactions->whereNotDeleted();
-			$transactions->where('status', 0);
-			$transactions->row();
-			$this->ajax->setData('pending_count', $transactions->count);
-//		} else {
-//			$this->ajax->addError(new AjaxError("No uploads found"));
-//		}
+		// now set the pending count
+		$transactions = new transaction_upload();
+		$transactions->select('count(*) as count');
+		$transactions->whereNotDeleted();
+		$transactions->where('status', 0);
+		$transactions->row();
+		$this->ajax->setData('pending_count', $transactions->count);
+
 		$this->ajax->output();
 	}
 
@@ -91,20 +88,20 @@ class upload_controller Extends rest_controller {
 		}
 
 		$id = $this->input->get('id');
-		if (!is_numeric($id) || $id < 0) {
+		if (!is_numeric($id) || $id <= 0) {
 			$this->ajax->addError(new AjaxError("Invalid transaction id - (upload/assign)"));
 			$this->ajax->output();
 		}
 
 		$uploaded = new transaction_upload($id);
 		if ($uploaded->numRows()) {
-			// find any current transactions that could mnatch this uploaded transaction
 			if(isset($uploaded->bank_account)) {
 				isset($uploaded->bank_account->bank);
 			}
 
 			$this->ajax->setData('result', $uploaded);
 
+			// find any current transactions that could match the uploaded transaction
 			$transactions = new transaction();
 			$transactions->whereNotDeleted();
 			switch($uploaded->type) {
@@ -184,9 +181,11 @@ class upload_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$uploaded = new transaction_upload($_POST['id']);
+		$id = (!empty($_POST['id'])) ? $_POST['id']: null;
+		$uploaded = new transaction_upload($id);
 		if ($uploaded->numRows()) {
-			$uploaded->status = (!empty($_POST['id'])) ? 1: 2;			// set uploaded transaction as added or overwrite for existing
+			$uploaded->status = (!empty($id)) ? 1: 2;		// set uploaded transaction as added or overwrite for existing
+			$uploaded->vendor_id = (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;
 			$uploaded->save();
 
 			// now save the transaction, possibly overwriting an existing transaction
@@ -250,11 +249,11 @@ class upload_controller Extends rest_controller {
 						$found = false;
 						foreach ($_POST['splits'] as $split) {
 							if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
-								if ($tr_split->category_id = $split['category_id']
+								if ($tr_split->category_id == $split['category_id']
 										&&
-									$tr_split->vendor_id = $split['vendor_id']
+									$tr_split->vendor_id == $split['vendor_id']
 										&&
-									($tr_split->exact_match = 0 || $tr_split->amount = $split['amount'])) {
+									($tr_split->exact_match = 0 || $tr_split->amount == $split['amount'])) {
 									$found = true;
 									break;	// one of the posted splits matches this transaction_repeat_split
 								}
@@ -270,7 +269,7 @@ class upload_controller Extends rest_controller {
 $lq = 'DID NOT FIND A REPEAT';
 				} else {
 					// if we found a match
-					$transaction_repeat = new transaction_repeat();	//$transaction_repeat_split->transaction_repeat_id);
+					$transaction_repeat = new transaction_repeat();	
 					$transaction_repeat->whereNotDeleted();
 					$transaction_repeat->where('id', $transaction_repeat_id);
 					$transaction_repeat->where('type', $_POST['type']);

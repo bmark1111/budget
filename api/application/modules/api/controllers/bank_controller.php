@@ -21,7 +21,6 @@ class bank_controller Extends rest_controller {
 
 	public function load() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (bank/load)"));
 			$this->ajax->output();
 		}
@@ -55,7 +54,6 @@ class bank_controller Extends rest_controller {
 
 	public function edit() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (bank/edit)"));
 			$this->ajax->output();
 		}
@@ -103,7 +101,8 @@ class bank_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$bank = new bank($_POST['id']);
+		$id = (!empty($_POST['id'])) ? $_POST['id']: null;
+		$bank = new bank($id);
 		$bank->name	= $_POST['name'];
 		$bank->save();
 

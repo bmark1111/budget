@@ -67,21 +67,17 @@ class forecast_controller Extends rest_controller {
 
 		$this->ajax->setData('total_rows', $forecasts->foundRows());
 
-//		if ($forecasts->numRows()) {
-			foreach ($forecasts as $forecast) {
-				isset($forecast->category);
-				isset($forecast->bank_account);
-			}
-			$this->ajax->setData('result', $forecasts);
-//		} else {
-//			$this->ajax->addError(new AjaxError("No forecasts found"));
-//		}
+		foreach ($forecasts as $forecast) {
+			isset($forecast->category);
+			isset($forecast->bank_account);
+		}
+		$this->ajax->setData('result', $forecasts);
+
 		$this->ajax->output();
 	}
 
 	public function edit() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (forecast/edit)"));
 			$this->ajax->output();
 		}
@@ -101,7 +97,6 @@ class forecast_controller Extends rest_controller {
 
 	public function save() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (forecast/save)"));
 			$this->ajax->output();
 		}
@@ -123,7 +118,8 @@ class forecast_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$forecast = new forecast($_POST['id']);
+		$id = (!empty($_POST['id'])) ? $_POST['id']: null;
+		$forecast = new forecast($id);
 		$forecast->bank_account_id	= $_POST['bank_account_id'];
 		$forecast->first_due_date	= date('Y-m-d', strtotime($_POST['first_due_date']));
 		$forecast->last_due_date	= (!empty($_POST['last_due_date'])) ? date('Y-m-d', strtotime($_POST['last_due_date'])): NULL;
@@ -142,7 +138,6 @@ class forecast_controller Extends rest_controller {
 
 	public function delete() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (forecast/delete)"));
 			$this->ajax->output();
 		}
@@ -164,7 +159,6 @@ class forecast_controller Extends rest_controller {
 
 	public function this() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (forecast/this)"));
 			$this->ajax->output();
 		}

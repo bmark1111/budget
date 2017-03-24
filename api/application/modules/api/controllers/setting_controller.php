@@ -21,7 +21,6 @@ class setting_controller Extends rest_controller {
 	
 	public function load() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (setting/load)"));
 			$this->ajax->output();
 		}
@@ -37,7 +36,6 @@ class setting_controller Extends rest_controller {
 
 	public function save() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (setting/save)"));
 			$this->ajax->output();
 		}
@@ -63,7 +61,8 @@ class setting_controller Extends rest_controller {
 		}
 
 		foreach ($_POST['settings'] as $new_setting) {
-			$setting = new setting($new_setting['id']);
+			$id = (!empty($new_setting['id'])) ? $new_setting['id']: null;
+			$setting = new setting($id);
 			$setting->description	= $new_setting['description'];
 			$setting->name			= $new_setting['name'];
 			$setting->type			= $new_setting['type'];

@@ -52,11 +52,11 @@ class category_controller Extends rest_controller {
 		$categories->limit($pagination_amount, $pagination_start);
 		$categories->orderBy($sort, $sort_dir);
 		$categories->result();
-//		if ($categories->numRows()) {
-			$this->ajax->setData('result', $categories);
-//		} else {
-//			$this->ajax->addError(new AjaxError("No categories found"));
-//		}
+
+		$this->ajax->setData('total_rows', $categories->foundRows());
+
+		$this->ajax->setData('result', $categories);
+
 		$this->ajax->output();
 	}
 
@@ -82,7 +82,6 @@ class category_controller Extends rest_controller {
 
 	public function save() {
 		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/save)"));
 			$this->ajax->output();
 		}
@@ -98,9 +97,10 @@ class category_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
-		$category = new category($_POST['id']);
+		$id = (!empty($_POST['id'])) ? $_POST['id']: null;
+		$category = new category($id);
 		$category->name			= $_POST['name'];
-		$category->description	= $_POST['description'];
+		$category->description	= (!empty($_POST['description'])) ? $_POST['description']: null;
 		$category->order		= $_POST['order'];
 		$category->save();
 
@@ -109,7 +109,6 @@ class category_controller Extends rest_controller {
 
 	public function delete() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-//			$this->ajax->set_header("Forbidden", '403');
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/delete)"));
 			$this->ajax->output();
 		}

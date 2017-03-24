@@ -36,7 +36,7 @@ services.accounts.prototype.get = function () {
 
 	var deferred = this.$q.defer();
 
-	if (this.data.length == 0) {
+	if (this.data.length === 0) {
 		this.RestData2().getBankAccounts(function (response) {
 			console.log("accounts got");
 			self.data = [];
