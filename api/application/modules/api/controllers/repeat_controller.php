@@ -205,7 +205,8 @@ class repeat_controller Extends rest_controller {
 
 		if (!empty($_POST['splits'])) {
 			foreach ($_POST['splits'] as $split) {
-				$transaction_repeat_split = new transaction_repeat_split($split['id']);
+				$splitId = (!empty($split['id'])) ? $split['id']: NULL;
+				$transaction_repeat_split = new transaction_repeat_split($splitId);
 				if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
 					$transaction_repeat_split->amount					= $split['amount'];
 					$transaction_repeat_split->transaction_repeat_id	= $repeat->id;

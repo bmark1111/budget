@@ -38,6 +38,7 @@ class transaction_controller Extends rest_controller {
 		$sort_dir			= (!empty($params['sort_dir']) && $params['sort_dir'] == 'DESC') ? 'DESC': 'ASC';
 
 		$join = false;
+		$join2 = false;
 		$transactions = new transaction();
 		$transactions->select('SQL_CALC_FOUND_ROWS transaction.*', FALSE);
 		if ($date) {
@@ -74,12 +75,17 @@ class transaction_controller Extends rest_controller {
 			$transactions->join('vendor V1', 'V1.id = transaction.vendor_id', 'left');
 			if (!$join) {
 				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
-				$transactions->join('vendor V2', 'V2.id = transaction_split.vendor_id', 'left');
 				$join = true;
+			}
+			if ($join && !$join2) {
+				$transactions->join('vendor V2', 'V2.id = transaction_split.vendor_id', 'left');
+				$join2 = true;
 			}
 			$transactions->groupStart();
 			$transactions->orLike('V1.name', $vendor, 'both');
-			$transactions->orLike('V2.name', $vendor, 'both');
+			if ($join2) {
+				$transactions->orLike('V2.name', $vendor, 'both');
+			}
 			$transactions->groupEnd();
 		}
 		$transactions->where('transaction.is_deleted', 0);
@@ -189,7 +195,8 @@ class transaction_controller Extends rest_controller {
 
 		if (!empty($_POST['splits'])) {
 			foreach ($_POST['splits'] as $split) {
-				$transaction_split = new transaction_split($split['id']);
+				$splitId = (!empty($split['id'])) ? $split['id']: NULL;
+				$transaction_split = new transaction_split($splitId);
 				if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
 					$transaction_split->amount			= $split['amount'];
 					$transaction_split->transaction_id	= $transaction->id;

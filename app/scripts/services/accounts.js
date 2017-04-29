@@ -20,7 +20,7 @@ services.accounts.prototype.data = [];
 
 /**
  * Holds all active account information
- * @name data
+ * @name active
  * @public
  * @type {Array}
  */
@@ -39,6 +39,7 @@ services.accounts.prototype.get = function () {
 	if (this.data.length === 0) {
 		this.RestData2().getBankAccounts(function (response) {
 			console.log("accounts got");
+			self.active = [];
 			self.data = [];
 			angular.forEach(response.data.bank_accounts, function(account) {
 				var diff = 0;
@@ -53,6 +54,7 @@ services.accounts.prototype.get = function () {
 					diff = date_closed.getTime() - now.getTime();
 				}
 				if (diff >= 0) {
+					// account is still open, add to active array
 					self.active.push({
 						'id': account.id,
 						'name': account.bank.name + ' ' + account.name,

@@ -31,6 +31,8 @@ class sheet_controller Extends rest_controller {
 			$this->ajax->output();
 		}
 
+		$accounts = array();
+
 		$start = new DateTime();
 		$start_date = explode('T', $start_date);
 		$start_date = explode('-', $start_date[0]);
@@ -84,10 +86,9 @@ $this->ajax->setData('ed', $ed);
 							break;
 					}
 				}
+				array_push($accounts, $tr->bank_account_id);
 			}
 		}
-
-		$this->ajax->setData('balance_forward', $balance_forward);
 
 		$transactions = array();
 		$repeats = $this->loadRepeats($sd, $ed, 1);
@@ -120,6 +121,7 @@ $this->ajax->setData('ed', $ed);
 						$tr['transaction_date']	= $next_due_date;
 						$transactions[] = $tr;
 					}
+					array_push($accounts, $repeat->bank_account_id);
 				}
 			}
 		}
@@ -130,7 +132,6 @@ $this->ajax->setData('ed', $ed);
 				foreach ($forecast->next_due_dates as $next_due_date) {
 					$tr = array(
 'id'=> $repeat->id,	// TEMPORARY
-								'bank_account_id'	=> $forecast->bank_account_id,
 								'description'		=> $forecast->description,
 								'notes'				=> $forecast->notes,
 								'transaction_type'	=> 1,					// Forecast transaction
@@ -140,6 +141,44 @@ $this->ajax->setData('ed', $ed);
 								'type'				=> $forecast->type,
 								'transaction_date'	=> $next_due_date);
 					$transactions[] = $tr;
+					array_push($accounts, $forecast->bank_account_id);
+				}
+			}
+		}
+
+		$bank_accounts = new bank_account();
+		$bank_accounts->whereNotDeleted();
+		$bank_accounts->where('date_opened <', $sd);
+		$bank_accounts->groupStart();
+		$bank_accounts->orWhere('date_closed IS NULL', null, FALSE);
+		$bank_accounts->orWhere('date_closed >', $ed);
+		$bank_accounts->groupEnd();
+		$bank_accounts->whereNotIn('id', array_unique($accounts));
+		$bank_accounts->result();
+
+		$account_balances = array();
+		if ($bank_accounts->numRows()) {
+			foreach ($bank_accounts as $account) {
+				$balance_transaction = new transaction();
+				$balance_transaction->whereNotDeleted();
+				$balance_transaction->where('transaction_date < ', $sd);
+				$balance_transaction->where('bank_account_id', $account->id);
+				$balance_transaction->orderBy('transaction_date', 'desc');
+				$balance_transaction->orderBy('id', 'desc');
+				$balance_transaction->row();
+				if ($balance_transaction->numRows()) {
+					$tr = array(
+								'id'					=> 2157,
+								'bank_account_id'		=> $account->id,
+								'description'			=> 'BALANCE',
+								'transaction_type'		=> 0,					// dummy balance transaction
+								'amount'				=> 0,
+								'bank_account_balance'	=> $balance_transaction->bank_account_balance,
+								'reconciled_date'		=> (!empty($balance_transaction->reconciled_date)) ? $sd: NULL,
+								'type'					=> 'DEBIT',
+								'transaction_date'		=> $sd);
+					$transactions[] = $tr;
+					$balance_forward += $balance_transaction->bank_account_balance;
 				}
 			}
 		}
@@ -160,6 +199,9 @@ $this->ajax->setData('ed', $ed);
 		} else {
 			$transaction = $transaction->toArray();
 		}
+				
+		$this->ajax->setData('balance_forward', $balance_forward);
+
 		$this->ajax->setData('result', $transaction);
 
 		$this->ajax->output();

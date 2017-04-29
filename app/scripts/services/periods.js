@@ -57,10 +57,11 @@ services.periods.prototype.getTransactions = function () {
 				budget_interval += 7;
 				var budget_start_date = new Date(this.$localStorage.budget_start_date);
 				var d1 = budget_start_date.getDay();
+
 				var sd = new Date();
 				var d2 = sd.getDay();
 
-				var day = (d1 > d2) ? (d1-d2): (d2-d1);
+				var day = (d1 >= d2) ? (d1 - d2): (d1 - d2 + 7);
 				sd.setDate(sd.getDate() + day - ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
 
 				var ed = new Date();
@@ -235,7 +236,6 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 				angular.forEach(self.periods, function(period) {
 					moved.push(period);
 				});
-
 				// if moving forward add interval to end of array
 				if (direction == 1) {
 					for(var x = 0; x < output.accounts.length; x++) {
@@ -244,6 +244,8 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 						}
 					};
 					output.running_total = self.periods[interval].running_total;
+					output.balance_forward = output.running_total;
+
 					angular.forEach(response.data.result,  function(transaction, x) {
 						self.addTransactionToTotals(transaction, output);
 					});
@@ -304,10 +306,11 @@ services.periods.prototype.buildPeriods = function(data) {
 			budget_interval += 7;
 			var budget_start_date = new Date(this.$localStorage.budget_start_date);
 			var d1 = budget_start_date.getDay();
+
 			var start = new Date();
 			var d2 = start.getDay();
 
-			var day = (d1 > d2) ? (d1-d2): (d2-d1);
+			var day = (d1 >= d2) ? (d1 - d2): (d1 - d2 + 7);
 			start.setDate(start.getDate() + day - ((this.$localStorage.sheet_views/2) * budget_interval) + 1);
 
 			var end = new Date();
@@ -451,17 +454,6 @@ services.periods.prototype.buildPeriods = function(data) {
 	}
 	self.periods = output;
 };
-
-///**
-// * @name checkRepeatTransaction
-// * @private
-// * @param {Object} transaction
-// * @param {Object} output
-// * @returns {undefined}
-// */
-//services.periods.prototype.checkRepeatTransaction = function(transaction, output) {
-//
-//};
 
 /**
  * @name addTransactionToTotals

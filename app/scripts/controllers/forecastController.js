@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ForecastController', function($q, $scope, $modal, $timeout, RestData2, $filter, Accounts, Categories) {
+app.controller('ForecastController', function($q, $scope, $modal, $timeout, RestData2, Accounts, Categories) {
 
 	$scope.totals = [];
 	$scope.rTotals = [];
@@ -27,8 +27,6 @@ app.controller('ForecastController', function($q, $scope, $modal, $timeout, Rest
 		category_id:		'',
 		amount:				''
 	};
-
-//	var interval = 0;
 
 	var loadAllForecasts = function() {
 		$scope.dataErrorMsg = [];

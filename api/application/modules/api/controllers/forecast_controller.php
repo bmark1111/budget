@@ -130,7 +130,7 @@ class forecast_controller Extends rest_controller {
 		$forecast->every_on			= $_POST['every_on'];
 		$forecast->category_id		= $_POST['category_id'];
 		$forecast->amount			= $_POST['amount'];
-		$forecast->notes			= $_POST['notes'];
+		$forecast->notes			= (!empty($_POST['notes'])) ? $_POST['notes']:null;
 		$forecast->save();
 
 		$this->ajax->output();

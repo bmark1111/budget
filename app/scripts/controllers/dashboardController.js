@@ -5,8 +5,6 @@ app.controller('DashboardController', ['$q', '$scope', '$localStorage', 'RestDat
 function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 
 	var self = this;
-	
-//	this.Accounts = Accounts;
 
 	this.dataErrorMsg = [];
 	this.ytdYear = [];
@@ -119,7 +117,6 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 					self.ytdTotals[ytdIndex] = [];
 					angular.forEach(self.categories,function(category, key) {
 						if (category.id != 17 && category.id != 22) {	// Do not show Transfer's and Opening Balance's
-//							self.ytdTotals[ytdIndex].push({ id:			category.id,
 							self.ytdTotals[ytdIndex][category.id] = {	id:			category.id,
 																		name:		category.name,
 																		total:		Number(response.data.result['total_' + category.id]),
