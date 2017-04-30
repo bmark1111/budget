@@ -31,8 +31,7 @@
 						<tr>
 							<th nowrap>Balance Forward</th>
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
-								<!--<span class="pull-right" ng-if="$index == 0">{{ period.balance_forward|currency }}</span>-->
-								<span class="pull-right">{{ period.balance_forward|currency }}</span>
+								<span class="pull-right" ng-if="$index == 0">{{ period.balance_forward|currency }}</span>
 							</td>
 						</tr>
 						<tr ng-repeat="category in categories track by $index" ng-show="category.id != 17 && showCategory[category.id]">
