@@ -173,7 +173,8 @@ $this->ajax->setData('ed', $ed);
 								'description'			=> 'BALANCE',
 								'transaction_type'		=> 0,					// dummy balance transaction
 								'amount'				=> 0,
-								'bank_account_balance'	=> $balance_transaction->bank_account_balance,
+															// TODO: not sure this is correct - sending -ve balance to front-end causing error
+								'bank_account_balance'	=> ($balance_transaction->bank_account_balance >= 0) ? $balance_transaction->bank_account_balance: 0,
 								'reconciled_date'		=> (!empty($balance_transaction->reconciled_date)) ? $sd: NULL,
 								'type'					=> 'DEBIT',
 								'transaction_date'		=> $sd);
