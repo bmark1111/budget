@@ -30,73 +30,75 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 		return deferred.promise;
 	};
 
-	var getRepeats = function() {
-		var deferred = $q.defer();
-		var result = RestData2().getAllRepeats({
-				'last_due_date':		false,
-				'name':					'',
-				'bank_account_id':		'',
-				'category_id':			'',
-				'amount':				'',
-				'sort':					'next_due_date',
-				'sort_dir':				'ASC',
-				'pagination_start':		0,
-				'pagination_amount':	40
-			},
-			function(response) {
-				deferred.resolve(result);
-			},
-			function(err) {
-				deferred.resolve(err);
-			});
-		return deferred.promise;
-	};
+//	var getRepeats = function() {
+//		var deferred = $q.defer();
+//		var result = RestData2().getAllRepeats({
+//				'last_due_date':		false,
+//				'name':					'',
+//				'bank_account_id':		'',
+//				'category_id':			'',
+//				'amount':				'',
+//				'sort':					'next_due_date',
+//				'sort_dir':				'ASC',
+//				'pagination_start':		0,
+//				'pagination_amount':	40
+//			},
+//			function(response) {
+//				console.log('Repeats loaded')
+//				deferred.resolve(result);
+//			},
+//			function(err) {
+//				deferred.resolve(err);
+//			});
+//		return deferred.promise;
+//	};
 
-	var getBankBalances = function() {
-		var deferred = $q.defer();
-		var result = RestData2().getBankBalances(
-			function(response) {
-				deferred.resolve(result);
-			},
-			function(err) {
-				deferred.resolve(err);
-			});
-		return deferred.promise;
-	};
+//	var getBankBalances = function() {
+//		var deferred = $q.defer();
+//		var result = RestData2().getBankBalances(
+//			function(response) {
+//				console.log('Bank Balances loaded')
+//				deferred.resolve(result);
+//			},
+//			function(err) {
+//				deferred.resolve(err);
+//			});
+//		return deferred.promise;
+//	};
 
 	$q.all([
 		Categories.get(),
-		Periods.getTransactions(),
-		getRepeats(),
-		getBankBalances(),
-		Accounts.get()
+//		Periods.getTransactions(),
+//		getRepeats(),
+//		getBankBalances(),
+//		Accounts.get()
 	]).then(function(response) {
 		// load the categories
 		self.categories = Categories.data;
-		// load the YTD Totals
-		if (!!response[1].success) {
-			Periods.buildPeriods(response[1].data);
-		}
+		// load the transactions
+//		if (!!response[1].success) {
+//			Periods.buildPeriods(response[1].data);
+//		}
 		// load repeats
-		if (response[2].success) {
-			var repeats = response[2].data.result;
-			var repeats_seq = Object.keys(response[2].data.result);
-			var due = [];
-			self.repeats = [];
-			for (var x = 0; x < repeats_seq.length; x++) {
-				var idx = repeats_seq[x];
-				if (!due[repeats[idx].category_id] || due[repeats[idx].category_id] != repeats[idx].vendor_id) {
-					due[repeats[idx].category_id] = repeats[idx].vendor_id
-					repeats[idx].dueDate = new Date(repeats[idx].next_due_date + 'T00:00:00.000Z');
-					self.repeats.push(repeats[idx]);
-				}
-			}
-		}
-		// load bank balances
-		if (response[3].success) {
-			self.balances = response[3].data.result;
-			self.balances_seq = Object.keys(response[3].data.result);
-		}
+//		if (response[1].success) {
+//			var repeats = response[1].data.result;
+//			var repeats_seq = Object.keys(response[1].data.result);
+//			var due = [];
+//			self.repeats = [];
+//			for (var x = 0; x < repeats_seq.length; x++) {
+//				var idx = repeats_seq[x];
+//				if (!due[repeats[idx].category_id] || due[repeats[idx].category_id] != repeats[idx].vendor_id) {
+//					due[repeats[idx].category_id] = repeats[idx].vendor_id
+//					repeats[idx].dueDate = new Date(repeats[idx].next_due_date + 'T00:00:00.000Z');
+//					self.repeats.push(repeats[idx]);
+//				}
+//			}
+//		}
+//		// load bank balances
+//		if (response[2].success) {
+//			self.balances = response[2].data.result;
+//			self.balances_seq = Object.keys(response[2].data.result);
+//		}
 
 		//get start year of Budget
 		var sd = new Date($localStorage.budget_start_date);
@@ -104,7 +106,8 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 
 		// load yearly totals
 		var now = new Date();
-		for(var year = start_year; year <= (now.getFullYear()+1); year++) {
+//		for(var year = start_year; year <= (now.getFullYear()+1); year++) {
+		for(var year = now.getFullYear(); year >= start_year; year--) {
 			getYTDTotals(year).then(function(response) {
 				if (!!response.success) {
 					var ytdIndex = response.data.year - start_year;
@@ -131,6 +134,70 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 		}
 	});
 
+	RestData2().getAllRepeats({
+			'last_due_date':		false,
+			'name':					'',
+			'bank_account_id':		'',
+			'category_id':			'',
+			'amount':				'',
+			'sort':					'next_due_date',
+			'sort_dir':				'ASC',
+			'pagination_start':		0,
+			'pagination_amount':	40
+		},
+		function(response) {
+			if (response.success) {
+				console.log('Repeats loaded')
+				var repeats = response.data.result;
+				var repeats_seq = Object.keys(response.data.result);
+				var due = [];
+				self.repeats = [];
+				for (var x = 0; x < repeats_seq.length; x++) {
+					var idx = repeats_seq[x];
+					if (!due[repeats[idx].category_id] || due[repeats[idx].category_id] != repeats[idx].vendor_id) {
+						due[repeats[idx].category_id] = repeats[idx].vendor_id
+						repeats[idx].dueDate = new Date(repeats[idx].next_due_date + 'T00:00:00.000Z');
+						self.repeats.push(repeats[idx]);
+					}
+				}
+			} else {
+				if (response.errors) {
+					angular.forEach(response.errors,
+						function(error) {
+							self.dataErrorMsg.push(error.error);
+						})
+				} else {
+					self.dataErrorMsg.push(response);
+				}
+			}
+		},
+		function(err) {
+			
+		});
+
+	RestData2().getBankBalances(
+		function(response) {
+			if (response.success) {
+				console.log('Bank Balances loaded')
+				self.balances = response.data.result;
+				self.balances_seq = Object.keys(response.data.result);
+			} else {
+				if (response.errors) {
+					angular.forEach(response.errors,
+						function(error) {
+							self.dataErrorMsg.push(error.error);
+						})
+				} else {
+					self.dataErrorMsg.push(response);
+				}
+			}
+		},
+		function(err) {
+
+		});
+	Periods.getTransactions();
+	Accounts.get();
+
 	$scope.getYTDTransactions = function(category_id, year) {
 		self.dataErrorMsg = [];
 
@@ -149,7 +216,7 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 								self.dataErrorMsg.push(error.error);
 							})
 					} else {
-						self.dataErrorMsg[0] = response;
+						self.dataErrorMsg.push(response);
 					}
 				}
 			});
