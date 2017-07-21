@@ -32,6 +32,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	});
 
 	$scope.$on('liveSearchBlur', function(event, result) {
+console.log('liveSearchBlur',result)
 		if (!result.id && result.name) {
 			// nothing has been selected but a name has been entered, so lets see if a new payer/payee should be added
 			var modalInstance = $modal.open({

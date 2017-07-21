@@ -167,18 +167,19 @@ $this->ajax->setData('ed', $ed);
 				$balance_transaction->orderBy('id', 'desc');
 				$balance_transaction->row();
 				if ($balance_transaction->numRows()) {
-					$tr = array(
-								'id'					=> 2157,
-								'bank_account_id'		=> $account->id,
-								'description'			=> 'BALANCE',
-								'transaction_type'		=> 0,					// dummy balance transaction
-								'amount'				=> 0,
-															// TODO: not sure this is correct - sending -ve balance to front-end causing error
-								'bank_account_balance'	=> ($balance_transaction->bank_account_balance >= 0) ? $balance_transaction->bank_account_balance: 0,
-								'reconciled_date'		=> (!empty($balance_transaction->reconciled_date)) ? $sd: NULL,
-								'type'					=> 'DEBIT',
-								'transaction_date'		=> $sd);
-					$transactions[] = $tr;
+//					$tr = array(
+//								'id'					=> 2157,
+//								'bank_account_id'		=> $account->id,
+//								'description'			=> 'BALANCE',
+//								'transaction_type'		=> 0,					// dummy balance transaction
+//								'amount'				=> 0,
+//															// TODO: not sure this is correct - sending -ve balance to front-end causing error
+////								'bank_account_balance'	=> ($balance_transaction->bank_account_balance >= 0) ? $balance_transaction->bank_account_balance: 0,
+//								'bank_account_balance'	=> $balance_transaction->bank_account_balance,
+//								'reconciled_date'		=> (!empty($balance_transaction->reconciled_date)) ? $sd: NULL,
+//								'type'					=> 'DEBIT',
+//								'transaction_date'		=> $sd);
+//					$transactions[] = $tr;
 					$balance_forward += $balance_transaction->bank_account_balance;
 				}
 			}

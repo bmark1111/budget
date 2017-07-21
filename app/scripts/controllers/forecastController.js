@@ -118,6 +118,7 @@ app.controller('ForecastController', function($q, $scope, $modal, $timeout, Rest
 					}
 				}
 				$scope.forecasts_seq = Object.keys(response[2].data.result);
+				$scope.recCount = response[2].data.total_rows;
 			}
 		} else {
 			if (response[2].errors) {

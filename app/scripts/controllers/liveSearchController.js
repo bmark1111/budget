@@ -29,8 +29,6 @@ app.controller('LiveSearchController', ['$scope', 'RestData2',
 						}
 					},
 					function(err) {
-console.log('live search error')
-console.log(err)
 						$scope.livesearch_results = false;
 						$scope.liveSearchId = liveSearch_save.id;
 						$scope.liveSearchName = liveSearch_save.name;

@@ -10,7 +10,7 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 //			livesearchTable: '=?',
 //			livesearchIndex: '=?'
 //		},
-		template:	'<input type="text" name="name" class="form-control" ng-model="liveSearchName" autocomplete="off" />' +
+		template:	'<input type="text" name="name" class="form-control" ng-model="liveSearchName" autocomplete="off" autofocus />' +
 					'<div ng-show="livesearchResults" class="liveSearchResults">' +
 						'<div ng-repeat="result in livesearchResults">' +
 							'<div ng-mousedown="livesearchSelect(result)">' +

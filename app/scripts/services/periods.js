@@ -239,9 +239,10 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 				// if moving forward add interval to end of array
 				if (direction == 1) {
 					for(var x = 0; x < output.accounts.length; x++) {
-						if (output.accounts[x].balance_date) {
-							output.accounts[x].balance = 0;		// init balance amount
-						}
+						self.bank_account_balance[output.accounts[x].bank_account_id] = self.periods[self.periods.length - 1].accounts[x].balance;
+//						if (output.accounts[x].balance_date) {
+//							output.accounts[x].balance = 0;		// init balance amount
+//						}
 					};
 					output.running_total = self.periods[interval].running_total;
 					output.balance_forward = output.running_total;
@@ -249,12 +250,12 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 					angular.forEach(response.data.result,  function(transaction, x) {
 						self.addTransactionToTotals(transaction, output);
 					});
-					// 
-					for(var x = 0; x < output.accounts.length; x++) {
-						if (output.accounts[x].balance_date) {
-							output.accounts[x].balance += parseFloat(self.periods[interval].accounts[x].balance);
-						}
-					};
+//					for(var x = 0; x < output.accounts.length; x++) {
+//						if (output.accounts[x].balance_date) {
+////							output.accounts[x].balance += parseFloat(self.periods[interval].accounts[x].balance);
+//							output.accounts[x].balance = parseFloat(output.accounts[x].balance) + parseFloat(self.periods[interval].accounts[x].balance);
+//						}
+//					};
 					self._isReconciled(output.accounts, sd, ed);
 					moved.push(output);
 				}
@@ -397,7 +398,7 @@ services.periods.prototype.buildPeriods = function(data) {
 		if (now >= sd && now <= ed) {
 			output[o_idx].alt_ending = now;				// set alternative ending
 			output[o_idx].current_interval = true;		// mark the current period
-			var currentPeriodStartDate = sd;
+//			var currentPeriodStartDate = sd;
 		}
 
 		// build account data
@@ -437,13 +438,31 @@ services.periods.prototype.buildPeriods = function(data) {
 		}
 
 		for(var x = 0; x < output[o_idx].accounts.length; x++) {
-			if(output[o_idx].accounts[x].balance === null && o_idx > 0) {
-				if (output[o_idx-1].accounts[x].balance !== null) {
+			if(output[o_idx].accounts[x].balance === null) {
+				// check to see if we have a previous balance and use it
+				if (o_idx > 0 && output[o_idx-1].accounts[x].balance !== null) {
 					output[o_idx].accounts[x].balance			= output[o_idx-1].accounts[x].balance;
 					output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
 					output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;
 					output[o_idx].accounts[x].date_closed		= output[o_idx-1].accounts[x].date_closed;
 					output[o_idx].accounts[x].transaction_id	= output[o_idx-1].accounts[x].transaction_id;
+				} else if (o_idx === 0 && output[o_idx].accounts[x].date_closed === null) {
+					// this is the first period and we have a missing account balance, find the first transaction for this account
+					var found = false;
+					for (var xx in this.data.result) {
+						if (this.data.result[xx].bank_account_id === output[o_idx].accounts[x].bank_account_id) {
+							output[o_idx].accounts[x].balance			= parseFloat(this.data.result[xx].bank_account_balance - this.data.result[xx].amount);
+							output[o_idx].accounts[x].balance_date		= this.data.result[xx].transaction_date;
+							output[o_idx].accounts[x].reconciled_date	= this.data.result[xx].reconciled_date;
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						output[o_idx].accounts[x].balance			= 0;
+						output[o_idx].accounts[x].balance_date		= interval_beginning.split('T')[0];
+						output[o_idx].accounts[x].reconciled_date	= interval_beginning.split('T')[0];
+					}
 				}
 			}
 		}

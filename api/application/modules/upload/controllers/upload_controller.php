@@ -25,6 +25,7 @@ class upload_controller extends EP_Controller {
 			$upload_map->orderBy('offset', 'ASC');
 			$upload_map->result();
 
+			$numOfFields = $upload_map->numRows();		// number of import fields to find
 			$upload_datetime = date('Y-m-d H:i:s');
 
 			$file_handle = fopen($config['upload_path'] . $this->upload->file_name, "r");
@@ -32,15 +33,21 @@ class upload_controller extends EP_Controller {
 				$params = fgetcsv($file_handle);
 				if ($params !== false) {
 					if ($ignoreFirstLine != 1) {
-						$transaction = new transaction_upload();
-						$transaction->upload_datetime	= $upload_datetime;
-						$transaction->bank_account_id	= $account_id;
-// bug in downloaded/imported file from chase bank
+// bug in downloaded/imported file from chase bank. Comma inserted into description.
+if ($numOfFields != count($params)) {
+	$params[3] = $params[3] . ', ' . $params[4];
+	$params[4] = $params[5];
+	unset ($params[5]);
+}
+// bug in downloaded/imported file from chase bank.
 if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 	$params[0] = 'CREDIT';
 } elseif ($params[0] === 'CREDIT' && floatval($params[3]) < 0) {
 	$params[0] = 'DEBIT';
 }
+						$transaction = new transaction_upload();
+						$transaction->upload_datetime	= $upload_datetime;
+						$transaction->bank_account_id	= $account_id;
 						foreach($upload_map as $map) {
 							switch ($map->type) {
 								case 'TEXT':
@@ -57,12 +64,6 @@ if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 									$transaction->type = (floatval($params[$map->offset]) < 0) ? 'CREDIT': 'DEBIT';
 									$transaction[$map->field] = (floatval($params[$map->offset]) < 0) ? -floatval($params[$map->offset]): floatval($params[$map->offset]);
 									break;
-//								case 'DEBIT':
-//									if (strlen($params[$map->offset]) > 0) {
-//										$transaction->type = 'DEBIT';
-//										$transaction[$map->field] = floatval($params[$map->offset]);
-//									}
-//									break;
 								case 'SALE':
 									$transaction->type = (floatval($params[$map->offset]) < 0) ? 'SALE': 'PAYMENT';
 									$transaction[$map->field] = (floatval($params[$map->offset]) < 0) ? -floatval($params[$map->offset]): floatval($params[$map->offset]);
@@ -72,7 +73,7 @@ if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 								case 'RETURN':
 								case 'PAYMENT':
 									if (strlen($params[$map->offset]) > 0) {
-										$transaction->type = $map->type;//'CREDIT';
+										$transaction->type = $map->type;
 										$transaction[$map->field] = floatval($params[$map->offset]);
 									}
 									break;
@@ -83,7 +84,6 @@ if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 				}
 				$ignoreFirstLine = FALSE;
 			}
-
 			// get count of uploaded transactions
 			$transactions = new transaction_upload();
 			$transactions->select('count(*) as count');
