@@ -93,7 +93,6 @@ class transaction_controller Extends rest_controller {
 		$transactions->orderBy($sort, $sort_dir);
 		$transactions->orderBy('transaction.id', 'DESC');
 		$transactions->result();
-
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
 		foreach ($transactions as $transaction) {
@@ -189,7 +188,13 @@ class transaction_controller Extends rest_controller {
 			$transaction->bank_account_balance = $_POST['amount'];		// .... set default balance
 		}
 		$transaction->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
-		$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+		if (empty($_POST['splits'])) {
+			// if this is a transfer/payment then set vendor_id to 0
+			$transaction->vendor_id = ($_POST['category_id'] != 17) ? $_POST['vendor_id']: 0;
+		} else {
+			$transaction->vendor_id = NULL;	// ignore vendor_id if splits are present
+		}
+//		$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 		$transaction->save();
 
@@ -202,7 +207,7 @@ class transaction_controller Extends rest_controller {
 					$transaction_split->transaction_id	= $transaction->id;
 					$transaction_split->type			= $split['type'];
 					$transaction_split->category_id		= $split['category_id'];
-					$transaction_split->vendor_id		= $split['vendor_id'];
+					$transaction_split->vendor_id		= ($split['category_id'] != 17) ? $split['vendor_id']: 0;	//$split['vendor_id'];
 					$transaction_split->notes			= (!empty($split['notes'])) ? $split['notes']: NULL;
 					$transaction_split->save();
 				} else {
@@ -261,7 +266,8 @@ class transaction_controller Extends rest_controller {
 		$_POST = json_decode($input, TRUE);
 
 		// if no splits then vendor_id is required otherwise MUST be NULL (will be ignored in Save)
-		if (empty($_POST['splits']) && empty($_POST['vendor_id'])) {
+		// unless its a transfer/payment (category_id == 17) then no vendor_id required
+		if (empty($_POST['splits']) && (empty($_POST['vendor_id']) && $_POST['category_id'] != 17)) {
 			$this->form_validation->set_message('isValidVendor', 'The Vendor Field is Required');
 			return FALSE;
 		}

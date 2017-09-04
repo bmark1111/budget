@@ -109,7 +109,8 @@ $this->ajax->setData('ed', $ed);
 							$tr['vendor']			= $split->vendor;
 							$tr['amount']			= $split->amount;
 							$tr['type']				= $split->type;
-							$tr['transaction_date']	= $next_due_date;
+							$tr['transaction_date']	= $this->getNextDueDate($next_due_date);
+							$tr['original_date']	= $next_due_date;
 							$transactions[] = $tr;
 						}
 					} else {
@@ -118,7 +119,8 @@ $this->ajax->setData('ed', $ed);
 						$tr['vendor']			= $repeat->vendor;
 						$tr['amount']			= $repeat->amount;
 						$tr['type']				= $repeat->type;
-						$tr['transaction_date']	= $next_due_date;
+						$tr['transaction_date']	= $this->getNextDueDate($next_due_date);
+						$tr['original_date']	= $next_due_date;
 						$transactions[] = $tr;
 					}
 					array_push($accounts, $repeat->bank_account_id);
@@ -209,6 +211,15 @@ $this->ajax->setData('ed', $ed);
 		$this->ajax->output();
 	}
 
+	// if the repeat is in the past this will move it up today so that it is not missed
+	private function getNextDueDate($date) {
+		$d1 = strtotime('now');
+		$d2 = strtotime($date);
+		if ($d1 > $d2) {
+			return date('Y-m-d');
+		}
+		return $date;
+	}
 }
 
 // EOF

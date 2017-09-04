@@ -128,7 +128,7 @@ services.periods.prototype.getPeriod = function (index) {
 /**
  * @name getDates
  * @public
- * @param {number} direction -1  = backward, 1= forward
+ * @param {number} direction: -1 = backward, 1 = forward
  * @returns {Object}
  */
 services.periods.prototype.getNext = function (direction, callback) {

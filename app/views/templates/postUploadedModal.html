@@ -34,7 +34,14 @@
 	</div>
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-md-4" ng-if="!is_split">
+			<div class="col-sm-3" ng-if="!is_split">
+				<label for="category">Category</label>
+				<div class="form-group" ng-class="{'has-error':validation.category_id}">
+					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
+					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
+				</div>
+			</div>
+			<div class="col-md-4" ng-if="!is_split && transaction.category_id != 17">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<div id="liveSearch">
 						<label for="name">Payee/Payer</label>{{ display_name }}
@@ -43,14 +50,7 @@
 					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
 				</div>
 			</div>
-			<div class="col-sm-4" ng-if="!is_split">
-				<label for="category">Category</label>
-				<div class="form-group" ng-class="{'has-error':validation.category_id}">
-					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
-					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
-				</div>
-			</div>
-			<div class="col-md-4">
+			<div class="col-md-5">
 				<div class="form-group">
 					<label for="notes">Notes</label>
 					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
@@ -59,6 +59,71 @@
 		</fieldset>
 	</div>
 	<div split-tran is-split="{{ is_split }}"></div>
+	<div class="table-responsive" ng-if="repeats[0]">
+		<div class="row">
+			<div class="col-sm-12">
+				<h3>Multiple Possible Repeat Transactions</h3>
+				<span>Select possible repeat transaction</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<table style="width:100%;">
+					<thead>
+						<tr>
+							<th class="col-sm-3"><span class="pull-left">Date</span></th>
+							<th class="col-sm-2"><span class="pull-left">Account</span></th>
+							<th class="col-sm-1"><span class="pull-left">Type</span></th>
+							<th class="col-sm-1"><span class="pull-left">Category</span></th>
+							<th class="col-sm-4"><span class="pull-left">Vendor</span></th>
+							<th class="col-sm-1"><span class="pull-left">Amount</span></th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="idx in repeats_seq">
+						<tr ng-click="setRepeat(repeats[idx])" ng-class="{selected: repeats[idx].id === idSelectedTransaction}">
+							<td>
+								<span class="pull-left">{{ repeats[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span>
+							</td>
+							<td>
+								<span class="pull-left">{{ repeats[idx].bank_account.bank.name }} {{ repeats[idx].bank_account.name }}</span>
+							</td>
+							<td>
+								<span class="pull-left">{{ repeats[idx].type }}</span>
+							</td>
+							<td ng-if="repeats[idx].category_id">
+								<span class="pull-left">{{ repeats[idx].category.name }}</span>
+							</td>
+							<td ng-if='repeats[idx].vendor_id'>
+								<span class="pull-left">{{ repeats[idx].vendor.name }}</span><br />
+								<span ng-if="repeats[idx].description"><em>{{ repeats[idx].description }}</em><br /></span>
+								<span ng-if="repeats[idx].notes"><em>{{ repeats[idx].notes }}</em></span>
+							</td>
+							<td colspan="2" style="text-align:center;" ng-if="!repeats[idx].category_id && !repeats[idx].vendor_id">
+								<span>--Split--</span>
+							</td>
+							<td>
+								<span class="pull-right">{{ repeats[idx].amount|currency }}</span>
+							</td>
+						</tr>
+						<tr ng-repeat="split in repeats[idx].splits" style="font-size: 12px;" ng-class="{selected: repeats[idx].id === idSelectedTransaction}">
+							<td colspan="3"></td>
+							<td>
+								<span class="pull-left">{{ split.category.name }}</span>
+							</td>
+							<td>
+								<span class="pull-left">{{ split.vendor.name }}</span><br />
+								<span ng-if="split.description"><em>{{ split.description }}</em><br /></span>
+								<span ng-if="split.notes"><em>{{ split.notes }}</em></span>
+							</td>
+							<td>
+								<span class="pull-right">{{ split.amount|currency }}</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 	<div class="table-responsive" ng-if="transactions[0]">
 		<div class="row">
 			<div class="col-sm-12">

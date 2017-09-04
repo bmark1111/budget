@@ -4,53 +4,6 @@
 <div class="modal-body">
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-md-3">
-				<label for="date">Bank Account</label>
-				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
-					<select class="form-control" name="bank_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in active_accounts"></select>
-					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
-				</div>
-			</div>
-			<div class="col-md-4">
-				<label for="transaction_date">Date</label>
-				<div class="form-group" ng-class="{ 'has-error': validation.transaction_date }">
-					<p class="input-group">
-						<input type="text" name="transaction_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-						<span class="input-group-btn">
-							<button type="button" class="btn btn-default" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-						</span>
-					</p>
-					<span class="help-block" ng-show="validation.transaction_date">{{ validation.transaction_date }}</span>
-				</div>
-			</div>
-			<div class="col-md-5" ng-show="!is_split">
-				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
-					<label for="name">Payee/Payer</label>
-					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
-					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
-				</div>
-			</div>
-		</fieldset>
-	</div>
-	<div class="row">
-		<fieldset ng-disabled="isSaving">
-			<div class="col-md-5">
-				<div class="form-group" ng-class="{ 'has-error': validation.description }">
-					<label for="description">Description</label>
-					<input type="text" name="description" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.description" />
-					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
-				</div>
-			</div>
-			<div class="col-md-5">
-				<div class="form-group">
-					<label for="notes">Notes</label>
-					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
-				</div>
-			</div>
-		</fieldset>
-	</div>
-	<div class="row">
-		<fieldset ng-disabled="isSaving">
 			<div class="col-md-3" ng-if="!is_split">
 				<label for="category">Category</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
@@ -97,6 +50,53 @@
 			<div class="col-md-2" style="padding-top:25px;">
 				<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"> Uploaded</span><br />
 				<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /> &nbsp; &nbsp; Reconciled</span>
+			</div>
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-3">
+				<label for="date">Bank Account</label>
+				<div class="form-group" ng-class="{ 'has-error':validation.bank_account_id }">
+					<select class="form-control" name="bank_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in active_accounts"></select>
+					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label for="transaction_date">Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.transaction_date }">
+					<p class="input-group">
+						<input type="text" name="transaction_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.transaction_date" is-open="opened" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="validation.transaction_date">{{ validation.transaction_date }}</span>
+				</div>
+			</div>
+			<div class="col-md-6" ng-show="!is_split && transaction.category_id != 17">
+				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
+					<label for="name">Payee/Payer</label>
+					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}" id="{{ transaction.vendor.id }}"></div>
+					<span class="help-block" ng-show="validation.vendor_id">{{ validation.vendor_id }}</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-5">
+				<div class="form-group" ng-class="{ 'has-error': validation.description }">
+					<label for="description">Description</label>
+					<input type="text" name="description" class="form-control" ng-disabled="!is_admin && (transaction.is_uploaded == 1 || transaction.reconciled_date)" ng-model="transaction.description" />
+					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
+				</div>
+			</div>
+			<div class="col-md-5">
+				<div class="form-group">
+					<label for="notes">Notes</label>
+					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
+				</div>
 			</div>
 		</fieldset>
 	</div>

@@ -1,35 +1,40 @@
-<!--<script type="text/ng-template" id="popover2">-->
-	<div class="triangle"></div>
-	<div>
-		<div>{{ title }}</div>
-		<div class="table-responsive" style="font-size:12px;">
-			<table style="width:100%;">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>From Account</th>
-						<th>To Account</th>
-						<th>Amount</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-if="!dataErrorMsgThese" ng-repeat="transaction in transactions" ng-class="{ 'forecast_amount':transaction.transaction_type == 1,
-																										'repeat_amount':transaction.transaction_type == 2 }">
-						<td>
-							<span class="pull-left">{{ transaction.transaction_date|date:'EEE MMM dd, yyyy' }}</span>&nbsp;
-							<span ng-if="transaction.is_uploaded == 1" class="glyphicon glyphicon-upload" title="Uploaded"></span>
-							<span ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></span>
-						</td>
-						<td>{{ transaction.bankNameFrom }} {{ transaction.accountNameFrom }}</td>
-						<td>{{ transaction.bankNameTo }} {{ transaction.accountNameTo }}</td>
-						<td><span class="pull-right">{{ transaction.amount|currency }}</span></td>
-					</tr>
-					<tr ng-if="dataErrorMsgThese" ng-repeat="error in dataErrorMsgThese">
-						<td colspan="4">{{ error.error }}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+<div class="triangle"></div>
+<div style="overflow:auto; max-height:400px">
+	<div>{{ title }}</div>
+	<div class="table-responsive" style="font-size:12px;">
+		<table style="width:100%;">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>From Account</th>
+					<th>To Account</th>
+					<th>Amount</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-if="!dataErrorMsgThese" ng-repeat="transaction in transactions" ng-class="{ 'forecast_amount': transaction.transaction_type == 1,
+																									'repeat_amount': transaction.transaction_type == 2 }">
+					<td nowrap>
+						<div class="row">
+							<div class="col-md-7">{{ transaction.transaction_date|date:'EEE MMM dd' }}</div>
+							<div class="col-md-1" ng-if="transaction.is_uploaded == 1"><span class="glyphicon glyphicon-upload" title="Uploaded"></span></div>
+							<div class="col-md-1" ng-if="transaction.reconciled_date"><img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" title="Reconciled" /></div>
+						</div>
+						<div class="row" ng-if="transaction.original_date && transaction.transaction_date !== transaction.original_date">
+							<div class="col-sm-12">
+								<span class="text-danger"><strong>Due: {{ transaction.original_date|date:'EEE MMM dd' }}</strong></span>
+							</div>
+						</div>
+					</td>
+					<td>{{ transaction.bankNameFrom }} {{ transaction.accountNameFrom }}</td>
+					<td>{{ transaction.bankNameTo }} {{ transaction.accountNameTo }}</td>
+					<td><span class="pull-right">{{ transaction.amount|currency }}</span></td>
+				</tr>
+				<tr ng-if="dataErrorMsgThese" ng-repeat="error in dataErrorMsgThese">
+					<td colspan="4">{{ error.error }}</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
-<!--</script>-->
+</div>
 	

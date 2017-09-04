@@ -9,6 +9,8 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 
 	$scope.showCategory = [];
 
+	var moveBusy = false;
+
 	var loadData = function() {
 
 		$q.all([
@@ -113,10 +115,14 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 
 	$scope.moveInterval = function(direction) {
 
-		Periods.getNext(direction, function() {
-			$scope.periods = Periods.periods;
-			$scope.period_start = Periods.period_start;
-		});
+		if (!moveBusy) {
+			moveBusy = true;
+			Periods.getNext(direction, function() {
+				$scope.periods = Periods.periods;
+				$scope.period_start = Periods.period_start;
+				moveBusy = false;
+			});
+		}
 	};
 
 	/**

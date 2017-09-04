@@ -185,7 +185,13 @@ class upload_controller Extends rest_controller {
 		$uploaded = new transaction_upload($id);
 		if ($uploaded->numRows()) {
 			$uploaded->status = (!empty($id)) ? 1: 2;		// set uploaded transaction as added or overwrite for existing
-			$uploaded->vendor_id = (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;
+			if (empty($_POST['splits'])) {
+				// if this is a transfer/payment then set vendor_id to 0
+				$uploaded->vendor_id = ($_POST['category_id'] != 17) ? $_POST['vendor_id']: 0;
+			} else {
+				$uploaded->vendor_id = NULL;
+			}
+//			$uploaded->vendor_id = (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;
 			$uploaded->save();
 
 			// now save the transaction, possibly overwriting an existing transaction
@@ -195,7 +201,7 @@ class upload_controller Extends rest_controller {
 			$transaction->transaction_date		= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->description			= $_POST['description'];
 			$transaction->type					= $_POST['type'];
-			$transaction->vendor_id				= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+			$transaction->vendor_id				= $uploaded->vendor_id;	//(empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 			$transaction->category_id			= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 			$transaction->amount				= $_POST['amount'];
 			$transaction->bank_account_balance	= $_POST['amount'];		// set default balance
@@ -205,6 +211,7 @@ class upload_controller Extends rest_controller {
 			$transaction->is_uploaded			= 1;
 			$transaction->save();
 
+			// if we have split amounts save transaction splits
 			if (!empty($_POST['splits'])) {
 				foreach ($_POST['splits'] as $split) {
 					$transaction_split = new transaction_split();
@@ -213,7 +220,7 @@ class upload_controller Extends rest_controller {
 						$transaction_split->transaction_id	= $transaction->id;
 						$transaction_split->type			= $split['type'];
 						$transaction_split->category_id		= $split['category_id'];
-						$transaction_split->vendor_id		= $split['vendor_id'];
+						$transaction_split->vendor_id		= ($split['category_id'] != 17) ? $split['vendor_id']: 0;	//$split['vendor_id'];
 						$transaction_split->notes			= (!empty($split['notes'])) ? $split['notes']: NULL;
 						$transaction_split->save();
 					} else {
@@ -228,6 +235,7 @@ class upload_controller Extends rest_controller {
 			}
 			$this->resetBalances(array($transaction->bank_account_id => $transaction->transaction_date));	// adjust the account balance from the new transaction forward
 
+			// if we have splits then check against repeat splits
 			if (!empty($_POST['splits'])) {
 				$transaction_repeat_id = false;
 				$match = false;
@@ -246,9 +254,15 @@ class upload_controller Extends rest_controller {
 							$transaction_repeat_id = $tr_split->transaction_repeat_id;
 							$match = true;	// assume a match until we find a non-match
 						}
+						$splitCategoryIds = array();
+						$splitVendorIds = array();
+						$splitAmounts = array();
 						$found = false;
 						foreach ($_POST['splits'] as $split) {
 							if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
+								$splitCategoryIds[] = $split['category_id'];
+								$splitVendorIds[] = $split['vendor_id'];
+								$splitAmounts[] = $split['amount'];
 								if ($tr_split->category_id == $split['category_id']
 										&&
 									$tr_split->vendor_id == $split['vendor_id']
@@ -265,17 +279,37 @@ class upload_controller Extends rest_controller {
 					}
 				}
 				if (!$match) {
-					$transaction_repeat = false;
-$lq = 'DID NOT FIND A REPEAT';
+//					$transaction_repeat = false;
+//$lq = 'DID NOT FIND A SPLIT REPEAT';
+					// we did not find a repeat split so lets look in the regular repeats
+					$transaction_repeat = new transaction_repeat();
+					$transaction_repeat->whereNotDeleted();
+					$transaction_repeat->where('type', $_POST['type']);
+					$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
+					$transaction_repeat->where('first_due_date <= now()', NULL);
+					$transaction_repeat->groupStart();
+					$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
+					$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date']);
+					$transaction_repeat->groupEnd();
+//					$transaction_repeat->where('category_id', $_POST['category_id']);
+					$transaction_repeat->whereIn('category_id', $splitCategoryIds);
+//					$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
+					$transaction_repeat->whereIn('vendor_id', $splitVendorIds);
+					$transaction_repeat->groupStart();
+					$transaction_repeat->orWhere('exact_match', 0);
+//					$transaction_repeat->orWhere('amount', $_POST['amount']);
+					$transaction_repeat->orWhereIn('amount', $splitAmounts);
+					$transaction_repeat->groupEnd();
+					$transaction_repeat->result();
+$lq = $transaction_repeat->lastQuery();
 				} else {
-					// if we found a match
+					// if we found a match get the repeat transaction
 					$transaction_repeat = new transaction_repeat();	
 					$transaction_repeat->whereNotDeleted();
 					$transaction_repeat->where('id', $transaction_repeat_id);
 					$transaction_repeat->where('type', $_POST['type']);
 					$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
 					$transaction_repeat->where('first_due_date <= now()', NULL);
-//					$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
 					$transaction_repeat->groupStart();
 					$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
 					$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
@@ -290,7 +324,6 @@ $lq = $transaction_repeat->lastQuery();
 				$transaction_repeat->where('type', $_POST['type']);
 				$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
 				$transaction_repeat->where('first_due_date <= now()', NULL);
-//				$transaction_repeat->where('next_due_date <= ', $_POST['transaction_date']);
 				$transaction_repeat->groupStart();
 				$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
 				$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date']);
@@ -298,12 +331,7 @@ $lq = $transaction_repeat->lastQuery();
 				$transaction_repeat->where('category_id', $_POST['category_id']);
 				$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
 				$transaction_repeat->groupStart();
-//				$transaction_repeat->orGroupStart();
 				$transaction_repeat->orWhere('exact_match', 0);
-//				$transaction_repeat->where('exact_match', 0);
-//				$transaction_repeat->where('amount <= ', floatval($_POST['amount'] * 1.1));
-//				$transaction_repeat->where('amount >= ', floatval($_POST['amount'] * 0.9));
-//				$transaction_repeat->groupEnd();
 				$transaction_repeat->orWhere('amount', $_POST['amount']);
 				$transaction_repeat->groupEnd();
 				$transaction_repeat->result();
@@ -322,7 +350,8 @@ log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
 log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
 log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
 log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
-					throw new Exception('More than one repeat transaction found');
+//					throw new Exception('More than one repeat transaction found');
+					$this->ajax->setData('repeats', $transaction_repeat);
 				} else {
 					// we found a repeat so update the next_due_date
 					$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
@@ -375,7 +404,8 @@ log_message('error', '---------------------------------------------------------'
 		$_POST = json_decode($input, TRUE);
 
 		// if no splits then vendor_id is required otherwise MUST be NULL (will be ignored in Save)
-		if (empty($_POST['splits']) && empty($_POST['vendor_id'])) {
+		// unless its a transfer/payment (category_id == 17) then no vendor_id required
+		if (empty($_POST['splits']) && (empty($_POST['vendor_id']) && $_POST['category_id'] != 17)) {
 			$this->form_validation->set_message('isValidVendor', 'The Vendor Field is Required');
 			return FALSE;
 		}

@@ -17,6 +17,9 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 	$scope.is_split = false;
 
+	$scope.repeats_seq = false;
+	$scope.repeats = false;
+
 	//**********************//
 	// Live Search			//
 	//**********************//
@@ -93,7 +96,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 		// load the transaction
 		if (!!response[2].success) {
 			if (response[2].data.result) {
-//					$scope.uploaded = response[2].data.result;
+//				$scope.uploaded = response[2].data.result;
 				$scope.transaction = response[2].data.result;
 				$scope.transactions = response[2].data.transactions;
 				$scope.transactions_seq = Object.keys(response[2].data.transactions);
@@ -130,9 +133,15 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 			function(response) {
 				$scope.isSaving = false;
 				if (!!response.success) {
-					$modalInstance.close();
-					// now update the periods data
-					Periods.clear();
+					if (response.data && response.data.repeats) {
+						// mulitple repeats found
+						$scope.repeats_seq = Object.keys(response.data.repeats);
+						$scope.repeats = response.data.repeats;
+					} else {
+						$modalInstance.close();
+						// now update the periods data
+						Periods.clear();
+					}
 				} else if (response.validation) {
 					angular.forEach(response.validation,
 						function(validation) {

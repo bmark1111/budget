@@ -10,7 +10,7 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 //			livesearchTable: '=?',
 //			livesearchIndex: '=?'
 //		},
-		template:	'<input type="text" name="name" class="form-control" ng-model="liveSearchName" autocomplete="off" autofocus />' +
+		template:	'<input type="text" name="name" class="form-control" ng-model="liveSearchName" autocomplete="off" />' +
 					'<div ng-show="livesearchResults" class="liveSearchResults">' +
 						'<div ng-repeat="result in livesearchResults">' +
 							'<div ng-mousedown="livesearchSelect(result)">' +
@@ -21,6 +21,9 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 		link: function (scope, element, attrs) {
 			attrs.$observe('displayname', function(value) {
 				scope.liveSearchName = value;
+			});
+			attrs.$observe('id', function(value) {
+				scope.liveSearchId = value;
 			});
 			scope.liveSearchModel = attrs.liveSearch;
 			scope.liveSearchTable = attrs.table || null;
