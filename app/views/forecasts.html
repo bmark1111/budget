@@ -50,8 +50,8 @@
 					<th>First Due Date</th>
 					<th>last Due date</th>
 					<th>Description</th>
-					<th>Account</th>
 					<th>Category</th>
+					<th>Account</th>
 					<th>Every</th>
 					<th>Unit {{recCount}}</th>
 					<th>On</th>
@@ -64,9 +64,12 @@
 				<tr ng-show="forecasts_seq.length > 0" ng-repeat="idx in forecasts_seq">
 					<td>{{ forecasts[idx].first_due_date|date:'EEE MMM dd, yyyy' }}</td>
 					<td>{{ forecasts[idx].last_due_date|date:'EEE MMM dd, yyyy' }}</td>
-					<td><span class="pull-left">{{ forecasts[idx].description }}</span></td>
-					<td>{{ forecasts[idx].bankName }}</td>
+					<td>
+						<span class="pull-left">{{ forecasts[idx].description }}</span><br />
+						<span><em>{{ forecasts[idx].notes }}</em></span>
+					</td>
 					<td>{{ forecasts[idx].category.name }}</td>
+					<td>{{ forecasts[idx].bankName }}</td>
 					<td>{{ forecasts[idx].every }}</td>
 					<td>{{ forecasts[idx].every_unit }}</td>
 					<td>{{ forecasts[idx].every_on }}</td>
