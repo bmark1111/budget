@@ -89,11 +89,11 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 				self.repeats = [];
 				for (var x = 0; x < repeats_seq.length; x++) {
 					var idx = repeats_seq[x];
-					if (!due[repeats[idx].category_id] || due[repeats[idx].category_id] != repeats[idx].vendor_id) {
+			//		if (!due[repeats[idx].category_id] || due[repeats[idx].category_id] != repeats[idx].vendor_id) {
 						due[repeats[idx].category_id] = repeats[idx].vendor_id
 						repeats[idx].dueDate = new Date(repeats[idx].next_due_date + 'T00:00:00.000Z');
 						self.repeats.push(repeats[idx]);
-					}
+			//		}
 				}
 			} else {
 				if (response.errors) {

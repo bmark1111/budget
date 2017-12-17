@@ -40,23 +40,6 @@
 						</table>
 					</div>
 				</div>
-<!--			<div class="row">
-				<div class="col-md-5">
-					<div class="row">
-						<div class="col-md-4"><b>Category</b></div>
-						<div class="col-md-2"><span class="pull-right"><b>Actual</b></span></div>
-						<div class="col-md-3"><span class="pull-right"><b>Forecast</b></span></div>
-						<div class="col-md-3"><span class="pull-right"><b>Difference</b></span></div>
-					</div>
-					<div ng-repeat="ytdTotal in dashboard.ytdTotals[dashboard.selectedIndex] track by $index">
-						<div class="row">
-							<div class="col-md-4">{{ ytdTotal.name }}</div>
-							<div class="col-md-2" ng-click="getYTDTransactions(ytdTotal.id, ytdTotal.year)"><span class="pull-right">{{ ytdTotal.total | currency }}</span></div>
-							<div class="col-md-3"><span class="pull-right forecast_amount">{{ ytdTotal.forecast | currency }}</span></div>
-							<div class="col-md-3"><span class="pull-right" ng-class="{'overbudget':(ytdTotal.total - ytdTotal.forecast) < 0}"><b>{{ ytdTotal.total - ytdTotal.forecast | currency }}</b></span></div>
-						</div>
-					</div>
-				</div>-->
 				<div class="col-md-7" ng-show="dashboard.transactions" style="overflow:scroll; height:500px;">
 					<h4>YTD Transactions for Category</h4>
 					<div class="table-responsive well">
@@ -111,24 +94,6 @@
 								</td>
 							</tr>
 						</table>
-<!--					<div class="row">
-						<div class="col-md-4"><b>Category</b></div>
-						<div class="col-md-2" ng-repeat="year in dashboard.ytdYear track by $index">
-							<span class="pull-right"><b>{{ year }}</b></span>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-4">
-							<div class="row" ng-repeat="category in dashboard.ytdTotals[0]">
-								<div class="col-md-12">{{ category.name }}</div>
-							</div>
-						</div>
-						<div class="col-md-2" ng-repeat="ytdTotals in dashboard.ytdTotals track by $index">
-							<div class="row" ng-repeat="ytdTotal in ytdTotals">
-								<div class="col-md-12" ng-if="!ytdTotal.future"><span class="pull-right">&nbsp;{{ ytdTotal.total | currency }}</span></div>
-								<div class="col-md-12" ng-if="ytdTotal.future"><span class="pull-right forecast_amount"">&nbsp;{{ (ytdTotal.total + ytdTotal.forecast) | currency  }}</span></div>
-							</div>
-						</div>-->
 					</div>
 				</div>
 			</div>
@@ -144,22 +109,15 @@
 					</tr>
 					<tr ng-repeat="repeat in dashboard.repeats" ng-class="{'overdue': repeat.dueDate <= dashboard.now}">
 						<td>{{ repeat.next_due_date|date:'EEEE MMM dd, yyyy' }}</td>
-						<td>{{ repeat.description }}</td>
+						<td>
+							{{ repeat.vendor.name }}
+							<span ng-if="repeat.description"><br />{{ repeat.description }}</span>
+							<span ng-if="repeat.notes" style="font-size: 10px"> - <em>{{ repeat.notes }}</em></span>
+						</td>
 						<td><span ng-if="repeat.type == 'CHECK' || repeat.type == 'DEBIT' || repeat.type == 'SALE'" class="pull-right">{{ repeat.amount|currency }}</span></td>
 						<td><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></td>
 					</tr>
 				</table>
-<!--			<div class="row">
-				<div class="col-md-2"><span class="pull-left"><b>Date</b></span></div>
-				<div class="col-md-3"><span class="pull-left"><b>Description</b></span></div>
-				<div class="col-md-1"><span class="pull-right"><b>Debit</b></span></div>
-				<div class="col-md-1"><span class="pull-right"><b>Credit</b></span></div>
-			</div>
-			<div class="row" ng-repeat="repeat in dashboard.repeats" ng-class="{'overdue': repeat.dueDate <= dashboard.now}">
-				<div class="col-md-2">{{ repeat.next_due_date|date:'EEEE MMM dd, yyyy' }}</div>
-				<div class="col-md-3">{{ repeat.description }}</div>
-				<div class="col-md-1"><span ng-if="repeat.type == 'CHECK' || repeat.type == 'DEBIT' || repeat.type == 'SALE'" class="pull-right">{{ repeat.amount|currency }}</span></div>
-				<div class="col-md-1"><span ng-if="repeat.type == 'CREDIT' || repeat.type == 'DSLIP' || repeat.type == 'RETURN' || repeat.type == 'PAYMENT'" class="pull-right">{{ repeat.amount|currency }}</span></div>-->
 			</div>
 		</tab>
 		<tab heading="Account Balances">

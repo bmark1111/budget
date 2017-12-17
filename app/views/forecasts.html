@@ -65,8 +65,8 @@
 					<td>{{ forecasts[idx].first_due_date|date:'EEE MMM dd, yyyy' }}</td>
 					<td>{{ forecasts[idx].last_due_date|date:'EEE MMM dd, yyyy' }}</td>
 					<td>
-						<span class="pull-left">{{ forecasts[idx].description }}</span><br />
-						<span><em>{{ forecasts[idx].notes }}</em></span>
+						<span class="pull-left">{{ forecasts[idx].description }}</span>
+						<span ng-if="forecasts[idx].notes"><br /><em>{{ forecasts[idx].notes }}</em></span>
 					</td>
 					<td>{{ forecasts[idx].category.name }}</td>
 					<td>{{ forecasts[idx].bankName }}</td>
