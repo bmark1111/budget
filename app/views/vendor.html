@@ -28,6 +28,7 @@
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Street</th>
 					<th>City</th>
 					<th>State</th>
 					<th>Phone</th>
@@ -36,14 +37,15 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="idx in vendors_seq">
-					<td><span class="pull-left">{{vendors[idx].name}}</span></td>
-					<td><span class="pull-left">{{vendors[idx].city}}</span></td>
-					<td><span class="pull-left">{{vendors[idx].state}}</span></td>
+					<td><span class="pull-left">{{ vendors[idx].name }}</span></td>
+					<td><span class="pull-left">{{ vendors[idx].street }}</span></td>
+					<td><span class="pull-left">{{ vendors[idx].city }}</span></td>
+					<td><span class="pull-left">{{ vendors[idx].state }}</span></td>
 					<td>
 						<span class="pull-left" ng-if="vendors[idx].phone_area_code">
-							({{vendors[idx].phone_area_code}})
-							{{vendors[idx].phone_prefix}}-
-							{{vendors[idx].phone_number}}
+							({{ vendors[idx].phone_area_code }})
+							{{ vendors[idx].phone_prefix }}-
+							{{ vendors[idx].phone_number }}
 						</span>
 					</td>
 					<td>
