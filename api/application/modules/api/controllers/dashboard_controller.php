@@ -31,6 +31,8 @@ class dashboard_controller Extends rest_controller {
 			$this->ajax->addError(new AjaxError("Invalid year"));
 			$this->ajax->output();
 		}
+$this->ajax->setData('year', $year);
+$this->ajax->setData('yearNOW', date('Y'));
 		$categories = new category();
 		$categories->whereNotDeleted();
 		$categories->whereNotIn('id', Array(17,22));	// Do not load 'Transfer' and 'Opening Balance' categories
@@ -62,8 +64,18 @@ class dashboard_controller Extends rest_controller {
 
 		$totals = array();
 		// get any repeats for this interval
-		$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
-		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
+//		$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
+//		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
+		if ($year < date('Y')) {
+			$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', 2);
+			$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
+		} else {
+			$repeats = $this->loadRepeats(date('Y-01-01'), date("Y-m-d", strtotime("+ 1 day")), 2);
+//print $repeats;
+			$repeats = $this->sumRepeats($repeats, date('Y-01-01'), date("Y-m-d", strtotime("+ 1 day")));
+//print_r($repeats);die;
+
+		}
 		if (!empty($repeats)) {
 			foreach ($repeats as $rp) {
 				if (!empty($rp['totals'])) {
@@ -80,7 +92,9 @@ class dashboard_controller Extends rest_controller {
 
 		// get the past forecasts for this interval
 		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
+//print $forecasted;
 		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
+//print_r($forecast);die;
 		if (!empty($forecast)) {
 			foreach ($forecast as $fc) {
 				if (!empty($fc['totals'])) {

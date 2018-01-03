@@ -127,12 +127,12 @@ class rest_controller Extends EP_Controller {
 					}
 					$ndd = strtotime($next_due_date);
 					if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
-						if (($all == 0)														// ...we want all repeats
-								||															//			or
-							($all == 1 && $ndd >= strtotime($transaction->next_due_date))	// ... we want future repeats
-								||															//			or
-							($all == 2 && $ndd <= $now)) {									// ... we want past repeats
-							$next_due_dates[] = $next_due_date;								// ... then save this due date
+						if (($all == 0)															// ...we want all repeats
+								||																//			or
+							($all == 1 && $ndd >= strtotime($transaction->next_due_date))		// ... we want future repeats
+								||																//			or
+							($all == 2 && $ndd <= $now)) {										// ... we want past repeats
+							$next_due_dates[] = $next_due_date;									// ... then save this due date
 						}
 					}
 					$every = $transaction->every;
