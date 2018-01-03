@@ -96,35 +96,10 @@ class dashboard_controller Extends rest_controller {
 		}
 		$this->ajax->setData('forecast', $totals);
 
-		$this->ajax->setData('year', $year);//date('Y'));
+		$this->ajax->setData('year', $year);
 		$this->ajax->output();
 	}
-	/*
--55
--326.98
--33
--55
--256.98
--70
--33
--55
--363.65
--70
--33
--55
--336.98
--33
--55
--336.98
--33
--55
--266.98
--70
--33
--55
--336.98
-total = -3018.53
-		*/
+
 	public function these() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 			$this->ajax->addError(new AjaxError("Error: 403 Forbidden - (dashboard/these)"));

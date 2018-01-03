@@ -4,22 +4,24 @@
 <div class="modal-body">
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-md-4">
+			<div class="col-md-5">
 				<div class="form-group" ng-class="{ 'has-error': validation.description }">
 					<label for="description">Description</label>
 					<input type="text" name="description" class="form-control" ng-model="transaction.description" />
 					<span class="help-block" ng-show="validation.description">{{ validation.description }}</span>
 				</div>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-5">
 				<div class="form-group">
 					<label for="notes">Notes</label>
 					<input type="text" name="notes" class="form-control" ng-model="transaction.notes" />
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-2" ng-if="!is_split">
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-2"><!-- ng-if="!is_split">-->
 				<label for="category_id">Category</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
 					<select class="form-control" name="category_id" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
@@ -33,7 +35,7 @@
 					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
 				</div>
 			</div>
-			<div class="col-md-3" ng-if="!is_split">
+			<div class="col-md-5"><!-- ng-if="!is_split">-->
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<label for="name">Payee/Payer</label>
 					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
@@ -184,7 +186,7 @@
 			</div>
 		</fieldset>
 	</div>
-	<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>
+	<!--<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>-->
 </div>
 <div class="modal-footer">
 	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>

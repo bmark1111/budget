@@ -50,13 +50,19 @@
 			</thead>
 			<tbody>
 				<tr ng-show="repeats_seq.length > 0" ng-repeat="idx in repeats_seq">
-					<td ng-if="repeats[idx].category.name">
+					<td>
+						{{repeats[idx].vendor.name}}
+						<span ng-if="repeats[idx].description" style="font-size: 10px"><br />{{ repeats[idx].description }}</span>
+						<span ng-if="repeats[idx].notes" style="font-size: 10px"> - <em>{{ repeats[idx].notes }}</em></span>
+					</td>
+					<td><span class="pull-left">{{repeats[idx].category.name}}</span></td>
+<!--					<td ng-if="repeats[idx].category.name">
 						{{repeats[idx].vendor.name}}
 						<span ng-if="repeats[idx].description" style="font-size: 10px"><br />{{ repeats[idx].description }}</span>
 						<span ng-if="repeats[idx].notes" style="font-size: 10px"> - <em>{{ repeats[idx].notes }}</em></span>
 					</td>
 					<td ng-if="repeats[idx].category.name"><span class="pull-left">{{repeats[idx].category.name}}</span></td>
-					<td colspan="2" ng-if="!repeats[idx].category.name"><span class="pull-left">--Split--</span></td>
+					<td colspan="2" ng-if="!repeats[idx].category.name"><span class="pull-left">--Split--</span></td>-->
 					<td><span class="pull-left">{{ repeats[idx].bankName }}</td>
 					<td><span class="pull-left">{{ repeats[idx].first_due_date|date:'EEE MMM dd, yyyy' }}</span></td>
 					<td><span class="pull-left">{{ repeats[idx].next_due_date|date:'EEE MMM dd, yyyy' }}</span></td>

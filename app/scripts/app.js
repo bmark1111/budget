@@ -28,8 +28,6 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 //				}
 			},
 			'responseError': function (rejection) {
-//console.log('responseError rejection')
-//console.log(rejection)
 				if (rejection.status == '401') {// && rejection.statusText == 'EXPIRED') {
 					$localStorage.authenticated		= false;
 					$localStorage.authorizedRoles	= false;
@@ -166,6 +164,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		{
 			controller:		'SettingsController as settings',
 			templateUrl:	'app/views/settings.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
+		.when('/calendar',
+		{
+			controller:		'',
+			templateUrl:	'app/views/calendar.html',
 			data:			{
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}

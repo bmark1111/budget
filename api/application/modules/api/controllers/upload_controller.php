@@ -235,9 +235,72 @@ class upload_controller Extends rest_controller {
 			}
 			$this->resetBalances(array($transaction->bank_account_id => $transaction->transaction_date));	// adjust the account balance from the new transaction forward
 
-			// if we have splits then check against repeat splits
+			// NOW CHECK FOR REPEATS
+			// if we have splits then check splits against repeat transactions
 			if (!empty($_POST['splits'])) {
-				$transaction_repeat_id = false;
+				foreach ($_POST['splits'] as $split) {
+					if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
+						$transaction_repeat = new transaction_repeat();
+						$transaction_repeat->whereNotDeleted();
+						$transaction_repeat->where('type', $split['type']);
+						$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
+						$transaction_repeat->where('first_due_date <= now()', NULL);
+						$transaction_repeat->groupStart();
+						$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
+						$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date']);
+						$transaction_repeat->groupEnd();
+						$transaction_repeat->where('category_id', $split['category_id']);
+						$transaction_repeat->where('vendor_id', $split['vendor_id']);
+						$transaction_repeat->groupStart();
+						$transaction_repeat->orWhere('exact_match', 0);
+						$transaction_repeat->orWhere('amount', $split['amount']);
+						$transaction_repeat->groupEnd();
+						$transaction_repeat->result();
+$lq = $transaction_repeat->lastQuery();
+						if ($transaction_repeat && $transaction_repeat->numRows()) {
+							// repeat transaction
+							if ($transaction_repeat->numRows() > 1) {
+								log_message('error', 'More than one repeat split transaction found');
+log_message('error', '++++++++++++++++++++++++++++++++++++++++++FOUND MORE THAN ONE REPEAT SPLIT TRANSACTION');
+log_message('error', 'LAST QUERY = ' . $lq);
+log_message('error', 'id = ' . $transaction_repeat[0]->id);
+log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
+log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
+log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
+log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
+log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
+log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
+								foreach($transaction_repeat as $repeat) {
+									isset($repeat->bank_account);
+									isset($repeat->bank_account->bank);
+									isset($repeat->vendor);
+								}
+								$this->ajax->setData('repeats', $transaction_repeat);
+							} else {
+								// we found a repeat so update the next_due_date
+								$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
+log_message('error', '===========================================FOUND A REPEAT SPLIT TRANSACTION');
+log_message('error', 'LAST QUERY = ' . $lq);
+log_message('error', 'id = ' . $transaction_repeat[0]->id);
+log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
+log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
+log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
+log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
+log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
+log_message('error', '===========================================================');
+								$transaction_repeat[0]->save();
+							}
+						} else {
+log_message('error', '--------------------------------------DID NOT FIND A REPEAT SPLIT TRANSACTION');
+log_message('error', 'LAST QUERY = ' . $lq);
+log_message('error', 'bank_account_id = ' . $_POST['bank_account_id']);
+log_message('error', 'transaction_date = ' . $_POST['transaction_date']);
+log_message('error', 'amount = ' . $split['amount']);
+log_message('error', '---------------------------------------------------------');
+						}
+					}
+				}
+/*				$transaction_repeat_id = false;
 				$match = false;
 				// check if this is a repeat transaction - check split amounts and vendor/category
 				$transaction_repeat_split = new transaction_repeat_split();
@@ -317,6 +380,7 @@ $lq = $transaction_repeat->lastQuery();
 					$transaction_repeat->result();
 $lq = $transaction_repeat->lastQuery();
 				}
+*/
 			} else {
 				// check if this is a repeat transaction
 				$transaction_repeat = new transaction_repeat();
@@ -336,11 +400,10 @@ $lq = $transaction_repeat->lastQuery();
 				$transaction_repeat->groupEnd();
 				$transaction_repeat->result();
 $lq = $transaction_repeat->lastQuery();
-			}
-			if ($transaction_repeat && $transaction_repeat->numRows()) {
-				// repeat transaction
-				if ($transaction_repeat->numRows() > 1) {
-					log_message('error', 'More than one repeat transaction found');
+				if ($transaction_repeat && $transaction_repeat->numRows()) {
+					// repeat transaction
+					if ($transaction_repeat->numRows() > 1) {
+						log_message('error', 'More than one repeat transaction found');
 log_message('error', '++++++++++++++++++++++++++++++++++++++++++FOUND MORE THAN ONE REPEAT');
 log_message('error', 'LAST QUERY = ' . $lq);
 log_message('error', 'id = ' . $transaction_repeat[0]->id);
@@ -350,11 +413,15 @@ log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
 log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
 log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
 log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
-//					throw new Exception('More than one repeat transaction found');
-					$this->ajax->setData('repeats', $transaction_repeat);
-				} else {
-					// we found a repeat so update the next_due_date
-					$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
+						foreach($transaction_repeat as $repeat) {
+							isset($repeat->bank_account);
+							isset($repeat->bank_account->bank);
+							isset($repeat->vendor);
+						}
+						$this->ajax->setData('repeats', $transaction_repeat);
+					} else {
+						// we found a repeat so update the next_due_date
+						$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
 log_message('error', '===========================================FOUND A REPEAT');
 log_message('error', 'LAST QUERY = ' . $lq);
 log_message('error', 'id = ' . $transaction_repeat[0]->id);
@@ -364,15 +431,16 @@ log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
 log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
 log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
 log_message('error', '===========================================================');
-					$transaction_repeat[0]->save();
-				}
-			} else {
+						$transaction_repeat[0]->save();
+					}
+				} else {
 log_message('error', '--------------------------------------DID NOT FIND A REPEAT');
 log_message('error', 'LAST QUERY = ' . $lq);
 log_message('error', 'bank_account_id = ' . $_POST['bank_account_id']);
 log_message('error', 'transaction_date = ' . $_POST['transaction_date']);
 log_message('error', 'amount = ' . $_POST['amount']);
 log_message('error', '---------------------------------------------------------');
+				}
 			}
 		} else {
 			$this->ajax->addError(new AjaxError("403 - Invalid uploaded transaction (upload/post) - " . $_POST['id']));

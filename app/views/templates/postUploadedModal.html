@@ -71,7 +71,7 @@
 				<table style="width:100%;">
 					<thead>
 						<tr>
-							<th class="col-sm-3"><span class="pull-left">Date</span></th>
+							<th class="col-sm-3"><span class="pull-left">Next Due Date</span></th>
 							<th class="col-sm-2"><span class="pull-left">Account</span></th>
 							<th class="col-sm-1"><span class="pull-left">Type</span></th>
 							<th class="col-sm-1"><span class="pull-left">Category</span></th>
@@ -82,7 +82,7 @@
 					<tbody ng-repeat="idx in repeats_seq">
 						<tr ng-click="setRepeat(repeats[idx])" ng-class="{selected: repeats[idx].id === idSelectedTransaction}">
 							<td>
-								<span class="pull-left">{{ repeats[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</span>
+								<span class="pull-left">{{ repeats[idx].next_due_date|date:'EEE MMM dd, yyyy' }}</span>
 							</td>
 							<td>
 								<span class="pull-left">{{ repeats[idx].bank_account.bank.name }} {{ repeats[idx].bank_account.name }}</span>

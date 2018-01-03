@@ -270,4 +270,28 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 		}
 	};
 
+	$scope.setRepeat = function (selectedRepeat) {
+		var modalInstance = $modal.open({
+			templateUrl: 'app/views/templates/setRepeatTransactionModal.html',
+			controller: 'SetRepeatTransactionModalController',
+			size: 'sm',
+			resolve: {
+				params: function() {
+						return {
+							id: selectedRepeat.id,
+							title: 'Set Repeat Transaction ?',
+							msg: 'Are you sure you want to set this as the repeat this transaction. This action cannot be undone.'
+						}
+					}
+			}
+		});
+
+		modalInstance.result.then(function () {
+			loadData();
+		},
+		function () {
+			console.log('Delete Modal dismissed at: ' + new Date());
+		});
+	};
+
 }]);

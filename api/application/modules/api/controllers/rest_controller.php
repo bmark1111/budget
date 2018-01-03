@@ -157,40 +157,40 @@ class rest_controller Extends EP_Controller {
 				foreach($transaction->next_due_dates as $next_due_date) {
 					if (strtotime($next_due_date) >= $interval_beginning && strtotime($next_due_date) <= $interval_ending) {
 						$bb = $transaction->bank_account_id;
-						if (!$transaction->category_id) {
-							foreach ($transaction->splits as $split) {
-								$amount = NULL;
-								switch ($split->type) {
-									case 'DSLIP':
-									case 'CREDIT':
-									case 'RETURN':
-									case 'PAYMENT':
-										$amount = $split->amount;
-										break;
-									case 'DEBIT':
-									case 'CHECK':
-									case 'SALE':
-										$amount = -$split->amount;
-										break;
-								}
-								$cc = $split->category_id;
-								if (empty($interval['totals'][$cc])) {
-									$interval['totals'][$cc]		= $amount;			// set the category totals
-								} else {
-									$interval['totals'][$cc]		+= $amount;			// add the category totals
-								}
-								if (empty($interval['adjustments'][$bb])) {
-									$interval['adjustments'][$bb]	= $amount;			// set the bank account balance adjustments
-								} else {
-									$interval['adjustments'][$bb]	+= $amount;			// add the category totals
-								}
-								if (empty($interval['interval_total'])) {
-									$interval['interval_total']		= $amount;			// set the interval total
-								} else {
-									$interval['interval_total']		+= $amount;			// add the category totals
-								}
-							}
-						} else {
+//						if (!$transaction->category_id) {
+//							foreach ($transaction->splits as $split) {
+//								$amount = NULL;
+//								switch ($split->type) {
+//									case 'DSLIP':
+//									case 'CREDIT':
+//									case 'RETURN':
+//									case 'PAYMENT':
+//										$amount = $split->amount;
+//										break;
+//									case 'DEBIT':
+//									case 'CHECK':
+//									case 'SALE':
+//										$amount = -$split->amount;
+//										break;
+//								}
+//								$cc = $split->category_id;
+//								if (empty($interval['totals'][$cc])) {
+//									$interval['totals'][$cc]		= $amount;			// set the category totals
+//								} else {
+//									$interval['totals'][$cc]		+= $amount;			// add the category totals
+//								}
+//								if (empty($interval['adjustments'][$bb])) {
+//									$interval['adjustments'][$bb]	= $amount;			// set the bank account balance adjustments
+//								} else {
+//									$interval['adjustments'][$bb]	+= $amount;			// add the category totals
+//								}
+//								if (empty($interval['interval_total'])) {
+//									$interval['interval_total']		= $amount;			// set the interval total
+//								} else {
+//									$interval['interval_total']		+= $amount;			// add the category totals
+//								}
+//							}
+//						} else {
 							$amount = NULL;
 							switch ($transaction->type) {
 								case 'DSLIP':
@@ -221,7 +221,7 @@ class rest_controller Extends EP_Controller {
 							} else {
 								$interval['interval_total']		+= $amount;				// add the category totals
 							}
-						}
+//						}
 					}
 				}
 			}

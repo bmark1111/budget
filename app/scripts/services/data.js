@@ -48,6 +48,7 @@ app.factory('RestData2', function ($resource, $localStorage, Config) {
 				getAllUploads:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'upload', action: 'loadAll', param: null} },
 				getUploadedTransaction:		{ method: 'GET', headers: headers, params: {path: 'data', object: 'upload', action: 'assign', param: null} },
 				postUploadedTransaction:	{ method: 'POST', headers: headers, params: {path: 'data', object: 'upload', action: 'post', param: null} },
+				setRepeatTransaction:		{ method: 'GET', headers: headers, params: {path: 'data', object: 'upload', action: 'setRepeat', param: null} },
 				deleteUploadedTransaction:	{ method: 'GET', headers: headers, params: {path: 'data', object: 'upload', action: 'delete', param: null} },
 				getUploadCounts:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'upload', action: 'counts', param: null} },
 
