@@ -80,6 +80,7 @@ class rest_controller Extends EP_Controller {
 			$transactions->orGroupStart();
 			$transactions->where('transaction_repeat.last_due_date >= ', $sd);
 			$transactions->where('transaction_repeat.last_due_date >= now()', NULL, FALSE);
+//			$transactions->where("transaction_repeat.last_due_date >= '2018-01-04'", NULL, FALSE);
 			$transactions->groupEnd();
 			$transactions->groupEnd();
 			$transactions->where('transaction_repeat.next_due_date < ', $ed);

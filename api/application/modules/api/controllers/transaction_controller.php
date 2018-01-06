@@ -74,11 +74,11 @@ class transaction_controller Extends rest_controller {
 		if ($vendor) {
 			$transactions->join('vendor V1', 'V1.id = transaction.vendor_id', 'left');
 			if (!$join) {
-				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
+				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id AND transaction_split.is_deleted = 0', 'left');
 				$join = true;
 			}
 			if ($join && !$join2) {
-				$transactions->join('vendor V2', 'V2.id = transaction_split.vendor_id', 'left');
+				$transactions->join('vendor V2', 'V2.id = transaction_split.vendor_id AND V2.is_deleted = 0', 'left');
 				$join2 = true;
 			}
 			$transactions->groupStart();
@@ -90,9 +90,11 @@ class transaction_controller Extends rest_controller {
 		}
 		$transactions->where('transaction.is_deleted', 0);
 		$transactions->limit($pagination_amount, $pagination_start);
+		$transactions->groupBy('transaction.id');
 		$transactions->orderBy($sort, $sort_dir);
 		$transactions->orderBy('transaction.id', 'DESC');
 		$transactions->result();
+
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
 		foreach ($transactions as $transaction) {

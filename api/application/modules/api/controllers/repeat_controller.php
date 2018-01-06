@@ -42,6 +42,7 @@ class repeat_controller Extends rest_controller {
 			$repeats->groupStart();
 			$repeats->orWhere('last_due_date IS NULL', FALSE, FALSE);
 			$repeats->orWhere('last_due_date >= now()', FALSE, FALSE);
+//			$repeats->orWhere("last_due_date >= '2018-01-04'", NULL, FALSE);
 			$repeats->groupEnd();
 		}
 		if ($name) {
@@ -87,7 +88,7 @@ class repeat_controller Extends rest_controller {
 		$repeats->limit($pagination_amount, $pagination_start);
 		$repeats->orderBy($sort, $sort_dir);
 		$repeats->result();
-
+//echo $repeats->lastQuery();die;
 		$this->ajax->setData('total_rows', $repeats->foundRows());
 
 		foreach ($repeats as $repeat) {
@@ -98,7 +99,15 @@ class repeat_controller Extends rest_controller {
 		$this->ajax->setData('result', $repeats);
 		$this->ajax->output();
 	}
-
+//SELECT SQL_CALC_FOUND_ROWS transaction_repeat.*
+//FROM (transaction_repeat)
+//WHERE  (
+//transaction_repeat.last_due_date IS NULL
+//OR last_due_date >= now()
+//)
+//AND `transaction_repeat`.`is_deleted` = 0
+//ORDER BY transaction_repeat.next_due_date ASC
+//LIMIT 40
 	public function edit() {
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 			$this->ajax->addError(new AjaxError("403 - Forbidden (repeat/edit)"));

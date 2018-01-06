@@ -176,6 +176,10 @@ class EP_Controller extends MX_Controller
 						$input = file_get_contents('php://input');
 						$_POST = json_decode($input, TRUE);
 
+						if (empty($_POST['account'])) {
+							throw new Exception('Account Not Set');
+						}
+						
 						// check master DB for valid account
 						$this->db->from('account');
 						$this->db->where('account_num', $_POST['account']);
