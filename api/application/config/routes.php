@@ -49,7 +49,6 @@ $route['data/logout']							= "user/logout";					// POST - logout
 $route['data/rest/reconcileTransactions']		= "api/rest/reconcileTransactions";	// POST - reconcile transactions
 
 $route['data/budget/load']						= "api/budget/load";				// GET - load dashboard transactions
-//$route['data/budget/these']						= "api/budget/these";				// GET - load dashboard transactions for interval and category
 
 $route['data/sheet/load']						= "api/sheet/load";					// GET - load sheet transactions
 $route['data/sheet/loadAll']					= "api/sheet/loadAll";				// GET - load all transactions for interval
@@ -58,6 +57,7 @@ $route['data/livesearch']						= "api/livesearch";					// GET - do live search
 
 $route['data/dashboard/ytdTotals']				= "api/dashboard/ytdTotals";		// GET - load YTD Totals
 $route['data/dashboard/these']					= "api/dashboard/these";			// GET - load YTD Transactions for category
+$route['data/dashboard/forecast']				= "api/dashboard/forecast";			// GET - load YTD Forecast for category
 $route['data/dashboard/bankBalance']			= "api/dashboard/getBankBalances";	// GET - load bank balances
 
 $route['data/transaction/loadAll']				= "api/transaction/loadAll";		// GET - load all transactions in list

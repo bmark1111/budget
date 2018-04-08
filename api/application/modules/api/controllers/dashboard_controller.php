@@ -64,17 +64,12 @@ $this->ajax->setData('yearNOW', date('Y'));
 
 		$totals = array();
 		// get any repeats for this interval
-//		$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
-//		$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
 		if ($year < date('Y')) {
 			$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', 2);
 			$repeats = $this->sumRepeats($repeats, $year . '-01-01', ($year+1) . '-01-01');
 		} else {
 			$repeats = $this->loadRepeats(date('Y-01-01'), date("Y-m-d", strtotime("+ 1 day")), 2);
-//print $repeats;
 			$repeats = $this->sumRepeats($repeats, date('Y-01-01'), date("Y-m-d", strtotime("+ 1 day")));
-//print_r($repeats);die;
-
 		}
 		if (!empty($repeats)) {
 			foreach ($repeats as $rp) {
@@ -92,9 +87,7 @@ $this->ajax->setData('yearNOW', date('Y'));
 
 		// get the past forecasts for this interval
 		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0));
-//print $forecasted;
 		$forecast = $this->forecastIntervals($categories, $forecasted, $year . '-01-01', ($year+1) . '-01-01');
-//print_r($forecast);die;
 		if (!empty($forecast)) {
 			foreach ($forecast as $fc) {
 				if (!empty($fc['totals'])) {
@@ -114,19 +107,91 @@ $this->ajax->setData('yearNOW', date('Y'));
 		$this->ajax->output();
 	}
 
+	public function forecast() {
+		
+		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+			$this->ajax->addError(new AjaxError("Error: 403 Forbidden - (dashboard/forecast)"));
+			$this->ajax->output();
+		}
+
+		$year = $this->input->get('year');
+		if (!$year || !is_numeric($year)) {
+			$this->ajax->addError(new AjaxError("Error: Invalid year - (dashboard/forecast)"));
+			$this->ajax->output();
+		}
+
+		$category_id = $this->input->get('category_id');
+		if ($category_id == 0 || !is_numeric($category_id)) {
+			$this->ajax->addError(new AjaxError("Error: Invalid category id - (dashboard/forecast)"));
+			$this->ajax->output();
+		}
+
+		$forecast = array();
+		// get any repeats for this interval
+		if ($year < date('Y')) {
+			$repeats = $this->loadRepeats($year . '-01-01', ($year+1) . '-01-01', 2, $category_id);
+		} else {
+			$repeats = $this->loadRepeats(date('Y-01-01'), date("Y-m-d", strtotime("+ 1 day")), 2, $category_id);
+		}
+		foreach ($repeats as $repeat) {
+			foreach ($repeat->next_due_dates as $next_due_date) {
+				$ndd = strtotime($next_due_date);
+				if (!empty($forecast[$ndd])) {
+					$ndd++;
+				}
+				$forecast[$ndd]['date'] = $next_due_date;
+				$forecast[$ndd]['description'] = $repeat->description;
+				$forecast[$ndd]['notes'] = $repeat->notes;
+				$forecast[$ndd]['type'] = $repeat->type;
+				$forecast[$ndd]['amount'] = $repeat->amount;
+				$forecast[$ndd]['vendor'] = $repeat->vendor->name;
+				$forecast[$ndd]['account'] = $repeat->bank_account->bank->name . ' ' . $repeat->bank_account->name;
+				$forecast[$ndd]['ftype'] = 1;
+			}
+		}
+
+		// get the past forecasts for this interval
+		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0), $category_id);
+		if (!empty($forecasted)) {
+			foreach ($forecasted as $fc) {
+				foreach ($fc->next_due_dates as $next_due_date) {
+					$ndd = strtotime($next_due_date);
+					if (!empty($forecast[$ndd])) {
+						$ndd++;
+					}
+					$forecast[$ndd]['date'] = $next_due_date;
+					$forecast[$ndd]['description'] = $fc->description;
+					$forecast[$ndd]['notes'] = $fc->notes;
+					$forecast[$ndd]['type'] = $fc->type;
+					$forecast[$ndd]['amount'] = $fc->amount;
+					$forecast[$ndd]['account'] = $fc->bank_account->bank->name . ' ' . $fc->bank_account->name;
+					$forecast[$ndd]['ftype'] = 2;
+				}
+			}
+		}
+		ksort($forecast);
+		$totals = array();
+		foreach ($forecast as $fc) {
+			$totals[] = $fc;
+		}
+		$this->ajax->setData('result', $totals);
+		$this->ajax->output();
+	}
+
 	public function these() {
+
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 			$this->ajax->addError(new AjaxError("Error: 403 Forbidden - (dashboard/these)"));
 			$this->ajax->output();
 		}
 
-		$year	= $this->input->get('year');
+		$year = $this->input->get('year');
 		if (!$year || !is_numeric($year)) {
 			$this->ajax->addError(new AjaxError("Error: Invalid year - (dashboard/these)"));
 			$this->ajax->output();
 		}
 
-		$category_id	= $this->input->get('category_id');
+		$category_id = $this->input->get('category_id');
 		if ($category_id == 0 || !is_numeric($category_id)) {
 			$this->ajax->addError(new AjaxError("Error: Invalid category id - (dashboard/these)"));
 			$this->ajax->output();

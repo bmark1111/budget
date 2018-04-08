@@ -110,6 +110,7 @@ app.controller('RepeatController', function($q, $scope, $modal, $timeout, RestDa
 					}
 				}
 				$scope.repeats_seq = Object.keys(response[2].data.result);
+				$scope.recCount = response[2].data.total_rows;
 			}
 		} else {
 			if (response[2].errors) {

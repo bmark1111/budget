@@ -30,7 +30,10 @@
 								<td class="col-md-2" ng-click="getYTDTransactions(category.id, dashboard.ytdTotals[dashboard.selectedIndex][category.id].year)">
 									<span class="pull-right">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].total | currency }}</span>
 								</td>
-								<td class="col-md-3"><span class="pull-right forecast_amount">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</span></td>
+								<!--<td class="col-md-3"><span class="pull-right forecast_amount">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</span></td>-->
+								<td class="col-md-3" ng-click="getYTDForecast(category.id, dashboard.ytdTotals[dashboard.selectedIndex][category.id].year)">
+									<span class="pull-right forecast_amount">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</span>
+								</td>
 								<td class="col-md-3">
 									<span class="pull-right" ng-class="{'overbudget':(dashboard.ytdTotals[dashboard.selectedIndex][category.id].total - dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast) < 0}">
 										<b>{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].total - dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</b>
@@ -61,6 +64,39 @@
 									</td>
 									<td>{{ dashboard.transactions[idx].type }}</td>
 									<td><span class="pull-right">{{ dashboard.transactions[idx].amount|currency }}</span></td>
+								</tr>
+								<tr ng-repeat="error in dashboard.dataErrorMsgThese" ng-if="dashboard.dataErrorMsgThese">
+									<td colspan="4">{{ error.error }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="col-md-7" ng-show="dashboard.forecast" style="overflow:scroll; height:500px;">
+					<h4>YTD Forecast for Category</h4>
+					<div class="table-responsive well">
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>Date</th>
+									<th>Description</th>
+									<th>Type</th>
+									<th>Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="idx in dashboard.forecast_seq" ng-if="!dashboard.dataErrorMsgThese">
+									<td><span class="pull-left">{{ dashboard.forecast[idx].date|date:'EEE MMM dd, yyyy' }}</span></td>
+									<td>
+										<!--<span ng-show="dashboard.forecast[idx].ftype == 1"><a tooltip="{{ dashboard.forecast[idx].description }}">{{ dashboard.forecast[idx].vendor}}</a></span>-->
+										<span ng-show="dashboard.forecast[idx].ftype == 1">{{ dashboard.forecast[idx].vendor}}<br /></span>
+										<!--<span ng-show="dashboard.forecast[idx].ftype == 2">{{ dashboard.forecast[idx].description }}</span>-->
+										<!--<br />-->
+										<span ng-if="dashboard.forecast[idx].description">{{ dashboard.forecast[idx].description }}</span>
+										<span ng-if="dashboard.forecast[idx].notes"> - <em>{{ dashboard.forecast[idx].notes }}</em></span>
+									</td>
+									<td>{{ dashboard.forecast[idx].type }}</td>
+									<td><span class="pull-right">{{ dashboard.forecast[idx].amount|currency }}</span></td>
 								</tr>
 								<tr ng-repeat="error in dashboard.dataErrorMsgThese" ng-if="dashboard.dataErrorMsgThese">
 									<td colspan="4">{{ error.error }}</td>

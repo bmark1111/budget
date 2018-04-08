@@ -263,19 +263,31 @@ $lq = $transaction_repeat->lastQuery();
 								log_message('error', 'More than one repeat split transaction found');
 log_message('error', '++++++++++++++++++++++++++++++++++++++++++FOUND MORE THAN ONE REPEAT SPLIT TRANSACTION');
 log_message('error', 'LAST QUERY = ' . $lq);
-log_message('error', 'id = ' . $transaction_repeat[0]->id);
-log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
-log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
-log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
-log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
-log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
-log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
+								$found_exact = FALSE;
 								foreach($transaction_repeat as $repeat) {
+log_message('error', 'id = ' . $repeat->id);
+log_message('error', 'bank_account_id = ' . $repeat->bank_account_id);
+log_message('error', 'vendor_id = ' . $repeat->vendor_id);
+log_message('error', 'category_id = ' . $repeat->category_id);
+log_message('error', 'amount = ' . $repeat->amount);
+log_message('error', "next_due_date = " . $repeat->next_due_date);
+log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
 									isset($repeat->bank_account);
 									isset($repeat->bank_account->bank);
 									isset($repeat->vendor);
+// TODO need to sort through result and see if we have an exact match
+									if ($repeat->amount == $split['amount'] && $repeat->exact_match == 1) {
+										// found exact match for this repeat
+										$repeat->next_due_date = date("Y-m-d", strtotime($repeat->next_due_date . " +" . $repeat->every . " " . $repeat->every_unit));
+log_message('error', '===========================================FOUND A REPEAT SPLIT TRANSACTION EXACT MATCH');
+										$repeat->save();
+										$found_exact = TRUE;
+										break;
+									}
 								}
-								$this->ajax->setData('repeats', $transaction_repeat);
+								if (!$found_exact) {
+									$this->ajax->setData('repeats', $transaction_repeat);
+								}
 							} else {
 								// we found a repeat so update the next_due_date
 								$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
@@ -403,26 +415,39 @@ $lq = $transaction_repeat->lastQuery();
 				if ($transaction_repeat && $transaction_repeat->numRows()) {
 					// repeat transaction
 					if ($transaction_repeat->numRows() > 1) {
+// TODO need to sort through result and see if we have an exact match
 						log_message('error', 'More than one repeat transaction found');
-log_message('error', '++++++++++++++++++++++++++++++++++++++++++FOUND MORE THAN ONE REPEAT');
+log_message('error', '++++++++++++++++++++++++++++++++++++++++++FOUND MORE THAN ONE REPEAT TRANSACTION');
 log_message('error', 'LAST QUERY = ' . $lq);
-log_message('error', 'id = ' . $transaction_repeat[0]->id);
-log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);
-log_message('error', 'vendor_id = ' . $transaction_repeat[0]->vendor_id);
-log_message('error', 'category_id = ' . $transaction_repeat[0]->category_id);
-log_message('error', 'amount = ' . $transaction_repeat[0]->amount);
-log_message('error', "next_due_date = " . $transaction_repeat[0]->next_due_date);
-log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
+						$found_exact = FALSE;
 						foreach($transaction_repeat as $repeat) {
+log_message('error', 'id = ' . $repeat->id);
+log_message('error', 'bank_account_id = ' . $repeat->bank_account_id);
+log_message('error', 'vendor_id = ' . $repeat->vendor_id);
+log_message('error', 'category_id = ' . $repeat->category_id);
+log_message('error', 'amount = ' . $repeat->amount);
+log_message('error', "next_due_date = " . $repeat->next_due_date);
+log_message('error', '+++++++++++++++++++++++++++++++++++++++++++++++++++++');
 							isset($repeat->bank_account);
 							isset($repeat->bank_account->bank);
 							isset($repeat->vendor);
+// TODO need to sort through result and see if we have an exact match
+							if ($repeat->amount == $_POST['amount'] && $repeat->exact_match == 1) {
+								// found exact match for this repeat
+								$repeat->next_due_date = date("Y-m-d", strtotime($repeat->next_due_date . " +" . $repeat->every . " " . $repeat->every_unit));
+log_message('error', '===========================================FOUND A REPEAT TRANSACTION EXACT MATCH');
+								$repeat->save();
+								$found_exact = TRUE;
+								break;
+							}
 						}
-						$this->ajax->setData('repeats', $transaction_repeat);
+						if (!$found_exact) {
+							$this->ajax->setData('repeats', $transaction_repeat);
+						}
 					} else {
 						// we found a repeat so update the next_due_date
 						$transaction_repeat[0]->next_due_date = date("Y-m-d", strtotime($transaction_repeat[0]->next_due_date . " +" . $transaction_repeat[0]->every . " " . $transaction_repeat[0]->every_unit));
-log_message('error', '===========================================FOUND A REPEAT');
+log_message('error', '===========================================FOUND A REPEAT TRANSACTION');
 log_message('error', 'LAST QUERY = ' . $lq);
 log_message('error', 'id = ' . $transaction_repeat[0]->id);
 log_message('error', 'bank_account_id = ' . $transaction_repeat[0]->bank_account_id);

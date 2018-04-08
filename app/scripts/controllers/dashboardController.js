@@ -142,8 +142,36 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 			},
 			function(response) {
 				if (!!response.success) {
+					self.forecast = null;
+					self.forecast_seq = null;
 					self.transactions = response.data.result;
 					self.transactions_seq = Object.keys(response.data.result);
+				} else {
+					if (response.errors) {
+						angular.forEach(response.errors,
+							function(error) {
+								self.dataErrorMsg.push(error.error);
+							})
+					} else {
+						self.dataErrorMsg.push(response);
+					}
+				}
+			});
+	};
+
+	$scope.getYTDForecast = function(category_id, year) {
+		self.dataErrorMsg = [];
+
+		RestData2().getYTDForecast({
+				year:			year,
+				category_id:	category_id
+			},
+			function(response) {
+				if (!!response.success) {
+					self.transactions = null;
+					self.transactions_seq = null;
+					self.forecast = response.data.result;
+					self.forecast_seq = Object.keys(response.data.result);
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,

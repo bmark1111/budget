@@ -21,6 +21,7 @@ app.factory('RestData2', function ($resource, $localStorage, Config) {
 
 				getYTDTotals:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'ytdTotals', param: null} },
 				getYTDTransactions:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'these', param: null} },
+				getYTDForecast:				{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'forecast', param: null} },
 				getBankBalances:			{ method: 'GET', headers: headers, params: {path: 'data', object: 'dashboard', action: 'bankBalance', param: null} },
 
 				liveSearch:					{ method: 'GET', headers: headers, params: {path: 'data', object: 'livesearch', action: null, param: null} },

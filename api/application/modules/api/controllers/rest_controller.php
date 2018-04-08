@@ -71,36 +71,40 @@ class rest_controller Extends EP_Controller {
 	 * @return transactions with next due dates
 	 * @throws Exception
 	 */
-	protected function loadRepeats($sd, $ed, $all = 0) {
+	protected function loadRepeats($sd, $ed, $all = 0, $category_id = FALSE) {
 		$transactions = new transaction_repeat();
-		$transactions->select('transaction_repeat.*');
 		if ($all == 1) {
 			$transactions->groupStart();
-			$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
+			$transactions->orWhere('last_due_date IS NULL ', NULL);
 			$transactions->orGroupStart();
-			$transactions->where('transaction_repeat.last_due_date >= ', $sd);
-			$transactions->where('transaction_repeat.last_due_date >= now()', NULL, FALSE);
-//			$transactions->where("transaction_repeat.last_due_date >= '2018-01-04'", NULL, FALSE);
+			$transactions->where('last_due_date >= ', $sd);
+			$transactions->where('last_due_date >= now()', NULL, FALSE);
 			$transactions->groupEnd();
 			$transactions->groupEnd();
-			$transactions->where('transaction_repeat.next_due_date < ', $ed);
+			$transactions->where('next_due_date < ', $ed);
 		} else {
 			$transactions->groupStart();
-			$transactions->orWhere('transaction_repeat.last_due_date IS NULL ', NULL);
-			$transactions->orWhere('transaction_repeat.last_due_date >= ', $sd);
+			$transactions->orWhere('last_due_date IS NULL ', NULL);
+			$transactions->orWhere('last_due_date >= ', $sd);
 			$transactions->groupEnd();
 		}
+		if ($category_id) {
+			$transactions->where('category_id', $category_id);
+		}
 		$transactions->groupStart();
-		$transactions->orWhere('transaction_repeat.last_due_date IS NULL', NULL, FALSE);
-		$transactions->orWhere('transaction_repeat.last_due_date >= transaction_repeat.next_due_date', NULL, FALSE);
+		$transactions->orWhere('last_due_date IS NULL', NULL, FALSE);
+		$transactions->orWhere('last_due_date >= next_due_date', NULL, FALSE);
 		$transactions->groupEnd();
-		$transactions->where('transaction_repeat.first_due_date < ', $ed);
-		$transactions->where('transaction_repeat.is_deleted', 0);
-		$transactions->orderBy('transaction_repeat.next_due_date', 'ASC');
+		$transactions->where('first_due_date < ', $ed);
+		$transactions->where('is_deleted', 0);
+		$transactions->orderBy('next_due_date', 'ASC');
 		$transactions->result();
 		$now = strtotime(date('m/d/Y'));
 		// now calculate all repeat due dates for given period
 		foreach ($transactions as $transaction) {
+			if ($category_id) {
+				isset($transaction->vendor);
+			}
 			$next_due_dates = array();
 			foreach ($transaction->repeats as $repeat) {
 				$next_due_date = $transaction->first_due_date;
@@ -243,7 +247,7 @@ class rest_controller Extends EP_Controller {
 	 * @param type $all 0 = get all, 1 = future, 2 = past
 	 * @return forecast
 	 */
-	protected function loadForecast($sd, $ed, $all = 0) {
+	protected function loadForecast($sd, $ed, $all = 0, $category_id = FALSE) {
 		$forecast = new forecast();
 		$forecast->whereNotDeleted();
 		$forecast->groupStart();
@@ -252,13 +256,17 @@ class rest_controller Extends EP_Controller {
 		$forecast->orWhere('last_due_date >= ', $sd);
 		$forecast->groupEnd();
 		$forecast->where('first_due_date < ', $ed);
+		if ($category_id) {
+			$forecast->where('category_id', $category_id);
+		}
 		$forecast->result();
-//print $forecast;
-//die;
 		if ($forecast->numRows()) {
 			$now = strtotime(date('m/d/Y'));
 			// set the next due date(s) for the forecasted expenses
 			foreach ($forecast as $fc) {
+				if ($category_id) {
+					isset($fc->vendor);
+				}
 				isset($fc->bank_account->bank);
 				$next_due_dates = array();
 
