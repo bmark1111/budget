@@ -174,7 +174,7 @@ $this->ajax->setData('yearNOW', date('Y'));
 		foreach ($forecast as $fc) {
 			$totals[] = $fc;
 		}
-		$this->ajax->setData('result', $totals);
+		$this->ajax->setData('result', array_reverse($totals));
 		$this->ajax->output();
 	}
 
