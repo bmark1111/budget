@@ -1,6 +1,3 @@
-<!--<ng-include src="'app/views/templates/popover.html'"></ng-include>-->
-<!--<ng-include src="'app/views/templates/popover2.html'"></ng-include>-->
-
 <div class="container-fluid" style="line-height: 1.3"><!-- viewport-width>-->
 	<div class="row">
 		<div class="col-sm-2">
@@ -42,7 +39,6 @@
 										<a ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
 														'actual_and_forecast_amount':period.types[category.id] == 3,
 														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
-											
 											ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
 											ns-popover-placement="right"
 											ns-popover-template="app/views/templates/popover.html"
@@ -99,8 +95,7 @@
 										{{ period.accounts[$parent.$index].balance|currency }}
 									</span>
 								</button>
-								<span ng-show="period.accounts[$parent.$index].reconciled == 2" class="pull-right"
-												title="{{ account.name }} is reconciled">
+								<span ng-show="period.accounts[$parent.$index].reconciled == 2" class="pull-right" title="{{ account.name }} is reconciled">
 									<img ng-src="app/images/transparent-green-checkmark-th.png" height="12" width="8" />
 									{{ period.accounts[$parent.$index].balance|currency }}
 								</span>
