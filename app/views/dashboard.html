@@ -25,12 +25,11 @@
 								<th class="col-md-3"><span class="pull-right"><b>Forecast</b></span></th>
 								<th class="col-md-3"><span class="pull-right"><b>Difference</b></span></th>
 							</tr>
-							<tr ng-repeat="category in dashboard.categories track by $index" ng-if="category.id != 17 && category.id != 22">
+							<tr ng-repeat="category in dashboard.categories track by $index" ng-if="category.id != 17 && category.id != 22 && (dashboard.ytdTotals[dashboard.selectedIndex][category.id].inactive == null || dashboard.ytdTotals[dashboard.selectedIndex][category.id].year <= dashboard.ytdTotals[dashboard.selectedIndex][category.id].inactive)">
 								<td class="col-md-4">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].name }}</td>
 								<td class="col-md-2" ng-click="getYTDTransactions(category.id, dashboard.ytdTotals[dashboard.selectedIndex][category.id].year)">
 									<span class="pull-right">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].total | currency }}</span>
 								</td>
-								<!--<td class="col-md-3"><span class="pull-right forecast_amount">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</span></td>-->
 								<td class="col-md-3" ng-click="getYTDForecast(category.id, dashboard.ytdTotals[dashboard.selectedIndex][category.id].year)">
 									<span class="pull-right forecast_amount">{{ dashboard.ytdTotals[dashboard.selectedIndex][category.id].forecast | currency }}</span>
 								</td>

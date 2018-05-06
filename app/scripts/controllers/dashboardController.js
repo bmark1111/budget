@@ -51,12 +51,16 @@ function($q, $scope, $localStorage, RestData2, Categories, Periods, Accounts) {
 						self.selectedYear = response.data.year;
 						self.selectedIndex = ytdIndex;
 					}
-
 					self.ytdTotals[ytdIndex] = [];
 					angular.forEach(self.categories,function(category, key) {
 						if (category.id != 17 && category.id != 22) {	// Do not show Transfer's and Opening Balance's
+							var year = null;
+							if (category.date_inactive !== null) {
+								year = category.date_inactive.split('-')[0];
+							}
 							self.ytdTotals[ytdIndex][category.id] = {	id:			category.id,
 																		name:		category.name,
+																		inactive:	year,
 																		total:		Number(response.data.result['total_' + category.id]),
 																		forecast:	Number(response.data.forecast[category.id]),
 																		future:		(response.data.year > now.getFullYear()) ? true: false,

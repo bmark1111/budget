@@ -114,6 +114,13 @@
 				</div>
 			</div>
 			<div class="col-sm-2">
+				<label for="every">Every</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.every }">
+					<input type="number" name="every" class="form-control" ng-model="transaction.every" />
+					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
 				<label for="every_unit">Every Unit</label>
 				<div class="form-group" ng-class="{'has-error': validation.every_unit }">
 					<select class="form-control" name="every_unit" ng-model="transaction.every_unit">
@@ -124,13 +131,6 @@
 						<option ng-selected="transaction.every_unit == 'Year'" value="Year">Year</option>
 					</select>
 					<span class="help-block" ng-show="validation.every_unit">{{ validation.every_unit }}</span>
-				</div>
-			</div>
-			<div class="col-sm-2">
-				<label for="every">Every</label>
-				<div class="form-group" ng-class="{ 'has-error': validation.every }">
-					<input type="text" name="every" class="form-control" ng-model="transaction.every" />
-					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
 				</div>
 			</div>
 			<div class="col-sm-2">
@@ -197,7 +197,6 @@
 			</div>
 		</fieldset>
 	</div>
-	<!--<div split-tran is-split="{{ is_split }}" transaction-amount="{{ transaction.amount }}"></div>-->
 </div>
 <div class="modal-footer">
 	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>

@@ -122,6 +122,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 				if ($scope.transaction.splits) {
 					$scope.is_split = true;
 				}
+				$scope.transaction.every = parseInt($scope.transaction.every, 10);
 			}
 //		} else {
 //			if (response[2].errors) {

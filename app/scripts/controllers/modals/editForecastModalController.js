@@ -46,6 +46,7 @@ function($q, $scope, $modalInstance, RestData2, params, Categories, Accounts, Pe
 					dt = $scope.forecast.last_due_date.split('-');
 					$scope.forecast.last_due_date = new Date(dt[0], --dt[1], dt[2]);
 				}
+				$scope.forecast.every = parseInt($scope.forecast.every, 10);
 			}
 //		} else {
 //			if (response[2].errors) {
