@@ -20,7 +20,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	$scope.opened = {
 		first_due_date: false,
 		last_due_date: false,
-		next_due_date: false
+		last_due_date: false
 	};
 
 	$scope.minDate = null;
@@ -235,13 +235,122 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						$scope.dataErrorMsg[0] = response;
 					}
 				}
-//					ngProgress.complete();
+//				ngProgress.complete();
 			});
 	};
 
 	// cancel repeat edit
 	$scope.cancel = function () {
+		
 		$modalInstance.dismiss('cancel');
 	};
 
+	$scope.previousDueDate = function() {
+
+		if ($scope.transaction.next_due_date !== null) {
+			switch ($scope.transaction.every_unit) {
+				case 'Day':
+					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() - (1 * $scope.transaction.every));
+					break;
+				case 'Week':
+					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() - (7 * $scope.transaction.every));
+					break;
+				case 'Month':
+					var dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					var mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
+					$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+					break;
+				case 'Year':
+					var dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					var year = parseInt(dd[0], 10) - parseInt($scope.transaction.every, 10);
+					$scope.transaction.next_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					break;
+			}
+		}
+	};
+
+	$scope.nextDueDate = function() {
+		
+		if ($scope.transaction.next_due_date !== null) {
+			switch ($scope.transaction.every_unit) {
+				case 'Day':
+					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() + (1 * $scope.transaction.every));
+					break;
+				case 'Week':
+					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() + (7 * $scope.transaction.every));
+					break;
+				case 'Month':
+					var dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					var mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
+					$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+					break;
+				case 'Year':
+					var dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					var year = parseInt(dd[0], 10) + parseInt($scope.transaction.every, 10);
+					$scope.transaction.next_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					break;
+			}
+		} else {
+			$scope.transaction.next_due_date = new Date($scope.transaction.first_due_date.getYear(), $scope.transaction.first_due_date.getMonth(), $scope.transaction.first_due_date.getDate());
+		}
+	};
+
+	$scope.deleteDueDate = function() {
+		
+		$scope.transaction.next_due_date = null;
+	};
+	
+	$scope.previousLastDueDate = function() {
+		
+		if ($scope.transaction.last_due_date !== null) {
+			switch ($scope.transaction.every_unit) {
+				case 'Day':
+					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() - (1 * $scope.transaction.every));
+					break;
+				case 'Week':
+					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() - (7 * $scope.transaction.every));
+					break;
+				case 'Month':
+					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
+					var mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
+					$scope.transaction.last_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+					break;
+				case 'Year':
+					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
+					var year = parseInt(dd[0], 10) - parseInt($scope.transaction.every, 10);
+					$scope.transaction.last_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					break;
+			}
+		}
+	};
+
+	$scope.nextLastDueDate = function() {
+
+		if ($scope.transaction.last_due_date !== null) {
+			switch ($scope.transaction.every_unit) {
+				case 'Day':
+					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() + (1 * $scope.transaction.every));
+					break;
+				case 'Week':
+					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() + (7 * $scope.transaction.every));
+					break;
+				case 'Month':
+					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
+					var mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
+					$scope.transaction.last_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+					break;
+				case 'Year':
+					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
+					var year = parseInt(dd[0], 10) + parseInt($scope.transaction.every, 10);
+					$scope.transaction.last_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					break;
+			}
+		}
+	};
+
+	$scope.deleteLastDueDate = function() {
+		
+		$scope.transaction.last_due_date = null;
+	};
+	
 }]);
