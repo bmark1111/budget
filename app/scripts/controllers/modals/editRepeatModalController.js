@@ -292,7 +292,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 					break;
 			}
 		} else {
-			$scope.transaction.next_due_date = new Date($scope.transaction.first_due_date.getYear(), $scope.transaction.first_due_date.getMonth(), $scope.transaction.first_due_date.getDate());
+			$scope.transaction.next_due_date = new Date($scope.transaction.first_due_date.getFullYear(), $scope.transaction.first_due_date.getMonth(), $scope.transaction.first_due_date.getDate());
 		}
 	};
 
