@@ -46,57 +46,6 @@
 	</div>
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-md-3">
-				<label for="first_due_date">First Due Date</label>
-				<div class="form-group" ng-class="{ 'has-error': validation.first_due_date }">
-					<p class="input-group">
-						<input type="text" name="first_due_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="transaction.first_due_date" is-open="opened.first_due_date" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-						<span class="input-group-btn">
-							<button type="button" class="btn btn-default" ng-click="open($event, 'first_due_date')"><i class="glyphicon glyphicon-calendar"></i></button>
-						</span>
-					</p>
-					<span class="help-block" ng-show="validation.first_due_date">{{ validation.first_due_date }}</span>
-				</div>
-			</div>
-			<div class="col-md-4">
-				<label for="next_due_date">Next Due Date</label>
-				<div class="form-group" ng-class="{ 'has-error': validation.next_due_date }">
-					<p class="input-group">
-						<div class="row">
-							<div class="col-md-1" ng-click="previousDueDate()"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></div>
-							<div class="col-md-6">{{ transaction.next_due_date|date:'EEE MMM dd, yyyy' }}</div>
-							<div class="col-md-1" ng-click="deleteDueDate()"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></div>
-							<div class="col-md-1" ng-click="nextDueDate()"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></div>
-						</div>
-					</p>
-					<span class="help-block" ng-show="validation.next_due_date">{{ validation.next_due_date }}</span>
-				</div>
-			</div>
-			<div class="col-md-4">
-				<label for="last_due_date">Last Due Date</label>
-				<div class="form-group" ng-class="{ 'has-error': validation.last_due_date }">
-					<p class="input-group">
-						<div class="row">
-							<div class="col-md-1" ng-click="previousLastDueDate()"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></div>
-							<div class="col-md-6">{{ transaction.last_due_date|date:'EEE MMM dd, yyyy' }}</div>
-							<div class="col-md-1" ng-click="deleteLastDueDate()"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></div>
-							<div class="col-md-1" ng-click="nextLastDueDate()"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></div>
-<!--							<div class="col-sm-3"><a href="javascript:void(0)" ng-click="previousLastDueDate()"><<<<</a></div>
-							<div class="col-md-6">{{ transaction.last_due_date|date:'EEE MMM dd, yyyy' }}</div>
-							<div class="col-md-3"><a href="javascript:void(0)" ng-click="nextLastDueDate()">>>>></a></div>-->
-						</div>
-<!--						<input type="text" name="last_due_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="transaction.last_due_date" is-open="opened.last_due_date" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-						<span class="input-group-btn">
-							<button type="button" class="btn btn-default" ng-click="open($event, 'last_due_date')"><i class="glyphicon glyphicon-calendar"></i></button>
-						</span>-->
-					</p>
-					<span class="help-block" ng-show="validation.last_due_date">{{ validation.last_due_date }}</span>
-				</div>
-			</div>
-		</fieldset>
-	</div>
-	<div class="row">
-		<fieldset ng-disabled="isSaving">
 			<div class="col-sm-2">
 				<label for="type">Type</label>
 				<div class="form-group" ng-class="{'has-error': validation.type }">
@@ -145,6 +94,50 @@
 				<div class="form-group" ng-class="{ 'has-error': validation.exact_match }">
 					<input type="checkbox" name="exact_match" class="form-control" ng-model="transaction.exact_match" ng-checked="transaction.exact_match == 1">
 					<span class="help-block" ng-show="validation.exact_match">{{ validation.exact_match }}</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-md-3">
+				<label for="first_due_date">First Due Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.first_due_date }">
+					<p class="input-group">
+						<input type="text" name="first_due_date" class="form-control" datepicker-popup="dd-MMMM-yyyy" ng-model="transaction.first_due_date" is-open="opened.first_due_date" min-date="minDate" max-date="maxdate" datepicker-options="" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="open($event, 'first_due_date')"><i class="glyphicon glyphicon-calendar"></i></button>
+						</span>
+					</p>
+					<span class="help-block" ng-show="validation.first_due_date">{{ validation.first_due_date }}</span>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<label for="next_due_date">Next Due Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.next_due_date }">
+					<p class="input-group">
+						<div class="row">
+							<div class="col-md-1" ng-click="previousDueDate()"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></div>
+							<div class="col-md-6">{{ transaction.next_due_date|date:'EEE MMM dd, yyyy' }}</div>
+							<div class="col-md-1" ng-click="deleteDueDate()"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></div>
+							<div class="col-md-1" ng-click="nextDueDate()"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></div>
+						</div>
+					</p>
+					<span class="help-block" ng-show="validation.next_due_date">{{ validation.next_due_date }}</span>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<label for="last_due_date">Last Due Date</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.last_due_date }">
+					<p class="input-group">
+						<div class="row">
+							<div class="col-md-1" ng-click="previousLastDueDate()"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></div>
+							<div class="col-md-6">{{ transaction.last_due_date|date:'EEE MMM dd, yyyy' }}</div>
+							<div class="col-md-1" ng-click="deleteLastDueDate()"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></div>
+							<div class="col-md-1" ng-click="nextLastDueDate()"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></div>
+						</div>
+					</p>
+					<span class="help-block" ng-show="validation.last_due_date">{{ validation.last_due_date }}</span>
 				</div>
 			</div>
 		</fieldset>

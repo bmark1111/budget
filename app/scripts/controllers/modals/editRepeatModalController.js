@@ -248,7 +248,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 	$scope.previousDueDate = function() {
 
-		if ($scope.transaction.next_due_date !== null) {
+		if ($scope.transaction.next_due_date) {
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
 					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() - (1 * $scope.transaction.every));
@@ -271,8 +271,8 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	};
 
 	$scope.nextDueDate = function() {
-		
-		if ($scope.transaction.next_due_date !== null) {
+
+		if ($scope.transaction.next_due_date) {
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
 					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() + (1 * $scope.transaction.every));
@@ -303,7 +303,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	
 	$scope.previousLastDueDate = function() {
 		
-		if ($scope.transaction.last_due_date !== null) {
+		if ($scope.transaction.last_due_date) {
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
 					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() - (1 * $scope.transaction.every));
@@ -327,7 +327,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 	$scope.nextLastDueDate = function() {
 
-		if ($scope.transaction.last_due_date !== null) {
+		if ($scope.transaction.last_due_date) {
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
 					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() + (1 * $scope.transaction.every));
@@ -346,6 +346,8 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 					$scope.transaction.last_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
 					break;
 			}
+		} else {
+			$scope.transaction.last_due_date = new Date($scope.transaction.next_due_date.getFullYear(), $scope.transaction.next_due_date.getMonth(), $scope.transaction.next_due_date.getDate());
 		}
 	};
 
