@@ -80,6 +80,14 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
 							}
 		})
+		.when('/budget',
+		{
+			controller:		'BudgetController',
+			templateUrl:	'app/views/budget.html',
+			data:			{
+								authorizedRoles: [USER_ROLES.admin, USER_ROLES.user]
+							}
+		})
 		.when('/sheet',
 		{
 			controller:		'SheetController',

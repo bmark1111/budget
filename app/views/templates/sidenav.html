@@ -1,5 +1,3 @@
-<!--<ng-include src="'app/views/templates/resetBalanceModal.html'"></ng-include>-->
-
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
 	<a class="navmenu-brand visible-md visible-lg">Budget Tracker Pro</a>
 	<div ng-if="!authenticated">
@@ -17,8 +15,8 @@
 		</ul>
 		<ul class="nav navmenu-nav">
 			<li ng-class="{'active': nav_active == 'dashboard'}"><a href="#/dashboard">Dashboard</a></li>
-			<!--<li ng-class="{'active': nav_active == 'budget'}"><a href="#/budget">Budget</a></li>-->
-			<li ng-class="{'active': nav_active == 'sheet'}"><a href="#/sheet">Budget</a></li>
+			<li ng-class="{'active': nav_active == 'budget'}"><a href="#/budget">Budget</a></li>
+			<!--<li ng-class="{'active': nav_active == 'sheet'}"><a href="#/sheet">Budget</a></li>-->
 			<li ng-class="{'active': nav_active == 'forecast'}"><a href="#/forecast">Forecasts</a></li>
 			<li ng-class="{'active': nav_active == 'transactions'}"><a href="#/transactions">Transactions</a></li>
 			<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads<span class="badge">{{ transaction_count }}</span></a></li>
@@ -32,17 +30,6 @@
 			<li ng-class="{'active': nav_active == 'categories'}"><a href="#/categories">Categories</a></li>
 			<li ng-class="{'active': nav_active == 'budget_settings'}"><a href="#/budget_settings">Budget</a></li>
 			<li ng-class="{'active': nav_active == 'calendar'}"><a href="#/calendar">Calendar</a></li>
-<!--			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
-				<ul class="dropdown-menu navmenu-nav">
-					<li><a href="#/bank_settings">Banks</a></li>
-					<li><a href="#/budget_settings">Budget</a></li>
-					<li class="divider"></li>
-					<li class="dropdown-header">Nav header</li>
-					<li><a href="#">Separated link</a></li>
-					<li><a href="#">One more separated link</a></li>
-				</ul>
-			</li>-->
 			<hr />
 		</ul>
 		<ul class="nav navmenu-nav" ng-if="is_admin">
