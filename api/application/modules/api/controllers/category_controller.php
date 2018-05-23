@@ -14,6 +14,7 @@ class category_controller Extends rest_controller {
 	}
 
 	public function index() {
+		
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/index)"));
 			$this->ajax->output();
@@ -23,13 +24,21 @@ class category_controller Extends rest_controller {
 		$categories->whereNotDeleted();
 		$categories->orderBy('order');
 		$categories->result();
-
+		if ($categories->numRows()) {
+			foreach ($categories as $category) {
+				unset($category->created_at);
+				unset($category->created_by);
+				unset($category->updated_at);
+				unset($category->updated_by);
+			}
+		}
 		$this->ajax->setData('categories', $categories);
 
 		$this->ajax->output();
 	}
 
 	public function load() {
+		
 		if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 			$this->ajax->addError(new AjaxError("403 - Forbidden (category/load)"));
 			$this->ajax->output();
