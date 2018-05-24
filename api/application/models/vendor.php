@@ -28,10 +28,10 @@ class vendor extends Nagilum {
 
 		$displayName = array($this->name);
 		if ($this->street) {
-			$displayName[] = $this->street;
+			$displayName[] = ($this->city || $this->state) ? $this->street . ',': $this->street;
 		}
 		if ($this->city) {
-			$displayName[] = ($this->state) ? $this->city . ',': $this->city;
+			$displayName[] = $this->city;
 		}
 		if ($this->state) {
 			$displayName[] = $this->state;
@@ -53,5 +53,20 @@ class vendor extends Nagilum {
 		unset($this->updated_at);
   	}
 
+	public function postSaveHook() {
+		parent::postSaveHook();
+
+		$displayName = array($this->name);
+		if ($this->street) {
+			$displayName[] = ($this->city || $this->state) ? $this->street . ',': $this->street;
+		}
+		if ($this->city) {
+			$displayName[] = $this->city;
+		}
+		if ($this->state) {
+			$displayName[] = $this->state;
+		}
+		$this->display_name = implode(' ', $displayName);
+	}
 }
 //EOF

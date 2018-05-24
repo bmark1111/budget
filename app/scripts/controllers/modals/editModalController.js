@@ -50,6 +50,7 @@ console.log('liveSearchBlur',result)
 
 			modalInstance.result.then(
 				function (response) {
+console.log('response',response)
 					if (result.table && result.index) {
 						$scope.transaction[result.table][result.index][result.model] = response.data.id;
 					} else {

@@ -19,6 +19,7 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 						'</div>' +
 					'</div>',
 		link: function (scope, element, attrs) {
+
 			attrs.$observe('displayname', function(value) {
 				scope.liveSearchName = value;
 			});
@@ -32,6 +33,7 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 			scope.liveSearchId = null;
 
 			element.find('input').bind('keyup', function($event) {
+
 				if ($event.keyCode !== 37 && $event.keyCode !== 39) {
 					scope.liveSearchId = null;
 					if (scope.liveSearchName.length >= 2) {
@@ -40,12 +42,15 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 							search:	scope.liveSearchName
 						},
 						function(resp) {
-							if (resp.success === 1) {
-								scope.livesearchResults = (resp.data.result[0]) ? resp.data.result: false;
-								scope.liveSearchId = null;
-							} else {
-								// ERROR
-								scope.livesearchResults = false;
+
+							if (resp.data.liveSearchName == scope.liveSearchName) {
+								if (resp.success === 1) {
+									scope.livesearchResults = (resp.data.result[0]) ? resp.data.result: false;
+									scope.liveSearchId = null;
+								} else {
+									// ERROR
+									scope.livesearchResults = false;
+								}
 							}
 						},
 						function(err) {
@@ -58,6 +63,7 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 			});
 
 			element.find('input').bind('blur', function($event) {
+
 				scope.livesearchResults = false;
 				// give the selected result or a new name to the parent
 				scope.$emit('liveSearchBlur', {
@@ -70,10 +76,12 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 			});
 
 			element.find('input').bind('focus', function($event) {
+
 				scope.livesearchResults = false;
 			});
 
 			scope.livesearchSelect = function(result) {
+
 				scope.liveSearchId = result.id;
 				scope.liveSearchName = result.display_name;
 				scope.livesearchResults = false;
@@ -85,7 +93,6 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 					index:	scope.liveSearchIndex
 				});
 			};
-
 		}
 	};
 }]);

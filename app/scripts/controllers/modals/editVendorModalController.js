@@ -46,6 +46,7 @@ app.controller('EditVendorModalController', ['$scope', '$modalInstance', 'RestDa
 			$scope.validation = {};
 			RestData2().saveVendor($scope.vendor,
 					function(response) {
+console.log('MODAL response',response)
 						$scope.isSaving = false;
 						if (!!response.success) {
 							$modalInstance.close(response);

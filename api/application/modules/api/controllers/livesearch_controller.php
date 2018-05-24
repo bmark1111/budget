@@ -29,7 +29,6 @@ class livesearch_controller Extends rest_controller {
 				$vendors->limit(20);
 				$vendors->orderBy('name', 'asc');
 				$vendors->result();
-
 				$this->ajax->setData('result', $vendors);
 				break;
 		}

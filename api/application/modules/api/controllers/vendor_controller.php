@@ -109,6 +109,7 @@ class vendor_controller Extends rest_controller {
 		$vendor->phone_number		= (!empty($_POST['phone_number']) ? $_POST['phone_number']: NULL);
 		$vendor->save();
 
+		$this->ajax->setdata('display_name', $vendor->display_name);
 		$this->ajax->setdata('id', $vendor->id);
 		$this->ajax->output();
 	}
