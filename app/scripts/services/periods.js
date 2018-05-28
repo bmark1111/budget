@@ -385,14 +385,14 @@ services.periods.prototype.buildPeriods = function(data) {
 			'transfer_amount': 0,
 			'totals': {},
 			'types': {},
-			'transactions': {}								// individual transactions in this period
+			'transactions': {},								// individual transactions in this period
+			'income': null,
+			'expense': null
 		};
 
-		var dt = output[o_idx].interval_beginning.split('T');
-		var dt = dt[0].split('-');
+		var dt = output[o_idx].interval_beginning.split('T')[0].split('-');
 		var sd = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
-		var dt = output[o_idx].interval_ending.split('T');
-		var dt = dt[0].split('-');
+		dt = output[o_idx].interval_ending.split('T')[0].split('-');
 		var ed = new Date(dt[0], --dt[1], dt[2], 23, 59, 59, 0);
 		var now = new Date();
 		if (now >= sd && now <= ed) {
@@ -407,6 +407,7 @@ services.periods.prototype.buildPeriods = function(data) {
 				balance: null,
 				bank_account_id: self.Accounts.data[x].id,
 				name: self.Accounts.data[x].name,
+				date_opened: self.Accounts.data[x].date_opened,
 				date_closed: self.Accounts.data[x].date_closed,
 				reconciled_date: null,
 				balance_date: null
@@ -430,13 +431,12 @@ services.periods.prototype.buildPeriods = function(data) {
 				}
 
 				// get the next transaction date
-				var trd = transaction.transaction_date.split('-');
+				trd = transaction.transaction_date.split('-');
 				transaction_date = new Date(trd[0], --trd[1], trd[2], 0, 0, 0, 0);
 			}
 			// end of transactions for current period
 			running_total = output[o_idx].running_total;
 		}
-
 		for(var x = 0; x < output[o_idx].accounts.length; x++) {
 			if(output[o_idx].accounts[x].balance === null) {
 				// check to see if we have a previous balance and use it
@@ -445,12 +445,15 @@ services.periods.prototype.buildPeriods = function(data) {
 					output[o_idx].accounts[x].balance_date		= output[o_idx-1].accounts[x].balance_date;
 					output[o_idx].accounts[x].reconciled_date	= output[o_idx-1].accounts[x].reconciled_date;
 					output[o_idx].accounts[x].date_closed		= output[o_idx-1].accounts[x].date_closed;
+					output[o_idx].accounts[x].date_opened		= output[o_idx-1].accounts[x].date_opened;
 					output[o_idx].accounts[x].transaction_id	= output[o_idx-1].accounts[x].transaction_id;
 				} else if (o_idx === 0 && output[o_idx].accounts[x].date_closed === null) {
 					// this is the first period and we have a missing account balance, find the first transaction for this account
 					var found = false;
 					for (var xx in this.data.result) {
-						if (this.data.result[xx].bank_account_id === output[o_idx].accounts[x].bank_account_id) {
+						dt = this.data.result[xx].transaction_date.split('-');
+						var td = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
+						if (this.data.result[xx].bank_account_id === output[o_idx].accounts[x].bank_account_id && td <= ed) {
 							output[o_idx].accounts[x].balance			= parseFloat(this.data.result[xx].bank_account_balance - this.data.result[xx].amount);
 							output[o_idx].accounts[x].balance_date		= this.data.result[xx].transaction_date;
 							output[o_idx].accounts[x].reconciled_date	= this.data.result[xx].reconciled_date;
@@ -458,7 +461,9 @@ services.periods.prototype.buildPeriods = function(data) {
 							break;
 						}
 					}
-					if (!found) {
+					dt = output[o_idx].accounts[x].date_opened.split('-');
+					var dop = new Date(dt[0], --dt[1], dt[2], 0, 0, 0, 0);
+					if (!found && dop <= sd) {
 						output[o_idx].accounts[x].balance			= 0;
 						output[o_idx].accounts[x].balance_date		= interval_beginning.split('T')[0];
 						output[o_idx].accounts[x].reconciled_date	= interval_beginning.split('T')[0];

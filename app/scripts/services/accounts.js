@@ -58,12 +58,14 @@ services.accounts.prototype.get = function () {
 					self.active.push({
 						'id': account.id,
 						'name': account.bank.name + ' ' + account.name,
+						'date_opened': account.date_opened,
 						'date_closed': account.date_closed
 					});
 				}
 				self.data.push({
 					'id': account.id,
 					'name': account.bank.name + ' ' + account.name,
+					'date_opened': account.date_opened,
 					'date_closed': account.date_closed
 				});
 			});
