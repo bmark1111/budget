@@ -86,6 +86,8 @@ class transaction_controller Extends rest_controller {
 			if ($join2) {
 				$transactions->orLike('V2.name', $vendor, 'both');
 			}
+			$transactions->orLike('transaction.description', $vendor, 'both');
+			$transactions->orLike('transaction_split.notes', $vendor, 'both');
 			$transactions->groupEnd();
 		}
 		$transactions->where('transaction.is_deleted', 0);
