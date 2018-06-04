@@ -160,13 +160,13 @@
 				<table class="table table-bordered table-striped">
 					<tr>
 						<th><span class="pull-left">Account</span></th>
-						<th><span class="pull-left">Date</span></th>
+						<th><span class="pull-left">Last Reconciled</span></th>
 						<th><span class="pull-right">Balance</span></th>
 					</tr>
 					<tr ng-repeat="balance in dashboard.balances">
-						<td>{{ balance.account_name }}</td>
-						<td>{{ balance.transaction_date|date:'EEEE MMM dd, yyyy' }}</td>
-						<td><span class="pull-right">{{ balance.bank_account_balance|currency }}</span></td>
+						<td ng-class="{ 'closed': balance.date_closed }">{{ balance.account_name }}</td>
+						<td ng-class="{ 'closed': balance.date_closed }">{{ balance.transaction_date|date:'EEEE MMM dd, yyyy' }}</td>
+						<td ng-class="{ 'closed': balance.date_closed }"><span class="pull-right">{{ balance.bank_account_balance|currency }}</span></td>
 					</tr>
 				</table>
 			</div>

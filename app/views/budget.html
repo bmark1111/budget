@@ -20,7 +20,7 @@
 						<tr>
 							<th><span class="pull-right">Period Ending</span></th>
 							<th style="text-align:center;" ng-repeat="period in periods|getIntervals:period_start" ng-class="{ 'currentInterval': period.current_interval }">
-								<span><!--  ng-init="period.income = 0; period.expense = 0">-->{{ period.interval_ending|displayDate:period.budget_mode }}</span>
+								<span ng-init="period.income = 0; period.expense = 0">{{ period.interval_ending|displayDate:period.budget_mode }}</span>
 							</th>
 						</tr>
 					</thead>
@@ -48,7 +48,7 @@
 						</tr>
 						<tr>
 							<th nowrap style="background-color: #007bbc; color: #FFF">Income Total</th>
-							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:4px!important; background-color: #007bbc; color: #FFF">
+							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:5px!important; background-color: #007bbc; color: #FFF">
 								<span class="pull-right">
 									{{ period.income|currency }}
 								</span>
@@ -77,7 +77,7 @@
 						</tr>
 						<tr>
 							<th nowrap style="background-color: #007bbc; color: #FFF">Expense Total</th>
-							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:4px!important; background-color: #007bbc;  color: #FFF">
+							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:5px!important; background-color: #007bbc;  color: #FFF">
 								<span class="pull-right">
 									{{ period.expense|currency }}
 								</span>
@@ -93,15 +93,15 @@
 							</td>
 						</tr>
 						<!-- BALANCE FORWARD -->
-						<tr>
+<!--						<tr>
 							<th nowrap>Balance Forward</th>
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
 								<span class="pull-right" ng-if="$index == 0">{{ period.balance_forward|currency }}</span>
 							</td>
-						</tr>
+						</tr>-->
 						<!-- RUNNING TOTAL -->
 						<tr>
-							<th nowrap>Running Totals</th>
+							<th nowrap>Balance ({{ periods|getBalanceForward:period_start|currency }})</th>
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
 								<span class="pull-right">{{ period.running_total|currency }}</span>
 							</td>
@@ -126,8 +126,8 @@
 							</td>
 						</tr>
 						<tr ng-repeat="account in accounts track by $index">
-							<td class="banks" nowrap>{{ account.name }}</td>
-							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
+							<td class="banks" nowrap ng-class="{ 'accountClosed': account.date_closed }">{{ account.name }}</td>
+							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval, 'accountClosed': account.date_closed }" style="padding:2px!important;">
 								<span ng-show="period.accounts[$parent.$index].reconciled == 0" class="pull-right forecast_amount">
 									{{ period.accounts[$parent.$index].balance|currency }}
 								</span>

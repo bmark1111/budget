@@ -31,6 +31,7 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 				Periods.buildPeriods(response[2].data);
 				$scope.periods = Periods.periods;
 				$scope.period_start = Periods.period_start;
+				$scope.balanceForward = $scope.periods[$scope.period_start].balance_forward;
 			} else if (response[2]) {
 				$scope.periods = Periods.periods;
 				$scope.period_start = Periods.period_start;
