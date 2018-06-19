@@ -8,7 +8,7 @@
 	</div>
 	<div ng-if="authenticated">
 		<ul class="nav navmenu-nav">
-			<li style="padding-left:12px;font-size:15px;"><b>{{userFullName}}<span ng-if="is_admin"> (Admin)</span></b></li>
+			<li style="padding-left:12px;font-size:15px;"><b>{{ userFullName }}<span ng-if="is_admin"> (Admin)</span></b></li>
 			<li ng-class="{'active': nav_active == 'logout'}"><a href="#/logout">Logout</a></li>
 		</ul>
 			<hr />
@@ -16,10 +16,9 @@
 		<ul class="nav navmenu-nav">
 			<li ng-class="{'active': nav_active == 'dashboard'}"><a href="#/dashboard">Dashboard</a></li>
 			<li ng-class="{'active': nav_active == 'budget'}"><a href="#/budget">Budget</a></li>
-			<!--<li ng-class="{'active': nav_active == 'sheet'}"><a href="#/sheet">Budget</a></li>-->
 			<li ng-class="{'active': nav_active == 'forecast'}"><a href="#/forecast">Forecasts</a></li>
 			<li ng-class="{'active': nav_active == 'transactions'}"><a href="#/transactions">Transactions</a></li>
-			<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads<span class="badge">{{ transaction_count }}</span></a></li>
+			<li ng-class="{'active': nav_active == 'uploads'}"><a href="#/uploads">Uploads&nbsp;<span class="badge">{{ transaction_count }}</span></a></li>
 			<li ng-class="{'active': nav_active == 'vendors'}"><a href="#/vendors">Payers/Payees</a></li>
 			<li ng-class="{'active': nav_active == 'repeats'}"><a href="#/repeats">Repeats</a></li>
 			<hr />

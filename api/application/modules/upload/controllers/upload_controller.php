@@ -35,9 +35,13 @@ class upload_controller extends EP_Controller {
 					if ($ignoreFirstLine != 1) {
 // bug in downloaded/imported file from chase bank. Comma inserted into description.
 if ($numOfFields != count($params)) {
-	$params[3] = $params[3] . ', ' . $params[4];
-	$params[4] = $params[5];
-	unset ($params[5]);
+	$params[2] = $params[2] . ', ' . $params[3];
+//	$params[4] = $params[5];
+//	unset ($params[5]);
+	for($x = 3; $x < $numOfFields; $x++) {
+		$params[$x] = $params[$x + 1];
+		unset ($params[$x + 1]);
+	}
 }
 // bug in downloaded/imported file from chase bank.
 if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
@@ -57,7 +61,9 @@ if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 									$transaction[$map->field] = date('Y-m-d', strtotime($params[$map->offset]));
 									break;
 								case 'AMOUNT1':
-									$transaction->type = (floatval($params[$map->offset]) < 0) ? 'DEBIT': 'CREDIT';
+									if ($transaction->type !== 'CHECK') {
+										$transaction->type = (floatval($params[$map->offset]) < 0) ? 'DEBIT': 'CREDIT';
+									}
 									$transaction[$map->field] = (floatval($params[$map->offset]) < 0) ? -floatval($params[$map->offset]): floatval($params[$map->offset]);
 									break;
 								case 'AMOUNT2':
@@ -70,8 +76,8 @@ if ($params[0] === 'DEBIT' && floatval($params[3]) >= 0) {
 									break;
 								case 'DEBIT':
 								case 'CREDIT':
-								case 'RETURN':
-								case 'PAYMENT':
+							//	case 'RETURN':
+							//	case 'PAYMENT':
 									if (strlen($params[$map->offset]) > 0) {
 										$transaction->type = $map->type;
 										$transaction[$map->field] = floatval($params[$map->offset]);

@@ -89,7 +89,7 @@
 				<tr ng-show="transactions_seq.length > 0" ng-repeat-end="">
 					<td colspan="2" style="font-size: 10px;">
 						<span class="pull-left">{{ transactions[idx].description }}</span>
-						<span ng-if="transactions[idx].notes"> - <em>{{ transactions[idx].notes }}</em></span>
+						<span ng-if="transactions[idx].notes">&nbsp;- <em>{{ transactions[idx].notes }}</em></span>
 					</td>
 				</tr>
 				<tr ng-show="transactions_seq.length == 0">
