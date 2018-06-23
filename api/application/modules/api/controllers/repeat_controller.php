@@ -176,9 +176,13 @@ class repeat_controller Extends rest_controller {
 			if ($on) {
 				switch($on) {
 					case 'First':
+					case 'first':
 					case 'Second':
+					case 'second':
 					case 'Third':
+					case 'third':
 					case 'Fourth':
+					case 'fourth':
 						break;
 					default:
 						$this->form_validation->set_message('isValidOn',  $on . ' is Invalid');
