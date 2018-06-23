@@ -258,17 +258,18 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
 					mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
 					if ($scope.transaction.everyDay === null && $scope.transaction.day === null) {
-						$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+						year = dd[0];
+						day = dd[2];
 					} else {
 						if (mnth < 1) {
 							year = parseInt(--dd[0], 10);
-							mnth = 12;
+							mnth = mnth + 12;
 						} else {
 							year = parseInt(dd[0], 10);
 						}
 						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
-						$scope.transaction.next_due_date = new Date(dd[0], --mnth, day, 0, 0, 0, 0);
 					}
+					$scope.transaction.next_due_date = new Date(year, --mnth, day, 0, 0, 0, 0);
 //					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
 //					mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
 //					$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
@@ -297,17 +298,18 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
 					mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
 					if ($scope.transaction.everyDay === null && $scope.transaction.day === null) {
-						$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+						year = dd[0];
+						day = dd[2];
 					} else {
 						if (mnth > 12) {
 							year = parseInt(++dd[0], 10);
-							mnth = 1;
+							mnth = mnth - 12;
 						} else {
 							year = parseInt(dd[0], 10);
 						}
 						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
-						$scope.transaction.next_due_date = new Date(dd[0], --mnth, day, 0, 0, 0, 0);
 					}
+					$scope.transaction.next_due_date = new Date(year, --mnth, day, 0, 0, 0, 0);
 //					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
 //					mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
 //					$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
