@@ -7,13 +7,13 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	$scope.dataErrorMsg = [];
 
 	$scope.transaction = {
-		splits: {},
-		repeats: {
-			0:{
-				every_day:	false,
-				every_date:	'',
-				every_month: false}
-		},
+//		splits: {},
+//		repeats: {
+//			0:{
+//				every_day:	false,
+//				every_date:	'',
+//				every_month: false}
+//		},
 		every_unit: ''
 	};
 
@@ -25,7 +25,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 	$scope.minDate = null;
 	$scope.maxDate = null;
-	$scope.is_split = false;
+//	$scope.is_split = false;
 	$scope.isSaving = false;
 
 	//**********************//
@@ -119,9 +119,9 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 				dt = $scope.transaction.next_due_date.split('-');
 				$scope.transaction.next_due_date = new Date(dt[0], --dt[1], dt[2]);
 
-				if ($scope.transaction.splits) {
-					$scope.is_split = true;
-				}
+//				if ($scope.transaction.splits) {
+//					$scope.is_split = true;
+//				}
 				$scope.transaction.every = parseInt($scope.transaction.every, 10);
 			}
 //		} else {
@@ -200,6 +200,8 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 								case 'every_unit':
 								case 'every':
 								case 'amount':
+								case 'everyDay':
+								case 'day':
 									$scope.validation[validation.fieldName] = validation.errorMessage;
 									break;
 								default:

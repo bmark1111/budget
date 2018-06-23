@@ -118,6 +118,8 @@ class repeat_controller Extends rest_controller {
 		$this->form_validation->set_rules('next_due_date', 'Next Due Date', 'required|callback_isValidDate');
 		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
 		$this->form_validation->set_rules('every_unit', 'Every Unit', 'required|alpha');
+		$this->form_validation->set_rules('everyDay', 'On', 'callback_isValidOn');
+		$this->form_validation->set_rules('day', 'Day Of Week', 'callback_isValidDay');
 		$this->form_validation->set_rules('every', 'Every', 'required|integer');
 		$this->form_validation->set_rules('amount', 'Amount', 'required|number');
 
@@ -134,8 +136,10 @@ class repeat_controller Extends rest_controller {
 		$repeat->next_due_date		= $_POST['next_due_date'];
 		$repeat->type				= $_POST['type'];
 		$repeat->amount				= $_POST['amount'];
-		$repeat->every_unit			= $_POST['every_unit'];
 		$repeat->every				= $_POST['every'];
+		$repeat->every_unit			= $_POST['every_unit'];
+		$repeat->everyDay			= ($_POST['every_unit'] == 'Month') ? $_POST['everyDay']: NULL;;
+		$repeat->day				= ($_POST['every_unit'] == 'Month') ? $_POST['day']: NULL;
 		$repeat->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 //		$repeat->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 //		$repeat->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
@@ -144,34 +148,70 @@ class repeat_controller Extends rest_controller {
 		$repeat->exact_match		= (!empty($_POST['exact_match']) && $_POST['exact_match']) ? 1: 0;
 		$repeat->save();
 
-		foreach ($_POST['repeats'] as $repeat_every) {
-			$id = (!empty($repeat_every['id'])) ? $repeat_every['id']: NULL;
-			$transaction_repeat_every = new transaction_repeat_every($id);
-			if (empty($repeat['is_deleted']) || $repeat['is_deleted'] != 1) {
-				$transaction_repeat_every->transaction_repeat_id	= $repeat->id;
-				$transaction_repeat_every->every_day				= (!empty($repeat_every['every_day'])) ? $repeat_every['every_day']: NULL;
-				$transaction_repeat_every->every_date				= $repeat_every['every_date'];
-				$transaction_repeat_every->every_month				= $repeat_every['every_month'];
-				$transaction_repeat_every->save();
-			} else {
-				$transaction_repeat_every->delete();
-			}
-		}
+//		foreach ($_POST['repeats'] as $repeat_every) {
+//			$id = (!empty($repeat_every['id'])) ? $repeat_every['id']: NULL;
+//			$transaction_repeat_every = new transaction_repeat_every($id);
+//			if (empty($repeat['is_deleted']) || $repeat['is_deleted'] != 1) {
+//				$transaction_repeat_every->transaction_repeat_id	= $repeat->id;
+//				$transaction_repeat_every->every_day				= (!empty($repeat_every['every_day'])) ? $repeat_every['every_day']: NULL;
+//				$transaction_repeat_every->every_date				= $repeat_every['every_date'];
+//				$transaction_repeat_every->every_month				= $repeat_every['every_month'];
+//				$transaction_repeat_every->save();
+//			} else {
+//				$transaction_repeat_every->delete();
+//			}
+//		}
 
 		$this->ajax->setdata('id', $repeat->id);
 		$this->ajax->output();
 	}
 	
 	/**
+	 * Checks if a valid On is entered
+	 */
+	public function isValidOn($on) {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+		if ($_POST['every_unit'] === 'Month') {
+			if ($on) {
+				switch($on) {
+					case 'First':
+					case 'Second':
+					case 'Third':
+					case 'Fourth':
+						break;
+					default:
+						$this->form_validation->set_message('isValidOn',  $on . ' is Invalid');
+						return FALSE;
+						break;
+				}
+			}
+		}
+		return TRUE;
+	}
+
+	/**
 	 * Checks if a valid Day of week is entered
 	 */
 	public function isValidDay($day) {
 		$input = file_get_contents('php://input');
 		$_POST = json_decode($input, TRUE);
-		if ($_POST['every_unit'] == 'Week') {
-			if (empty($day) || !is_numeric($day) || $day < 1 || $day > 7) {
-				$this->form_validation->set_message('isValidDay', 'The Day of Week is Invalid');
-				return FALSE;
+		if ($_POST['every_unit'] === 'Month') {
+			if ($day) {
+				switch($day) {
+					case 'Monday':
+					case 'Tuesday':
+					case 'Wednesday':
+					case 'Thursday':
+					case 'Friday':
+					case 'Saturday':
+					case 'Sunday':
+						break;
+					default:
+						$this->form_validation->set_message('isValidDay', $day . ' is Invalid');
+						return FALSE;
+						break;
+				}
 			}
 		}
 		return TRUE;

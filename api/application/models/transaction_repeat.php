@@ -13,8 +13,7 @@ class transaction_repeat extends Nagilum {
 							'bank_account' => array('class' => 'bank_account', 'joinField' => 'bank_account_id'),
 							'vendor' => array('class' => 'vendor', 'joinField' => 'vendor_id')
 						);
-	public $hasMany = array('repeats' => array('class' => 'transaction_repeat_every', 'joinField' => 'transaction_repeat_id')//,
-//							'splits' => array('class' => 'transaction_repeat_split', 'joinField' => 'transaction_repeat_id')
+	public $hasMany = array(//'repeats' => array('class' => 'transaction_repeat_every', 'joinField' => 'transaction_repeat_id')
 						);
 
 	public $autoPopulateHasOne = FALSE;

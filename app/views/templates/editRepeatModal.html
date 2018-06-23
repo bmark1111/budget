@@ -21,7 +21,7 @@
 	</div>
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-md-2"><!-- ng-if="!is_split">-->
+			<div class="col-md-2">
 				<label for="category_id">Category</label>
 				<div class="form-group" ng-class="{ 'has-error':validation.category_id}">
 					<select class="form-control" name="category_id" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
@@ -35,7 +35,7 @@
 					<span class="help-block" ng-show="validation.bank_account_id">{{ validation.bank_account_id }}</span>
 				</div>
 			</div>
-			<div class="col-md-5"><!-- ng-if="!is_split">-->
+			<div class="col-md-5">
 				<div class="form-group" ng-class="{ 'has-error': validation.vendor_id }">
 					<label for="name">Payee/Payer</label>
 					<div live-search="vendor_id" displayname="{{ transaction.vendor.display_name }}"></div>
@@ -63,26 +63,6 @@
 				</div>
 			</div>
 			<div class="col-sm-2">
-				<label for="every">Every</label>
-				<div class="form-group" ng-class="{ 'has-error': validation.every }">
-					<input type="number" name="every" class="form-control" ng-model="transaction.every" />
-					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
-				</div>
-			</div>
-			<div class="col-sm-2">
-				<label for="every_unit">Every Unit</label>
-				<div class="form-group" ng-class="{'has-error': validation.every_unit }">
-					<select class="form-control" name="every_unit" ng-model="transaction.every_unit">
-						<option>Select Type</option>
-						<option ng-selected="transaction.every_unit == 'Day'" value="Day">Day</option>
-						<option ng-selected="transaction.every_unit == 'Week'" value="Week">Week</option>
-						<option ng-selected="transaction.every_unit == 'Month'" value="Month">Month</option>
-						<option ng-selected="transaction.every_unit == 'Year'" value="Year">Year</option>
-					</select>
-					<span class="help-block" ng-show="validation.every_unit">{{ validation.every_unit }}</span>
-				</div>
-			</div>
-			<div class="col-sm-2">
 				<label for="amount">Amount</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.amount }">
 					<input type="text" name="amount" class="form-control" ng-model="transaction.amount">
@@ -94,6 +74,59 @@
 				<div class="form-group" ng-class="{ 'has-error': validation.exact_match }">
 					<input type="checkbox" name="exact_match" class="form-control" ng-model="transaction.exact_match" ng-checked="transaction.exact_match == 1">
 					<span class="help-block" ng-show="validation.exact_match">{{ validation.exact_match }}</span>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="row">
+		<fieldset ng-disabled="isSaving">
+			<div class="col-sm-2">
+				<label for="every">Every</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.every }">
+					<input type="number" name="every" class="form-control" ng-model="transaction.every" />
+					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<label for="every_unit">Every Unit</label>
+				<div class="form-group" ng-class="{'has-error': validation.every_unit }">
+					<select class="form-control" name="every_unit" ng-model="transaction.every_unit">
+						<option>Select Unit</option>
+						<option ng-selected="transaction.every_unit == 'Day'" value="Day">Day</option>
+						<option ng-selected="transaction.every_unit == 'Week'" value="Week">Week</option>
+						<option ng-selected="transaction.every_unit == 'Month'" value="Month">Month</option>
+						<option ng-selected="transaction.every_unit == 'Year'" value="Year">Year</option>
+					</select>
+					<span class="help-block" ng-show="validation.every_unit">{{ validation.every_unit }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2" ng-show="transaction.every_unit == 'Month'">
+				<label for="everyDay">On</label>
+				<div class="form-group" ng-class="{'has-error': validation.everyDay }">
+					<select class="form-control" name="every_unit" ng-model="transaction.everyDay">
+						<option>Select On</option>
+						<option ng-selected="transaction.everyDay == 'first'" value="first">First</option>
+						<option ng-selected="transaction.everyDay == 'second'" value="second">Second</option>
+						<option ng-selected="transaction.everyDay == 'third'" value="third">Third</option>
+						<option ng-selected="transaction.everyDay == 'fourth'" value="fourth">Fourth</option>
+					</select>
+					<span class="help-block" ng-show="validation.everyDay">{{ validation.everyDay }}</span>
+				</div>
+			</div>
+			<div class="col-sm-2" ng-show="transaction.every_unit == 'Month'">
+				<label for="day">Day of Week</label>
+				<div class="form-group" ng-class="{'has-error': validation.day }">
+					<select class="form-control" name="every_unit" ng-model="transaction.day">
+						<option>Select Day</option>
+						<option ng-selected="transaction.day == 'Monday'" value="Monday">Monday</option>
+						<option ng-selected="transaction.day == 'Tuesday'" value="Tuesday">Tuesday</option>
+						<option ng-selected="transaction.day == 'Wednesday'" value="Wednesday">Wednesday</option>
+						<option ng-selected="transaction.day == 'Thursday'" value="Thursday">Thursday</option>
+						<option ng-selected="transaction.day == 'Friday'" value="Friday">Friday</option>
+						<option ng-selected="transaction.day == 'Saturday'" value="Saturday">Saturday</option>
+						<option ng-selected="transaction.day == 'Sunday'" value="Sunday">Sunday</option>
+					</select>
+					<span class="help-block" ng-show="validation.day">{{ validation.day }}</span>
 				</div>
 			</div>
 		</fieldset>
@@ -142,7 +175,7 @@
 			</div>
 		</fieldset>
 	</div>
-	<div class="row">
+<!--	<div class="row">
 		<fieldset ng-disabled="isSaving">
 			<div class="col-md-1">
 				<label>On</label>
@@ -152,7 +185,7 @@
 															validation.repeats.every_month[$index] ||
 															validation.repeats.every_date[$index] }">
 					<div class="col-md-4">
-						<!--<p class="input-group">-->
+						<p class="input-group">
 							<select ng-if="transaction.every_unit == 'Week'" name="every_day" ng-model="repeat.every_day" class="form-control">
 								<option ng-selected="!repeat.every_day">Select Day</option>
 								<option ng-selected="repeat.every_day == '1'" value="1">Monday</option>
@@ -178,7 +211,7 @@
 								<option ng-selected="repeat.every_month == '11'" value="11">November</option>
 								<option ng-selected="repeat.every_month == '12'" value="12">December</option>
 							</select>
-						<!--</p>-->
+						</p>
 					</div>
 					<div class="col-md-3">
 						<input type="text" class="form-control input-xs" ng-if="transaction.every_unit == 'Month' || transaction.every_unit == 'Year'" ng-model="repeat.every_date" />
@@ -189,7 +222,7 @@
 				</div>
 			</div>
 		</fieldset>
-	</div>
+	</div>-->
 </div>
 <div class="modal-footer">
 	<button class="btn btn-primary" ng-click="save()" ng-disabled="isSaving">Save</button>

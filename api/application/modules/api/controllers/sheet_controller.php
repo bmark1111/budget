@@ -102,27 +102,14 @@ $this->ajax->setData('ed', $ed);
 								'description'		=> $repeat->description,
 								'notes'				=> $repeat->notes,
 								'transaction_type'	=> 2);					// Repeat transaction
-					if ($repeat->splits) {
-						foreach ($repeat->splits as $split) {
-							$tr['category_id']		= $split->category_id;
-							$tr['bank_account_id']	= $repeat->bank_account_id;
-							$tr['vendor']			= $split->vendor;
-							$tr['amount']			= $split->amount;
-							$tr['type']				= $split->type;
-							$tr['transaction_date']	= $this->getNextDueDate($next_due_date);
-							$tr['original_date']	= $next_due_date;
-							$transactions[] = $tr;
-						}
-					} else {
-						$tr['category_id']		= $repeat->category_id;
-						$tr['bank_account_id']	= $repeat->bank_account_id;
-						$tr['vendor']			= $repeat->vendor;
-						$tr['amount']			= $repeat->amount;
-						$tr['type']				= $repeat->type;
-						$tr['transaction_date']	= $this->getNextDueDate($next_due_date);
-						$tr['original_date']	= $next_due_date;
-						$transactions[] = $tr;
-					}
+					$tr['category_id']		= $repeat->category_id;
+					$tr['bank_account_id']	= $repeat->bank_account_id;
+					$tr['vendor']			= $repeat->vendor;
+					$tr['amount']			= $repeat->amount;
+					$tr['type']				= $repeat->type;
+					$tr['transaction_date']	= $this->getNextDueDate($next_due_date);
+					$tr['original_date']	= $next_due_date;
+					$transactions[] = $tr;
 					array_push($accounts, $repeat->bank_account_id);
 				}
 			}
