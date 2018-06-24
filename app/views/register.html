@@ -2,7 +2,7 @@
 	<h1 class="page-header">Register</h1>
 	<div ng-if="error">{{error}}</div>
 
-	<div class="row">
+	<div class="row" style="padding-left: 10px;">
 		<div class="col-md-2" ng-class="{'has-error': validation.firstname }">
 			<label for="firstname">First name:</label>
 			<div class="form-group">
@@ -25,7 +25,7 @@
 			<span class="help-block" ng-show="validation.email">{{ validation.email }}</span>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" style="padding-left: 10px;">
 		<div class="col-md-2" ng-class="{'has-error': validation.login }">
 			<label for="login">Login</label>
 			<div class="form-group">
@@ -34,7 +34,7 @@
 			<span class="help-block" ng-show="validation.login">{{ validation.login }}</span>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" style="padding-left: 10px;">
 		<div class="col-md-2" ng-class="{'has-error': validation.password }">
 			<label for="password">Password</label>
 			<div class="form-group">
@@ -43,7 +43,7 @@
 			<span class="help-block" ng-show="validation.password">{{ validation.password }}</span>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" style="padding-left: 10px;">
 		<div class="col-md-2" ng-class="{'has-error': validation.password2 }">
 			<label for="password2">Retype Password</label>
 			<div class="form-group">
@@ -52,7 +52,7 @@
 			<span class="help-block" ng-show="validation.password2">{{ validation.password2 }}</span>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" style="padding-left: 10px;">
 		<div class="col-md-6">
 			<button class="btn btn-primary" ng-click="register()">Register</button>
 		</div>

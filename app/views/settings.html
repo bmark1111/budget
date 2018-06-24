@@ -2,7 +2,7 @@
 	<h1 class="page-header">Budget</h1>
 	<div ng-if="setting.error">{{setting.error}}</div>
 	<form>
-		<div class="row" ng-repeat="setting in settings.settings">
+		<div class="row" ng-repeat="setting in settings.settings" style="padding-left: 10px;">
 			<div class="col-sm-2">
 				<div class="form-group" ng-class="{'has-error': setting.validation.settings.description[$index] }">
 					<input type="text" ng-model="setting.description" />
@@ -50,13 +50,13 @@
 			</div>
 			<br /><br />
 		</div>
-		<div class="row">
+		<div class="row" style="padding-left: 10px;">
 			<div class="col-md-3">
 				<button class="btn btn-primary" ng-click="save()">Save</button>
 			</div>
 		</div>
 	</form>
-	<div class="row">
+	<div class="row" style="padding-left: 10px;">
 		<div class="col-md-3">
 			<div ng-if="dataErrorMsg[0]">
 				<p ng-repeat="error in dataErrorMsg">{{error}}</p>

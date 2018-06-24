@@ -4,7 +4,7 @@
 	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
 			<div class="row">
-				<div class="col-sm-2">
+				<div class="col-sm-2" style="padding-left: 25px;">
 					<label for="date">Date</label>
 					<p class="input-group">
 						<input type="text" class="form-control" datepicker-popup="dd-MMMM-yyyy" name="date" ng-model="search.date" is-open="$parent.opened" min-date="minDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="refreshData()" />

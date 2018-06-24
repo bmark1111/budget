@@ -3,7 +3,7 @@
 	<div ng-if="error">{{error}}</div>
 	<div class="form-wrap" ng-if="searchDisplay">
 		<form>
-			<div class="row" style="padding-bottom:11px;">
+			<div class="row" style="padding-bottom:10px;">
 				<div style="float:left;padding-left:20px">
 					<label for="last_due_date">All</label><br />
 					<input type="checkbox" name="last_due_date" ng-model="search.last_due_date" ng-change="refreshData()" />
@@ -38,8 +38,8 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Vendor/Description</th>
-					<th>Category</th>
+					<th style="width:250px !important;">Vendor/Description</th>
+					<th style="width:40px !important;">Category</th>
 					<th>Account</th>
 					<th>First Due Date</th>
 					<th>Next Due Date</th>
@@ -71,7 +71,7 @@
 					</td>
 				</tr>
 				<tr ng-show="repeats_seq.length == 0">
-					<td colspan="7">No repeats found</td>
+					<td colspan="10">No repeats found</td>
 				</tr>
 			</tbody>
 		</table>

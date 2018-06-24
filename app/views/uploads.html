@@ -4,9 +4,9 @@
 	<div class="form-wrap" ng-if="!dataErrorMsg[0] && !error">
 		<form>
 			<div class="row">
-				<div class="col-sm-1">
-					<label for="status">All</label>
-					<input type="checkbox" class="form-control" name="status" ng-model="search.status" ng-change="refreshData()" />
+				<div style="float:left;padding-left:20px">
+                    <label for="status">All</label><br />
+					<input type="checkbox" name="status" ng-model="search.status" ng-change="refreshData()" />
 				</div>
 				<div class="col-sm-2">
 					<label for="date">Date</label>
