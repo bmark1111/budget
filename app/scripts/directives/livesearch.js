@@ -32,18 +32,27 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 			scope.livesearchResults = false;
 			scope.liveSearchId = null;
 
+			scope.lastValue = null;
+			scope.liveSearchDelay = 1000;
+			scope.timeout = null;
+
 			element.find('input').bind('keyup', function($event) {
 
-				if ($event.keyCode !== 37 && $event.keyCode !== 39) {
-					scope.liveSearchId = null;
-					if (scope.liveSearchName.length >= 2) {
-						RestData2().liveSearch({
-							type:	'vendors',
-							search:	scope.liveSearchName
-						},
-						function(resp) {
-
-							if (resp.data.liveSearchName == scope.liveSearchName) {
+				if(scope.liveSearchName != scope.lastValue) {
+					// Save the "last" value
+					scope.lastValue = scope.liveSearchName;
+					// Delay before search in the case of typing
+					if(scope.timeout) { clearTimeout(scope.timeout); }
+					// Start new time out
+					scope.timeout = setTimeout(function() {
+						// Do the search!
+						scope.liveSearchId = null;
+						if (scope.liveSearchName.length >= 2) {
+							RestData2().liveSearch({
+								type:	'vendors',
+								search:	scope.liveSearchName
+							},
+							function(resp) {
 								if (resp.success === 1) {
 									scope.livesearchResults = (resp.data.result[0]) ? resp.data.result: false;
 									scope.liveSearchId = null;
@@ -51,15 +60,40 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 									// ERROR
 									scope.livesearchResults = false;
 								}
-							}
-						},
-						function(err) {
+							},
+							function(err) {
+								scope.livesearchResults = false;
+							});
+						} else {
 							scope.livesearchResults = false;
-						});
-					} else {
-						scope.livesearchResults = false;
-					}
+						}
+					}, scope.liveSearchDelay);
 				}
+//				if ($event.keyCode !== 37 && $event.keyCode !== 39) {
+//					scope.liveSearchId = null;
+//					if (scope.liveSearchName.length >= 2) {
+//						RestData2().liveSearch({
+//							type:	'vendors',
+//							search:	scope.liveSearchName
+//						},
+//						function(resp) {
+////							if (resp.data.liveSearchName == scope.liveSearchName) {
+//								if (resp.success === 1) {
+//									scope.livesearchResults = (resp.data.result[0]) ? resp.data.result: false;
+//									scope.liveSearchId = null;
+//								} else {
+//									// ERROR
+//									scope.livesearchResults = false;
+//								}
+////							}
+//						},
+//						function(err) {
+//							scope.livesearchResults = false;
+//						});
+//					} else {
+//						scope.livesearchResults = false;
+//					}
+//				}
 			});
 
 			element.find('input').bind('blur', function($event) {
