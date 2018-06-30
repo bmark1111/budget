@@ -12,7 +12,6 @@ class dashboard_controller Extends rest_controller {
 	public function __construct() {
 		parent::__construct();
 		
-//		mail("9497020934@vtext.com", "", "This is a test message!", "From: BudgetTrackerPro\r\n");
 	}
 
 	public function index() {
