@@ -1,15 +1,6 @@
 app.directive("liveSearch", ['RestData2', function (RestData2) {
 	return {
 		restrict: 'A',
-//		replace: false,
-//		scope: {
-//			liveSearchName: '=?',
-//			liveSearchId: '=?',
-//			livesearchResults: '=?',
-//			livesearchModel: '=?',
-//			livesearchTable: '=?',
-//			livesearchIndex: '=?'
-//		},
 		template:	'<input type="text" name="name" class="form-control" ng-model="liveSearchName" autocomplete="off" />' +
 					'<div ng-show="livesearchResults" class="liveSearchResults">' +
 						'<div ng-repeat="result in livesearchResults">' +
@@ -69,31 +60,6 @@ app.directive("liveSearch", ['RestData2', function (RestData2) {
 						}
 					}, scope.liveSearchDelay);
 				}
-//				if ($event.keyCode !== 37 && $event.keyCode !== 39) {
-//					scope.liveSearchId = null;
-//					if (scope.liveSearchName.length >= 2) {
-//						RestData2().liveSearch({
-//							type:	'vendors',
-//							search:	scope.liveSearchName
-//						},
-//						function(resp) {
-////							if (resp.data.liveSearchName == scope.liveSearchName) {
-//								if (resp.success === 1) {
-//									scope.livesearchResults = (resp.data.result[0]) ? resp.data.result: false;
-//									scope.liveSearchId = null;
-//								} else {
-//									// ERROR
-//									scope.livesearchResults = false;
-//								}
-////							}
-//						},
-//						function(err) {
-//							scope.livesearchResults = false;
-//						});
-//					} else {
-//						scope.livesearchResults = false;
-//					}
-//				}
 			});
 
 			element.find('input').bind('blur', function($event) {
