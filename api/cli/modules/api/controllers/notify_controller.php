@@ -17,11 +17,32 @@ class notify_controller Extends EP_Controller {
 
 	public function index() {
 
-		echo "Here I am 22222 \n";
-		$repeats = new transaction_repeat();
-		$repeats->limit(20);
-		$repeats->result();
-print $repeats;
+		$accounts = new account();
+		$accounts->whereNotDeleted();
+		$accounts->where('is_active', 1);
+		$accounts->result();
+		if ($accounts->numFields()) {
+			foreach ($accounts as $account) {
+				$this->switchDatabase('budgettr_' . $account->db_suffix_name);
+				$repeats = new transaction_repeat();
+				$repeats->whereNotDeleted();
+				$repeats->where('next_due_date <= now()', FALSE, FALSE);
+				$repeats->groupStart();
+				$repeats->orWhere('last_due_date IS NULL', FALSE, FALSE);
+				$repeats->orWhere('last_due_date >= now()', FALSE, FALSE);
+				$repeats->groupEnd();
+				$repeats->result();
+				if ($repeats->numRows()) {
+					foreach ($repeats as $repeat) {
+						isset($repeat->vendor);
+//print $repeat;
+						$to = $account->phone . "@vtext.com\n";
+						$msg = "Your Payment to " . $repeat->vendor->name . " for " . $repeat->description . " is due on " . $repeat->next_due_date . "\n";
+						mail($to, "", $msg, "From: BudgetTrackerPro\r\n");
+					}
+				}
+			}
+		}
 	}
 
 }
