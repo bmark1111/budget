@@ -20,6 +20,16 @@ class user extends Nagilum {
 		parent::__construct($id);
 	}
 
+	public function postResultHook() {
+		parent::postResultHook();
+
+		unset($this->is_deleted);
+		unset($this->created_by);
+		unset($this->created_at);
+		unset($this->updated_by);
+		unset($this->updated_at);
+  	}
+
 	public function setSession(&$user) {
 		$_SESSION['id']		= $user->id;
 		$_SESSION['uname']	= $user->login;
