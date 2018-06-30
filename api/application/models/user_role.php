@@ -1,20 +1,6 @@
 <?php
-/*
- * user_role.php
- * Brian Markham 05/21/2015
- *
-*/
-class user_role extends Nagilum {
 
-	public $table = 'user_role';
+(defined('BASEPATH')) OR exit('No direct script access allowed');
 
-	public $autoPopulateHasOne = FALSE;
-	public $autoPopulateHasMany = FALSE;
-
-	public function __construct($id = NULL) {
-		parent::__construct($id);
-	}
-
-}
-
+require (SHAREPATH . "models/user_role.php");
 // EOF

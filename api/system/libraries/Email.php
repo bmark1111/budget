@@ -1521,10 +1521,10 @@ class CI_Email {
 	 */
 	private function _send_with_mail()
 	{
-echo "11111 ".$this->_recipients."\n";
-echo "22222 ".$this->_subject."\n";
-echo "33333 ".$this->_finalbody."\n";
-echo "44444 ".$this->_header_str."\n";
+//echo "11111 ".$this->_recipients."\n";
+//echo "22222 ".$this->_subject."\n";
+//echo "33333 ".$this->_finalbody."\n";
+//echo "44444 ".$this->_header_str."\n";
 return true;
 		if ($this->_safe_mode == TRUE)
 		{

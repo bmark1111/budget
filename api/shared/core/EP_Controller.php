@@ -217,7 +217,8 @@ class EP_Controller extends MX_Controller
 					break;
 			}
 		} elseif (APPLICATION == 'CLI') {
-			// ????????
+//			$this->switchDatabase('budgettr_'. $oRow->db_suffix_name);
+			$this->switchDatabase('budgettr_b_1_m');
 		} else {
 			if(!$this->input->is_ajax_request()) {
 				$this->set_header("Not Found", '404');

@@ -125,8 +125,8 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  */
 
 //	$BM =& load_class('Benchmark', 'core');
-require_once(BASEPATH.'core/Benchmark.php');
-$BM = new CI_Benchmark();
+	require_once(BASEPATH.'core/Benchmark.php');
+	$BM = new CI_Benchmark();
 	$BM->mark('total_execution_time_start');
 	$BM->mark('loading_time:_base_classes_start');
 
@@ -136,8 +136,8 @@ $BM = new CI_Benchmark();
  * ------------------------------------------------------
  */
 //	$EXT =& load_class('Hooks', 'core');
-require_once(BASEPATH.'core/Hooks.php');
-$EXT = new CI_Hooks();
+	require_once(BASEPATH.'core/Hooks.php');
+	$EXT = new CI_Hooks();
 
 /*
  * ------------------------------------------------------
@@ -247,7 +247,6 @@ $EXT = new CI_Hooks();
 	{
 		return CI_Controller::get_instance();
 	}
-
 
 	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller'.EXT))
 	{

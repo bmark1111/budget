@@ -1,13 +1,13 @@
 <?php
 /*
- * transaction_repeat_every.php
- * Brian Markham 04/04/2015
+ * setting.php
+ * Brian Markham 04/03/2015
  *
 */
-class transaction_repeat_every extends Nagilum {
+class setting extends Nagilum {
 
-	public $table = 'transaction_repeat_every';
-	
+	public $table = 'setting';
+
 	public $autoPopulateHasOne = FALSE;
 	public $autoPopulateHasMany = FALSE;
 

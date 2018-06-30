@@ -1,19 +1,6 @@
 <?php
-/*
- * category.php
- * Brian Markham 04/04/2015
- *
-*/
-class category extends Nagilum {
 
-	public $table = 'category';
+(defined('BASEPATH')) OR exit('No direct script access allowed');
 
-	public $autoPopulateHasOne = FALSE;
-	public $autoPopulateHasMany = FALSE;
-
-	public function __construct($id = FALSE) {
-		parent::__construct($id);
-	}
-
-}
+require (SHAREPATH . "models/category.php");
 //EOF

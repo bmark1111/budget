@@ -2,6 +2,7 @@
 
 define('APPLICATION', 'CLI');
 
+define('ENVIRONMENT', 'CLI');
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME

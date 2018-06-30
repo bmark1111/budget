@@ -224,7 +224,6 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = '';
 $config['encryption_key'] = 'n51nas0.p201*2n';
 
 /*
@@ -360,32 +359,6 @@ $config['proxy_ips'] = '';
 
 /*
 |---------------------------------------------------------------------------
-| Paths To CSS And JS
-|---------------------------------------------------------------------------
-|
-| This is the path for css and javascript from the public directory.
-| Do not include the base path
-| Do include an opening and trailing trailing slash
-|
-*/
-
-//$config['css_path'] = '/css/';
-//$config['js_path'] = '/js/';
-
-/*
-|---------------------------------------------------------------------------
-| Show PreRelease And Show Cert
-|---------------------------------------------------------------------------
-|
-| These booleans determine what gets shown based on the flags that are set
-|
-*/
-
-$config['show_prerelease'] = TRUE;
-$config['show_cert'] = TRUE;
-
-/*
-|---------------------------------------------------------------------------
 | Controller Suffix
 |---------------------------------------------------------------------------
 |
@@ -403,33 +376,27 @@ $config['controller_suffix'] = '_controller';
 | This will allow you to override the profiler on non-production environments
 |
 */
-$config['enable_profiler'] = TRUE;
+$config['enable_profiler'] = FALSE;
 
-/*
-|---------------------------------------------------------------------------
-| Database Configuration
-|---------------------------------------------------------------------------
-|
-| This is the live copy of the information you use to connect to the database
-|
-*/
+$config['database']['hostname'] = 'localhost';
+$config['database']['username'] = 'budgettr_budget';
+$config['database']['password'] = 'X120798x!';
+$config['database']['database'] = 'budgettr_b_1_m';
+$config['database']['dbdriver'] = 'mysqli';
+$config['database']['dbprefix'] = '';
+$config['database']['pconnect'] = TRUE;
+$config['database']['db_debug'] = TRUE;
+$config['database']['cache_on'] = FALSE;
+$config['database']['cachedir'] = '';
+$config['database']['char_set'] = 'utf8';
+$config['database']['dbcollat'] = 'utf8_general_ci';
+$config['database']['swap_pre'] = '';
+$config['database']['autoinit'] = FALSE; // this is set to false as we're going to make sure the database exists before connecting to it
+$config['database']['stricton'] = FALSE;
 
-//$config['database']['hostname'] = '10.10.3.147:3306';
-//$config['database']['username'] = 'proovebio';
-//$config['database']['password'] = 'proovebio';
-//$config['database']['database'] = 'biohelix';
-//$config['database']['dbdriver'] = 'mysql';
-//$config['database']['dbprefix'] = '';
-//$config['database']['pconnect'] = TRUE;
-//$config['database']['db_debug'] = TRUE;
-//$config['database']['cache_on'] = FALSE;
-//$config['database']['cachedir'] = '';
-//$config['database']['char_set'] = 'utf8';
-//$config['database']['dbcollat'] = 'utf8_general_ci';
-//$config['database']['swap_pre'] = '';
-//$config['database']['autoinit'] = FALSE; // this is set to false as we're going to make sure the database exists before connecting to it
-//$config['database']['stricton'] = FALSE;
+require_once(dirname(dirname(__FILE__)).'/config/version.php');
+
+//$config['version']['base'] = floatval($config['version']['major'] . '.'  . $config['version']['minor']);
+
 /* End of file config.php */
 /* Location: ./application/config/config.php */
-
-
