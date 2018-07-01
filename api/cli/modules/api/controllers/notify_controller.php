@@ -35,10 +35,16 @@ class notify_controller Extends EP_Controller {
 				if ($repeats->numRows()) {
 					foreach ($repeats as $repeat) {
 						isset($repeat->vendor);
-//print $repeat;
 						$to = $account->phone . "@vtext.com\n";
-						$msg = "Your Payment to " . $repeat->vendor->name . " for " . $repeat->description . " is due on " . $repeat->next_due_date . "\n";
-						mail($to, "", $msg, "From: BudgetTrackerPro\r\n");
+						if ($repeat->type == 'DEBIT' || $repeat->type == 'CHECK' || $repeat->type == 'SALE' || $repeat->type == 'PAYMENT') {
+							$subject = "Payment to " . $repeat->vendor->name;
+							$type = ' for ';
+						} else {
+							$subject = 'Credit from ' . $repeat->vendor->name;
+							$type = ' from ';
+						}
+						$msg = "$" . $repeat->amount . $type . $repeat->description . " is due on " . date('l F j, Y', strtotime($repeat->next_due_date)) . "\n";
+						mail($to, $subject, $msg, "From: BudgetTrackerPro\r\n");
 					}
 				}
 			}
