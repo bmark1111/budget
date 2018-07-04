@@ -29,12 +29,9 @@ class EP_Controller extends MX_Controller
 	public	$nRoles = array();
 	public  $sUserName = NULL; // used to store the username for the currently logged in user
 	public  $sFullUserName = NULL; // used to store the username for the currently logged in user
-//	public  $nExpertId = NULL; // used to store the implementor associated with this account
-//	public  $nStimulusExpertId = NULL; // used to store the implementor associated with this account
 	public	$title = ''; // used to store the title for the header
 
 	public $aDBs = array(); // used to store the various databases connections that we load up when old connections die out??
-//	public $current_migration_db = NULL; // this is used only for specific migration requirements don't try this at home unless you know what you're doing
 
 	public static $isModuleExtendSession = FALSE;
 
@@ -51,11 +48,17 @@ class EP_Controller extends MX_Controller
 		// this is loaded at this point so we can use it to determine what REST we're accessing
 		$this->load->helper('url');
 
-		$httpReferer = explode('//', $_SERVER['HTTP_REFERER']);
-		$httpReferer = explode('.', $httpReferer[1]);
-		$httpReferer2 = array_reverse($httpReferer);
-		if ($httpReferer2[1] == $this->config->item('referer')) {
-			define('APPLICATION', 'REST');
+		if (isset($_SERVER['HTTP_REFERER'])) {
+			$httpReferer = explode('//', $_SERVER['HTTP_REFERER']);
+			$httpReferer = explode('.', $httpReferer[1]);
+			$httpReferer2 = array_reverse($httpReferer);
+			if ($httpReferer2[1] == $this->config->item('referer')) {
+				define('APPLICATION', 'REST');
+			} else {
+				throw new Exception('Invalid application requested');
+			}
+		} elseif (isset($_SERVER['SCRIPT_FILENAME']) && $_SERVER['SCRIPT_FILENAME'] == $this->config->item('referer')) {
+			define('APPLICATION', 'CLI');
 		} else {
 			throw new Exception('Invalid application requested');
 		}
@@ -406,12 +409,6 @@ class EP_Controller extends MX_Controller
 	 */
 	public function _output($output, $printMode = FALSE)
 	{
-//		$this->css->printMode = $printMode;
-//		$this->js->printMode = $printMode;
-
-//		$output = str_replace('{*JS*}', $this->js->output(), $output);
-//		$output = str_replace('{*CSS*}', $this->css->output(), $output);
-
 		if($printMode)
 		{
 			return $output;

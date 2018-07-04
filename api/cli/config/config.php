@@ -357,6 +357,8 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+$config['referer'] = 'cli.php';
+
 /*
 |---------------------------------------------------------------------------
 | Controller Suffix
@@ -394,7 +396,7 @@ $config['database']['swap_pre'] = '';
 $config['database']['autoinit'] = FALSE; // this is set to false as we're going to make sure the database exists before connecting to it
 $config['database']['stricton'] = FALSE;
 
-require_once(dirname(dirname(__FILE__)).'/config/version.php');
+//require_once(dirname(dirname(__FILE__)).'/config/version.php');
 
 //$config['version']['base'] = floatval($config['version']['major'] . '.'  . $config['version']['minor']);
 

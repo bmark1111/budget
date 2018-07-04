@@ -396,9 +396,9 @@ $config['database']['swap_pre'] = '';
 $config['database']['autoinit'] = FALSE; // this is set to false as we're going to make sure the database exists before connecting to it
 $config['database']['stricton'] = FALSE;
 
-require_once(dirname(dirname(__FILE__)).'/version.php');
+//require_once(dirname(dirname(__FILE__)).'/version.php');
 
-$config['version']['base'] = floatval($config['version']['major'] . '.'  . $config['version']['minor']);
+//$config['version']['base'] = floatval($config['version']['major'] . '.'  . $config['version']['minor']);
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

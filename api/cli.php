@@ -1,8 +1,11 @@
 <?php
 
-define('APPLICATION', 'CLI');
+//define('APPLICATION', 'CLI');
 
 define('ENVIRONMENT', 'CLI');
+
+date_default_timezone_set('America/Los_Angeles');
+
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME
