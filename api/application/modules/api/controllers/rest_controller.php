@@ -106,48 +106,53 @@ class rest_controller Extends EP_Controller {
 				isset($transaction->vendor);
 			}
 			$next_due_dates = array();
-			$next_due_date = $transaction->first_due_date;
-			$every = 0;
-			while (strtotime($next_due_date) < strtotime($ed)) {
-				switch ($transaction->every_unit) {
-					case 'Day':
-						$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
-						break;
-					case 'Week':
-						$date = strtotime($next_due_date . ' +' . $every . ' week');
-						$dayofweek = date('w', $date);
-						$every_day = date('N', $date);
-						$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($every_day - $dayofweek).' day'));
-						break;
-					case 'Month':
-						if ($transaction->everyDay === NULL && $transaction->day === NULL) {
-							$next_due_date = date('Y-m-' . date('d', strtotime($next_due_date)), strtotime($next_due_date . ' +' . $every . ' month'));
-						} else {
-							$next_due_date = date('Y-m-d', strtotime($transaction->everyDay . ' ' . $transaction->day . ' of ' . date('Y-m', strtotime($next_due_date . ' +' . $every . ' month'))));
-						}
-						break;
-					case 'Year':
-						$every_date = date('d', strtotime($transaction->first_due_date));
-						$every_month = date('m', strtotime($transaction->first_due_date));
-						$next_due_date = date('Y-' . $every_month . '-' . $every_date, strtotime($next_due_date . ' +' . $every . ' year'));
-						break;
-					case 'Quarter':
-					default:
-						throw new Exception('Invalid transaction_repeat->every_unit');
-						break;
-				}
-				$ndd = strtotime($next_due_date);
-				if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
-					if (($all == 0)															// ...we want all repeats
-							||																//			or
-						($all == 1 && $ndd >= strtotime($transaction->next_due_date))		// ... we want future repeats
-							||																//			or
-						($all == 2 && $ndd <= $now)) {										// ... we want past repeats
-						$next_due_dates[] = $next_due_date;									// ... then save this due date
+//			foreach ($transaction->repeats as $repeat) {
+				$next_due_date = $transaction->first_due_date;
+				$every = 0;
+				while (strtotime($next_due_date) < strtotime($ed)) {
+					switch ($transaction->every_unit) {
+						case 'Day':
+							$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
+							break;
+						case 'Week':
+							$date = strtotime($next_due_date . ' +' . $every . ' week');
+							$dayofweek = date('w', $date);
+							$every_day = date('N', $date);
+//							$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($repeat->every_day - $dayofweek).' day'));
+							$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($every_day - $dayofweek).' day'));
+							break;
+						case 'Month':
+							if ($transaction->everyDay === NULL && $transaction->day === NULL) {
+								$next_due_date = date('Y-m-' . date('d', strtotime($next_due_date)), strtotime($next_due_date . ' +' . $every . ' month'));
+							} else {
+								$next_due_date = date('Y-m-d', strtotime($transaction->everyDay . ' ' . $transaction->day . ' of ' . date('Y-m', strtotime($next_due_date . ' +' . $every . ' month'))));
+							}
+//							$next_due_date = date('Y-m-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' month'));
+							break;
+						case 'Year':
+							$every_date = date('d', strtotime($transaction->first_due_date));
+							$every_month = date('m', strtotime($transaction->first_due_date));
+							$next_due_date = date('Y-' . $every_month . '-' . $every_date, strtotime($next_due_date . ' +' . $every . ' year'));
+//							$next_due_date = date('Y-' . sprintf('%02d', $repeat->every_month) . '-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' year'));
+							break;
+						case 'Quarter':
+						default:
+							throw new Exception('Invalid transaction_repeat->every_unit');
+							break;
 					}
+					$ndd = strtotime($next_due_date);
+					if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
+						if (($all == 0)															// ...we want all repeats
+								||																//			or
+							($all == 1 && $ndd >= strtotime($transaction->next_due_date))		// ... we want future repeats
+								||																//			or
+							($all == 2 && $ndd <= $now)) {										// ... we want past repeats
+							$next_due_dates[] = $next_due_date;									// ... then save this due date
+						}
+					}
+					$every = $transaction->every;
 				}
-				$every = $transaction->every;
-			}
+//			}
 			$transaction->next_due_dates = $next_due_dates;
 		}
 		return $transactions;
@@ -377,7 +382,7 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 
 	/**
 	 * 
-	 * @name reconcileTransactions
+	 * @name resetAccountBalances
 	 * @type {function}
 	 */
 	public function reconcileTransactions() {
@@ -456,7 +461,7 @@ $second = 'last day of month';		// should come from DB record - in forecast entr
 				$first = TRUE;
 				$bank_account_balances = array();
 				foreach ($transactions as $transaction) {
-					if (!$first) {
+					if (!$first) {// || empty($transaction->bank_account_balance)) {
 						switch ($transaction->type) {
 							case 'DEBIT':
 							case 'CHECK':

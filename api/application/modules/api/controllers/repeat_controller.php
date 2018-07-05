@@ -141,10 +141,26 @@ class repeat_controller Extends rest_controller {
 		$repeat->everyDay			= ($_POST['every_unit'] == 'Month') ? $_POST['everyDay']: NULL;;
 		$repeat->day				= ($_POST['every_unit'] == 'Month') ? $_POST['day']: NULL;
 		$repeat->notes				= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
+//		$repeat->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+//		$repeat->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 		$repeat->vendor_id			= $_POST['vendor_id'];
 		$repeat->category_id		= $_POST['category_id'];
 		$repeat->exact_match		= (!empty($_POST['exact_match']) && $_POST['exact_match']) ? 1: 0;
 		$repeat->save();
+
+//		foreach ($_POST['repeats'] as $repeat_every) {
+//			$id = (!empty($repeat_every['id'])) ? $repeat_every['id']: NULL;
+//			$transaction_repeat_every = new transaction_repeat_every($id);
+//			if (empty($repeat['is_deleted']) || $repeat['is_deleted'] != 1) {
+//				$transaction_repeat_every->transaction_repeat_id	= $repeat->id;
+//				$transaction_repeat_every->every_day				= (!empty($repeat_every['every_day'])) ? $repeat_every['every_day']: NULL;
+//				$transaction_repeat_every->every_date				= $repeat_every['every_date'];
+//				$transaction_repeat_every->every_month				= $repeat_every['every_month'];
+//				$transaction_repeat_every->save();
+//			} else {
+//				$transaction_repeat_every->delete();
+//			}
+//		}
 
 		$this->ajax->setdata('id', $repeat->id);
 		$this->ajax->output();
