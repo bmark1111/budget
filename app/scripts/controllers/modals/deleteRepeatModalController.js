@@ -15,6 +15,8 @@ app.controller('DeleteRepeatModalController', function ($scope, $modalInstance, 
 			function(response) {
 				if (!!response.success) {
 					$modalInstance.close();
+					// now update the global intervals data
+					Periods.clear();
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,
