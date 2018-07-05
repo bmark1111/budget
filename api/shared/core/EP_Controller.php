@@ -57,8 +57,13 @@ class EP_Controller extends MX_Controller
 			} else {
 				throw new Exception('Invalid application requested');
 			}
-		} elseif (isset($_SERVER['SCRIPT_FILENAME']) && $_SERVER['SCRIPT_FILENAME'] == $this->config->item('referer')) {
-			define('APPLICATION', 'CLI');
+		} elseif (isset($_SERVER['argv'])) {
+			$ref = explode('/', $_SERVER['argv'][0]);
+			if ($ref[count($ref) - 1] == $this->config->item('referer')) {
+				define('APPLICATION', 'CLI');
+			} else {
+				throw new Exception('Invalid CLI application requested');
+			}
 		} else {
 			throw new Exception('Invalid application requested');
 		}
@@ -220,8 +225,7 @@ class EP_Controller extends MX_Controller
 					break;
 			}
 		} elseif (APPLICATION == 'CLI') {
-//			$this->switchDatabase('budgettr_'. $oRow->db_suffix_name);
-//			$this->switchDatabase('budgettr_b_1_m');
+			
 		} else {
 			if(!$this->input->is_ajax_request()) {
 				$this->set_header("Not Found", '404');
@@ -230,63 +234,6 @@ class EP_Controller extends MX_Controller
 			}
 			exit;
 		}
-/*		elseif(APPLICATION == 'ADMIN')
-		{
-			// Used for the rss/atom newsfeed for Support News to bypass the ip whitelist:
-			if ($this->uri->segment(1) == 'error' && $this->uri->segment(2) == 'newsfeed')
-			{
-				if(isset($this->session->userdata))
-				{
-					$this->nUserId = intval($this->session->userdata('user_id'));
-				}
-				return TRUE;
-			}
-
-			if(isset($this->session->userdata))
-			{
-				$this->nUserId = intval($this->session->userdata('user_id'));
-			}
-			$this->db->from('admin_user');
-			$this->db->where('id', $this->nUserId);
-			$query = $this->db->get();
-			if ($query->num_rows() === 1 && !empty($query->row()->first_name))
-			{
-				$this->sUserName = $query->row()->username;
-				$this->sFullUserName = $query->row()->first_name;
-				if (!empty($query->row()->last_name))
-				{
-					$this->sFullUserName .= ' '.$query->row()->last_name;
-				}
-			}
-
-
-			$ip_address = explode('.', $this->input->ip_address());
-
-			$ip_whitelist = new ip_whitelist();
-			$ip = '';
-			for($i = 0; $i < count($ip_address); $i++)
-			{
-				if($i != 0)
-				{
-					$ip .= '.';
-				}
-				$ip .= $ip_address[$i];
-				$ip_whitelist->orWhere('value', $ip);
-			}
-			$ip_whitelist->result();
-
-			if($ip_whitelist->count() == 0)
-			{
-				log_message('error', 'User Failed IP Check with IP of ' . $this->input->ip_address());
-				die('You don\'t have permission to access this application please contact the administrator.');
-			}
-
-			if(isset($this->session->userdata))
-			{
-				$this->nUserId = intval($this->session->userdata('user_id'));
-			}
-		}
-*/
 	}
 
 	/**
