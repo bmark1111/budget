@@ -106,53 +106,48 @@ class rest_controller Extends EP_Controller {
 				isset($transaction->vendor);
 			}
 			$next_due_dates = array();
-//			foreach ($transaction->repeats as $repeat) {
-				$next_due_date = $transaction->first_due_date;
-				$every = 0;
-				while (strtotime($next_due_date) < strtotime($ed)) {
-					switch ($transaction->every_unit) {
-						case 'Day':
-							$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
-							break;
-						case 'Week':
-							$date = strtotime($next_due_date . ' +' . $every . ' week');
-							$dayofweek = date('w', $date);
-							$every_day = date('N', $date);
-//							$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($repeat->every_day - $dayofweek).' day'));
-							$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($every_day - $dayofweek).' day'));
-							break;
-						case 'Month':
-							if ($transaction->everyDay === NULL && $transaction->day === NULL) {
-								$next_due_date = date('Y-m-' . date('d', strtotime($next_due_date)), strtotime($next_due_date . ' +' . $every . ' month'));
-							} else {
-								$next_due_date = date('Y-m-d', strtotime($transaction->everyDay . ' ' . $transaction->day . ' of ' . date('Y-m', strtotime($next_due_date . ' +' . $every . ' month'))));
-							}
-//							$next_due_date = date('Y-m-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' month'));
-							break;
-						case 'Year':
-							$every_date = date('d', strtotime($transaction->first_due_date));
-							$every_month = date('m', strtotime($transaction->first_due_date));
-							$next_due_date = date('Y-' . $every_month . '-' . $every_date, strtotime($next_due_date . ' +' . $every . ' year'));
-//							$next_due_date = date('Y-' . sprintf('%02d', $repeat->every_month) . '-' . sprintf('%02d', $repeat->every_date), strtotime($next_due_date . ' +' . $every . ' year'));
-							break;
-						case 'Quarter':
-						default:
-							throw new Exception('Invalid transaction_repeat->every_unit');
-							break;
-					}
-					$ndd = strtotime($next_due_date);
-					if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
-						if (($all == 0)															// ...we want all repeats
-								||																//			or
-							($all == 1 && $ndd >= strtotime($transaction->next_due_date))		// ... we want future repeats
-								||																//			or
-							($all == 2 && $ndd <= $now)) {										// ... we want past repeats
-							$next_due_dates[] = $next_due_date;									// ... then save this due date
+			$next_due_date = $transaction->first_due_date;
+			$every = 0;
+			while (strtotime($next_due_date) < strtotime($ed)) {
+				switch ($transaction->every_unit) {
+					case 'Day':
+						$next_due_date = date('Y-m-d', strtotime($next_due_date . ' +' . $every . ' day'));
+						break;
+					case 'Week':
+						$date = strtotime($next_due_date . ' +' . $every . ' week');
+						$dayofweek = date('w', $date);
+						$every_day = date('N', $date);
+						$next_due_date = date('Y-m-d', strtotime(date('Y-m-d', $date) . ' +' . ($every_day - $dayofweek).' day'));
+						break;
+					case 'Month':
+						if ($transaction->everyDay === NULL && $transaction->day === NULL) {
+							$next_due_date = date('Y-m-' . date('d', strtotime($next_due_date)), strtotime($next_due_date . ' +' . $every . ' month'));
+						} else {
+							$next_due_date = date('Y-m-d', strtotime($transaction->everyDay . ' ' . $transaction->day . ' of ' . date('Y-m', strtotime($next_due_date . ' +' . $every . ' month'))));
 						}
-					}
-					$every = $transaction->every;
+						break;
+					case 'Year':
+						$every_date = date('d', strtotime($transaction->first_due_date));
+						$every_month = date('m', strtotime($transaction->first_due_date));
+						$next_due_date = date('Y-' . $every_month . '-' . $every_date, strtotime($next_due_date . ' +' . $every . ' year'));
+						break;
+					case 'Quarter':
+					default:
+						throw new Exception('Invalid transaction_repeat->every_unit');
+						break;
 				}
-//			}
+				$ndd = strtotime($next_due_date);
+				if ($ndd >= strtotime($sd) && $ndd < strtotime($ed) && (!$transaction->last_due_date || $ndd <= strtotime($transaction->last_due_date))) {
+					if (($all == 0)															// ...we want all repeats
+							||																//			or
+						($all == 1 && $ndd >= strtotime($transaction->next_due_date))		// ... we want future repeats
+							||																//			or
+						($all == 2 && $ndd <= $now)) {										// ... we want past repeats
+						$next_due_dates[] = $next_due_date;									// ... then save this due date
+					}
+				}
+				$every = $transaction->every;
+			}
 			$transaction->next_due_dates = $next_due_dates;
 		}
 		return $transactions;
@@ -172,37 +167,36 @@ class rest_controller Extends EP_Controller {
 				foreach($transaction->next_due_dates as $next_due_date) {
 					if (strtotime($next_due_date) >= $interval_beginning && strtotime($next_due_date) <= $interval_ending) {
 						$bb = $transaction->bank_account_id;
-							$amount = NULL;
-							switch ($transaction->type) {
-								case 'DSLIP':
-								case 'CREDIT':
-								case 'RETURN':
-								case 'PAYMENT':
-									$amount = $transaction->amount;
-									break;
-								case 'DEBIT':
-								case 'CHECK':
-								case 'SALE':
-									$amount = -$transaction->amount;
-									break;
-							}
-							$cc = $transaction->category_id;
-							if (empty($interval['totals'][$cc])) {
-								$interval['totals'][$cc]		= $amount;				// set the category totals
-							} else {
-								$interval['totals'][$cc]		+= $amount;				// add the category totals
-							}
-							if (empty($interval['adjustments'][$bb])) {
-								$interval['adjustments'][$bb]	= $amount;				// set the bank account balance adjustments
-							} else {
-								$interval['adjustments'][$bb]	+= $amount;				// add the category totals
-							}
-							if (empty($interval['interval_total'])) {
-								$interval['interval_total']		= $amount;				// set the interval total
-							} else {
-								$interval['interval_total']		+= $amount;				// add the category totals
-							}
-//						}
+						$amount = NULL;
+						switch ($transaction->type) {
+							case 'DSLIP':
+							case 'CREDIT':
+							case 'RETURN':
+							case 'PAYMENT':
+								$amount = $transaction->amount;
+								break;
+							case 'DEBIT':
+							case 'CHECK':
+							case 'SALE':
+								$amount = -$transaction->amount;
+								break;
+						}
+						$cc = $transaction->category_id;
+						if (empty($interval['totals'][$cc])) {
+							$interval['totals'][$cc]		= $amount;				// set the category totals
+						} else {
+							$interval['totals'][$cc]		+= $amount;				// add the category totals
+						}
+						if (empty($interval['adjustments'][$bb])) {
+							$interval['adjustments'][$bb]	= $amount;				// set the bank account balance adjustments
+						} else {
+							$interval['adjustments'][$bb]	+= $amount;				// add the category totals
+						}
+						if (empty($interval['interval_total'])) {
+							$interval['interval_total']		= $amount;				// set the interval total
+						} else {
+							$interval['interval_total']		+= $amount;				// add the category totals
+						}
 					}
 				}
 			}

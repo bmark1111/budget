@@ -17,15 +17,14 @@ class notify_controller Extends EP_Controller {
 
 	public function index() {
 
-		log_message("debug", "CRON running");
+		log_message("debug", "CRON notify running");
 		$accounts = new account();
 		$accounts->whereNotDeleted();
 		$accounts->where('is_active', 1);
 		$accounts->result();
 		if ($accounts->numFields()) {
-			log_message("debug", "CRON found accounts");
 			foreach ($accounts as $account) {
-				log_message("debug", 'CRON budgettr_' . $account->db_suffix_name);
+				log_message("debug", 'CRON notify account budgettr_' . $account->db_suffix_name);
 				$this->switchDatabase('budgettr_' . $account->db_suffix_name);
 				$repeats = new transaction_repeat();
 				$repeats->whereNotDeleted();
@@ -38,6 +37,7 @@ class notify_controller Extends EP_Controller {
 				if ($repeats->numRows()) {
 					foreach ($repeats as $repeat) {
 						$repeat->smsSent = date('Y-m-d H:i:s');
+						$repeat->save();
 						isset($repeat->vendor);
 						$to = $account->phone . "@vtext.com";
 						if ($repeat->type == 'DEBIT' || $repeat->type == 'CHECK' || $repeat->type == 'SALE' || $repeat->type == 'PAYMENT') {
@@ -48,13 +48,13 @@ class notify_controller Extends EP_Controller {
 							$type = ' from ';
 						}
 						$msg = "$" . $repeat->amount . $type . $repeat->description . " is due on " . date('l F j, Y', strtotime($repeat->next_due_date));
-						log_message("debug", 'CRON ' . $to . ' ' . $subject . ' ' . $msg);
+						log_message("debug", 'CRON notify ' . $to . ' ' . $subject . ' ' . $msg);
 						mail($to, $subject, $msg, "From: BudgetTrackerPro\r\n");
 					}
 				}
 			}
 		}
-		log_message("debug", "CRON job finished");
+		log_message("debug", "CRON notify finished");
 	}
 
 }
