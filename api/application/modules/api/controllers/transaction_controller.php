@@ -198,7 +198,6 @@ class transaction_controller Extends rest_controller {
 		} else {
 			$transaction->vendor_id = NULL;	// ignore vendor_id if splits are present
 		}
-//		$transaction->vendor_id			= (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
 		$transaction->category_id		= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 		$transaction->save();
 
