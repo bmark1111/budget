@@ -35,7 +35,6 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 					$localStorage.token_id			= false;
 					$localStorage.account_id		= false;
 					$localStorage.authorization		= false;
-//					$localStorage.budget_views		= false;
 					$localStorage.budget_start_date	= false;
 					$localStorage.sheet_views		= false;
 					$localStorage.budget_mode		= false;
@@ -204,64 +203,116 @@ app.config(function($routeProvider, $httpProvider, USER_ROLES) {
 		{
 			redirectTo: '/'
 		});
-
-// CHECK THIS FOR NEED ////////
-//$httpProvider.defaults.useXDomain = true;
-//delete $httpProvider.defaults.headers.common['X-Requested-With'];
-//$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';		// TRY THIS ???????
-///////////////////////////////
 });
 
-app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService, Periods) { //, AUTH_EVENTS)
+//app.run(function($route, $rootScope, $localStorage, $location, RestData2, AuthService, Periods) { //, AUTH_EVENTS)
+app.run(function($rootScope, $timeout, $document, $route, $localStorage, $location, RestData2, AuthService) {
 
 	$route.reload(); 
 
-	$rootScope.$on('$routeChangeStart',
-		function (event, next) {
-			$rootScope.nav_active		= $location.path().replace("/", "");
-			$rootScope.error			= false;
-			$rootScope.authenticated	= $localStorage.authenticated;
-			$rootScope.userFullName		= $localStorage.userFullName;
+	$rootScope.$on('$routeChangeStart', function (event, next) {
+		$rootScope.nav_active		= $location.path().replace("/", "");
+		$rootScope.error			= false;
+		$rootScope.authenticated	= $localStorage.authenticated;
+		$rootScope.userFullName		= $localStorage.userFullName;
 
-			var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
-			if (AuthService.isAuthorized(authorizedRoles)) {
-				if ($localStorage.authenticated) {
-					// load the upload counts
-					if (typeof($rootScope.transaction_count) === 'undefined') {
-						$rootScope.transaction_count = '';
-						RestData2().getUploadCounts(
-							function(response) {
-								$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
-							});
-					}
-//					// make sure the periods are built if necessary
-//					Periods.getTransactions().then(function(response) {
-//						if (!!response.success) {
-//							Periods.buildPeriods(response.data);
-//						}
-//					});
-				} else {
-					// user is not authenticated
-					console.log('USER NOT AUTHENTICATED');
-					$rootScope.authenticated = false;
-					$localStorage.authenticated = false;
+		var authorizedRoles = (next.data) ? next.data.authorizedRoles: false;
+		if (AuthService.isAuthorized(authorizedRoles)) {
+			if ($localStorage.authenticated) {
+				// load the upload counts
+				if (typeof($rootScope.transaction_count) === 'undefined') {
+					$rootScope.transaction_count = '';
+					RestData2().getUploadCounts(
+						function(response) {
+							$rootScope.transaction_count = (parseInt(response.data.count) > 0) ? parseInt(response.data.count): '';
+						});
 				}
+//				// make sure the periods are built if necessary
+//				Periods.getTransactions().then(function(response) {
+//					if (!!response.success) {
+//						Periods.buildPeriods(response.data);
+//					}
+//				});
 			} else {
-				// role not authorized
-				event.preventDefault();
-
-				if ($localStorage.authenticated) {
-					// user is not allowed
-					console.log('ROLE NOT AUTHORIZED BUT AUTHENTICATED');
-					$location.path("/dashboard");
-				} else {
-					// user is not logged in
-					console.log('ROLE NOT AUTHORIZED AND  NOT AUTHENTICATED');
-					$rootScope.authenticated = false;
-					$localStorage.authenticated = false;
-					$location.path("/");
-				}
+				// user is not authenticated
+				console.log('USER NOT AUTHENTICATED');
+				$rootScope.authenticated = false;
+				$localStorage.authenticated = false;
 			}
-		});
+		} else {
+			// role not authorized
+			event.preventDefault();
+
+			if ($localStorage.authenticated) {
+				// user is not allowed
+				console.log('ROLE NOT AUTHORIZED BUT AUTHENTICATED');
+				$location.path("/dashboard");
+			} else {
+				// user is not logged in
+				console.log('ROLE NOT AUTHORIZED AND  NOT AUTHENTICATED');
+				$rootScope.authenticated = false;
+				$localStorage.authenticated = false;
+				$location.path("/");
+			}
+		}
+	});
+
+	// Timeout timer value
+	var TimeOutTimerValue = 15*60*1000;
+
+	// Start a timeout
+	var TimeOut_Thread = $timeout(function(){ LogoutByTimer() } , TimeOutTimerValue);
+	var bodyElement = angular.element($document);
+
+	/// Keyboard Events
+	bodyElement.bind('keydown', function (e) { TimeOut_Resetter(e) });  
+	bodyElement.bind('keyup', function (e) { TimeOut_Resetter(e) });    
+
+	/// Mouse Events    
+	bodyElement.bind('click', function (e) { TimeOut_Resetter(e) });
+	bodyElement.bind('mousemove', function (e) { TimeOut_Resetter(e) });    
+	bodyElement.bind('DOMMouseScroll', function (e) { TimeOut_Resetter(e) });
+	bodyElement.bind('mousewheel', function (e) { TimeOut_Resetter(e) });   
+	bodyElement.bind('mousedown', function (e) { TimeOut_Resetter(e) });        
+
+	/// Touch Events
+	bodyElement.bind('touchstart', function (e) { TimeOut_Resetter(e) });       
+	bodyElement.bind('touchmove', function (e) { TimeOut_Resetter(e) });        
+
+	/// Common Events
+	bodyElement.bind('scroll', function (e) { TimeOut_Resetter(e) });       
+	bodyElement.bind('focus', function (e) { TimeOut_Resetter(e) });    
+
+	function LogoutByTimer() {
+
+		if ($localStorage.authenticated !== false) {
+			var date = new Date();
+			console.log('Logged out by timeout on', date.toDateString(), 'at', date.toLocaleTimeString());
+
+			$timeout.cancel(TimeOut_Thread);
+
+			$localStorage.authenticated		= false;
+			$localStorage.authorizedRoles	= false;
+			$localStorage.userFullName		= false;
+			$localStorage.token_id			= false;
+			$localStorage.account_id		= false;
+			$localStorage.authorization		= false;
+			$localStorage.budget_start_date	= false;
+			$localStorage.sheet_views		= false;
+			$localStorage.budget_mode		= false;
+			$location.path("/login");
+		}
+	}
+
+	function TimeOut_Resetter(e) {
+
+		// Stop the pending timeout
+		$timeout.cancel(TimeOut_Thread);
+
+		// Reset the timeout
+		TimeOut_Thread = $timeout(function() {
+			LogoutByTimer()
+		} , TimeOutTimerValue);
+	}
 
 });
