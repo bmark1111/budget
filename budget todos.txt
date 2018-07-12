@@ -8,15 +8,6 @@
 	b) need to store the balance in the transaction table with 'is_uploaded' set
 		and store the transaction id in the bank account table
 		
-4) in the budget controller need to complete the other interval setting (other than weekly)
-	for semi-monthly divide the month :- 1st through the 15th and 16th through the end of month
+4) in the budget controller need to complete the semi-monthly setting - divide the month :- 1st through the 15th and 16th through the end of month
 
-5) Transfers between accounts should show and not effect the overall totals, they balance each other out
-        right now they show zero in transfers on the budget.
-
-6) In bank display show opening balance from transaction table
-
-7) Finish tool-tip in sheet & budget
-
-8) Update all search features, add category, bank account, etc
-
+5) In bank display show opening balance from transaction table
