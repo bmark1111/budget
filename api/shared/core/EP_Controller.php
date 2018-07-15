@@ -140,7 +140,7 @@ class EP_Controller extends MX_Controller
 
 						// update the user_session 'expire' to 30 mins past now
 						$data = array(
-							'expire' => date('Y-m-d H:i:s', strtotime('+30 MINS'))
+							'expire' => date('Y-m-d H:i:s', strtotime('+15 MINS'))
 						);
 						$this->db->where('id', $uSession->session_id);
 						$this->db->update('user_session', $data); 
