@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginController', function($rootScope, $scope, RestData2, $location, $localStorage) {
+app.controller('LoginController', function($rootScope, $scope, RestData2, $location, $localStorage, Periods) {
 
 	$rootScope.nav_active = 'login';
 
@@ -21,12 +21,12 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 					$localStorage.token_id			= data.data.user.last_session_id;
 					$localStorage.account_id		= data.data.account_id;
 					$localStorage.authorization		= "Basic " + btoa(credentials.username + ":" + credentials.password);
-//					$localStorage.budget_views		= data.data.budget_views;
 					var dt = data.data.budget_start_date.split('-');
 					$localStorage.budget_start_date	= new Date(dt[0], --dt[1], dt[2]);
 					$localStorage.sheet_views		= data.data.sheet_views;
 					$localStorage.budget_mode		= data.data.budget_mode;
 
+					Periods.clear();
 					$location.path("/dashboard");
 					$scope.error = false;
 				} else {
@@ -36,7 +36,6 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 					$localStorage.token_id			= false;
 					$localStorage.account_id		= false;
 					$localStorage.authorization		= false;
-//					$localStorage.budget_views		= false;
 					$localStorage.budget_start_date	= false;
 					$localStorage.sheet_views		= false;
 					$localStorage.budget_mode		= false;

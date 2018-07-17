@@ -63,9 +63,9 @@ div.table-responsive td.closed {
 	background-color: #FF3368;
 }
 	
-div.table-responsive td.accountClosed {
+/*div.table-responsive td.accountClosed {
 	display: none;
-}
+}*/
 	
 div.table-responsive tfoot td.banks {
 	background:#66a9bd;

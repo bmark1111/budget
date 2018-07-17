@@ -25,11 +25,11 @@
 					</thead>
 					<tbody>
 						<!-- INCOME CATEGORIES -->
-						<tr ng-repeat="category in categories track by $index" ng-if="category.type == 1" ng-show="category.id != 17 && showCategory[category.id]">
+						<tr ng-repeat="category in categories track by $index" ng-if="category.type == 1" ng-show="showCategory(category.id)">
 							<th style="padding:2px!important;">{{ category.name }}</th>
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" id="popover_{{ $index }}_{{ category.id }}">
 								<div class="pull-right">
-									<span ng-if="period.types[category.id] >= 0" ng-init="showCategory[category.id] = true; period.income = period.income + period.totals[category.id]">
+									<span ng-if="period.types[category.id] >= 0" ng-init="period.income = period.income + period.totals[category.id]">
 										<a ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
 														'actual_and_forecast_amount':period.types[category.id] == 3,
 														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
@@ -54,11 +54,11 @@
 							</td>
 						</tr>
 						<!-- EXPENSE CATEGORIES -->
-						<tr ng-repeat="category in categories track by $index" ng-if="category.type == 2" ng-show="category.id != 17 && showCategory[category.id]">
+						<tr ng-repeat="category in categories track by $index" ng-if="category.type == 2" ng-show="showCategory(category.id)">
 							<th style="padding:2px!important;">{{ category.name }}</th>
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" id="popover_{{ $index }}_{{ category.id }}">
 								<div class="pull-right">
-									<span ng-if="period.types[category.id] >= 0" ng-init="showCategory[category.id] = true; period.expense = period.expense + period.totals[category.id]">
+									<span ng-if="period.types[category.id] >= 0" ng-init="period.expense = period.expense + period.totals[category.id]">
 										<a ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
 														'actual_and_forecast_amount':period.types[category.id] == 3,
 														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
@@ -91,13 +91,6 @@
 								<span class="pull-right">{{ period.interval_total|currency }}</span>
 							</td>
 						</tr>
-						<!-- BALANCE FORWARD -->
-<!--						<tr>
-							<th nowrap>Balance Forward</th>
-							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
-								<span class="pull-right" ng-if="$index == 0">{{ period.balance_forward|currency }}</span>
-							</td>
-						</tr>-->
 						<!-- RUNNING TOTAL -->
 						<tr>
 							<th nowrap>Balance ({{ periods|getBalanceForward:period_start|currency }})</th>
@@ -124,9 +117,11 @@
 								</div>
 							</td>
 						</tr>
-						<tr ng-repeat="account in accounts track by $index">
-							<td class="banks" nowrap ng-class="{ 'accountClosed': account.date_closed }">{{ account.name }}</td>
-							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval, 'accountClosed': account.date_closed }" style="padding:2px!important;">
+						<tr ng-repeat="account in accounts track by $index" ng-show="showAccount(account)">
+<!--							<td class="banks" nowrap ng-class="{ 'accountClosed': account.date_closed }">{{ account.name }}</td>
+							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval, 'accountClosed': account.date_closed }" style="padding:2px!important;">-->
+							<td class="banks" nowrap>{{ account.name }}</td>
+							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
 								<span ng-show="period.accounts[$parent.$index].reconciled == 0" class="pull-right forecast_amount">
 									{{ period.accounts[$parent.$index].balance|currency }}
 								</span>
