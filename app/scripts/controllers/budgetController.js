@@ -1,13 +1,13 @@
 'use strict';
 
-app.controller('BudgetController', ['$q', '$scope', '$sce', '$modal', '$filter', 'Categories', 'Accounts', 'Periods',
+app.controller('BudgetController', ['$q', '$scope', '$sce', '$modal', '$filter', '$localStorage', 'Categories', 'Accounts', 'Periods',
 
-function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
+function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts, Periods) {
 
 	$scope.dataErrorMsg = [];
 	$scope.dataErrorMsgThese = false;
 
-	$scope.showCategory = [];
+	var localStorage = $localStorage;
 
 	var moveBusy = false;
 
@@ -23,9 +23,6 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 			$scope.active_accounts = Accounts.active;
 			// load the categories
 			$scope.categories = Categories.data;
-			for(var y = 0; y < $scope.categories.length; y++) {
-				$scope.showCategory[$scope.categories[y].id] = false;
-			}
 			// load the transactions
 			if (!!response[2].success) {
 				Periods.buildPeriods(response[2].data);
@@ -39,6 +36,44 @@ function($q, $scope, $sce, $modal, $filter, Categories, Accounts, Periods) {
 		});
 	};
 	loadData();
+
+	/*
+	 * Checks to see if category has entries for all periods shown
+	 * @param {int} category_id
+	 * @returns {Boolean}
+	 */
+	$scope.showCategory = function(category_id) {
+
+		for (var x = $scope.period_start; x < localStorage.sheet_views; x++) {
+			if ($scope.periods[x]['totals'][category_id] !== undefined) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	/*
+	 * Checks to see if account was opened during periods that are showing
+	 * @param {int} account
+	 * @returns {Boolean}
+	 */
+	$scope.showAccount = function(account) {
+
+		var dop = (account.date_opened) ? account.date_opened.split('-'): null;
+		var dcl = (account.date_closed) ? account.date_closed.split('-'): null;
+		dop = (dop) ? new Date(dop[0], dop[1] - 1, dop[2], 0, 0, 0, 0): null;
+		dcl = (dcl) ? new Date(dcl[0], dcl[1] - 1, dcl[2], 0, 0, 0, 0): null;
+
+		var sd = new Date($scope.periods[$scope.period_start].interval_beginning);
+		var ed = new Date($scope.periods[$scope.period_start + localStorage.sheet_views - 1].interval_ending);
+
+		if (dcl === null && dop !== null && dop <= ed) {
+			return true;
+		} else if (dcl !== null && dop !== null && dcl >= sd) {
+			return true;
+		}
+		return false;
+	};
 
 	$scope.showTheseTransactions = function(category_id, index, category_name) {
 
