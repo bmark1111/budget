@@ -100,9 +100,16 @@ class transaction_controller Extends rest_controller {
 		$this->ajax->setData('total_rows', $transactions->foundRows());
 
 		foreach ($transactions as $transaction) {
-			isset($transaction->category);
 			isset($transaction->bank_account);
-			isset($transaction->vendor);
+			if($transaction->splits) {
+				foreach ($transaction->splits as $split) {
+					isset($split->category);
+					isset($split->vendor);
+				}
+			} else {
+				isset($transaction->category);
+				isset($transaction->vendor);
+			}
 		}
 		$this->ajax->setData('result', $transactions);
 		$this->ajax->output();

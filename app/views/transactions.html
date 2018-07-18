@@ -33,11 +33,19 @@
 					<label for="amount">Amount</label>
 					<input type="text" class="form-control input-sm search" name="amount" data-length="4" ng-model="search.amount" ng-change="refreshData()" />
 				</div>
-				<div class="col-sm-1" style="padding-top:25px;">
-					<button type="button" class="btn-sm btn-primary" ng-model="singleModel" ng-click="addTransaction()">New</button>
+<!--				<div class="col-sm-1" style="padding-top:25px;">
+					<button type="button" class="btn-sm btn-primary" ng-click="addTransaction()">New</button>
 				</div>
 				<div class="col-sm-1" style="padding-top:25px;">
-					<button type="button" class="btn-sm btn-primary" ng-model="singleModel" ng-click="uploadTransactions()">Upload</button>
+					<button type="button" class="btn-sm btn-primary" ng-click="uploadTransactions()">Upload</button>
+				</div>
+				<div class="col-sm-2" style="padding-top:25px;">
+					<button type="button" class="btn-sm btn-primary" ng-click="downloadTransactions()">Download CSV</button>
+				</div>-->
+				<div class="col-sm-3" style="padding-top:25px;">
+					<button type="button" class="btn-sm btn-primary" ng-click="addTransaction()">New</button>
+					<button type="button" class="btn-sm btn-primary" ng-click="uploadTransactions()">Upload</button>
+					<button type="button" class="btn-sm btn-primary" ng-click="downloadTransactions()">Download CSV</button>
 				</div>
 			</div>
 		</form>

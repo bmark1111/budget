@@ -1,11 +1,12 @@
 /app/scripts/controllers/xxbudgetController_old.js
 /app/scripts/controllers/xxdashboardController_old.js
 /app/scripts/controllers/modals/xxeditModalController_old.js
-/nbproject/private/
+/api/application/models/xxtransaction_repeat_every.php
 /api/application/logs/
 /api/uploads/
-/nbproject/
 /api/cli/logs/
-/api/application/models/xxtransaction_repeat_every.php
 /api/error_log
 /api/public/error_log
+/nbproject/
+/nbproject/private/
+/nbproject/project.xml
