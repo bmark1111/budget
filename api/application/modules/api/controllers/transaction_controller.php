@@ -29,7 +29,7 @@ class transaction_controller Extends rest_controller {
 		$date				= (!empty($params['date'])) ? $params['date']: FALSE;
 		$description		= (!empty($params['description'])) ? $params['description']: FALSE;
 		$amount				= (!empty($params['amount'])) ? $params['amount']: FALSE;
-		$vendor				= (!empty($params['vendor'])) ? $params['vendor']: FALSE;
+		$text				= (!empty($params['vendor'])) ? $params['vendor']: FALSE;
 		$bank_account_id	= (!empty($params['bank_account_id'])) ? $params['bank_account_id']: FALSE;
 		$category_id		= (!empty($params['category_id'])) ? $params['category_id']: FALSE;
 		$pagination_amount	= (!empty($params['pagination_amount'])) ? $params['pagination_amount']: 20;
@@ -50,12 +50,12 @@ class transaction_controller Extends rest_controller {
 		}
 		if ($amount) {
 			if (!$join) {
-				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
+				$transactions->join('transaction_split TS', 'transaction.id = TS.transaction_id', 'left');
 				$join = true;
 			}
 			$transactions->groupStart();
 			$transactions->orWhere('transaction.amount', $amount);
-			$transactions->orWhere('transaction_split.amount', $amount);
+			$transactions->orWhere('TS.amount', $amount);
 			$transactions->groupEnd();
 		}
 		if ($bank_account_id) {
@@ -63,31 +63,32 @@ class transaction_controller Extends rest_controller {
 		}
 		if ($category_id) {
 			if (!$join) {
-				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id', 'left');
+				$transactions->join('transaction_split TS', 'transaction.id = TS.transaction_id', 'left');
 				$join = true;
 			}
 			$transactions->groupStart();
 			$transactions->orWhere('transaction.category_id', $category_id);
-			$transactions->orWhere('transaction_split.category_id', $category_id);
+			$transactions->orWhere('TS.category_id', $category_id);
 			$transactions->groupEnd();
 		}
-		if ($vendor) {
+		if ($text) {
 			$transactions->join('vendor V1', 'V1.id = transaction.vendor_id', 'left');
 			if (!$join) {
-				$transactions->join('transaction_split', 'transaction.id = transaction_split.transaction_id AND transaction_split.is_deleted = 0', 'left');
+				$transactions->join('transaction_split TS', 'transaction.id = TS.transaction_id AND TS.is_deleted = 0', 'left');
 				$join = true;
 			}
 			if ($join && !$join2) {
-				$transactions->join('vendor V2', 'V2.id = transaction_split.vendor_id AND V2.is_deleted = 0', 'left');
+				$transactions->join('vendor V2', 'V2.id = TS.vendor_id AND V2.is_deleted = 0', 'left');
 				$join2 = true;
 			}
 			$transactions->groupStart();
-			$transactions->orLike('V1.name', $vendor, 'both');
+			$transactions->orLike('V1.name', $text, 'both');
 			if ($join2) {
-				$transactions->orLike('V2.name', $vendor, 'both');
+				$transactions->orLike('V2.name', $text, 'both');
 			}
-			$transactions->orLike('transaction.description', $vendor, 'both');
-			$transactions->orLike('transaction_split.notes', $vendor, 'both');
+			$transactions->orLike('transaction.description', $text, 'both');
+			$transactions->orLike('transaction.notes', $text, 'both');
+			$transactions->orLike('TS.notes', $text, 'both');
 			$transactions->groupEnd();
 		}
 		$transactions->where('transaction.is_deleted', 0);

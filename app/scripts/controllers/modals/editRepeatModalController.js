@@ -270,9 +270,6 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
 					}
 					$scope.transaction.next_due_date = new Date(year, --mnth, day, 0, 0, 0, 0);
-//					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
-//					mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
-//					$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
 					break;
 				case 'Year':
 					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
@@ -310,9 +307,6 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
 					}
 					$scope.transaction.next_due_date = new Date(year, --mnth, day, 0, 0, 0, 0);
-//					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
-//					mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
-//					$scope.transaction.next_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
 					break;
 				case 'Year':
 					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
