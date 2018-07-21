@@ -7,13 +7,6 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	$scope.dataErrorMsg = [];
 
 	$scope.transaction = {
-//		splits: {},
-//		repeats: {
-//			0:{
-//				every_day:	false,
-//				every_date:	'',
-//				every_month: false}
-//		},
 		every_unit: ''
 	};
 
@@ -247,17 +240,18 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 		var dd, day, mnth, year;
 		if ($scope.transaction.next_due_date) {
+			var ndd = $scope.transaction.next_due_date;
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
-					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() - (1 * $scope.transaction.every));
+					ndd.setDate(ndd.getDate() - (1 * $scope.transaction.every));
 					break;
 				case 'Week':
-					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() - (7 * $scope.transaction.every));
+					ndd.setDate(ndd.getDate() - (7 * $scope.transaction.every));
 					break;
 				case 'Month':
-					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					dd = ndd.toISOString().split('T')[0].split('-');
 					mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
-					if ($scope.transaction.everyDay === null && $scope.transaction.day === null) {
+					if ((typeof $scope.transaction.everyDay === 'undefined' || $scope.transaction.everyDay === null) && (typeof $scope.transaction.day === 'undefined' || $scope.transaction.day === null)) {
 						year = dd[0];
 						day = dd[2];
 					} else {
@@ -269,13 +263,16 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						}
 						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
 					}
-					$scope.transaction.next_due_date = new Date(year, --mnth, day, 0, 0, 0, 0);
+					ndd = new Date(year, --mnth, day, 0, 0, 0, 0);
 					break;
 				case 'Year':
-					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					dd = ndd.toISOString().split('T')[0].split('-');
 					year = parseInt(dd[0], 10) - parseInt($scope.transaction.every, 10);
-					$scope.transaction.next_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					ndd = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
 					break;
+			}
+			if (ndd >= $scope.transaction.first_due_date) {
+				$scope.transaction.next_due_date = ndd;
 			}
 		}
 	};
@@ -284,17 +281,18 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 		var dd, day, mnth, year;
 		if ($scope.transaction.next_due_date) {
+			var ndd = $scope.transaction.next_due_date;
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
-					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() + (1 * $scope.transaction.every));
+					ndd.setDate(ndd.getDate() + (1 * $scope.transaction.every));
 					break;
 				case 'Week':
-					$scope.transaction.next_due_date.setDate($scope.transaction.next_due_date.getDate() + (7 * $scope.transaction.every));
+					ndd.setDate(ndd.getDate() + (7 * $scope.transaction.every));
 					break;
 				case 'Month':
-					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					dd = ndd.toISOString().split('T')[0].split('-');
 					mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
-					if ($scope.transaction.everyDay === null && $scope.transaction.day === null) {
+					if ((typeof $scope.transaction.everyDay === 'undefined' || $scope.transaction.everyDay === null) && (typeof $scope.transaction.day === 'undefined' || $scope.transaction.day === null)) {
 						year = dd[0];
 						day = dd[2];
 					} else {
@@ -306,15 +304,18 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						}
 						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
 					}
-					$scope.transaction.next_due_date = new Date(year, --mnth, day, 0, 0, 0, 0);
+					ndd = new Date(year, --mnth, day, 0, 0, 0, 0);
 					break;
 				case 'Year':
-					dd = $scope.transaction.next_due_date.toISOString().split('T')[0].split('-');
+					dd = ndd.toISOString().split('T')[0].split('-');
 					year = parseInt(dd[0], 10) + parseInt($scope.transaction.every, 10);
-					$scope.transaction.next_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					ndd = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
 					break;
 			}
-		} else {
+			if (!$scope.transaction.last_due_date || ndd <= $scope.transaction.last_due_date) {
+				$scope.transaction.next_due_date = ndd;
+			}
+		} else if ($scope.transaction.first_due_date) {
 			$scope.transaction.next_due_date = new Date($scope.transaction.first_due_date.getFullYear(), $scope.transaction.first_due_date.getMonth(), $scope.transaction.first_due_date.getDate());
 		}
 	};
@@ -439,50 +440,84 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 	
 	$scope.previousLastDueDate = function() {
 		
+		var dd, mnth, day, year;
 		if ($scope.transaction.last_due_date) {
+			var ldd = $scope.transaction.last_due_date;
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
-					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() - (1 * $scope.transaction.every));
+					ldd.setDate(ldd.getDate() - (1 * $scope.transaction.every));
 					break;
 				case 'Week':
-					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() - (7 * $scope.transaction.every));
+					ldd.setDate(ldd.getDate() - (7 * $scope.transaction.every));
 					break;
 				case 'Month':
-					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
-					var mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
-					$scope.transaction.last_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+					dd = ldd.toISOString().split('T')[0].split('-');
+					mnth = parseInt(dd[1], 10) - parseInt($scope.transaction.every, 10);
+					if ((typeof $scope.transaction.everyDay === 'undefined' || $scope.transaction.everyDay === null) && (typeof $scope.transaction.day === 'undefined' || $scope.transaction.day === null)) {
+						year = dd[0];
+						day = dd[2];
+					} else {
+						if (mnth < 1) {
+							year = parseInt(--dd[0], 10);
+							mnth = mnth + 12;
+						} else {
+							year = parseInt(dd[0], 10);
+						}
+						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
+					}
+					ldd = new Date(year, --mnth, day, 0, 0, 0, 0);
 					break;
 				case 'Year':
-					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
+					var dd = ldd.toISOString().split('T')[0].split('-');
 					var year = parseInt(dd[0], 10) - parseInt($scope.transaction.every, 10);
-					$scope.transaction.last_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					ldd = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
 					break;
+			}
+			if (!$scope.transaction.next_due_date || ldd >= $scope.transaction.next_due_date) {
+				$scope.transaction.last_due_date = ldd;
 			}
 		}
 	};
 
 	$scope.nextLastDueDate = function() {
 
+		var dd, mnth, day, year;
 		if ($scope.transaction.last_due_date) {
+			var ldd = $scope.transaction.last_due_date;
 			switch ($scope.transaction.every_unit) {
 				case 'Day':
-					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() + (1 * $scope.transaction.every));
+					ldd.setDate(ldd.getDate() + (1 * $scope.transaction.every));
 					break;
 				case 'Week':
-					$scope.transaction.last_due_date.setDate($scope.transaction.last_due_date.getDate() + (7 * $scope.transaction.every));
+					ldd.setDate(ldd.getDate() + (7 * $scope.transaction.every));
 					break;
 				case 'Month':
-					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
-					var mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
-					$scope.transaction.last_due_date = new Date(dd[0], --mnth, dd[2], 0, 0, 0, 0);
+					dd = ldd.toISOString().split('T')[0].split('-');
+					mnth = parseInt(dd[1], 10) + parseInt($scope.transaction.every, 10);
+					if ((typeof $scope.transaction.everyDay === 'undefined' || $scope.transaction.everyDay === null) && (typeof $scope.transaction.day === 'undefined' || $scope.transaction.day === null)) {
+						year = dd[0];
+						day = dd[2];
+					} else {
+						if (mnth > 12) {
+							year = parseInt(++dd[0], 10);
+							mnth = mnth - 12;
+						} else {
+							year = parseInt(dd[0], 10);
+						}
+						day = _getMonthlyWeekday($scope.transaction.everyDay, $scope.transaction.day , mnth, year);
+					}
+					ldd = new Date(year, --mnth, day, 0, 0, 0, 0);
 					break;
 				case 'Year':
-					var dd = $scope.transaction.last_due_date.toISOString().split('T')[0].split('-');
+					var dd = ldd.toISOString().split('T')[0].split('-');
 					var year = parseInt(dd[0], 10) + parseInt($scope.transaction.every, 10);
-					$scope.transaction.last_due_date = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
+					ldd = new Date(year, --dd[1], dd[2], 0, 0, 0, 0);
 					break;
 			}
-		} else {
+			if (!$scope.transaction.next_due_date || ldd >= $scope.transaction.next_due_date) {
+				$scope.transaction.last_due_date = ldd;
+			}
+		} else if ($scope.transaction.next_due_date) {
 			$scope.transaction.last_due_date = new Date($scope.transaction.next_due_date.getFullYear(), $scope.transaction.next_due_date.getMonth(), $scope.transaction.next_due_date.getDate());
 		}
 	};

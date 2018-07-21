@@ -56,24 +56,6 @@
 	</div>
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-<!--			<div class="col-sm-2">
-				<label for="every">Every</label>
-				<div class="form-group" ng-class="{'has-error':validation.every}">
-					<select class="form-control" name="every" ng-model="forecast.every">
-						<option>Select Type</option>
-						<option ng-selected="forecast.every == 1" value="1">1</option>
-						<option ng-selected="forecast.every == 2" value="2">2</option>
-						<option ng-selected="forecast.every == 3" value="3">3</option>
-						<option ng-selected="forecast.every == 4" value="4">4</option>
-						<option ng-selected="forecast.every == 5" value="5">5</option>
-						<option ng-selected="forecast.every == 6" value="6">6</option>
-						<option ng-selected="forecast.every == 7" value="7">7</option>
-						<option ng-selected="forecast.every == 8" value="8">8</option>
-						<option ng-selected="forecast.every == 9" value="9">9</option>
-					</select>
-					<span class="help-block" ng-show="validation.every">{{ validation.every }}</span>
-				</div>
-			</div>-->
 			<div class="col-sm-2">
 				<label for="every">Every</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.every }">
@@ -92,13 +74,6 @@
 						<option ng-selected="forecast.every_unit == 'Years'" value="Years">Year</option>
 					</select>
 					<span class="help-block" ng-show="validation.every_unit">{{ validation.every_unit }}</span>
-				</div>
-			</div>
-			<div class="col-sm-2">
-				<label for="every_on">On Date</label>
-				<div class="form-group" ng-class="{'has-error':validation.every_on}">
-					<input type="text" name="every_on" class="form-control" ng-model="forecast.every_on" />
-					<span class="help-block" ng-show="validation.every_on">{{ validation.every_on }}</span>
 				</div>
 			</div>
 		</fieldset>

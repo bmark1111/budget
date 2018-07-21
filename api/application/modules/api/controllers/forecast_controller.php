@@ -127,7 +127,7 @@ class forecast_controller Extends rest_controller {
 		$forecast->type				= $_POST['type'];
 		$forecast->every			= $_POST['every'];
 		$forecast->every_unit		= $_POST['every_unit'];
-		$forecast->every_on			= $_POST['every_on'];
+//		$forecast->every_on			= $_POST['every_on'];
 		$forecast->category_id		= $_POST['category_id'];
 		$forecast->amount			= $_POST['amount'];
 		$forecast->notes			= (!empty($_POST['notes'])) ? $_POST['notes']:null;
@@ -215,7 +215,8 @@ class forecast_controller Extends rest_controller {
 						break;
 					case 'Months':
 						$dt = explode('-', $sd);
-						$date = $dt[0] . '-' . $dt[1] . '-' . $fc->every_on;
+//						$date = $dt[0] . '-' . $dt[1] . '-' . $fc->every_on;
+						$date = $dt[0] . '-' . $dt[1] . '-' . $dt[2];
 						while (strtotime($date . " +" . $offset . " Months") < strtotime($ed) && (!$fc->last_due_date || strtotime($sd . " +" . $offset . " Months") <= strtotime($fc->last_due_date))) {
 							if (strtotime($date . " +" . $offset . " Months") >= strtotime($sd) && strtotime($date . " +" . $offset . " Months") >= strtotime($fc->first_due_date)) {
 								$transactions[$x]['transaction_date']	= date('Y-m-d', strtotime($date . " +" . $offset . " Months"));
@@ -228,7 +229,8 @@ class forecast_controller Extends rest_controller {
 						break;
 					case 'Years':
 						$dt = explode('-', $sd);
-						$date = $dt[0] . '-' . $fc->every_on;
+//						$date = $dt[0] . '-' . $fc->every_on;
+						$date = $dt[0] . '-' . $dt[1] . '-' . $dt[2];
 						while (strtotime($date . " +" . $offset . " Years") < strtotime($ed) && (!$fc->last_due_date || strtotime($sd . " +" . $offset . " Years") <= strtotime($fc->last_due_date))) {
 							if (strtotime($date . " +" . $offset . " Years") >= strtotime($sd) && strtotime($date . " +" . $offset . " Years") >= strtotime($fc->first_due_date)) {
 								$transactions[$x]['transaction_date']	= date('Y-m-d', strtotime($date . " +" . $offset . " Years"));
