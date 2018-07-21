@@ -30,11 +30,22 @@
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" id="popover_{{ $index }}_{{ category.id }}">
 								<div class="pull-right">
 									<span ng-if="period.types[category.id] >= 0" ng-init="period.income = period.income + period.totals[category.id]">
-										<a ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
+										<a ng-if="$index < 7" ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
 														'actual_and_forecast_amount':period.types[category.id] == 3,
 														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
 											ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
-											ns-popover-placement="right"
+											ns-popover-placement="bottom|left"
+											ns-popover-template="app/views/templates/popover.html"
+											ns-popover-trigger="click"
+											ns-popover-theme="ns-popover-custom-theme"
+											ns-popover-timeout="0">
+											{{ period.totals[category.id]|currency }}
+										</a>
+										<a ng-if="$index >= 7" ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
+														'actual_and_forecast_amount':period.types[category.id] == 3,
+														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
+											ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
+											ns-popover-placement="bottom|right"
 											ns-popover-template="app/views/templates/popover.html"
 											ns-popover-trigger="click"
 											ns-popover-theme="ns-popover-custom-theme"
@@ -59,11 +70,22 @@
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" id="popover_{{ $index }}_{{ category.id }}">
 								<div class="pull-right">
 									<span ng-if="period.types[category.id] >= 0" ng-init="period.expense = period.expense + period.totals[category.id]">
-										<a ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
+										<a ng-if="$index < 7" ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
 														'actual_and_forecast_amount':period.types[category.id] == 3,
 														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
 											ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
-											ns-popover-placement="right"
+											ns-popover-placement="bottom|left"
+											ns-popover-template="app/views/templates/popover.html"
+											ns-popover-trigger="click"
+											ns-popover-theme="ns-popover-custom-theme"
+											ns-popover-timeout="0">
+											{{ period.totals[category.id]|currency }}
+										</a>
+										<a ng-if="$index >= 7" ng-class="{ 'forecast_amount':period.types[category.id] == 2 || period.types[category.id] == 6,
+														'actual_and_forecast_amount':period.types[category.id] == 3,
+														'repeat_amount':period.types[category.id] == 4 || period.types[category.id] == 5 || period.types[category.id] == 7 }"
+											ns-popover="showTheseTransactions(category.id, $index, category.name, period.types[category.id])"
+											ns-popover-placement="bottom|right"
 											ns-popover-template="app/views/templates/popover.html"
 											ns-popover-trigger="click"
 											ns-popover-theme="ns-popover-custom-theme"
@@ -104,9 +126,18 @@
 							<td ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;" class="transfer_amount">
 								<div class="pull-right">
 									<span ng-if="period.transfer_amount > 0">
-										<a tooltip="Account Transfers"
+										<a ng-if="$index < 7" tooltip="Account Transfers"
 											ns-popover="showTheseTransactions(17, $index, 'Transfers', period.types[category.id])"
-											ns-popover-placement="right"
+											ns-popover-placement="bottom|left"
+											ns-popover-template="app/views/templates/popover2.html"
+											ns-popover-trigger="click"
+											ns-popover-theme="ns-popover-custom-theme"
+											ns-popover-timeout="0">
+											{{ period.transfer_amount|currency }}
+										</a>
+										<a ng-if="$index >= 7" tooltip="Account Transfers"
+											ns-popover="showTheseTransactions(17, $index, 'Transfers', period.types[category.id])"
+											ns-popover-placement="bottom|right"
 											ns-popover-template="app/views/templates/popover2.html"
 											ns-popover-trigger="click"
 											ns-popover-theme="ns-popover-custom-theme"
@@ -118,8 +149,6 @@
 							</td>
 						</tr>
 						<tr ng-repeat="account in accounts track by $index" ng-show="showAccount(account)">
-<!--							<td class="banks" nowrap ng-class="{ 'accountClosed': account.date_closed }">{{ account.name }}</td>
-							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval, 'accountClosed': account.date_closed }" style="padding:2px!important;">-->
 							<td class="banks" nowrap>{{ account.name }}</td>
 							<td class="balances" ng-repeat="period in periods|getIntervals:period_start" nowrap ng-class="{ 'currentInterval': period.current_interval }" style="padding:2px!important;">
 								<span ng-show="period.accounts[$parent.$index].reconciled == 0" class="pull-right forecast_amount">
