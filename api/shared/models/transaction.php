@@ -27,6 +27,7 @@ class transaction extends Nagilum {
 	public function postResultHook() {
 		parent::postResultHook();
 
+unset($this->xxtransaction_repeat_id);
 		unset($this->is_deleted);
 		unset($this->created_by);
 		unset($this->created_at);

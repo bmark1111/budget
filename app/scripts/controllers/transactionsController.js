@@ -182,9 +182,7 @@ app.controller('TransactionsController', function($q, $scope, $rootScope, $modal
 				'bank_account_id':		$scope.search.bank_account_id,
 				'category_id':			$scope.search.category_id,
 				'sort':					'transaction_date',
-				'sort_dir':				'DESC'//,
-//				'pagination_start':		($scope.search.currentPage - 1) * $scope.itemsPerPage,
-//				'pagination_amount':	$scope.itemsPerPage
+				'sort_dir':				'DESC'
 			},
 			function(response) {
 				if (!!response.success) {
@@ -200,87 +198,90 @@ console.log(arrData);
 					//This loop will extract the label from 1st index of on array
 					for (var index in arrData[0]) {
 						//Now convert each value to string and comma-seprated
-						row += index + ',';
+						if (index !== 'splits') {
+							row += index + ',';
+						}
 					}
 
 					row = row.slice(0, -1);
 
 					//append Label row with line break
 					CSV += row + '\r\n';
-console.log(CSV)
-//1st loop is to extract each row
-for (var i in arrData) {
-	var row = "";
-console.log(arrData[i]);
-	//2nd loop will extract each column and convert it in string comma-seprated
-	for (var index in arrData[i]) {
-console.log(arrData[i][index]);
-		if (typeof arrData[i][index] !== 'object') {
-			row += '"' + arrData[i][index] + '",';
-		} else {
-			console.log('INDEX', index);
-			switch (index) {
-				
-			}
-		}
-	}
-//return;
-//	row.slice(0, row.length - 1);
 
-	//add a line break after each row
-	CSV += row + '\r\n';
-break;
-}
-console.log(CSV);
-/*
-if (CSV == '') {        
-	alert("Invalid data");
-	return;
-}   
+					//1st loop is to extract each row
+					for (var i in arrData) {
+						var row = "";
 
-//Generate a file name
-var fileName = "MyReport_";
-//this will remove the blank-spaces from the title and replace it with an underscore
-fileName += ReportTitle.replace(/ /g,"_");   
+						//2nd loop will extract each column and convert it in string comma-seprated
+						for (var index in arrData[i]) {
+							if (typeof arrData[i][index] !== 'object') {
+								row += '"' + arrData[i][index] + '",';
+							} else if (arrData[i][index] === null) {
+								row += ',';
+							} else {
+								switch (index) {
+									case 'splits':
+										if (arrData[i][index]) {
+											for (var x in arrData[i][index]) {
+												
+											}
+										}
+										break;
+									case 'bank_account':
+										if (arrData[i][index].name) {
+											row += '"' + arrData[i][index].name + '",';
+										} else {
+											row += ','
+										}
+										break;
+									case 'vendor':
+										if (arrData[i][index].name) {
+											row += '"' + arrData[i][index].name + '",';
+										} else {
+											row += ','
+										}
+										break;
+									case 'category':
+										if (arrData[i][index].name) {
+											row += '"' + arrData[i][index].name + '",';
+										} else {
+											row += ','
+										}
+										break;
+								}
+							}
+						}
+						row = row.slice(0, -1);
 
-//Initialize file format you want csv or xls
-var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+						//add a line break after each row
+						CSV += row + '\r\n';
+					}
 
-// Now the little tricky part.
-// you can use either>> window.open(uri);
-// but this will not work in some browsers
-// or you will not get the correct file extension    
+					if (CSV == '') {        
+						alert("Invalid data");
+						return;
+					}
 
-//this trick will generate a temp <a /> tag
-var link = document.createElement("a");    
-link.href = uri;
+					//Initialize file format you want csv or xls
+					var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
 
-//set the visibility hidden so it will not effect on your web-layout
-link.style = "visibility:hidden";
-link.download = fileName + ".csv";
+					//this trick will generate a temp <a /> tag
+					var link = document.createElement("a");    
+					link.href = uri;
 
-//this part will append the anchor tag and remove it after automatic click
-document.body.appendChild(link);
-link.click();
-document.body.removeChild(link);
-*/
-//					$scope.transactions = response.data.result;
-//					for(var x in $scope.transactions) {
-//						for(var y = 0; y < $scope.accounts.length; y++) {
-//							if ($scope.accounts[y].id == $scope.transactions[x].bank_account_id) {
-//								$scope.transactions[x].bankName = $scope.accounts[y].name;
-//								break;
-//							}
-//						}
-//					}
-//					$scope.transactions_seq = Object.keys(response.data.result);
-//					$scope.recCount = response.data.total_rows;
+					//set the visibility hidden so it will not effect on your web-layout
+					link.style = "visibility:hidden";
+					link.download = "Transactions_.csv";
+
+					//this part will append the anchor tag and remove it after automatic click
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
 				} else {
 					if (response.errors) {
-						angular.forEach(response.errors,
-							function(error) {
-								$scope.dataErrorMsg.push(error.error);
-							})
+						angular.forEach(response.errors, function(error) {
+							$scope.dataErrorMsg.push(error.error);
+						});
 					} else {
 						$scope.dataErrorMsg[0] = response;
 					}
