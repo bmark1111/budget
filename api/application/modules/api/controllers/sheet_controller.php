@@ -49,7 +49,7 @@ $this->ajax->setData('ed', $ed);
 
 		$balance_forward = 0;
 		$transaction = new transaction();
-		$transaction->select('transaction.id, transaction.transaction_date, transaction.category_id, transaction.vendor_id, transaction.bank_account_id, transaction.amount, transaction.type, transaction.description, transaction.notes, transaction.bank_account_balance, transaction.is_uploaded, transaction.reconciled_date, transaction.check_num');
+		$transaction->select('transaction.id, transaction.transaction_date, transaction.transfer_account_id, transaction.category_id, transaction.vendor_id, transaction.bank_account_id, transaction.amount, transaction.type, transaction.description, transaction.notes, transaction.bank_account_balance, transaction.is_uploaded, transaction.reconciled_date, transaction.check_num');
 		$transaction->where('transaction.is_deleted', 0);
 		$transaction->where('transaction.transaction_date >= ', $sd);
 		$transaction->where('transaction.transaction_date < ', $ed);

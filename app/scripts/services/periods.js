@@ -117,7 +117,7 @@ services.periods.prototype.getTransactions = function () {
  * @name getPeriod
  * @public
  * @param {number} index
- * @returns {Object}
+ * @returns {Object|null}
  */
 services.periods.prototype.getPeriod = function (index) {
 

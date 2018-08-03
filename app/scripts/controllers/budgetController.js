@@ -10,6 +10,7 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 	var localStorage = $localStorage;
 
 	var moveBusy = false;
+	var txAssigned = Array();
 
 	var loadData = function() {
 
@@ -83,7 +84,8 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 		var end_date = $filter('date')(period.interval_ending, "EEE MMM dd, yyyy");
 		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
 
-		if (category_id == 17) {		// Transfer
+		if (category_id == 17) {		// TRANSFER
+			txAssigned = Array();
 			$scope.transactions = [];
 			var transactions = period.transactions[category_id];
 			var xx = 0;
@@ -97,7 +99,7 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 						}
 					}
 					// find corresponding credit transaction in transfer
-					var toTrans = findCreditTransInTransfer(transactions[x], transactions);
+					var toTrans = findCreditTransInTransfer(transactions[x], transactions, index);
 					$scope.transactions[xx].bankNameTo = toTrans.name;
 					$scope.transactions[xx].accountNameTo = toTrans.accountName;
 					xx++;
@@ -134,19 +136,39 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 		}
 	};
 
-	var findCreditTransInTransfer = function(transaction, transactions) {
+	var findCreditTransInTransfer = function(transaction, transactions, index) {
+
+		var tx = findCreditTrans(transaction, transactions);
+		if (tx) {
+			return tx;
+		} else {
+			// TODO: see if it existst in next period
+			var nextPeriod = Periods.getPeriod(index + 1);
+//console.log(nextPeriod)
+			return { 'name': '--NO CREDIT FOUND--',
+					'accountName': '' };
+			}
+	}
+
+	var findCreditTrans = function(transaction, transactions) {
+
 		for(var x in transactions) {
-			if ((transactions[x].type === 'CREDIT' || transactions[x].type === 'PAYMENT') && transactions[x].amount === transaction.amount && transactions[x].transaction_type == transaction.transaction_type && (!transaction.vendor || transactions[x].vendor.id == transaction.vendor.id)) {
-				for(var y = 0; y < $scope.accounts.length; y++) {
-					if ($scope.accounts[y].id == transactions[x].bank_account_id) {
-						return { 'name': $scope.accounts[y].name,
-								'accountName': $scope.accounts[y].accountName };
+			if ((transactions[x].type === 'CREDIT' || transactions[x].type === 'PAYMENT') && transactions[x].amount === transaction.amount && transactions[x].transaction_type == transaction.transaction_type) {	// && (!transaction.vendor || transactions[x].vendor.id == transaction.vendor.id)) {
+				// have we already assigned this credit or payment to a debit transfer
+				if (txAssigned.indexOf(transactions[x].id) < 0) {
+					// if not, then mark it as assigned
+					txAssigned.push(transactions[x].id);
+					// find the account transferred to
+					for(var y = 0; y < $scope.accounts.length; y++) {
+						if ($scope.accounts[y].id == transactions[x].bank_account_id) {
+							return { 'name': $scope.accounts[y].name,
+									'accountName': $scope.accounts[y].accountName };
+						}
 					}
 				}
 			}
 		}
-		return { 'name': '--NO CREDIT FOUND--',
-				'accountName': '' };
+		return null;
 	}
 
 	$scope.moveInterval = function(direction) {
@@ -196,3 +218,5 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 	};
 
 }]);
+
+//SELECT id, transaction_date, amount, transfer_account_id, bank_account_id FROM `transaction` WHERE `category_id` = 17 AND `is_deleted` = 0 ORDER BY `transaction_date` DESC, id DESC
