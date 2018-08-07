@@ -625,6 +625,7 @@ services.periods.prototype.addToTotals = function(data, output) {
 	}
 
 	if (category_id == 17 && data.type == 'DEBIT') {
+console.log(data)
 		output.transfer_amount += parseFloat(amount);
 	}
 

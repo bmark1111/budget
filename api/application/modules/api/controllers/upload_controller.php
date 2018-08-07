@@ -156,7 +156,8 @@ class upload_controller Extends rest_controller {
 		$_POST = json_decode($input, TRUE);
 
 		// VALIDATION
-		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|integer');
+		$this->form_validation->set_rules('bank_account_id', 'Account', 'required|integer');
+		$this->form_validation->set_rules('transfer_account_id', 'Account', 'callback_isValidTransferAccount');
 		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
 		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
@@ -191,7 +192,6 @@ class upload_controller Extends rest_controller {
 			} else {
 				$uploaded->vendor_id = NULL;
 			}
-//			$uploaded->vendor_id = (empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;
 			$uploaded->save();
 
 			// now save the transaction, possibly overwriting an existing transaction
@@ -201,13 +201,14 @@ class upload_controller Extends rest_controller {
 			$transaction->transaction_date		= date('Y-m-d', strtotime($_POST['transaction_date']));
 			$transaction->description			= $_POST['description'];
 			$transaction->type					= $_POST['type'];
-			$transaction->vendor_id				= $uploaded->vendor_id;	//(empty($_POST['splits'])) ? $_POST['vendor_id']: NULL;	// ignore vendor_id if splits are present
+			$transaction->vendor_id				= $uploaded->vendor_id;
 			$transaction->category_id			= (empty($_POST['splits'])) ? $_POST['category_id']: NULL;	// ignore category if splits are present
 			$transaction->amount				= $_POST['amount'];
 			$transaction->bank_account_balance	= $_POST['amount'];		// set default balance
 			$transaction->check_num				= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
 			$transaction->notes					= (!empty($_POST['notes'])) ? $_POST['notes']: NULL;
 			$transaction->bank_account_id		= $_POST['bank_account_id'];
+			$transaction->transfer_account_id	= ($_POST['category_id'] == 17) ? $_POST['transfer_account_id']: NULL;
 			$transaction->is_uploaded			= 1;
 			$transaction->save();
 
@@ -220,7 +221,7 @@ class upload_controller Extends rest_controller {
 						$transaction_split->transaction_id	= $transaction->id;
 						$transaction_split->type			= $split['type'];
 						$transaction_split->category_id		= $split['category_id'];
-						$transaction_split->vendor_id		= ($split['category_id'] != 17) ? $split['vendor_id']: 0;	//$split['vendor_id'];
+						$transaction_split->vendor_id		= ($split['category_id'] != 17) ? $split['vendor_id']: 0;
 						$transaction_split->notes			= (!empty($split['notes'])) ? $split['notes']: NULL;
 						$transaction_split->save();
 					} else {
@@ -312,87 +313,6 @@ log_message('error', '---------------------------------------------------------'
 						}
 					}
 				}
-/*				$transaction_repeat_id = false;
-				$match = false;
-				// check if this is a repeat transaction - check split amounts and vendor/category
-				$transaction_repeat_split = new transaction_repeat_split();
-				$transaction_repeat_split->whereNotDeleted();
-				$transaction_repeat_split->orderBy('transaction_repeat_id');
-				$transaction_repeat_split->result();
-				if ($transaction_repeat_split->numRows()) {
-					foreach ($transaction_repeat_split as $tr_split) {
-						if ($transaction_repeat_id !== $tr_split->transaction_repeat_id) {
-							if ($match) {
-								// GOT A MATCH
-								break;
-							}
-							$transaction_repeat_id = $tr_split->transaction_repeat_id;
-							$match = true;	// assume a match until we find a non-match
-						}
-						$splitCategoryIds = array();
-						$splitVendorIds = array();
-						$splitAmounts = array();
-						$found = false;
-						foreach ($_POST['splits'] as $split) {
-							if (empty($split['is_deleted']) || $split['is_deleted'] != 1) {
-								$splitCategoryIds[] = $split['category_id'];
-								$splitVendorIds[] = $split['vendor_id'];
-								$splitAmounts[] = $split['amount'];
-								if ($tr_split->category_id == $split['category_id']
-										&&
-									$tr_split->vendor_id == $split['vendor_id']
-										&&
-									($tr_split->exact_match = 0 || $tr_split->amount == $split['amount'])) {
-									$found = true;
-									break;	// one of the posted splits matches this transaction_repeat_split
-								}
-							}
-						}
-						if (!$found) {
-							$match = false;		// found a non-match
-						}
-					}
-				}
-				if (!$match) {
-//					$transaction_repeat = false;
-//$lq = 'DID NOT FIND A SPLIT REPEAT';
-					// we did not find a repeat split so lets look in the regular repeats
-					$transaction_repeat = new transaction_repeat();
-					$transaction_repeat->whereNotDeleted();
-					$transaction_repeat->where('type', $_POST['type']);
-					$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
-					$transaction_repeat->where('first_due_date <= now()', NULL);
-					$transaction_repeat->groupStart();
-					$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
-					$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date']);
-					$transaction_repeat->groupEnd();
-//					$transaction_repeat->where('category_id', $_POST['category_id']);
-					$transaction_repeat->whereIn('category_id', $splitCategoryIds);
-//					$transaction_repeat->where('vendor_id', $_POST['vendor_id']);
-					$transaction_repeat->whereIn('vendor_id', $splitVendorIds);
-					$transaction_repeat->groupStart();
-					$transaction_repeat->orWhere('exact_match', 0);
-//					$transaction_repeat->orWhere('amount', $_POST['amount']);
-					$transaction_repeat->orWhereIn('amount', $splitAmounts);
-					$transaction_repeat->groupEnd();
-					$transaction_repeat->result();
-$lq = $transaction_repeat->lastQuery();
-				} else {
-					// if we found a match get the repeat transaction
-					$transaction_repeat = new transaction_repeat();	
-					$transaction_repeat->whereNotDeleted();
-					$transaction_repeat->where('id', $transaction_repeat_id);
-					$transaction_repeat->where('type', $_POST['type']);
-					$transaction_repeat->where('bank_account_id', $_POST['bank_account_id']);
-					$transaction_repeat->where('first_due_date <= now()', NULL);
-					$transaction_repeat->groupStart();
-					$transaction_repeat->orWhere('last_due_date IS NULL', NULL, FALSE);
-					$transaction_repeat->orWhere('last_due_date >= ', $_POST['transaction_date'], FALSE);
-					$transaction_repeat->groupEnd();
-					$transaction_repeat->result();
-$lq = $transaction_repeat->lastQuery();
-				}
-*/
 			} else {
 				// check if this is a repeat transaction
 				$transaction_repeat = new transaction_repeat();
@@ -472,6 +392,27 @@ log_message('error', '---------------------------------------------------------'
 		}
 
 		$this->ajax->output();
+	}
+
+	/**
+	 * Checks if a valid transfer to/from account id has been entered
+	 */
+	public function isValidTransferAccount() {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+
+		// if not a transfer then ok
+		if ($_POST['category_id'] == 17) {
+			if (empty($_POST['transfer_account_id']) || !is_numeric($_POST['transfer_account_id'])) {
+				$this->form_validation->set_message('isValidTransferAccount', 'The Account From/To is required');
+				return FALSE;
+			}
+			if ($_POST['transfer_account_id'] == $_POST['bank_account_id']) {
+				$this->form_validation->set_message('isValidTransferAccount', 'You cannot transfer From/To the same account');
+				return FALSE;
+			}
+		}
+		return TRUE;
 	}
 
 	/**

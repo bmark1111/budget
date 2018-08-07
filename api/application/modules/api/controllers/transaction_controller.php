@@ -133,9 +133,9 @@ class transaction_controller Extends rest_controller {
 				isset($split->vendor);
 			}
 		}
-		isset($transaction->repeat);
+//		isset($transaction->repeat);
 		isset($transaction->vendor);
-		
+
 		$this->ajax->setData('result', $transaction);
 
 		$this->ajax->output();
@@ -152,7 +152,7 @@ class transaction_controller Extends rest_controller {
 
 		// VALIDATION
 		$this->form_validation->set_rules('bank_account_id', 'Bank Account', 'required|integer');
-
+		$this->form_validation->set_rules('transfer_account_id', 'Account', 'callback_isValidTransferAccount');
 		$this->form_validation->set_rules('transaction_date', 'Date', 'required');
 		$this->form_validation->set_rules('description', 'Description', 'required|max_length[150]');
 		$this->form_validation->set_rules('type', 'Type', 'required|alpha');
@@ -192,8 +192,11 @@ class transaction_controller Extends rest_controller {
 			$transaction->description		= $_POST['description'];
 			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
 		} elseif ($transaction->is_reconciled != 1 && $transaction->is_uploaded == 1) {
-			// if transaction is not reconciled but uploaded allow account id to be changed
-			$transaction->bank_account_id	= $_POST['bank_account_id'];
+			// if transaction is not reconciled but uploaded....
+			// .... allow account id to be changed
+			$transaction->bank_account_id		= $_POST['bank_account_id'];
+			// .... also allow transfer account id to be changed
+			$transaction->transfer_account_id	= ($_POST['category_id'] == 17) ? $_POST['transfer_account_id']: NULL;
 		}
 		if (empty($id)) {					// if this is a new transaction then .....
 			$transaction->bank_account_balance = $_POST['amount'];		// .... set default balance
@@ -251,6 +254,27 @@ class transaction_controller Extends rest_controller {
 			$this->resetBalances($resetBalances);
 		}
 		$this->ajax->output();
+	}
+
+	/**
+	 * Checks if a valid transfer to/from account id has been entered
+	 */
+	public function isValidTransferAccount() {
+		$input = file_get_contents('php://input');
+		$_POST = json_decode($input, TRUE);
+
+		// if not a transfer then ok
+		if ($_POST['category_id'] == 17) {
+			if (empty($_POST['transfer_account_id']) || !is_numeric($_POST['transfer_account_id'])) {
+				$this->form_validation->set_message('isValidTransferAccount', 'The Account From/To is required');
+				return FALSE;
+			}
+			if ($_POST['transfer_account_id'] == $_POST['bank_account_id']) {
+				$this->form_validation->set_message('isValidTransferAccount', 'You cannot transfer From/To the same account');
+				return FALSE;
+			}
+		}
+		return TRUE;
 	}
 
 	/**

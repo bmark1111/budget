@@ -96,7 +96,6 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 		// load the transaction
 		if (!!response[2].success) {
 			if (response[2].data.result) {
-//				$scope.uploaded = response[2].data.result;
 				$scope.transaction = response[2].data.result;
 				$scope.transactions = response[2].data.transactions;
 				$scope.transactions_seq = Object.keys(response[2].data.transactions);
@@ -122,6 +121,7 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 
 	// post uploaded uploaded
 	$scope.postUploaded = function () {
+
 		$scope.dataErrorMsg = [];
 		$scope.isSaving = true;
 
@@ -143,52 +143,54 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 						Periods.clear();
 					}
 				} else if (response.validation) {
-					angular.forEach(response.validation,
-						function(validation) {
-							switch (validation.fieldName) {
-								case 'vendor_id':
-									$scope.validation.vendor_id = validation.errorMessage;
-									break;
-								case 'bank_account_id':
-									$scope.validation.bank_account_id = validation.errorMessage;
-									break;
-								case 'transaction_date':
-									$scope.validation.transaction_date = validation.errorMessage;
-									break;
-								case 'description':
-									$scope.validation.description = validation.errorMessage;
-									break;
-								case 'category_id':
-									$scope.validation.category_id = validation.errorMessage;
-									break;
-								case 'type':
-									$scope.validation.type = validation.errorMessage;
-									break;
-								case 'amount':
-									$scope.validation.amount = validation.errorMessage;
-									break;
-								case 'splits':
-									$scope.validation.splits = validation.errorMessage;
-									break;
-								default:
-									if (validation.fieldName.substr(0,6) == 'splits') {
-										var fieldName = validation.fieldName;
-										var matches = fieldName.match(/\[(.*?)\]/g);
-										if (matches) {
-											for (var x = 0; x < matches.length; x++) {
-												matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
-											}
-											if (typeof $scope.validation.splits[matches[1]] == 'undefined') {
-												$scope.validation.splits[matches[1]] = Array();
-											}
-											$scope.validation.splits[matches[1]].push(validation.errorMessage);
-										} else {
-											$scope.validation[fieldName] = validation.errorMessage;
+					angular.forEach(response.validation, function(validation) {
+						switch (validation.fieldName) {
+							case 'vendor_id':
+								$scope.validation.vendor_id = validation.errorMessage;
+								break;
+							case 'bank_account_id':
+								$scope.validation.bank_account_id = validation.errorMessage;
+								break;
+							case 'transfer_account_id':
+								$scope.validation.transfer_account_id = validation.errorMessage;
+								break;
+							case 'transaction_date':
+								$scope.validation.transaction_date = validation.errorMessage;
+								break;
+							case 'description':
+								$scope.validation.description = validation.errorMessage;
+								break;
+							case 'category_id':
+								$scope.validation.category_id = validation.errorMessage;
+								break;
+							case 'type':
+								$scope.validation.type = validation.errorMessage;
+								break;
+							case 'amount':
+								$scope.validation.amount = validation.errorMessage;
+								break;
+							case 'splits':
+								$scope.validation.splits = validation.errorMessage;
+								break;
+							default:
+								if (validation.fieldName.substr(0,6) == 'splits') {
+									var fieldName = validation.fieldName;
+									var matches = fieldName.match(/\[(.*?)\]/g);
+									if (matches) {
+										for (var x = 0; x < matches.length; x++) {
+											matches[x] = matches[x].replace(/\]/g, '').replace(/\[/g, '');
 										}
+										if (typeof $scope.validation.splits[matches[1]] == 'undefined') {
+											$scope.validation.splits[matches[1]] = Array();
+										}
+										$scope.validation.splits[matches[1]].push(validation.errorMessage);
+									} else {
+										$scope.validation[fieldName] = validation.errorMessage;
 									}
-									break;
-							}
-						});
+								}
+								break;
+						}
+					});
 				} else {
 					if (response.errors) {
 						angular.forEach(response.errors,

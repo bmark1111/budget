@@ -169,6 +169,9 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 								case 'bank_account_id':
 									$scope.validation.bank_account_id = validation.errorMessage;
 									break;
+								case 'transfer_account_id':
+									$scope.validation.transfer_account_id = validation.errorMessage;
+									break;
 								case 'transaction_date':
 									$scope.validation.transaction_date = validation.errorMessage;
 									break;

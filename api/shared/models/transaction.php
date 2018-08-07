@@ -10,7 +10,6 @@ class transaction extends Nagilum {
 	
 	public $hasOne = array(	'category' => array('class' => 'category', 'joinField' => 'category_id'),
 							'bank_account' => array('class' => 'bank_account', 'joinField' => 'bank_account_id'),
-						//	'repeat' => array('class' => 'transaction_repeat', 'joinField' => 'transaction_repeat_id'),
 							'vendor' => array('class' => 'vendor', 'joinField' => 'vendor_id')
 						);
 
@@ -27,7 +26,6 @@ class transaction extends Nagilum {
 	public function postResultHook() {
 		parent::postResultHook();
 
-unset($this->xxtransaction_repeat_id);
 		unset($this->is_deleted);
 		unset($this->created_by);
 		unset($this->created_at);

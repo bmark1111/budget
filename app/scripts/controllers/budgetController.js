@@ -84,28 +84,28 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 		var end_date = $filter('date')(period.interval_ending, "EEE MMM dd, yyyy");
 		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
 
-		if (category_id == 17) {		// TRANSFER
-			txAssigned = Array();
-			$scope.transactions = [];
-			var transactions = period.transactions[category_id];
-			var xx = 0;
-			for(var x in transactions) {
-				if (transactions[x].type === 'DEBIT') {
-					$scope.transactions[xx] = transactions[x];
-					for(var y = 0; y < $scope.accounts.length; y++) {
-						if ($scope.accounts[y].id == transactions[x].bank_account_id) {
-							$scope.transactions[xx].bankNameFrom = $scope.accounts[y].name;
-							$scope.transactions[xx].accountNameFrom = $scope.accounts[y].accountName;
-						}
-					}
-					// find corresponding credit transaction in transfer
-					var toTrans = findCreditTransInTransfer(transactions[x], transactions, index);
-					$scope.transactions[xx].bankNameTo = toTrans.name;
-					$scope.transactions[xx].accountNameTo = toTrans.accountName;
-					xx++;
-				}
-			}
-		} else {
+//		if (category_id == 17) {		// TRANSFER
+//			txAssigned = Array();
+//			$scope.transactions = [];
+//			var transactions = period.transactions[category_id];
+//			var xx = 0;
+//			for(var x in transactions) {
+//				if (transactions[x].type === 'DEBIT') {
+//					$scope.transactions[xx] = transactions[x];
+//					for(var y = 0; y < $scope.accounts.length; y++) {
+//						if ($scope.accounts[y].id == transactions[x].bank_account_id) {
+//							$scope.transactions[xx].bankNameFrom = $scope.accounts[y].name;
+//							$scope.transactions[xx].accountNameFrom = $scope.accounts[y].accountName;
+//						}
+//					}
+//					// find corresponding credit transaction in transfer
+//					var toTrans = findCreditTransInTransfer(transactions[x], transactions, index);
+//					$scope.transactions[xx].bankNameTo = toTrans.name;
+//					$scope.transactions[xx].accountNameTo = toTrans.accountName;
+//					xx++;
+//				}
+//			}
+//		} else {
 			$scope.transactions = period.transactions[category_id];
 			// get the account name
 			for(var x in $scope.transactions) {
@@ -132,6 +132,36 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 					label = '<br /><font size="1">' + label + '</font>';
 				}
 				$scope.transactions[x].label = $sce.trustAsHtml(vendor + label);
+			}
+//		}
+	};
+
+	$scope.showTheseTransfers = function(index, category_name) {
+
+		var period = Periods.getPeriod(index);
+
+		var start_date = $filter('date')(period.interval_beginning, "EEE MMM dd, yyyy");
+		var end_date = $filter('date')(period.interval_ending, "EEE MMM dd, yyyy");
+		$scope.title = category_name + ' for ' + start_date + ' through ' + end_date;
+
+		txAssigned = Array();
+		$scope.transactions = [];
+		var transactions = period.transactions[17];
+		var xx = 0;
+		for(var x in transactions) {
+			if (transactions[x].type === 'DEBIT') {
+				$scope.transactions[xx] = transactions[x];
+				for(var y = 0; y < $scope.accounts.length; y++) {
+					if ($scope.accounts[y].id == transactions[x].bank_account_id) {
+						$scope.transactions[xx].bankNameFrom = $scope.accounts[y].name;
+						$scope.transactions[xx].accountNameFrom = $scope.accounts[y].accountName;
+					}
+				}
+				// find corresponding credit transaction in transfer
+				var toTrans = findCreditTransInTransfer(transactions[x], transactions, index);
+				$scope.transactions[xx].bankNameTo = toTrans.name;
+				$scope.transactions[xx].accountNameTo = toTrans.accountName;
+				xx++;
 			}
 		}
 	};
@@ -219,4 +249,4 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 
 }]);
 
-//SELECT id, transaction_date, amount, transfer_account_id, bank_account_id FROM `transaction` WHERE `category_id` = 17 AND `is_deleted` = 0 ORDER BY `transaction_date` DESC, id DESC
+//SELECT id, transaction_date, amount, type, transfer_account_id, bank_account_id FROM `transaction` WHERE `category_id` = 17 AND `is_deleted` = 0 ORDER BY `transaction_date` DESC, id DESC

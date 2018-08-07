@@ -4,7 +4,7 @@
 <div class="modal-body">
 	<div class="row">
 		<div class="col-md-4">
-			<label>Bank Account:</label> {{ transaction.bank_account.bank.name }} {{ transaction.bank_account.name }}
+			<label>Account:</label> {{ transaction.bank_account.bank.name }} {{ transaction.bank_account.name }}
 		</div>
 		<div class="col-md-8">
 			<label>Description:</label> {{ transaction.description }}
@@ -34,11 +34,25 @@
 	</div>
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-sm-3" ng-if="!is_split">
+			<div class="col-md-3" ng-if="!is_split">
 				<label for="category">Category</label>
 				<div class="form-group" ng-class="{'has-error':validation.category_id}">
 					<select class="form-control" name="category" ng-model="transaction.category_id" ng-options="category.id as category.name for category in categories"></select>
 					<span class="help-block" ng-show="validation.category_id">{{ validation.category_id }}</span>
+				</div>
+			</div>
+			<div class="col-md-3" ng-if="!is_split && transaction.category_id == 17 && (transaction.type == 'CHECK' || transaction.type == 'DEBIT' || transaction.type == 'SALE')">
+				<label for="transfer_account_id">To Account</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.transfer_account_id }">
+					<select class="form-control" name="transfer_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.transfer_account_id" ng-options="account.id as account.name for account in active_accounts"></select>
+					<span class="help-block" ng-show="validation.transfer_account_id">{{ validation.transfer_account_id }}</span>
+				</div>
+			</div>
+			<div class="col-md-3" ng-if="!is_split && transaction.category_id == 17 && (transaction.type == 'CREDIT' || transaction.type == 'DSLIP' || transaction.type == 'RETURN' || transaction.type == 'PAYMENT')">
+				<label for="transfer_account_id">From Account</label>
+				<div class="form-group" ng-class="{ 'has-error': validation.transfer_account_id }">
+					<select class="form-control" name="transfer_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.transfer_account_id" ng-options="account.id as account.name for account in active_accounts"></select>
+					<span class="help-block" ng-show="validation.transfer_account_id">{{ validation.transfer_account_id }}</span>
 				</div>
 			</div>
 			<div class="col-md-4" ng-if="!is_split && transaction.category_id != 17">

@@ -127,7 +127,7 @@
 								<div class="pull-right">
 									<span ng-if="period.transfer_amount > 0">
 										<a ng-if="$index < 7" tooltip="Account Transfers"
-											ns-popover="showTheseTransactions(17, $index, 'Transfers', period.types[category.id])"
+											ns-popover="showTheseTransfers($index, 'Transfers', period.types[category.id])"
 											ns-popover-placement="bottom|left"
 											ns-popover-template="app/views/templates/popover2.html"
 											ns-popover-trigger="click"
@@ -136,7 +136,7 @@
 											{{ period.transfer_amount|currency }}
 										</a>
 										<a ng-if="$index >= 7" tooltip="Account Transfers"
-											ns-popover="showTheseTransactions(17, $index, 'Transfers', period.types[category.id])"
+											ns-popover="showTheseTransfers($index, 'Transfers', period.types[category.id])"
 											ns-popover-placement="bottom|right"
 											ns-popover-template="app/views/templates/popover2.html"
 											ns-popover-trigger="click"
