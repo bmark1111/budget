@@ -133,7 +133,6 @@ class transaction_controller Extends rest_controller {
 				isset($split->vendor);
 			}
 		}
-//		isset($transaction->repeat);
 		isset($transaction->vendor);
 
 		$this->ajax->setData('result', $transaction);
@@ -178,19 +177,21 @@ class transaction_controller Extends rest_controller {
 
 		$id = (!empty($_POST['id'])) ? $_POST['id']: FALSE;
 		$transaction = new transaction($id);
-		$bank_account_id	= (!empty($transaction->bank_account_id)) ? $transaction->bank_account_id: FALSE;
-		$transaction_date	= (!empty($transaction->transaction_date)) ? $transaction->transaction_date: FALSE;
-		$amount				= (!empty($transaction->amount)) ? $transaction->amount: FALSE;
-		$type				= (!empty($transaction->type)) ? $transaction->type: FALSE;
+		$bank_account_id		= (!empty($transaction->bank_account_id)) ? $transaction->bank_account_id: FALSE;
+		$transfer_account_id	= ($_POST['category_id'] == 17) ? $transaction->transfer_account_id: FALSE;
+		$transaction_date		= (!empty($transaction->transaction_date)) ? $transaction->transaction_date: FALSE;
+		$amount					= (!empty($transaction->amount)) ? $transaction->amount: FALSE;
+			$type				= (!empty($transaction->type)) ? $transaction->type: FALSE;
 
 		if (in_array('admin', $this->nRoles) || ($transaction->is_reconciled != 1 && $transaction->is_uploaded != 1)) {
 			// can't edit these fields if uploaded or reconciled, only if admin (use with caution)
-			$transaction->transaction_date	= date('Y-m-d', strtotime($_POST['transaction_date']));
-			$transaction->type				= $_POST['type'];
-			$transaction->amount			= $_POST['amount'];
-			$transaction->bank_account_id	= $_POST['bank_account_id'];
-			$transaction->description		= $_POST['description'];
-			$transaction->check_num			= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
+			$transaction->transaction_date		= date('Y-m-d', strtotime($_POST['transaction_date']));
+			$transaction->type					= $_POST['type'];
+			$transaction->amount				= $_POST['amount'];
+			$transaction->bank_account_id		= $_POST['bank_account_id'];
+			$transaction->transfer_account_id	= ($_POST['category_id'] == 17) ? $_POST['transfer_account_id']: NULL;
+			$transaction->description			= $_POST['description'];
+			$transaction->check_num				= (!empty($_POST['check_num'])) ? $_POST['check_num']: NULL;
 		} elseif ($transaction->is_reconciled != 1 && $transaction->is_uploaded == 1) {
 			// if transaction is not reconciled but uploaded....
 			// .... allow account id to be changed
@@ -233,10 +234,10 @@ class transaction_controller Extends rest_controller {
 		 * if the transaction will affect the account balances then reset account balances
 		 * if the amount or date or type or bank account changed then reset account balances
 		 */
-		if ($amount !== $transaction->amount || $transaction_date !== $transaction->transaction_date || $type !== $transaction->type  || $bank_account_id !== $transaction->bank_account_id) {
+		if ($amount !== $transaction->amount || $transaction_date !== $transaction->transaction_date || $type !== $transaction->type || $bank_account_id !== $transaction->bank_account_id || $transfer_account_id !== $transaction->transfer_account_id) {
 			$resetBalances = array();
-			// if the bank account changed then reset account balances
-			if ($bank_account_id && $bank_account_id !== $transaction->bank_account_id) {
+			// if the account id changed or transfer account id changed then reset account balances
+			if (($bank_account_id && $bank_account_id !== $transaction->bank_account_id) || ($transfer_account_id && $transfer_account_id !== $transaction->transfer_account_id)) {
 				// if we changed the account then reset balance for original account
 				if (!$transaction_date || strtotime($transaction->transaction_date) < strtotime($transaction_date)) {
 					$date = $transaction->transaction_date;
