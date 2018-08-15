@@ -8,6 +8,9 @@ class bank extends Nagilum {
 
 	public $table = 'bank';
 
+	public $hasMany = array('accounts' => array('class' => 'bank_account', 'joinField' => 'bank_id')
+						);
+
 	public $autoPopulateHasOne = FALSE;
 	public $autoPopulateHasMany = FALSE;
 
