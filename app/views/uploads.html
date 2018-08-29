@@ -51,7 +51,11 @@
 				<tr ng-show="transactions_seq.length > 0" ng-repeat="idx in transactions_seq">
 					<td>{{ transactions[idx].transaction_date|date:'EEE MMM dd, yyyy' }}</td>
 					<td><span class="pull-left">{{ transactions[idx].bankName }}</span></td>
-					<td><span class="pull-left">{{ transactions[idx].description }}</span></td>
+					<!--<td><span class="pull-left">{{ transactions[idx].description }}</span></td>-->
+					<td>
+						<span class="pull-left">{{ transactions[idx].description }}</span>
+						<span style="font-size: 10px;" ng-if="transactions[idx].notes">&nbsp;- <em>{{ transactions[idx].notes }}</em></span>
+					</td>
 					<td><span class="pull-right">{{ transactions[idx].check_num }}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CHECK' || transactions[idx].type == 'DEBIT' || transactions[idx].type == 'SALE'">{{ transactions[idx].amount|currency }}</span></td>
 					<td><span class="pull-right" ng-if="transactions[idx].type == 'CREDIT' || transactions[idx].type == 'DSLIP' || transactions[idx].type == 'RETURN' || transactions[idx].type == 'PAYMENT'">{{ transactions[idx].amount|currency }}</span></td>

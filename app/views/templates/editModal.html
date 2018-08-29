@@ -55,7 +55,7 @@
 	</div>
 	<div class="row">
 		<fieldset ng-disabled="isSaving">
-			<div class="col-md-3" ng-if="transaction.category_id == 17">
+			<div class="col-md-3" ng-if="transaction.category_id != 17">
 				<label for="date">Account</label>
 				<div class="form-group" ng-class="{ 'has-error': validation.bank_account_id }">
 					<select class="form-control" name="bank_account_id" ng-disabled="!is_admin && transaction.reconciled_date" ng-model="transaction.bank_account_id" ng-options="account.id as account.name for account in active_accounts"></select>

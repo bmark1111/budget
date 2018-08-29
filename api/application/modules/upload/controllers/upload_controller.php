@@ -12,7 +12,6 @@ class upload_controller extends EP_Controller {
 		$config['allowed_types'] = 'csv';
 		$config['max_size']	= '1000';
 		$config['overwrite'] = TRUE;
-echo $config['upload_path'] . $this->upload->file_name;die('pppppp');
 
 		$this->load->library('upload', $config);
 
