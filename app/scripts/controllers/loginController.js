@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginController', function($rootScope, $scope, RestData2, $location, $localStorage, Periods) {
+app.controller('LoginController', function($rootScope, $scope, RestData2, $location, $localStorage, Accounts, Periods) {
 
 	$rootScope.nav_active = 'login';
 
@@ -26,6 +26,7 @@ app.controller('LoginController', function($rootScope, $scope, RestData2, $locat
 					$localStorage.sheet_views		= data.data.sheet_views;
 					$localStorage.budget_mode		= data.data.budget_mode;
 
+					Accounts.clear();
 					Periods.clear();
 					$location.path("/dashboard");
 					$scope.error = false;

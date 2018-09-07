@@ -82,4 +82,13 @@ services.accounts.prototype.get = function () {
 	return deferred.promise;
 };
 
+services.accounts.prototype.clear = function () {
+
+//	this.all = false;
+//	this.bank_account_balance = Array();
+//	this.periods = [];
+//	this.period_start = 0;
+	this.data = [];
+};
+
 app.service('Accounts',  [ "$q", "RestData2", services.accounts]);
