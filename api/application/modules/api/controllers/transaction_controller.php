@@ -228,6 +228,17 @@ class transaction_controller Extends rest_controller {
 					$transaction_split->delete();
 				}
 			}
+		} else {
+			// clean up any splits if necessasry
+			$transaction_split = new transaction_split();
+			$transaction_split->whereNotDeleted();
+			$transaction_split->where('transaction_id', $transaction->id);
+			$transaction_split->result();
+			if ($transaction_split->numRows()) {
+				foreach ($transaction_split as $split) {
+					$split->delete();
+				}
+			}
 		}
 
 		/*

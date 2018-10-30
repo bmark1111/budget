@@ -151,6 +151,9 @@ function($q, $scope, $modalInstance, $modal, RestData2, params, Categories, Acco
 			var dt = new Date($scope.transaction.transaction_date);
 			$scope.transaction.transaction_date = dt.getFullYear() + '-' + _addZero(dt.getMonth()+1) + '-' + _addZero(dt.getDate());
 		}
+		if (!$scope.is_split) {
+			delete $scope.transaction.splits;
+		}
 		RestData2().saveTransaction($scope.transaction,
 			function(response) {
 				$scope.isSaving = false;
