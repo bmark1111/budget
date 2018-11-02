@@ -84,10 +84,7 @@ services.accounts.prototype.get = function () {
 
 services.accounts.prototype.clear = function () {
 
-//	this.all = false;
-//	this.bank_account_balance = Array();
-//	this.periods = [];
-//	this.period_start = 0;
+	console.log("accounts cleared");
 	this.data = [];
 };
 

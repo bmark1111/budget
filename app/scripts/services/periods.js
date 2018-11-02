@@ -278,6 +278,7 @@ services.periods.prototype.loadNext = function (direction, interval, callback) {
 
 services.periods.prototype.clear = function () {
 
+	console.log("periods cleared");
 	this.all = false;
 	this.bank_account_balance = Array();
 	this.periods = [];
@@ -625,7 +626,6 @@ services.periods.prototype.addToTotals = function(data, output) {
 	}
 
 	if (category_id == 17 && data.type == 'DEBIT') {
-//console.log(data)
 		output.transfer_amount += parseFloat(amount);
 	}
 

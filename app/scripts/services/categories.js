@@ -48,4 +48,11 @@ services.categories.prototype.get = function () {
 	return deferred.promise;
 };
 
+services.categories.prototype.clear = function () {
+
+	console.log("categories cleared");
+	this.data = [];
+};
+
+
 app.service('Categories',  [ "$q", "RestData2", services.categories]);
