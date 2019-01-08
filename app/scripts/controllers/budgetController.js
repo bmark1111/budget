@@ -45,7 +45,7 @@ function($q, $scope, $sce, $modal, $filter, $localStorage, Categories, Accounts,
 	 */
 	$scope.showCategory = function(category_id) {
 
-		for (var x = $scope.period_start; x < localStorage.sheet_views; x++) {
+		for (var x = $scope.period_start; x < ($scope.period_start + localStorage.sheet_views); x++) {
 			if ($scope.periods[x]['totals'][category_id] !== undefined) {
 				return true;
 			}
