@@ -135,7 +135,7 @@ $this->ajax->setData('yearNOW', date('Y'));
 		foreach ($repeats as $repeat) {
 			foreach ($repeat->next_due_dates as $next_due_date) {
 				$ndd = strtotime($next_due_date);
-				if (!empty($forecast[$ndd])) {
+				while (!empty($forecast[$ndd])) {
 					$ndd++;
 				}
 				$forecast[$ndd]['date'] = $next_due_date;
@@ -148,14 +148,13 @@ $this->ajax->setData('yearNOW', date('Y'));
 				$forecast[$ndd]['ftype'] = 1;
 			}
 		}
-
 		// get the past forecasts for this interval
 		$forecasted = $this->loadForecast($year . '-01-01', ($year+1) . '-01-01', (($year <= date('Y')) ? 2: 0), $category_id);
 		if (!empty($forecasted)) {
 			foreach ($forecasted as $fc) {
 				foreach ($fc->next_due_dates as $next_due_date) {
 					$ndd = strtotime($next_due_date);
-					if (!empty($forecast[$ndd])) {
+					while (!empty($forecast[$ndd])) {
 						$ndd++;
 					}
 					$forecast[$ndd]['date'] = $next_due_date;
